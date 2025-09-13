@@ -205,6 +205,7 @@ TYPE
 		BEGIN
 			reader.text.AcquireRead;
 			len := 0; res := Streams.Ok;
+			offs := ofs;
 			WHILE len < size DO
 				IF remainder # 0 THEN
 					ucs32 := remainder; remainder := 0;
