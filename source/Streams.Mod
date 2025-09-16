@@ -2,7 +2,7 @@
 
 MODULE Streams;   (** AUTHOR "pjm/be"; PURPOSE "I/O buffering and formatted writing and reading"; *)
 
-IMPORT SYSTEM, RC := RealConversions(*, UTF8Strings*);
+IMPORT SYSTEM, RC := RealConversions;
 
 CONST
 	Ok* = 0;   (** zero result code means no error occurred *)
@@ -466,61 +466,110 @@ TYPE
 
 		(** -- unicode -- *)
 
-	(** Write one UTF-16 unit *)
+	(** Write one UTF-16 unit without validation *)
 		PROCEDURE RawChar16*( x: Char16 ): BOOLEAN;
 		BEGIN
-			IF ( byteOrder = ByteOrder.LittleEndian ) THEN
-				Char( CHR( x ) ); Char( CHR( x DIV 100H ) );
-			ELSE
-				Char( CHR( x DIV 100H ) ); Char( CHR( x ) );
+			IF ( byteOrder = ByteOrder.BigEndian ) THEN
+				x := ROL( x, 8 );
 			END;
+			Bytes( SYSTEM.VAL( Bytes2, x ), 0, 2 );
 			RETURN res = Ok;
 		END RawChar16;
 
-	(** Encode one unicode codepoint into one well-formed UTF-8 character *)
-		PROCEDURE UTF8Char*( ucs: Char32 ): BOOLEAN;
+	(** Write one UTF-32 unit without validation *)
+		PROCEDURE RawChar32*( ucs: Char32 ): BOOLEAN;
+		VAR unicode: RECORD u0, u1: Char16; ucs {OFFSET=0}: UNSIGNED32 END;
 		BEGIN
-			IF ( UNSIGNED32( ucs ) <= 0x7F ) THEN
-				Char( CHR( ucs ) );
-			ELSIF ( UNSIGNED32( ucs ) <= 0x7FF ) THEN
-				Char( CHR( SHR( ucs, 6 ) + 0xC0 ) );
-				Char( CHR( ucs MOD 0x40 + 0x80 ) );
-			ELSIF ( UNSIGNED32( ucs ) <= 0xD7FF ) OR ( UNSIGNED32( 0xE000 ) <= UNSIGNED32( ucs ) ) & ( UNSIGNED32( ucs ) <= 0xFFFF ) THEN
-				Char( CHR( SHR( ucs, 12 ) + 0xE0 ) );
-				Char( CHR( SHR( ucs,  6 ) MOD 0x40 + 0x80 ) );
-				Char( CHR( ucs MOD 0x40 + 0x80 ) );
-			ELSIF ( 0xFFFF < UNSIGNED32( ucs ) ) & ( UNSIGNED32( ucs ) <= 0x10FFFF ) THEN
-				Char( CHR( SHR( ucs, 18 ) + 0xF0 ) );
-				Char( CHR( SHR( ucs, 12 ) MOD 0x40 + 0x80 ) );
-				Char( CHR( SHR( ucs,  6 ) MOD 0x40 + 0x80 ) );
-				Char( CHR( ucs MOD 0x40 + 0x80 ) );
-			ELSE
-				RETURN FALSE;
+			IF ( byteOrder = ByteOrder.BigEndian ) THEN
+				unicode.ucs := ROL( ucs, 16 );
+				unicode.u0 := ROL( unicode.u0, 8 );
+				unicode.u1 := ROL( unicode.u1, 8 );
+				ucs := Char32( unicode.ucs );
 			END;
+			Bytes( SYSTEM.VAL( Bytes4, ucs ), 0, 4 );
 			RETURN res = Ok;
+		END RawChar32;
+
+	(** Encodes a Unicode code point into a UTF-8 byte sequence.
+		 Returns TRUE if encoding succeeds, FALSE for invalid code points or output errors.
+		 Rejects U+D800–U+DFFF (surrogates) and >U+10FFFF.
+	*)
+		PROCEDURE UTF8Char*( ucs: Char32 ): BOOLEAN;
+		VAR utf: ARRAY 4 OF CHAR; count: SIZE;
+		BEGIN
+			IF ( UNSIGNED32( ucs ) <= 0x10FFFF ) & ( SET32( ucs ) * SET32( 0xFFFFF800 ) # SET32( 0xD800 )) THEN (* Valid Unicode, not surrogate *)
+				IF ( ucs <= 0x7F ) THEN (* U+0000–U+007F: bits 7–31 zero *)
+					count := 1;
+					utf[0] := CHR( ucs );
+				ELSIF ( ucs <= 0x7FF ) THEN (* U+0080–U+07FF: bits 11–31 zero *)
+					count := 2;
+					utf[0] := CHR( SHR( ucs, 6 ) + 0xC0);
+					utf[1] := CHR( ucs MOD 0x40 + 0x80 );
+				ELSIF SET32(ucs) * SET32( 0xFFFF0000 ) = { } THEN (* U+0800–U+FFFF: bits 16–31 zero *)
+					count := 3;
+					utf[0] := CHR( SHR( ucs, 12 ) + 0xE0 );
+					utf[1] := CHR( SHR( ucs, 6) MOD 0x40 + 0x80 );
+					utf[2] := CHR( ucs MOD 0x40 + 0x80 );
+				ELSE (* U+10000–U+10FFFF: bits 21–31 zero, ucs > U+FFFF *)
+					count := 4;
+					utf[0] := CHR( SHR( ucs, 18 ) + 0xF0 );
+					utf[1] := CHR( SHR( ucs, 12 ) MOD 0x40 + 0x80 );
+					utf[2] := CHR( SHR( ucs, 6 ) MOD 0x40 + 0x80 );
+					utf[3] := CHR( ucs MOD 0x40 + 0x80 );
+			END;
+				Bytes( utf, 0, count );
+			RETURN res = Ok;
+			END;
+			RETURN FALSE;
 		END UTF8Char;
 
-	(** Encode one unicode codepoint into one well-formed UTF-16 character *)
+	(* Encodes a Unicode code point into a UTF-16 byte sequence.
+		 Returns TRUE if encoding succeeds, FALSE for invalid code points (U+D800–U+DFFF, >U+10FFFF)
+		 or output errors. Handles BMP (U+0000–U+FFFF) and supplementary plane (U+10000–U+10FFFF) via surrogate pairs.
+		 Supports big-endian and little-endian byte order.
+	*)
 		PROCEDURE UTF16Char*( ucs: Char32 ): BOOLEAN;
+		VAR utf: RECORD u0, u1: Char16 END;
 		BEGIN
-			IF ( UNSIGNED32( ucs ) <= 0xFFFF ) THEN
-				RETURN RawChar16( Char16( ucs ) );
-			ELSIF ( UNSIGNED32( ucs ) <= 0x10FFFF ) THEN
-				RETURN RawChar16( Char16( SHR( ucs, 10 ) + 0xD7C0 ) ) & RawChar16( Char16( SET32( ucs ) * SET32( 0x03FF ) + SET32( 0xDC00 ) ) );
+			IF ( UNSIGNED32( ucs ) <= 0x10FFFF ) & ( SET32( ucs ) * SET32( 0xFFFFF800 ) # SET32( 0xD800 )) THEN
+				IF ucs <= 0xFFFF THEN (* U+0000–U+FFFF: bits 16–31 zero *)
+					utf.u0 := Char16( ucs );
+					IF byteOrder = ByteOrder.BigEndian THEN
+						utf.u0 := ROL( utf.u0, 8 );
+					END;
+					Bytes( SYSTEM.VAL( Bytes2, utf.u0 ), 0, 2 );
+				ELSE (* U+10000–U+10FFFF *)
+					utf.u0 := Char16( SHR( ucs, 10 ) + 0xD7C0 ); (* High surrogate *)
+					utf.u1 := Char16( SET32( ucs ) * SET32( 0x03FF ) + SET32( 0xDC00 )); (* Low surrogate *)
+					IF byteOrder = ByteOrder.BigEndian THEN
+						utf.u0 := ROL( utf.u0, 8 );
+						utf.u1 := ROL( utf.u1, 8 );
+					END;
+					Bytes( SYSTEM.VAL( Bytes4, utf ), 0, 4 );
+				END;
+				RETURN res = Ok;
 			END;
 			RETURN FALSE;
 		END UTF16Char;
 
-	(** Write one UTF-32 unit *)
+	(** Encodes a Unicode code point into a UTF-32 byte sequence.
+	   Returns TRUE if encoding succeeds, FALSE for invalid code points (U+D800–U+DFFF, >U+10FFFF)
+	   or output errors. Supports big-endian (network byte order) and little-endian byte order.
+	*)
 		PROCEDURE UTF32Char*( ucs: Char32 ): BOOLEAN;
+		VAR unicode: RECORD u0, u1: Char16; ucs {OFFSET=0}: UNSIGNED32 END;
 		BEGIN
-			IF ( UNSIGNED32( ucs ) <= 0x10FFFF ) THEN
-				IF ( byteOrder = ByteOrder.LittleEndian ) THEN
-					RETURN RawChar16( Char16( ucs MOD 0x10000 ) ) & RawChar16( Char16( ucs DIV 0x10000 ) );
-				ELSE
-					RETURN RawChar16( Char16( ucs DIV 0x10000 ) ) & RawChar16( Char16( ucs MOD 0x10000 ) );
+			IF ( UNSIGNED32( ucs ) <= 0x10FFFF ) & ( SET32( ucs ) * SET32( 0xFFFFF800 ) # SET32( 0xD800 )) THEN
+				unicode.ucs := ucs;
+				IF ( byteOrder = ByteOrder.BigEndian ) THEN
+					unicode.u0 := ROL( unicode.u0, 8 );
+					unicode.u1 := ROL( unicode.u1, 8 );
+					unicode.ucs := ROL( unicode.ucs, 16 );
 				END;
+				Bytes( SYSTEM.VAL( Bytes4, unicode ), 0, 4 );
+				RETURN res = Ok;
 			END;
+
 			RETURN FALSE;
 		END UTF32Char;
 
@@ -636,6 +685,7 @@ TYPE
 			RETURN received - (tail - head)
 		END Pos;
 
+	(** Sets the byte order of the stream. Only has an effect on Unicode data. *)
 		PROCEDURE SetByteOrder*( order: ByteOrder );
 		BEGIN
 			byteOrder := order;
@@ -668,6 +718,74 @@ TYPE
 			END;
 			IF res = Ok THEN RETURN buf[head] ELSE RETURN 0X END
 		END Peek;
+
+	(* Reads up to 'nofBytes' from the input buffer into 'data' without advancing the stream position.
+
+		 Parameters:
+			 nofBytes: number of bytes to peek
+			 data: array to store the peeked bytes
+
+		 Returns TRUE if at least 'nofBytes' bytes are available and were copied
+		 to 'data'. Returns FALSE if not enough bytes are available or an error
+		 occurred.
+	*)
+		PROCEDURE PeekBytes*(nofBytes: SIZE; VAR data: ARRAY OF CHAR ): BOOLEAN;
+		VAR avail, read: SIZE;
+		BEGIN
+			IF ( res # Ok ) OR ( nofBytes > LEN( SELF.buf )) OR ( nofBytes > LEN( data )) THEN
+				RETURN FALSE
+			END;
+
+			avail := Available( );
+			IF nofBytes > avail THEN
+				IF avail > 0 THEN
+					SYSTEM.MOVE( ADDRESSOF( buf[head]), ADDRESSOF( buf[0]), avail );
+				END;
+				receive( buf^, avail, LEN( buf ) - avail, nofBytes - avail, read, res );
+				head := 0; tail := avail + read; INC( received, read );
+				IF res = EOF THEN res := Ok END;
+				IF nofBytes > tail THEN RETURN FALSE END;
+			END;
+			SYSTEM.MOVE( ADDRESSOF( buf[head]), ADDRESSOF( data[0]), nofBytes );
+			RETURN TRUE;
+		END PeekBytes;
+
+	(** peek utf8 char *)
+		PROCEDURE PeekUTF8Char*( ): Char32;
+			VAR utf: ARRAY 4 OF CHAR; ucs, b1, b2, b3: UNSIGNED32;
+		BEGIN
+			IF ~PeekBytes( 1, utf ) THEN RETURN Char32( 0 ) END;
+			ucs := ORD32( utf[0] );
+			IF ucs < 0x80 THEN
+				RETURN Char32( ucs )
+			ELSIF ( ucs >= 0xC2 ) & ( ucs < 0xE0 ) THEN
+				IF ~PeekBytes( 2, utf ) THEN RETURN Char32( 0 ) END;
+				b1 := ORD32( utf[1] );
+				IF SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 ) THEN RETURN Char32( 0 ) END;
+				ucs := LSH( ucs MOD 0x20, 6 ) + ( b1 MOD 0x40 );
+				IF ucs >= 0x80 THEN RETURN Char32( ucs ) END;
+			ELSIF ( ucs < 0xF0 ) THEN
+				IF ~PeekBytes( 3, utf ) THEN RETURN Char32( 0 ) END;
+				b1 := ORD32( utf[1] ); b2 := ORD32( utf[2] );
+				IF (SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) OR
+						(SET32( b2 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) THEN RETURN Char32( 0 ) END;
+				IF ( ucs = 0xE0 ) & ( b1 < 0xA0 ) THEN RETURN Char32( 0 ) END;  (* overlong *)
+				IF ( ucs = 0xED ) & ( b1 > 0x9F ) THEN RETURN Char32( 0 ) END;  (* surrogate *)
+				ucs := LSH( ucs MOD 0x10, 12 ) + LSH( b1 MOD 0x40, 6 ) + ( b2 MOD 0x40 );
+				IF ucs >= 0x800 THEN RETURN Char32( ucs ) END;
+			ELSIF ( ucs <= 0xF4 ) THEN
+				IF ~PeekBytes( 4, utf ) THEN RETURN Char32( 0 ) END;
+				b1 := ORD32( utf[1] ); b2 := ORD32( utf[2] ); b3 := ORD32( utf[3] );
+				IF ( SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) OR
+						( SET32( b2 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) OR
+						( SET32( b3 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) THEN RETURN Char32( 0 ) END;
+				IF ( ucs = 0xF0 ) & ( b1 < 0x90 ) THEN RETURN Char32( 0 ) END;  (* overlong *)
+				IF ( ucs = 0xF4 ) & ( b1 > 0x8F ) THEN RETURN Char32( 0 ) END;  (* > U+10FFFF *)
+				ucs := LSH( ucs MOD 0x08, 18 ) + LSH( b1 MOD 0x40, 12 ) + LSH( b2 MOD 0x40, 6 ) + ( b3 MOD 0x40 );
+				IF ( ucs >= 0x10000 ) & ( ucs <= 0x10FFFF ) THEN RETURN Char32( ucs ) END;
+			END;
+			RETURN Char32( 0 );
+		END PeekUTF8Char;
 
 	(** Read size bytes into x, starting at ofs.  The len parameter returns the number of bytes that were actually read. *)
 		PROCEDURE Bytes*( VAR x: ARRAY OF CHAR;  ofs, size: SIZE;  VAR len: SIZE );
@@ -1141,88 +1259,161 @@ TYPE
 
 		(** -- unicode -- *)
 
-	(** Read one UTF-16 unit *)
-		PROCEDURE RawChar16*( VAR u16: Char16 ): BOOLEAN;
-		VAR b0, b1: CHAR;
+	(** Try raw read one UTF-16 unit *)
+		PROCEDURE RawChar16*( VAR x: Char16 ): BOOLEAN;
+		VAR u16: UNSIGNED16;
 		BEGIN
-			u16 := 0;
-			Char( b0 ); Char( b1 );
-			IF ( res = Ok ) THEN
-				IF ( byteOrder = ByteOrder.LittleEndian ) THEN
-					u16 := Char16( ORD( b1 ) ) * 0x100 + Char16( ORD( b0 ) );
-				ELSE
-					u16 := Char16( ORD( b0 ) ) * 0x100 + Char16( ORD( b1 ) );
+			IF ~PeekBytes( 2, SYSTEM.VAL( Bytes2, u16 )) THEN RETURN FALSE END;
+			SkipBytes( 2 );
+			IF ( byteOrder = ByteOrder.BigEndian ) THEN
+				u16 := ROL( u16, 8 );
 				END;
+				x := Char16( u16 );
 				RETURN TRUE;
-			END;
-			RETURN FALSE;
 		END RawChar16;
 
-	(** Decode one well-formed UTF-8 character into one unicode codepoint *)
-		PROCEDURE UTF8Char*( VAR ucs: Char32 ): BOOLEAN;
-		VAR u32: Char32; isValid: BOOLEAN;
+	(** Try raw read one UTF-32 unit *)
+		PROCEDURE RawChar32*( VAR x: Char32 ): BOOLEAN;
+		VAR unicode: RECORD u0, u1: Char16; ucs {OFFSET=0}: UNSIGNED32 END;
 		BEGIN
-			isValid := FALSE;
-			ucs := 0; (* EOF *)
-
-			u32 := ORD32( Get( ) );
-			IF ( res = Ok ) THEN
-				IF ( u32 < 0x80 ) THEN (* len = 1 *)
-					isValid := TRUE;
-				ELSIF ( u32 < 0xE0 ) THEN (* 0x80 + 0x40 + 0x20 *)
-					u32 := LSH( u32 MOD 0x20, 6 ) + ORD32( Get( ) ) MOD 0x40;
-					isValid := u32 >= 0x0080;
-				ELSIF ( u32 < 0xF0 ) THEN (* 0x80 + 0x40 + 0x20 + 0x10 *)
-					u32 := LSH( u32 MOD 0x10, 12 ) + LSH( ORD32( Get( ) ) MOD 0x40, 6 ) + ORD32( Get( ) ) MOD 0x40;
-					isValid := u32 >= 0x0800;
-				ELSE (* len = 4 *)
-					u32 := LSH( u32 MOD 8, 18 ) + LSH( ORD32( Get( ) ) MOD 0x40, 12 ) + LSH( ORD32( Get( ) ) MOD 0x40, 6 ) + ORD32( Get( ) ) MOD 0x40;
-					isValid := u32 >= 0x010000;
-				END;
+			IF ~PeekBytes( 4, SYSTEM.VAL( Bytes4, unicode )) THEN RETURN FALSE END;
+			SkipBytes( 4 );
+			IF byteOrder = ByteOrder.BigEndian THEN
+				unicode.u0 := ROL( unicode.u0, 8 );
+				unicode.u1 := ROL( unicode.u1, 8 );
+				unicode.ucs := ROL( unicode.ucs, 16 );
 			END;
-			IF ( res = Ok ) & isValid THEN
-				ucs := u32;
+			x := Char32( unicode.ucs );
+			RETURN TRUE;
+		END RawChar32;
+
+	(** Decodes a UTF-8 encoded character from a byte stream into a 32-bit Unicode code point.
+		 Returns TRUE if a valid UTF-8 sequence is decoded and ucs is set, FALSE for invalid sequences
+	   (U+D800–U+DFFF, >U+10FFFF) or insufficient bytes.
+
+		 On success, advances the stream position by the appropriate number of bytes.
+
+		 UTF-8 sequences are validated according to the standard:
+			 - 0x00..0x7F
+			 - 0xC2..0xDF + 1 continuation byte
+			 - 0xE0..0xEF + 2 continuation bytes
+				 (with overlong and surrogate checks)
+			 - 0xF0..0xF4 + 3 continuation bytes
+				 (limited to <= U+10FFFF)
+	*)
+		PROCEDURE UTF8Char*( VAR ucs: Char32 ): BOOLEAN;
+		VAR utf: ARRAY 4 OF CHAR; b0, b1, b2, b3: UNSIGNED32; temp: UNSIGNED32;
+		BEGIN
+			IF ~PeekBytes( 1, utf ) THEN RETURN FALSE END;
+			b0 := ORD( utf[0] );
+			IF b0 < 0x80 THEN
+				SkipBytes( 1 );
+				ucs := Char32( b0 );
+				RETURN TRUE
+			ELSIF ( b0 >= 0xC2 ) & ( b0 < 0xE0 ) THEN
+				IF ~PeekBytes( 2, utf ) THEN RETURN FALSE END;
+				b1 := ORD32( utf[1] );
+				IF SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 ) THEN RETURN FALSE END;
+				temp := LSH( b0 MOD 0x20, 6 ) + ( b1 MOD 0x40 );
+				IF temp >= 0x80 THEN
+					SkipBytes( 2 );
+					ucs := Char32( temp );
+					RETURN TRUE;
+				END;
+			ELSIF ( b0 < 0xF0 ) THEN
+				IF ~PeekBytes( 3, utf ) THEN RETURN FALSE END;
+				b1 := ORD32( utf[1] ); b2 := ORD32( utf[2] );
+				IF ( SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) OR
+						( SET32( b2 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) THEN RETURN FALSE END;
+				IF ( b0 = 0xE0 ) & ( b1 < 0xA0 ) THEN RETURN FALSE END;  (* overlong *)
+				IF ( b0 = 0xED ) & ( b1 > 0x9F ) THEN RETURN FALSE END;  (* surrogate *)
+				temp := LSH( b0 MOD 0x10, 12 ) + LSH( b1 MOD 0x40, 6 ) + ( b2 MOD 0x40 );
+				IF temp >= 0x800 THEN
+					SkipBytes( 3 );
+					ucs := Char32( temp );
+					RETURN TRUE;
+			END;
+			ELSIF ( b0 <= 0xF4 ) THEN
+				IF ~PeekBytes( 4, utf ) THEN RETURN FALSE END;
+				b1 := ORD32( utf[1] ); b2 := ORD32( utf[2] ); b3 := ORD32( utf[3] );
+				IF ( SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) OR
+						( SET32( b2 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) OR
+						( SET32( b3 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) THEN RETURN FALSE END;
+				IF ( b0 = 0xF0 ) & ( b1 < 0x90 ) THEN RETURN FALSE END;  (* overlong *)
+				IF ( b0 = 0xF4 ) & ( b1 > 0x8F ) THEN RETURN FALSE END;  (* > U+10FFFF *)
+				temp := LSH( b0 MOD 0x08, 18 ) + LSH( b1 MOD 0x40, 12 ) + LSH( b2 MOD 0x40, 6 ) + ( b3 MOD 0x40 );
+				IF ( temp >= 0x10000 ) & ( temp <= 0x10FFFF ) THEN
+					SkipBytes( 4 );
+					ucs := Char32( temp );
 				RETURN TRUE;
 			END;
-			RETURN FALSE;
+			END;
+			RETURN FALSE
 		END UTF8Char;
 
+	(** Decodes a UTF-16 encoded character from a byte stream into a 32-bit Unicode code point.
+		 Returns TRUE if a valid UTF-16 sequence is decoded and ucs is set, FALSE for invalid sequences
+		 or insufficient bytes. Handles BMP (U+0000–U+D7FF, U+E000–U+FFFF) and supplementary plane
+		 (U+10000–U+10FFFF) via surrogate pairs. Supports big-endian and little-endian byte order.
+
+		 On success, advances the stream position by the appropriate number of bytes.
+	*)
 		PROCEDURE UTF16Char*( VAR ucs: Char32 ): BOOLEAN;
 		CONST SURROGATEOFFSET = LSH( 0x00D800, 10 ) + 0x00DC00 - 0x010000;
-		VAR u0, u1: Char16;
+		VAR utf: RECORD u0, u1: UNSIGNED16 END;
 		BEGIN
-			ucs := 0; (* EOF *)
-			IF RawChar16( u0 ) THEN
-				IF ( SET16( u0 ) * SET16( 0xFC00 ) # SET16( 0xD800 ) ) THEN
-					ucs := u0;
+			IF ~PeekBytes( 2, SYSTEM.VAL( Bytes2, utf.u0 )) THEN RETURN FALSE END;
+			IF ( byteOrder = ByteOrder.BigEndian ) THEN
+				utf.u0 := ROL( utf.u0, 8 );
+			END;
+
+			IF SET16( utf.u0 ) * SET16( 0xF800 ) # SET16( 0xD800 ) THEN (* single BMP *)
+				ucs := Char32( utf.u0 );
+				SkipBytes( 2 );
 					RETURN TRUE;
-				ELSE
-					IF RawChar16( u1 ) & ( SET16( u1 ) * SET16( 0xFC00 ) = SET16( 0xDC00 ) ) THEN (* IsTail *)
-						ucs := SHL( Char32( u0 ), 10 ) + Char32( u1 ) - Char32( SURROGATEOFFSET );
-						RETURN TRUE;
+			ELSIF SET16( utf.u0 ) * SET16( 0xFC00 ) = SET16( 0xD800 ) THEN (* High surrogate *)
+				IF PeekBytes( 4, SYSTEM.VAL( Bytes4, utf )) THEN
+					IF byteOrder = ByteOrder.BigEndian THEN
+						utf.u0 := ROL( utf.u0, 8 );
+						utf.u1 := ROL( utf.u1, 8 );
+					END;
+					IF SET16( utf.u1 ) * SET16( 0xFC00 ) = SET16( 0xDC00 ) THEN (* Low surrogate *)
+						VAR temp := SHL( UNSIGNED32( utf.u0 ), 10 ) + utf.u1 - SURROGATEOFFSET: UNSIGNED32;
+						IF temp <= 0x10FFFF THEN
+							SkipBytes( 4 );
+							ucs := Char32( temp );
+							RETURN TRUE;  (* well-formed pair *)
 					END;
 				END;
 			END;
-			RETURN FALSE;
+			END;
+
+			RETURN FALSE; (* lone surrogate *)
 		END UTF16Char;
 
-	(** Read one UTF-32 unit *)
+	(** Decodes a UTF-32 encoded character from a byte stream into a 32-bit Unicode code point.
+	   Returns TRUE if a valid UTF-32 sequence is decoded and ucs is set, FALSE for invalid sequences
+	   (U+D800–U+DFFF, >U+10FFFF) or insufficient bytes. Supports big-endian (network byte order) and
+	   little-endian byte order.
+
+	   On success, advances the stream position by the appropriate number of bytes.
+	*)
 		PROCEDURE UTF32Char*( VAR ucs: Char32 ): BOOLEAN;
-		VAR u0, u1: Char16; temp: Char32;
+		VAR unicode: RECORD u0, u1: UNSIGNED16; ucs {OFFSET=0}: UNSIGNED32 END;
 		BEGIN
-			ucs := 0; (* EOF *)
-			IF RawChar16( u0 ) & RawChar16( u1 ) THEN
-				IF ( byteOrder = ByteOrder.LittleEndian ) THEN
-					temp := Char32( u1 ) * 0x10000 + Char32( u0 );
-				ELSE
-					temp := Char32( u0 ) * 0x10000 + Char32( u1 );
+			IF ~PeekBytes(4, SYSTEM.VAL(Bytes4, unicode)) THEN RETURN FALSE END;
+			IF byteOrder = ByteOrder.BigEndian THEN
+				unicode.u0 := ROL( unicode.u0, 8 );
+				unicode.u1 := ROL( unicode.u1, 8 );
+				unicode.ucs := ROL( unicode.ucs, 16 );
 				END;
 
-				IF ( UNSIGNED32( temp ) <= 0x10FFFF ) THEN
-					ucs := temp;
+			IF ( unicode.ucs <= 0x10FFFF ) & ( SET32( unicode.ucs ) * SET32( 0xFFFFF800 ) # SET32( 0xD800 )) THEN
+				ucs := Char32( unicode.ucs );
+				SkipBytes( 4 );
 					RETURN TRUE;
 				END;
-			END;
+
 			RETURN FALSE;
 		END UTF32Char;
 
