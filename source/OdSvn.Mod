@@ -378,7 +378,7 @@ TYPE
 
 		(* Apply delta. *)
 		NEW(delta, txDelta, 0);
-		delta.RawLInt(svo); (* Skip header. *)
+		delta.RawInt32(svo); (* Skip header. *)
 		LOOP
 			RawNum(delta, svo);
 			IF delta.res # Streams.Ok THEN

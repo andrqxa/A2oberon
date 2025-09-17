@@ -658,45 +658,45 @@ TYPE
 
 	PROCEDURE WriteRawOperand*(w: Streams.Writer; CONST operand: Operand );
 	BEGIN
-		w.RawLInt(operand.type.form);
-		w.RawLInt(operand.type.sizeInBits);
-		w.RawLInt(operand.type.length);
+		w.RawInt32(operand.type.form);
+		w.RawInt32(operand.type.sizeInBits);
+		w.RawInt32(operand.type.length);
 		CASE operand.mode OF
 			Undefined:
 		|ModeMemory:
 			IF operand.register # None THEN
-				w.RawLInt(operand.register(SIGNED32));
-				w.RawSInt(operand.registerClass.class);
-				w.RawInt(operand.registerClass.number);
-				w.RawLInt(operand.offset(SIGNED32));
+				w.RawInt32(operand.register(SIGNED32));
+				w.RawInt8(operand.registerClass.class);
+				w.RawInt16(operand.registerClass.number);
+				w.RawInt32(operand.offset(SIGNED32));
 			ELSIF operand.symbol.name # "" THEN
 				Basic.WriteSegmentedName(w,operand.symbol.name);
-				IF operand.symbol.fingerprint # 0 THEN w.RawHInt(operand.symbol.fingerprint);END;
-				w.RawLInt(operand.symbolOffset(SIGNED32));
-				w.RawLInt(operand.offset(SIGNED32));
-			ELSE w.RawLInt(SHORT(operand.intValue));
+				IF operand.symbol.fingerprint # 0 THEN w.RawInt64(operand.symbol.fingerprint);END;
+				w.RawInt32(operand.symbolOffset(SIGNED32));
+				w.RawInt32(operand.offset(SIGNED32));
+			ELSE w.RawInt32(SHORT(operand.intValue));
 			END;
 		|ModeRegister:
-			w.RawLInt(operand.register(SIGNED32));
-			w.RawSInt(operand.registerClass.class);
-			w.RawInt(operand.registerClass.number);
-			w.RawLInt(operand.offset(SIGNED32));
+			w.RawInt32(operand.register(SIGNED32));
+			w.RawInt8(operand.registerClass.class);
+			w.RawInt16(operand.registerClass.number);
+			w.RawInt32(operand.offset(SIGNED32));
 		|ModeImmediate:
 			IF operand.symbol.name # "" THEN
 				Basic.WriteSegmentedName(w,operand.symbol.name);
-				IF operand.symbol.fingerprint # 0 THEN w.RawHInt(operand.symbol.fingerprint);END;
-				w.RawLInt(operand.symbolOffset(SIGNED32));
-				w.RawLInt(operand.offset(SIGNED32));
+				IF operand.symbol.fingerprint # 0 THEN w.RawInt64(operand.symbol.fingerprint);END;
+				w.RawInt32(operand.symbolOffset(SIGNED32));
+				w.RawInt32(operand.offset(SIGNED32));
 			ELSE
 				IF operand.type.form IN Integer THEN
-						w.RawLInt(SHORT(operand.intValue));
+						w.RawInt32(SHORT(operand.intValue));
 				ELSE
-					w.RawLReal(operand.floatValue);
+					w.RawFloat64(operand.floatValue);
 				END;
 			END;
 		|ModeString:
 			w.RawString(operand.string^);
-		|ModeNumber: w.RawLInt(SHORT(operand.intValue));
+		|ModeNumber: w.RawInt32(SHORT(operand.intValue));
 		END;
 	END WriteRawOperand;
 
@@ -723,11 +723,11 @@ TYPE
 
 	PROCEDURE WriteRawInstruction*(w: Streams.Writer; CONST instr: Instruction);
 	BEGIN
-		w.RawLInt(instr.opcode);
+		w.RawInt32(instr.opcode);
 		IF instr.op1.mode # Undefined THEN WriteRawOperand(w,instr.op1) END;
 		IF instr.op2.mode # Undefined THEN WriteRawOperand(w,instr.op2) END;
 		IF instr.op3.mode # Undefined THEN WriteRawOperand(w,instr.op3) END;
-		IF instr.opcode = special THEN w.RawLInt(instr.subtype) END;
+		IF instr.opcode = special THEN w.RawInt32(instr.subtype) END;
 	END WriteRawInstruction;
 
 	PROCEDURE DumpInstruction*(w: Streams.Writer; CONST instr: Instruction);

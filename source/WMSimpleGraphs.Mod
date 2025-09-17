@@ -499,7 +499,7 @@ BEGIN
 	ASSERT(DIM(t)>0);
 	len:=LEN(t);
 	IF  DIM(t)=1 THEN
-		FOR i:=0 TO LEN(t,0)-1 DO W.RawLReal(t[i]) END;
+		FOR i:=0 TO LEN(t,0)-1 DO W.RawFloat64(t[i]) END;
 	ELSE
 		FOR i:=0 TO LEN(t,0)-1 DO WriteLR(W, t[i,?]) END;
 	END;
@@ -595,7 +595,7 @@ VAR i:SIZE;
 BEGIN
 	ASSERT(DIM(t)>0);
 	IF  DIM(t)=1 THEN
-		FOR i:=0 TO LEN(t,0)-1 DO R.RawLReal(t[i]) END;
+		FOR i:=0 TO LEN(t,0)-1 DO R.RawFloat64(t[i]) END;
 	ELSE
 		FOR i:=0 TO LEN(t,0)-1 DO ReadLR(R, t[i,?]) END;
 	END;

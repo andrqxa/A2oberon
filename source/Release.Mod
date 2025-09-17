@@ -2785,7 +2785,7 @@ BEGIN
 			fileReader.Char(ch1);
 			fileReader.Char(ch2);
 			IF (ch1= 0F0X) & (ch2 = 01X) THEN (* formatted Oberon text, skip formatting information *)
-				fileReader.RawLInt(offset);
+				fileReader.RawInt32(offset);
 				fileReader.SetPos(offset);
 			ELSE
 				fileReader.SetPos(0);

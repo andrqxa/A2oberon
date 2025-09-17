@@ -81,9 +81,9 @@ TYPE
 		w.Char( 0X );																		(* family *)
 		w.Char( 0X );																		(* variant *)
 		i := inst.font.hhea.ascender + inst.font.hhea.descender + inst.font.hhea.lineGap;
-		w.RawInt( SHORT(OTInt.MulDiv( i, inst.yppm, 40H*LONG(inst.font.head.unitsPerEm) )) );	(* height *)
+		w.RawInt16( SHORT(OTInt.MulDiv( i, inst.yppm, 40H*LONG(inst.font.head.unitsPerEm) )) );	(* height *)
 
-		w.RawInt( 0 ); w.RawInt( 0 ); w.RawInt( 0 ); w.RawInt( 0 );	(* fix later *) (* min/max X/Y *)
+		w.RawInt16( 0 ); w.RawInt16( 0 ); w.RawInt16( 0 ); w.RawInt16( 0 );	(* fix later *) (* min/max X/Y *)
 
 		font := inst.font;
 		i := 0;  chars := 0;  ranges := 0;
@@ -98,15 +98,15 @@ TYPE
 				end[ranges] := i;  INC( ranges )
 			END
 		UNTIL i = 256;
-		w.RawInt( ranges);																(* number of runs *)
+		w.RawInt16( ranges);																(* number of runs *)
 		i := 0;  WHILE i < ranges DO
-			w.RawInt( beg[i] ); w.RawInt( end[i] );										(* start/end of run *)
+			w.RawInt16( beg[i] ); w.RawInt16( end[i] );										(* start/end of run *)
 			INC( i )
 		END;
 
 		ipos := w.Pos( );										(* open rider for later writing metrics *)
 		i := 0;  WHILE i < chars DO
-			w.RawInt( 0 ); w.RawInt( 0 ); w.RawInt( 0 ); w.RawInt( 0 ); w.RawInt( 0 );
+			w.RawInt16( 0 ); w.RawInt16( 0 ); w.RawInt16( 0 ); w.RawInt16( 0 ); w.RawInt16( 0 );
 			INC( i )
 		END;
 
@@ -125,11 +125,11 @@ TYPE
 					OType.LoadGlyph( inst, glyph, ras, SHORT(no), mode )
 				END;
 				apos := w.Pos( );  w.SetPos( ipos );
-				w.RawInt( glyph.awx );											(* advance *)
-				w.RawInt( glyph.hbx );											(* horizontal bearing x *)
-				w.RawInt( glyph.hby );											(* horizontal bearing y *)
-				w.RawInt( glyph.rw );											(* image width *)
-				w.RawInt( glyph.rh );												(* image height *)
+				w.RawInt16( glyph.awx );											(* advance *)
+				w.RawInt16( glyph.hbx );											(* horizontal bearing x *)
+				w.RawInt16( glyph.hby );											(* horizontal bearing y *)
+				w.RawInt16( glyph.rw );											(* image width *)
+				w.RawInt16( glyph.rh );												(* image height *)
 				ipos := w.Pos( );  w.SetPos( apos );
 				IF glyph.rw * glyph.rh # 0 THEN
 					IF glyph.hbx < xmin THEN  xmin := glyph.hbx  END;
@@ -150,8 +150,8 @@ TYPE
 		END;
 
 		w.SetPos( 6 );
-		w.RawInt( xmin); w.RawInt( xmax);										(* minX/maxX *)
-		w.RawInt( ymin); w.RawInt( ymax);										(* minY/maxY *)
+		w.RawInt16( xmin); w.RawInt16( xmax);										(* minX/maxX *)
+		w.RawInt16( ymin); w.RawInt16( ymax);										(* minY/maxY *)
 		w.Update;
 		RETURN file
 	END MakeFont;

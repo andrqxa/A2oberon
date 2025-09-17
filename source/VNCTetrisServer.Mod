@@ -397,9 +397,9 @@ BEGIN
 		f := Files.New(DataFile);
 		IF f # NIL THEN
 			Files.OpenWriter(w, f, 0);
-			w.RawLInt(highScore);
-			w.RawLInt(gamesTotal);
-			w.RawLInt(maxConcurrent);
+			w.RawInt32(highScore);
+			w.RawInt32(gamesTotal);
+			w.RawInt32(maxConcurrent);
 			w.Update();
 			Files.Register(f)
 		END;
@@ -418,9 +418,9 @@ BEGIN
 	f := Files.Old(DataFile);
 	IF f # NIL THEN
 		Files.OpenReader(r, f, 0);
-		r.RawLInt(highScore);
-		r.RawLInt(gamesTotal);
-		r.RawLInt(maxConcurrent)
+		r.RawInt32(highScore);
+		r.RawInt32(gamesTotal);
+		r.RawInt32(maxConcurrent)
 	END
 END ReadData;
 

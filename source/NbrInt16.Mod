@@ -127,13 +127,13 @@ VAR
 	VAR char: CHAR;  sInt: NbrInt8.Integer;
 	BEGIN
 		R.Char( char );
-		IF char = "S" THEN R.RawSInt( sInt );  x := Long( sInt ) ELSE  (* char = "I" *) R.RawInt( x ) END
+		IF char = "S" THEN R.RawInt8( sInt );  x := Long( sInt ) ELSE  (* char = "I" *) R.RawInt16( x ) END
 	END Load;
 
 	PROCEDURE Store*( W: Streams.Writer;  x: Integer );
 	VAR sInt: NbrInt8.Integer;
 	BEGIN
-		IF IsInt8( x ) THEN sInt := Short( x );  W.Char( "S" );  W.RawSInt( sInt ) ELSE W.Char( "I" );  W.RawInt( x ) END
+		IF IsInt8( x ) THEN sInt := Short( x );  W.Char( "S" );  W.RawInt8( sInt ) ELSE W.Char( "I" );  W.RawInt16( x ) END
 	END Store;
 
 BEGIN

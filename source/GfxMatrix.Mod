@@ -327,7 +327,7 @@ MODULE GfxMatrix; (** portable *)	(* eos  *)
 		VAR i: SIGNED32;
 	BEGIN
 		FOR i := 0 TO 2 DO
-			w.RawReal(m[i, 0]); w.RawReal(m[i, 1])
+			w.RawFloat32(m[i, 0]); w.RawFloat32(m[i, 1])
 		END
 	END Write;
 
@@ -335,7 +335,7 @@ MODULE GfxMatrix; (** portable *)	(* eos  *)
 		VAR i: SIGNED32;
 	BEGIN
 		FOR i := 0 TO 2 DO
-			r.RawReal(m[i, 0]); r.RawReal(m[i, 1])
+			r.RawFloat32(m[i, 0]); r.RawFloat32(m[i, 1])
 		END
 	END Read;
 

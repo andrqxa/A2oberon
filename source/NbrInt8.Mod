@@ -104,12 +104,12 @@ VAR
 (** Persistence: file IO *)
 	PROCEDURE Load*( R: Streams.Reader;  VAR x: Integer );
 	BEGIN
-		R.RawSInt( x )
+		R.RawInt8( x )
 	END Load;
 
 	PROCEDURE Store*( W: Streams.Writer;  x: Integer );
 	BEGIN
-		W.RawSInt( x )
+		W.RawInt8( x )
 	END Store;
 
 BEGIN

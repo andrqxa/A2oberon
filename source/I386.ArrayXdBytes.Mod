@@ -411,19 +411,19 @@ TYPE
 		PROCEDURE LoadXd*( VAR R: DataIO.Reader );
 		VAR version, i, size: SIGNED32;  readRawData: BOOLEAN;  readbytes: SIGNED32;
 		BEGIN
-			R.RawLInt( version );  R.RawLInt( dim );  NEW( len, dim );  NEW( diminc, dim );  NEW( origin, dim );  NEW( permutation, dim );
+			R.RawInt32( version );  R.RawInt32( dim );  NEW( len, dim );  NEW( diminc, dim );  NEW( origin, dim );  NEW( permutation, dim );
 			GetInfo( elementsize );  size := 1;
-			FOR i := 0 TO dim - 1 DO R.RawLInt( len[i] );  size := size * len[i];  END;
+			FOR i := 0 TO dim - 1 DO R.RawInt32( len[i] );  size := size * len[i];  END;
 			Allocate( size, baseadr, protector );  bytes := size * elementsize;
-			FOR i := 0 TO dim - 1 DO R.RawLInt( diminc[i] );  END;
+			FOR i := 0 TO dim - 1 DO R.RawInt32( diminc[i] );  END;
 			(* elementsize already set via GetInfo *)
-			FOR i := 0 TO dim - 1 DO R.RawLInt( origin[i] );  END;
+			FOR i := 0 TO dim - 1 DO R.RawInt32( origin[i] );  END;
 			(* protector set via Allocate *)
-			FOR i := 0 TO dim - 1 DO R.RawLInt( permutation[i] );  END;
-			ValidateCache;  R.RawSInt( bc );  SetBoundaryCondition( bc );
+			FOR i := 0 TO dim - 1 DO R.RawInt32( permutation[i] );  END;
+			ValidateCache;  R.RawInt8( bc );  SetBoundaryCondition( bc );
 			(* cache variables set via ValidateCache *)
 			R.RawBool( readRawData );
-			IF readRawData THEN R.RawLInt( readbytes );
+			IF readRawData THEN R.RawInt32( readbytes );
 				ASSERT ( readbytes = bytes );
 				ASSERT ( bytes # 0 );
 				ReadMemory( R, baseadr, bytes, readbytes );
@@ -435,20 +435,20 @@ TYPE
 		CONST version = 0;
 		VAR i: SIGNED32;
 		BEGIN
-			W.RawLInt( version );
+			W.RawInt32( version );
 			(* baseadr+bytes set while Allocation *)
-			W.RawLInt( dim );
-			FOR i := 0 TO dim - 1 DO W.RawLInt( len[i] );  END;
-			FOR i := 0 TO dim - 1 DO W.RawLInt( diminc[i] );  END;
+			W.RawInt32( dim );
+			FOR i := 0 TO dim - 1 DO W.RawInt32( len[i] );  END;
+			FOR i := 0 TO dim - 1 DO W.RawInt32( diminc[i] );  END;
 			(* elementsize set via GetInfo *)
-			FOR i := 0 TO dim - 1 DO W.RawLInt( origin[i] );  END;
+			FOR i := 0 TO dim - 1 DO W.RawInt32( origin[i] );  END;
 			(* protector set via Allocate *)
-			FOR i := 0 TO dim - 1 DO W.RawLInt( permutation[i] );  END;
+			FOR i := 0 TO dim - 1 DO W.RawInt32( permutation[i] );  END;
 			(* cache variables set via ValidateCache *)
-			W.RawSInt( bc );  W.RawBool( storeRawData );
+			W.RawInt8( bc );  W.RawBool( storeRawData );
 			IF storeRawData THEN
 				ASSERT ( bytes # 0 );
-				W.RawLInt( bytes );  StoreMemory( W, baseadr, bytes );
+				W.RawInt32( bytes );  StoreMemory( W, baseadr, bytes );
 			END;
 		END StoreXd;
 

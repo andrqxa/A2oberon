@@ -669,6 +669,22 @@ TYPE
 		BEGIN  w.Bytes(x,ofs,len);
 		END Bytes;
 
+		PROCEDURE RawInt8*( x: SIGNED8 );
+		BEGIN  w.RawInt8(x)
+		END RawInt8;
+
+		PROCEDURE RawInt16*( x: SIGNED16 );
+		BEGIN  w.RawInt16(x)
+		END RawInt16;
+
+		PROCEDURE RawInt32*( x: SIGNED32 );
+		BEGIN  w.RawInt32(x)
+		END RawInt32;
+
+		PROCEDURE RawInt64*( x: SIGNED64 );
+		BEGIN  w.RawInt64(x)
+		END RawInt64;
+
 		PROCEDURE RawSInt*( x: SIGNED8 );
 		BEGIN  w.RawSInt(x)
 		END RawSInt;
@@ -704,6 +720,14 @@ TYPE
 		PROCEDURE RawBool*( x: BOOLEAN );
 		BEGIN  w.RawBool(x)
 		END RawBool;
+
+		PROCEDURE RawFloat32*( x: FLOAT32 );
+		BEGIN  w.RawFloat32(x)
+		END RawFloat32;
+
+		PROCEDURE RawFloat64*( x: Real );
+		BEGIN  w.RawFloat64(x)
+		END RawFloat64;
 
 		PROCEDURE RawReal*( x: FLOAT32 );
 		BEGIN  w.RawReal(x)

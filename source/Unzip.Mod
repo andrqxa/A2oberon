@@ -69,7 +69,7 @@ MODULE Unzip; (** AUTHOR "ejz"; PURPOSE "Aos unzip program"; *)
 				VAR fR: Files.Reader; sig: SIGNED32; e: Entry; I: Inflate.Reader; S: SizeReader;
 			BEGIN
 				R := NIL; res := Streams.FormatError;
-				Files.OpenReader(fR, F, entry.pos); fR.RawLInt(sig);
+				Files.OpenReader(fR, F, entry.pos); fR.RawInt32(sig);
 				IF sig # LocalFileHeadSig THEN RETURN END;
 				NEW(e); ReadEntry(fR, e, TRUE);
 				IF e.crc = entry.crc THEN
@@ -111,13 +111,13 @@ MODULE Unzip; (** AUTHOR "ejz"; PURPOSE "Aos unzip program"; *)
 				WHILE (sig # EndOfCentralDirSig) & (pos > 0) DO
 					DEC(pos);
 					Files.OpenReader(R, F, pos);
-					R.RawLInt(sig)
+					R.RawInt32(sig)
 				END;
 				IF sig # EndOfCentralDirSig THEN res := Streams.FormatError; RETURN END;
-				R.RawInt(i); R.RawInt(i);
-				R.RawInt(i); entries := i;
-				R.RawInt(i); R.RawLInt(l);
-				R.RawLInt(j); pos := j;
+				R.RawInt16(i); R.RawInt16(i);
+				R.RawInt16(i); entries := i;
+				R.RawInt16(i); R.RawInt32(l);
+				R.RawInt32(j); pos := j;
 				IF R.res # Streams.Ok THEN res := R.res END;
 				IF (pos < 0) OR (pos >= F.Length()) THEN res := Streams.FormatError; RETURN END;
 				Files.OpenReader(R, F, pos);
@@ -125,7 +125,7 @@ MODULE Unzip; (** AUTHOR "ejz"; PURPOSE "Aos unzip program"; *)
 				j := 0;
 				WHILE j < entries DO
 					NEW(e.next); e := e.next; e.next := NIL;
-					R.RawLInt(sig);
+					R.RawInt32(sig);
 					IF sig = CentralFileHeadSig THEN
 						ReadEntry(R, e, FALSE)
 					ELSE
@@ -133,7 +133,7 @@ MODULE Unzip; (** AUTHOR "ejz"; PURPOSE "Aos unzip program"; *)
 					END;
 					INC(j)
 				END;
-				R.RawLInt(sig);
+				R.RawInt32(sig);
 				IF sig # EndOfCentralDirSig THEN res := Streams.FormatError; RETURN END;
 				IF res = Streams.Ok THEN
 					SELF.F := F; root := r.next
@@ -158,16 +158,16 @@ MODULE Unzip; (** AUTHOR "ejz"; PURPOSE "Aos unzip program"; *)
 		VAR l, nl, xl, t, d: SIGNED32; i: SIGNED16;
 	BEGIN
 		IF local THEN
-			R.RawInt(i);
-			R.RawInt(i); R.RawInt(i); entry.method := i;
-			R.RawInt(i); t := DosToOberonTime(i);
-			R.RawInt(i); d := DosToOberonDate(i);
+			R.RawInt16(i);
+			R.RawInt16(i); R.RawInt16(i); entry.method := i;
+			R.RawInt16(i); t := DosToOberonTime(i);
+			R.RawInt16(i); d := DosToOberonDate(i);
 			entry.td := Dates.OberonToDateTime(d, t);
-			R.RawLInt(entry.crc);
-			R.RawLInt(entry.csize);
-			R.RawLInt(entry.size);
-			R.RawInt(i); nl := i;
-			R.RawInt(i); xl := i;
+			R.RawInt32(entry.crc);
+			R.RawInt32(entry.csize);
+			R.RawInt32(entry.size);
+			R.RawInt16(i); nl := i;
+			R.RawInt16(i); xl := i;
 			NEW(entry.name, nl+1);
 			l := 0;
 			WHILE l < nl DO
@@ -176,19 +176,19 @@ MODULE Unzip; (** AUTHOR "ejz"; PURPOSE "Aos unzip program"; *)
 			entry.name[l] := 0X;
 			R.SkipBytes(xl)
 		ELSE
-			R.RawInt(i); R.RawInt(i);
-			R.RawInt(i); R.RawInt(i); entry.method := i;
-			R.RawInt(i); t := DosToOberonTime(i);
-			R.RawInt(i); d := DosToOberonDate(i);
+			R.RawInt16(i); R.RawInt16(i);
+			R.RawInt16(i); R.RawInt16(i); entry.method := i;
+			R.RawInt16(i); t := DosToOberonTime(i);
+			R.RawInt16(i); d := DosToOberonDate(i);
 			entry.td := Dates.OberonToDateTime(d, t);
-			R.RawLInt(entry.crc);
-			R.RawLInt(entry.csize);
-			R.RawLInt(entry.size);
-			R.RawInt(i); nl := i;
-			R.RawInt(i); xl := i;
-			R.RawInt(i); xl := xl + i;
-			R.RawInt(i); R.RawInt(i);
-			R.RawLInt(l); R.RawLInt(entry.pos);
+			R.RawInt32(entry.crc);
+			R.RawInt32(entry.csize);
+			R.RawInt32(entry.size);
+			R.RawInt16(i); nl := i;
+			R.RawInt16(i); xl := i;
+			R.RawInt16(i); xl := xl + i;
+			R.RawInt16(i); R.RawInt16(i);
+			R.RawInt32(l); R.RawInt32(entry.pos);
 			NEW(entry.name, nl+1);
 			l := 0;
 			WHILE l < nl DO

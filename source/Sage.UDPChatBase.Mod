@@ -137,8 +137,8 @@ TYPE
 				FS.OpenReader (r, f, 0);
 				WHILE r.res = Streams.Ok DO
 					NEW (u);
-					r.RawLInt (u.uin);
-					r.RawLInt (u.password);
+					r.RawInt32 (u.uin);
+					r.RawInt32 (u.password);
 					r.RawString (u.shortName);
 					r.RawString (u.fullName);
 					r.RawString (u.eMail);
@@ -167,8 +167,8 @@ TYPE
 					WHILE (w.res = Streams.Ok) & (i < list.GetCount ())  DO
 						ptr := list.GetItem (i);
 						u := ptr (User);
-						w.RawLInt(u.uin);
-						w.RawLInt(u.password);
+						w.RawInt32(u.uin);
+						w.RawInt32(u.password);
 						w.RawString(u.shortName);
 						w.RawString(u.fullName);
 						w.RawString(u.eMail);

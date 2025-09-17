@@ -135,7 +135,7 @@ TYPE
 				RETURN;
 			END;
 
-			in.RawInt(h.formatTag);
+			in.RawInt16(h.formatTag);
 			IF (h.formatTag # 1) THEN
 				KernelLog.String("WAVDecoder - Wrong wave format (must be PCM)"); KernelLog.Ln;
 				RETURN;

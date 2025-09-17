@@ -208,11 +208,11 @@ VAR
 		r.String( k.name );
 		r.RawBool( k.private );
 		ASSERT( k.private );
-		r.RawLInt( size ); k.size := size;
-		r.RawLInt( k.time );
-		r.RawLInt( k.date );
+		r.RawInt32( size ); k.size := size;
+		r.RawInt32( k.time );
+		r.RawInt32( k.date );
 
-		r.RawLInt( size ); bl := size;
+		r.RawInt32( size ); bl := size;
 		r.Bytes( buf, 0, bl, n );
 		ASSERT( n = bl );
 
@@ -262,9 +262,9 @@ VAR
 		ASSERT( k.private );
 		w.Char( '"' ); w.String( k.name ); w.Char( '"' );
 		w.RawBool( k.private );
-		w.RawLInt( k.size(SIGNED32) );
-		w.RawLInt( k.time );
-		w.RawLInt( k.date );
+		w.RawInt32( k.size(SIGNED32) );
+		w.RawInt32( k.time );
+		w.RawInt32( k.date );
 
 		pl := 0;
 		WHILE passwd[pl] # 0X DO  INC( pl )  END;
@@ -284,7 +284,7 @@ VAR
 		U.PutBigNumber( buf, bl, k.u );
 		INC( bl, (-bl) MOD 16 );
 		cipher.Encrypt( buf, 0, bl );
-		w.RawLInt( bl(SIGNED32) );
+		w.RawInt32( bl(SIGNED32) );
 		w.Bytes( buf, 0, bl );
 
 		c := k.certificates;

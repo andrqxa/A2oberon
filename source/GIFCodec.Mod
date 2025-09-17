@@ -54,7 +54,7 @@ TYPE
 		PROCEDURE WriteScrDesc(w: Streams.Writer; img: Raster.Image);
 		VAR i: SIGNED32;
 		BEGIN
-			w.RawInt(SIGNED16(img.width)); w.RawInt(SIGNED16(img.height));
+			w.RawInt16(SIGNED16(img.width)); w.RawInt16(SIGNED16(img.height));
 			i := ASH(7+ 8 (*img.fmt.bpp*), 4); i := i+ 8 (*img.fmt.bpp*) - 1;
 			w.Char( CHR(i) );
 			w.Char( 0X );
@@ -79,8 +79,8 @@ TYPE
 		PROCEDURE WriteImageDesc(w: Streams.Writer; img: Raster.Image);
 		BEGIN
 			w.Char(2CX);
-			w.RawInt( 0); w.RawInt(0);
-			w.RawInt(SIGNED16(img.width)); w.RawInt(SIGNED16(img.height));
+			w.RawInt16( 0); w.RawInt16(0);
+			w.RawInt16(SIGNED16(img.width)); w.RawInt16(SIGNED16(img.height));
 			w.Char(CHR(8 (*img.fmt.bpp*) - 1));
 		END WriteImageDesc;
 
@@ -242,7 +242,7 @@ TYPE
 			END;
 
 			(* logical screen descriptor *)
-			r.RawInt(w); r.RawInt(h);	(* dimensions of logical screen *)
+			r.RawInt16(w); r.RawInt16(h);	(* dimensions of logical screen *)
 			width := w; height := h;
 			r.Char(lcdFlags); r.Char(backGrndIdx); r.Char(ch);	(* ignore aspect ratio *)
 			NEW(globalPal); NEW(localPal);
@@ -311,8 +311,8 @@ TYPE
 					IF images > 1 THEN
 						Error("ignoring all but first image"); EXIT
 					END;
-					r.RawInt(left); r.RawInt(top);
-					r.RawInt(w); r.RawInt(h);
+					r.RawInt16(left); r.RawInt16(top);
+					r.RawInt16(w); r.RawInt16(h);
 					r.Char(idFlags);
 					interlaced := ODD(ASH(ORD(idFlags), -6));
 
@@ -393,7 +393,7 @@ TYPE
 			END;
 
 			(* logical screen descriptor *)
-			r.RawInt(w); r.RawInt(h);	(* dimensions of logical screen *)
+			r.RawInt16(w); r.RawInt16(h);	(* dimensions of logical screen *)
 			width := w; height := h;
 			r.Char(lcdFlags); r.Char(backGrndIdx); r.Char(ch);	(* ignore aspect ratio *)
 			NEW(globalPal); NEW(localPal);
@@ -443,7 +443,7 @@ TYPE
 						valid := TRUE;
 						userInput := ODD(ORD(ch) DIV 2);
 						disposeMode := (ORD(ch) DIV 4) MOD 8;
-						r.RawInt(delayTime);
+						r.RawInt16(delayTime);
 						r.Char(transPix);
 						r.Char(ch);
 						IF (ch # BlockTerminator) THEN Error("Expected block terminator 1"); RETURN; END;
@@ -466,10 +466,10 @@ TYPE
 						last.next := current;
 						last := current;
 					END;
-					r.RawInt(temp); current.left := temp;
-					r.RawInt(temp); current.top := temp;
-					r.RawInt(temp); current.width := temp;
-					r.RawInt(temp); current.height := temp;
+					r.RawInt16(temp); current.left := temp;
+					r.RawInt16(temp); current.top := temp;
+					r.RawInt16(temp); current.width := temp;
+					r.RawInt16(temp); current.height := temp;
 					r.Char(idFlags);
 					interlaced := ODD(ASH(ORD(idFlags), -6));
 

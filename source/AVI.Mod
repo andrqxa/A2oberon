@@ -160,7 +160,7 @@ IMPORT
 			REPEAT
 				r.Bytes(tempBuf, 0, 4, length );
 				IF r.res = Streams.Ok THEN
-					r.RawLInt(len);
+					r.RawInt32(len);
 					stuffByte := len MOD 2;
 					IF r.res = Streams.Ok THEN
 						IF Debug THEN
@@ -330,7 +330,7 @@ IMPORT
 				KernelLog.String( "Not a valid .avi File!" ); KernelLog.Ln;
 				RETURN FALSE
 			END;
-			r.RawLInt(riffLength);
+			r.RawInt32(riffLength);
 
 			r.Bytes( buf,0,4, len );
 			IF CompareCharArrays( buf, "AVI ",4 ) # TRUE THEN
@@ -344,7 +344,7 @@ IMPORT
 				IF CompareCharArrays( buf, "LIST",4 ) THEN
 					(* We found an additional Header *)
 					(* Store Infos about header *)
-					r.RawLInt(headerLength);
+					r.RawInt32(headerLength);
 
 					headerLength := headerLength + headerLength MOD 2;
 					headerBeginPos := r.Pos();
@@ -475,7 +475,7 @@ IMPORT
 			ioff: SIGNED32;
 
 		BEGIN
-			r.RawLInt(indexLength);
+			r.RawInt32(indexLength);
 
 			nidx := indexLength DIV 16;
 			idxType := 0;
@@ -495,13 +495,13 @@ IMPORT
 			END;
 
 			r.SkipBytes(4);
-			r.RawLInt(pos);
-			r.RawLInt(length);
+			r.RawInt32(pos);
+			r.RawInt32(length);
 			r.SetPos(pos);
 
 			(* Index from start of File*)
 			IF CompareCharArrays(buf2, buf, 4) THEN
-				r.RawLInt(temp);
+				r.RawInt32(temp);
 
 				IF (temp = length) THEN
 					idxType := 1;
@@ -511,7 +511,7 @@ IMPORT
 
 				r.Bytes(buf2, 0, 4, len);
 				IF CompareCharArrays(buf2, buf, 4) THEN
-					r.RawLInt(temp);
+					r.RawInt32(temp);
 
 					IF (temp = length) THEN
 						idxType := 2;
@@ -577,17 +577,17 @@ IMPORT
 				REPEAT
 					r.Bytes(buf, 0, 4, len);
 					IF CompareCharArrays(buf, videoStreamHeader.streamIdentifier, 3) THEN
-						r.RawLInt(videoIndex[nvi].flags);
-						r.RawLInt(videoIndex[nvi].offset);
+						r.RawInt32(videoIndex[nvi].flags);
+						r.RawInt32(videoIndex[nvi].offset);
 						videoIndex[nvi].offset := videoIndex[nvi].offset + ioff;
-						r.RawLInt(videoIndex[nvi].length);
+						r.RawInt32(videoIndex[nvi].length);
 						nvi := nvi+1;
 					ELSE
 						IF CompareCharArrays(buf, audioStreamHeader.streamIdentifier, 4) THEN
 							r.SkipBytes(4);
-							r.RawLInt(audioIndex[nai].offset);
+							r.RawInt32(audioIndex[nai].offset);
 							audioIndex[nai].offset := audioIndex[nai].offset + ioff;
-							r.RawLInt(audioIndex[nai].length);
+							r.RawInt32(audioIndex[nai].length);
 							audioIndex[nai].tot := tot;
 							tot := tot + audioIndex[nai].length;
 							nai := nai+1;
@@ -604,7 +604,7 @@ IMPORT
 		VAR
 			length: SIGNED32;
 		BEGIN
-			r.RawLInt(length);
+			r.RawInt32(length);
 			r.SkipBytes( length + length MOD 2)
 		END SkipHeader;
 
@@ -617,23 +617,23 @@ IMPORT
 		BEGIN
 			NEW( aviHeader );
 
-			r.RawLInt(headerLength);
+			r.RawInt32(headerLength);
 			startPos := r.Pos();
 
-			r.RawLInt( aviHeader.microSecsPerFrame );
-			r.RawLInt( aviHeader.maxBytesPerSec );
-			r.RawLInt( aviHeader.reserved1 );
-			r.RawLInt( aviHeader.flags );
-			r.RawLInt( aviHeader.totalFrames );
-			r.RawLInt( aviHeader.initialFrames );
-			r.RawLInt( aviHeader.streams );
-			r.RawLInt( aviHeader.suggestedBufferSize );
-			r.RawLInt( aviHeader.width );
-			r.RawLInt( aviHeader.height );
-			r.RawLInt( aviHeader.reserved[0] );
-			r.RawLInt( aviHeader.reserved[1] );
-			r.RawLInt( aviHeader.reserved[2] );
-			r.RawLInt( aviHeader.reserved[3] );
+			r.RawInt32( aviHeader.microSecsPerFrame );
+			r.RawInt32( aviHeader.maxBytesPerSec );
+			r.RawInt32( aviHeader.reserved1 );
+			r.RawInt32( aviHeader.flags );
+			r.RawInt32( aviHeader.totalFrames );
+			r.RawInt32( aviHeader.initialFrames );
+			r.RawInt32( aviHeader.streams );
+			r.RawInt32( aviHeader.suggestedBufferSize );
+			r.RawInt32( aviHeader.width );
+			r.RawInt32( aviHeader.height );
+			r.RawInt32( aviHeader.reserved[0] );
+			r.RawInt32( aviHeader.reserved[1] );
+			r.RawInt32( aviHeader.reserved[2] );
+			r.RawInt32( aviHeader.reserved[3] );
 
 			(* Skip Bytes if we have still available *)
 			IF r.Pos() - startPos < headerLength THEN
@@ -654,25 +654,25 @@ IMPORT
 		BEGIN
 			NEW(header);
 
-			r.RawLInt(headerLength);
+			r.RawInt32(headerLength);
 			startPos := r.Pos();
 
 			r.Bytes( header.fccType,0,4, len );
 			r.Bytes( header.fccHandler,0,4, len );
-			r.RawLInt( header.flags );
-			r.RawLInt( header.priority );
-			r.RawLInt( header.initialFrames );
-			r.RawLInt( header.scale );
-			r.RawLInt( header.rate );
-			r.RawLInt( header.start );
-			r.RawLInt( header.length );
-			r.RawLInt( header.suggestedBufferSize );
-			r.RawLInt( header.quality );
-			r.RawLInt( header.sampleSize );
-			r.RawInt( temp ); header.left := temp;
-			r.RawInt( temp ); header.top := temp;
-			r.RawInt( temp ); header.right := temp;
-			r.RawInt( temp ); header.bottom := temp;
+			r.RawInt32( header.flags );
+			r.RawInt32( header.priority );
+			r.RawInt32( header.initialFrames );
+			r.RawInt32( header.scale );
+			r.RawInt32( header.rate );
+			r.RawInt32( header.start );
+			r.RawInt32( header.length );
+			r.RawInt32( header.suggestedBufferSize );
+			r.RawInt32( header.quality );
+			r.RawInt32( header.sampleSize );
+			r.RawInt16( temp ); header.left := temp;
+			r.RawInt16( temp ); header.top := temp;
+			r.RawInt16( temp ); header.right := temp;
+			r.RawInt16( temp ); header.bottom := temp;
 
 			(* Skio Bytes if we have still available *)
 			IF r.Pos() - startPos < headerLength THEN
@@ -692,20 +692,20 @@ IMPORT
 		BEGIN
 			NEW(header);
 
-			r.RawLInt(headerLength);
+			r.RawInt32(headerLength);
 			startPos := r.Pos();
 
-			r.RawLInt( header.size );
-			r.RawLInt( header.width );
-			r.RawLInt( header.height );
-			r.RawInt( temp ); header.planes := temp;
-			r.RawInt( temp ); header.bitCount := temp;
-			r.RawLInt( header.compression );
-			r.RawLInt( header.sizeImage );
-			r.RawLInt( header.xPelsPerMeter );
-			r.RawLInt( header.yPelsPerMeter );
-			r.RawLInt( header.clrUsed );
-			r.RawLInt( header.clrImportant );
+			r.RawInt32( header.size );
+			r.RawInt32( header.width );
+			r.RawInt32( header.height );
+			r.RawInt16( temp ); header.planes := temp;
+			r.RawInt16( temp ); header.bitCount := temp;
+			r.RawInt32( header.compression );
+			r.RawInt32( header.sizeImage );
+			r.RawInt32( header.xPelsPerMeter );
+			r.RawInt32( header.yPelsPerMeter );
+			r.RawInt32( header.clrUsed );
+			r.RawInt32( header.clrImportant );
 
 			IF r.Pos() - startPos < headerLength THEN
 				r.SkipBytes( headerLength - ( r.Pos() - startPos ) )
@@ -724,16 +724,16 @@ IMPORT
 		BEGIN
 			NEW(header);
 
-			r.RawLInt(headerLength);
+			r.RawInt32(headerLength);
 			startPos := r.Pos();
 
-			r.RawInt( temp ); header.formatTag := temp;
-			r.RawInt( temp ); header.channels := temp;
-			r.RawLInt( header.samplesPerSec );
-			r.RawLInt( header.avgBytesPerSec );
-			r.RawInt( temp ); header.blockAlign := temp;
-			r.RawInt( temp ); header.bitsPerSample := temp;
-			r.RawInt( temp ); header.cbSize := temp;
+			r.RawInt16( temp ); header.formatTag := temp;
+			r.RawInt16( temp ); header.channels := temp;
+			r.RawInt32( header.samplesPerSec );
+			r.RawInt32( header.avgBytesPerSec );
+			r.RawInt16( temp ); header.blockAlign := temp;
+			r.RawInt16( temp ); header.bitsPerSample := temp;
+			r.RawInt16( temp ); header.cbSize := temp;
 
 			IF r.Pos() - startPos < headerLength THEN
 				r.SkipBytes( headerLength - ( r.Pos() - startPos ) )
