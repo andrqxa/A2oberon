@@ -1122,20 +1122,23 @@ TYPE
 				vd := 10 * vd + d;  vh := 16 * vh + d;   (* ignore overflow *)
 				ch := Get();  ok := TRUE
 			END;
-			IF hex & (CAP( ch ) = "H") THEN  (* optional "H" present *)
+			IF hex THEN
 				vd := vh;   (* use the hex value *)
-				ch := Get()
+				IF (CAP( ch ) = "H") THEN  (* optional "H" present *)
+					ch := Get()
+				END;
 			END;
 			x := vd;
 			IF (res = 0) & ~ok THEN res := FormatError END
 		END UInt32;
 
-	 (** Read a signed32 value in decimal or hexadecimal.  If hex = TRUE, recognize the "H" postfix for hexadecimal numbers. *)
+	 (** DEPRECATED, use Int32 instead. Read a signed32 value in decimal or hexadecimal.  If hex = TRUE, recognize the "H" postfix for hexadecimal numbers. *)
 		PROCEDURE Int*( VAR x: SIGNED32;  hex: BOOLEAN );
 		BEGIN
 			Int32(x, hex);
 		END Int;
 
+	(** Read a signed32 value in decimal or hexadecimal.  If hex = TRUE, recognize the "H" postfix for hexadecimal numbers. *)
 		PROCEDURE Int32*( VAR x: SIGNED32;  hex: BOOLEAN );
 		VAR try := 0: UNSIGNED32; sgn := 1: INTEGER; ch: CHAR;
 		BEGIN
@@ -1144,12 +1147,13 @@ TYPE
 			x := sgn * SIGNED32(try);
 		END Int32;
 
-	 (** Read a signed64 value in decimal or hexadecimal.  If hex = TRUE, recognize the "H" postfix for hexadecimal numbers. *)
+	 (** DEPRECATED, use Int64 instead. Read a signed64 value in decimal or hexadecimal.  If hex = TRUE, recognize the "H" postfix for hexadecimal numbers. *)
 		PROCEDURE HInt*( VAR x: SIGNED64;  hex: BOOLEAN );
 		BEGIN
 			Int64(x, hex)
 		END HInt;
 
+	(** Read a signed64 value in decimal or hexadecimal.  If hex = TRUE, recognize the "H" postfix for hexadecimal numbers. *)
 		PROCEDURE Int64*( VAR x: SIGNED64;  hex: BOOLEAN );
 		VAR try := 0: UNSIGNED64; sgn := 1: INTEGER; ch: CHAR;
 		BEGIN
@@ -1171,9 +1175,11 @@ TYPE
 				vd := 10 * vd + d;  vh := 16 * vh + d;   (* ignore overflow *)
 				ch := Get();  ok := TRUE
 			END;
-			IF hex & (CAP( ch ) = "H") THEN  (* optional "H" present *)
+			IF hex THEN
 				vd := vh;   (* use the hex value *)
-				ch := Get()
+				IF (CAP( ch ) = "H") THEN  (* optional "H" present *)
+					ch := Get()
+				END;
 			END;
 			x := vd;
 			IF (res = 0) & ~ok THEN res := FormatError END
@@ -1201,9 +1207,11 @@ TYPE
 				vd := 10 * vd + d;  vh := 16 * vh + d;   (* ignore overflow *)
 				ch := Get();  ok := TRUE
 			END;
-			IF hex & (CAP( ch ) = "H") THEN  (* optional "H" present *)
+			IF hex THEN
 				vd := vh;   (* use the hex value *)
-				ch := Get()
+				IF (CAP( ch ) = "H") THEN  (* optional "H" present *)
+					ch := Get()
+				END;
 			END;
 			x := vd;
 			IF (res = 0) & ~ok THEN res := FormatError END
