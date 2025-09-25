@@ -300,7 +300,7 @@ END FreeDownTo;
 
 (** Unload modules from memory *)
 PROCEDURE Free*(context : Commands.Context); (** {modulename} ~ *)
-VAR name, msg : ARRAY 64 OF CHAR; res : INTEGER;
+VAR name: Modules.Name; msg : ARRAY 64 OF CHAR; res : INTEGER;
 BEGIN
 	WHILE context.arg.GetString(name) DO
 		IF name # "" THEN
