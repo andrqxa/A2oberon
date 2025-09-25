@@ -523,7 +523,7 @@ BEGIN
 	IF ~binary THEN ASSERT(string="FoxOFT") END;
 	reader.SkipWhitespace;
 	reader.Char(ch); ASSERT(ch='v');
-	reader.Int(version,FALSE);
+	reader.Int32(version,FALSE);
 	IF (version # ObjectFile.Version) & (linker # NIL) THEN linker.Error("","invalid object file version encountered. Recompile sources.") END;
 	reader.Char(ch); ASSERT(ch='.');
 	IF ~binary THEN reader.SkipWhitespace

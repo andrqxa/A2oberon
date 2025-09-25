@@ -47,9 +47,9 @@ END DecNofThreadsRunning;
 PROCEDURE Bench*(context : Commands.Context); (** nofThreads nofLoops [holdTime] ~*)
 VAR start, nofThreads, nofLoops, holdTime : SIGNED32; i : SIZE; threads : POINTER TO ARRAY OF Thread;
 BEGIN {EXCLUSIVE}
-	context.arg.SkipWhitespace; context.arg.Int(nofThreads, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(nofLoops, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(holdTime, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(nofThreads, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(nofLoops, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(holdTime, FALSE);
 	IF (nofThreads > 0) & (nofLoops > 0) & (holdTime >= 0) THEN
 		context.out.String("Starting "); context.out.Int(nofThreads, 0);
 		context.out.String(" threads where each acquires each kernel lock ");

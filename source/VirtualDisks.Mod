@@ -173,7 +173,7 @@ BEGIN
 	options.Add("b", "blocksize", Options.Integer);
 	IF options.Parse(context.arg, context.error) THEN
 		context.arg.SkipWhitespace; context.arg.String(filename);
-		context.arg.SkipWhitespace; context.arg.Int(nbrOfBlocks, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(nbrOfBlocks, FALSE);
 		IF ~options.GetInteger("blocksize", blocksize) THEN
 			IF ~context.arg.GetInteger(blocksize, FALSE) THEN
 				blocksize := DefaultBlocksize;
@@ -301,7 +301,7 @@ BEGIN
 	IF GetOptions(context, blocksize, c, h, s) THEN
 		diskname := "";
 		context.arg.SkipWhitespace; context.arg.String(diskname);
-		context.arg.SkipWhitespace; context.arg.Int(size, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(size, FALSE);
 		IF (diskname = "") OR (size < 10)  THEN ShowUsage(context.out); RETURN; END;
 
 		NEW(memory, size * blocksize);

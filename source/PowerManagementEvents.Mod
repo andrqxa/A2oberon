@@ -28,7 +28,7 @@ BEGIN
 	context.arg.String(hostname);
 	context.arg.SkipWhitespace;
 	FOR i:=0 TO 5 DO
-		context.arg.Int(hex, TRUE); (*! to do: accept Hex numbers without leading 0 and trailing H for MAC in the format AA:BB:CC:DD:EE:FF *)
+		context.arg.Int32(hex, TRUE); (*! to do: accept Hex numbers without leading 0 and trailing H for MAC in the format AA:BB:CC:DD:EE:FF *)
 		mac[i] := CHR(hex);
 		context.arg.Char(c);
 	END;

@@ -2025,7 +2025,7 @@ VAR
 			context.arg.Token(name);
 			IF name # "" THEN win.OutlineProcedure (name) END
 		ELSIF (context.arg.Peek() >= "0") & (context.arg.Peek() <= "9") THEN
-			context.arg.Int(pc, FALSE);
+			context.arg.Int32(pc, FALSE);
 			IF pc > 0 THEN win.OutlinePC(pc) END
 		END;
 	END Open;

@@ -84,14 +84,14 @@ TYPE
 					isC := t = "C";
 					IF isC THEN
 						r.SkipWhitespace;
-						r.Int(char, FALSE);
+						r.Int32(char, FALSE);
 						r.SkipWhitespace;
 						IF r.Get() # ";" THEN res := 3; RETURN END;
 						r.SkipWhitespace;
 						r.Token(t);
 						IF t # "WX" THEN res := 3; RETURN END;
 						r.SkipWhitespace;
-						r.Int(ci.w, FALSE);
+						r.Int32(ci.w, FALSE);
 						r.SkipLn;
 						AddCharInfo(char, ci)
 					END

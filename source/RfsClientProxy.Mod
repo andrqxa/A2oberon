@@ -803,7 +803,7 @@ BEGIN
 	port := 0;
 	IF (ch = ":") THEN
 		context.arg.Char(ch); (* consume ":" *)
-		context.arg.Int(port, FALSE);
+		context.arg.Int32(port, FALSE);
 	ELSE
 		port := DefaultPort;
 	END;

@@ -969,7 +969,7 @@ BEGIN {EXCLUSIVE}
 	context.arg.SkipWhitespace;
 	context.arg.Token(username); context.arg.SkipWhitespace;
 	context.arg.String(password); context.arg.SkipWhitespace;
-	context.arg.Int(maxlogins, FALSE); context.arg.SkipWhitespace;
+	context.arg.Int32(maxlogins, FALSE); context.arg.SkipWhitespace;
 	context.arg.Token(permissions); context.arg.SkipWhitespace;
 	context.arg.String(root);
 

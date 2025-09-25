@@ -538,7 +538,7 @@ VAR
 			reader.SkipWhitespace;
 			reader.String(name);
 			StringToSegmentedName(name,identifier.name);
-			reader.SkipWhitespace; reader.HInt (identifier.fingerprint,TRUE);
+			reader.SkipWhitespace; reader.Int64 (identifier.fingerprint,TRUE);
 		END ReadIdentifier;
 
 		PROCEDURE ReadPattern(VAR pattern: Pattern);

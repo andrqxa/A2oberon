@@ -28,8 +28,8 @@ VAR
 BEGIN {EXCLUSIVE}
 	AWAIT(~running);
 	context.arg.SkipWhitespace; context.arg.String(hostname);
-	context.arg.SkipWhitespace; context.arg.Int(pingSize, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(timeout, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(pingSize, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(timeout, FALSE);
 
 	IF pingSize = 0 THEN pingSize := PingSize END;
 	IF timeout = 0 THEN timeout := Timeout END;

@@ -449,7 +449,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 		IF ~binary THEN ASSERT(string="FoxILT") END;
 		reader.SkipWhitespace;
 		reader.Char(ch); ASSERT(ch='v');
-		reader.Int(version,FALSE);
+		reader.Int32(version,FALSE);
 		IF version < Version THEN KernelLog.String("warning: old object file encountered"); KernelLog.Ln END;
 		reader.Char(ch); ASSERT(ch='.');
 		IF ~binary THEN reader.SkipWhitespace

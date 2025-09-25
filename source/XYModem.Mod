@@ -672,7 +672,7 @@ BEGIN
 	port := 0; bps := 115200; parity := Serials.ParNo; stop := Serials.Stop1;
 	IF context.arg.GetString(name) & IsDigit(name[0]) THEN
 		Strings.StrToInt32(name, port);
-		context.arg.SkipWhitespace; context.arg.Int(bps, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(bps, FALSE);
 		context.arg.SkipWhitespace; context.arg.String(name);
 		IF name = "odd" THEN
 			parity := Serials.ParOdd

@@ -443,7 +443,7 @@ END ModuleDetails;
 PROCEDURE ModulePC*(context : Commands.Context);	(** pc *)
 VAR pc : SIGNED32;
 BEGIN
-	context.arg.SkipWhitespace; context.arg.Int(pc, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(pc, FALSE);
 	IF Modules.ThisModuleByAdr(pc) # NIL THEN
 		Reflection.WriteProc(context.out, pc);
 	ELSE

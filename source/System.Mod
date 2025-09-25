@@ -372,7 +372,7 @@ PROCEDURE ShowStack*(context : Commands.Context); (** pid ~ *)
 VAR process : Objects.Process; pid : INTEGER;
 BEGIN
 	context.arg.SkipWhitespace;
-	context.arg.Int(pid, FALSE);
+	context.arg.Int32(pid, FALSE);
 	process := ProcessInfo.GetProcess(pid);
 	IF (process # NIL) THEN
 		context.out.String("Stack of process ID = "); context.out.Int(pid, 0); context.out.Ln;
@@ -639,7 +639,7 @@ VAR
 	nofTimes: INTEGER; res : INTEGER;
 BEGIN
 	nofTimes := 0; command := "";
-	context.arg.SkipWhitespace;	context.arg.Int(nofTimes, FALSE);
+	context.arg.SkipWhitespace;	context.arg.Int32(nofTimes, FALSE);
 	context.arg.SkipWhitespace;	context.arg.String(command);
 	IF (nofTimes > 0) & (command # "") THEN
 		res := Commands.Ok;
@@ -679,8 +679,8 @@ VAR
 
 BEGIN {EXCLUSIVE}
 	context.arg.SkipWhitespace;	context.arg.String(string);
-	context.arg.SkipWhitespace;	context.arg.Int(nbr1, FALSE);
-	context.arg.SkipWhitespace;	context.arg.Int(nbr2, FALSE);
+	context.arg.SkipWhitespace;	context.arg.Int32(nbr1, FALSE);
+	context.arg.SkipWhitespace;	context.arg.Int32(nbr2, FALSE);
 
 	IF ~Valid(nbr1) THEN ShowUsage; RETURN; END;
 

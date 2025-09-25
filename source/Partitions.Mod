@@ -194,7 +194,7 @@ BEGIN
 				bootfile := ""; fsRes := -2; flags := 0;
 				IF context.arg.GetInteger(fsRes, FALSE) THEN
 					IF context.arg.GetString(bootfile) THEN
-						context.arg.SkipWhitespace; context.arg.Int(flags, FALSE);
+						context.arg.SkipWhitespace; context.arg.Int32(flags, FALSE);
 					END;
 				END;
 				NEW(formatAos, selection.disk, selection.partition, context.out);

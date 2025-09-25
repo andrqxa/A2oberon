@@ -96,8 +96,8 @@ VAR
 PROCEDURE CreateJoystick*(context : Commands.Context); (* [nbrOfButtons] ~ *)
 VAR joystick : SimulatedJoystick; nbrOfButtons, nbrOfAxis: SIGNED32; res : INTEGER;
 BEGIN
-	context.arg.SkipWhitespace; context.arg.Int(nbrOfButtons, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(nbrOfAxis, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(nbrOfButtons, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(nbrOfAxis, FALSE);
 	IF nbrOfButtons <= 0 THEN nbrOfButtons := DefaultNbrOfButtons; END;
 	IF nbrOfJoysticks < LEN(joysticks) THEN
 		NEW(joystick, nbrOfButtons);

@@ -34,7 +34,7 @@ TYPE
 			reader.Reset;
 			reader.SkipWhitespace;
 			reader.Set(nbr);
-			reader.Int(blockNumber, FALSE);
+			reader.Int32(blockNumber, FALSE);
 			RETURN (reader.res = Streams.Ok) OR (reader.res = Streams.EOF);
 		END GetBlockNumber;
 
@@ -245,7 +245,7 @@ VAR window : Window; deviceName : ARRAY 128 OF CHAR; block : SIGNED32;
 BEGIN
 	deviceName := ""; block := 0;
 	context.arg.SkipWhitespace; context.arg.String(deviceName);
-	context.arg.SkipWhitespace; context.arg.Int(block, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(block, FALSE);
 	NEW(window, NIL);
 	IF (deviceName # "") THEN
 		window.Load(deviceName, block);

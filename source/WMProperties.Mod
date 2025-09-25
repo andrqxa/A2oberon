@@ -660,7 +660,7 @@ TYPE
 		VAR v : SIGNED32;
 		BEGIN
 			AcquireWrite;
-			r.Int(v, TRUE);
+			r.Int32(v, TRUE);
 			Set(v);
 			ReleaseWrite
 		END FromStream;
@@ -1020,7 +1020,7 @@ TYPE
 		VAR v : SIGNED64;
 		BEGIN
 			AcquireWrite;
-			r.HInt(v, TRUE);
+			r.Int64(v, TRUE);
 			Set(v);
 			ReleaseWrite
 		END FromStream;
@@ -1382,7 +1382,7 @@ TYPE
 		VAR v : SIGNED64;
 		BEGIN
 			AcquireWrite;
-			r.HInt(v, TRUE);
+			r.Int64(v, TRUE);
 			Set(v(SIZE));
 			ReleaseWrite
 		END FromStream;
@@ -1911,7 +1911,7 @@ TYPE
 		VAR v : SIGNED32;
 		BEGIN
 			AcquireWrite;
-			r.Int(v, TRUE); NotDefault;
+			r.Int32(v, TRUE); NotDefault;
 			IF v # value THEN value := v; Changed END;
 			ReleaseWrite
 		END FromStream;
@@ -2414,10 +2414,10 @@ TYPE
 		VAR new : WMRectangles.Rectangle; v: SIGNED32;
 		BEGIN
 			AcquireWrite;
-			r.SkipWhitespace; r.Int(v, FALSE); new.l := v;
-			r.SkipWhitespace; r.Int(v, FALSE); new.t := v;
-			r.SkipWhitespace; r.Int(v, FALSE); new.r := v;
-			r.SkipWhitespace; r.Int(v, FALSE); new.b := v;
+			r.SkipWhitespace; r.Int32(v, FALSE); new.l := v;
+			r.SkipWhitespace; r.Int32(v, FALSE); new.t := v;
+			r.SkipWhitespace; r.Int32(v, FALSE); new.r := v;
+			r.SkipWhitespace; r.Int32(v, FALSE); new.b := v;
 			NotDefault;
 			IF ~WMRectangles.IsEqual(new, value) THEN
 				value := new;

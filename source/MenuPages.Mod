@@ -42,7 +42,7 @@ BEGIN
 	in.SkipWhitespace;
 	ch := in.Peek();
 	IF ("0" <= ch) & (ch <= "9") THEN
-		in.Int(color, TRUE);
+		in.Int32(color, TRUE);
 	ELSE
 		color := 0;
 	END;

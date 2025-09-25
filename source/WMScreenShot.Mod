@@ -147,9 +147,9 @@ BEGIN
 	rh:=h;
 	
 	context.arg.SkipWhitespace;
-	IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int(w, FALSE) END;
+	IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int32(w, FALSE) END;
 	context.arg.SkipWhitespace;
-	IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int(h, FALSE) END;
+	IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int32(h, FALSE) END;
 	
 	context.out.String("ScreenShot View : ");
 	NEW(sv, manager, w, h);
@@ -180,23 +180,23 @@ BEGIN
 	context.arg.SkipWhitespace; context.arg.String(fn);
 	context.arg.SkipWhitespace; 
 	IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') OR (context.arg.Peek() = '-')THEN (*caller defines range*)
-		context.arg.Int(w, FALSE);
+		context.arg.Int32(w, FALSE);
 		IF w <1 THEN w := 1 END; IF w > 10000 THEN w := 10000 END;
 
-		context.arg.SkipWhitespace; context.arg.Int(h, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(h, FALSE);
 		IF h <1 THEN h := 1 END; IF h > 10000 THEN h := 10000 END;
 
 		context.arg.SkipWhitespace;
 		IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') OR (context.arg.Peek() = '-')THEN
-			context.arg.SkipWhitespace; context.arg.Int(rl, FALSE);
-			context.arg.SkipWhitespace; context.arg.Int(rt, FALSE);
+			context.arg.SkipWhitespace; context.arg.Int32(rl, FALSE);
+			context.arg.SkipWhitespace; context.arg.Int32(rt, FALSE);
 		 END;
 
 		rw := w; rh := h;
 		context.arg.SkipWhitespace;
 		IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN
-			context.arg.SkipWhitespace; context.arg.Int(rw, FALSE);
-			context.arg.SkipWhitespace; context.arg.Int(rh, FALSE);
+			context.arg.SkipWhitespace; context.arg.Int32(rw, FALSE);
+			context.arg.SkipWhitespace; context.arg.Int32(rh, FALSE);
 		 END;
 
 		 IF rw <= 0 THEN rw := 1 END;

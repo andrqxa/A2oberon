@@ -50,7 +50,7 @@ END SoftwareInterrupt;
 PROCEDURE Bench*(context : Commands.Context); (** [nofSamples] ~ *)
 VAR nofSamples, ignore : SIGNED32; oldNgc, index : SIZE;
 BEGIN {EXCLUSIVE}
-	context.arg.SkipWhitespace; context.arg.Int(nofSamples, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(nofSamples, FALSE);
 	IF (nofSamples < MinNofSamples) THEN nofSamples := MinNofSamples;
 	ELSIF (nofSamples > MaxNofSamples) THEN nofSamples := MaxNofSamples;
 	END;
@@ -90,7 +90,7 @@ VAR
 	nofSamples, min, avg, max : SIGNED32; i : SIZE; sum : SIGNED64;
 	diff, diffSum, standardDeviation : FLOAT64;
 BEGIN {EXCLUSIVE}
-	context.arg.SkipWhitespace; context.arg.Int(mhz, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(mhz, FALSE);
 	IF (data # NIL) THEN
 		nofSamples := LEN(data)(SIGNED32);
 		min := MAX(SIGNED32); max := MIN(SIGNED32); sum := 0;

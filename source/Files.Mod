@@ -1570,7 +1570,7 @@ BEGIN
 
 	IF (ch = "#") THEN
 		arg.Char(ch); (* consume "#" *)
-		arg.Int(partition, FALSE);
+		arg.Int32(partition, FALSE);
 	ELSE
 		partition := 0;
 	END;

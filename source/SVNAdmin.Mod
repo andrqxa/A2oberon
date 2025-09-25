@@ -372,7 +372,7 @@ TYPE
 
 			Files.OpenReader ( r, fAdmin, 0 );
 
-			r.Int ( adminDir.Format, FALSE ); r.SkipLn; (* 1 *)
+			r.Int32 ( adminDir.Format, FALSE ); r.SkipLn; (* 1 *)
 
 			IF adminDir.Format < EntryFileFormat THEN
 				res := SVNOutput.ResCLIENTOLD;

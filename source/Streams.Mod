@@ -1337,7 +1337,7 @@ TYPE
 		PROCEDURE GetInteger*(VAR integer : SIGNED32; isHexadecimal : BOOLEAN): BOOLEAN;
 		BEGIN
 			SkipWhitespace;
-			Int(integer, isHexadecimal);
+			Int32(integer, isHexadecimal);
 			RETURN res = Ok;
 		END GetInteger;
 

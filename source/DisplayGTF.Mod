@@ -357,11 +357,11 @@ PROCEDURE Mode*(context : Commands.Context);	(* mode (in decimal) DWidth DHeight
 VAR display: ARRAY 512 OF CHAR;
 	m, w, h, d, f: SIGNED32;
 BEGIN
-	context.arg.SkipWhitespace; context.arg.Int(m, FALSE); context.out.Int(m, 5);
-	context.arg.SkipWhitespace; context.arg.Int(w, FALSE); context.out.Int(w, 5);
-	context.arg.SkipWhitespace; context.arg.Int(h, FALSE); context.out.Int(h, 5);
-	context.arg.SkipWhitespace; context.arg.Int(d, FALSE); context.out.Int(d, 5);
-	context.arg.SkipWhitespace; context.arg.Int(f, FALSE); context.out.Int(f, 5);
+	context.arg.SkipWhitespace; context.arg.Int32(m, FALSE); context.out.Int(m, 5);
+	context.arg.SkipWhitespace; context.arg.Int32(w, FALSE); context.out.Int(w, 5);
+	context.arg.SkipWhitespace; context.arg.Int32(h, FALSE); context.out.Int(h, 5);
+	context.arg.SkipWhitespace; context.arg.Int32(d, FALSE); context.out.Int(d, 5);
+	context.arg.SkipWhitespace; context.arg.Int32(f, FALSE); context.out.Int(f, 5);
 	display[0] := 0X;
 	VesaConf(m, w, h, d, f, display);
 	context.out.String(display);
