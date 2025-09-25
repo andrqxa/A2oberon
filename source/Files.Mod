@@ -1235,8 +1235,9 @@ END Enumerate;
 PROCEDURE Exists*(CONST fileName: ARRAY OF CHAR; VAR fullName: ARRAY OF CHAR; VAR flags: SET): BOOLEAN;
 VAR
 	fs: FileSystem; ft: FileSystemTable; i: SIZE;
-	prefix: Prefix;
+	prefix: Prefix; fname: FileName;
 BEGIN
+	SplitName(fileName, prefix, fname);
 	IF prefix = "" THEN
 		GetList(ft);
 		IF ft # NIL THEN
@@ -1249,7 +1250,7 @@ BEGIN
 		END
 	ELSE
 		fs := This(prefix);
-		RETURN fs.Has(fileName, fullName, flags);
+		IF fs # NIL THEN RETURN fs.Has(fname, fullName, flags); END;
 	END;
 	RETURN FALSE;
 END Exists;
