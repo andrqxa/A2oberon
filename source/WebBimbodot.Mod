@@ -319,7 +319,7 @@ TYPE
 				StoreState
 			ELSE
 				Files.OpenReader(r, f, 0);
-				r.Int(nofVersions, FALSE);
+				r.Int32(nofVersions, FALSE);
 			END;
 			IF nofVersions = 0 THEN CountVersions; StoreState END;
 		END LoadState;

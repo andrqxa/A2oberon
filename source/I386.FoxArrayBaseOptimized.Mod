@@ -7167,8 +7167,8 @@ VAR
 
 	PROCEDURE SetParameters*( context: Commands.Context );
 	BEGIN
-		context.arg.SkipWhitespace; context.arg.Int(cBlockSize,TRUE);
-		context.arg.SkipWhitespace; context.arg.Int(nrProcesses,TRUE);
+		context.arg.SkipWhitespace; context.arg.Int32(cBlockSize,TRUE);
+		context.arg.SkipWhitespace; context.arg.Int32(nrProcesses,TRUE);
 		IF nrProcesses > maxProcesses THEN
 			nrProcesses := maxProcesses
 		ELSIF nrProcesses = 0 THEN nrProcesses := SIGNED32 (Machine.NumberOfProcessors());

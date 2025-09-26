@@ -518,7 +518,7 @@ VAR
 	stateWin: StateWindow;
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(name);
-	context.arg.SkipWhitespace; context.arg.Int(interval, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(interval, FALSE);
 	IF interval < 1 THEN interval := 2000 END;	(* default interval *)
 
 	NEW(stateWin, "Module State", interval, name);

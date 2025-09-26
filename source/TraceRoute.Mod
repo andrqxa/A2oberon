@@ -33,8 +33,8 @@ BEGIN
 		running := TRUE;
 	END;
 	context.arg.SkipWhitespace; context.arg.String(hostname);
-	context.arg.SkipWhitespace; context.arg.Int(pingSize, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(timeoutMS, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(pingSize, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(timeoutMS, FALSE);
 
 	IF pingSize = 0 THEN pingSize := PingSize END;
 	IF timeoutMS = 0 THEN timeoutMS := Timeout END;

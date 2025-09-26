@@ -535,13 +535,13 @@ TYPE
 						r.Char( ch ); ch := r.Peek();
 						IF (ch >= "0") & (ch <= "9") THEN
 							REPEAT
-								r.Int( par[n], FALSE );  INC( n );
+								r.Int32( par[n], FALSE );  INC( n );
 								r.Char( ch )
 							UNTIL (n >= 4) OR (ch # " ")
 						END
 					ELSIF (ch >= "0") & (ch <= "9") THEN
 						REPEAT
-							r.Int( par[n], FALSE ); INC( n );
+							r.Int32( par[n], FALSE ); INC( n );
 							r.Char( ch )
 						UNTIL (n >= 4) OR (ch # ";")
 					ELSE

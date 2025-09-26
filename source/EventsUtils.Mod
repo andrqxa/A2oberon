@@ -202,11 +202,11 @@ BEGIN
 	(* class, subclass & code *)
 	r.SkipWhitespace;
 	r.Char(ch); IF (r.res # Streams.Ok) OR (ch # "[") THEN msg := "Expected opening bracket"; RETURN; END;
-	r.Int(class, FALSE); IF (r.res # Streams.Ok) THEN	msg := "Could not parse event class"; RETURN; END;
+	r.Int32(class, FALSE); IF (r.res # Streams.Ok) THEN	msg := "Could not parse event class"; RETURN; END;
 	r.Char(ch); IF (r.res # Streams.Ok) OR (ch # ",") THEN msg := "Expected ,"; RETURN; END;
-	r.Int(subclass, FALSE); IF (r.res # Streams.Ok) THEN msg := "Could not parse event subclass"; RETURN; END;
+	r.Int32(subclass, FALSE); IF (r.res # Streams.Ok) THEN msg := "Could not parse event subclass"; RETURN; END;
 	r.Char(ch); IF (r.res # Streams.Ok) OR (ch # ",") THEN msg := "Expected ,"; RETURN; END;
-	r.Int(code, FALSE); IF (r.res # Streams.Ok) THEN msg := "Could not parse event code"; RETURN; END;
+	r.Int32(code, FALSE); IF (r.res # Streams.Ok) THEN msg := "Could not parse event code"; RETURN; END;
 	r.Char(ch); IF (r.res # Streams.Ok) OR (ch # "]") THEN msg := "Expected closing bracket"; RETURN; END;
 	(* check validity of class/subclass/code *)
 	IF ~IsValid(class) THEN msg := "Class must be in [0, 127]"; RETURN; END;
@@ -226,17 +226,17 @@ VAR ch : CHAR;
 BEGIN
 	ASSERT(r # NIL);
 	r.SkipWhitespace;
-	r.Int(dt.day, FALSE);
+	r.Int32(dt.day, FALSE);
 	r.Char(ch); IF (r.res # Streams.Ok) OR (ch # ".") THEN RETURN FALSE; END;
-	r.Int(dt.month, FALSE);
+	r.Int32(dt.month, FALSE);
 	r.Char(ch); IF (r.res # Streams.Ok) OR (ch # ".") THEN RETURN FALSE; END;
-	r.Int(dt.year, FALSE);
+	r.Int32(dt.year, FALSE);
 	r.Char(ch); IF (r.res # Streams.Ok) OR (ch # " ") THEN RETURN FALSE; END;
-	r.Int(dt.hour, FALSE);
+	r.Int32(dt.hour, FALSE);
 	r.Char(ch); IF (r.res # Streams.Ok) OR (ch # ":") THEN RETURN FALSE; END;
-	r.Int(dt.minute, FALSE);
+	r.Int32(dt.minute, FALSE);
 	r.Char(ch); IF (r.res # Streams.Ok) OR (ch # ":") THEN RETURN FALSE; END;
-	r.Int(dt.second, FALSE);
+	r.Int32(dt.second, FALSE);
 	IF (r.res # Streams.Ok) THEN RETURN FALSE; END;
 	RETURN Dates.ValidDateTime(dt);
 END DateTimeFromStream;
@@ -279,10 +279,10 @@ PROCEDURE GenerateEvent*(context : Commands.Context); (** originator type class 
 VAR event : Events.Event; value : SIGNED32;
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(event.originator);
-	context.arg.SkipWhitespace; context.arg.Int(value, FALSE); event.type := SHORT(SHORT(value));
-	context.arg.SkipWhitespace; context.arg.Int(value, FALSE); event.class := SHORT(SHORT(value));
-	context.arg.SkipWhitespace; context.arg.Int(value, FALSE); event.subclass := SHORT(SHORT(value));
-	context.arg.SkipWhitespace; context.arg.Int(value, FALSE); event.code := SHORT(SHORT(value));
+	context.arg.SkipWhitespace; context.arg.Int32(value, FALSE); event.type := SHORT(SHORT(value));
+	context.arg.SkipWhitespace; context.arg.Int32(value, FALSE); event.class := SHORT(SHORT(value));
+	context.arg.SkipWhitespace; context.arg.Int32(value, FALSE); event.subclass := SHORT(SHORT(value));
+	context.arg.SkipWhitespace; context.arg.Int32(value, FALSE); event.code := SHORT(SHORT(value));
 	context.arg.SkipWhitespace; context.arg.String(event.message);
 	Events.Add(event, FALSE);
 END GenerateEvent;

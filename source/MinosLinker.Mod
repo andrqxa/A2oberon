@@ -309,7 +309,7 @@ VAR
 		ELSE
 			fileHeader := "";
 		END;
-		S.SkipWhitespace;  S.Int( base, TRUE );
+		S.SkipWhitespace;  S.Int32( base, TRUE );
 		S.SkipWhitespace;  S.String( fileOut );
 		Files.Delete(fileOut, intRes);				(* Try to delete an existing output file *)
 		linker.Begin (base, fileOut, fileHeader, success);

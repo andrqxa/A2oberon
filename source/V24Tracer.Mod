@@ -74,9 +74,9 @@ END SetMode;
 PROCEDURE Enable*(context : Commands.Context);
 VAR inPort, outPort, baud : SIGNED32;
 BEGIN
-	context.arg.SkipWhitespace; context.arg.Int(inPort, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(outPort, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(baud, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(inPort, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(outPort, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(baud, FALSE);
 	NEW(tracingport[0], 0, inPort, baud);	(* Instantiate 2 active tracers, which will be used in alternance *)
 	NEW(tracingport[1], 1, outPort, baud);
 	running := TRUE;

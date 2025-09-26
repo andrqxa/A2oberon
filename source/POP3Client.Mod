@@ -78,7 +78,7 @@ TYPE POP3Client* = OBJECT
 			w.String("LIST"); w.Ln; w.Update;
 			IF ReadResponse(message) THEN
 				WHILE r.Peek() # "." DO
-					r.Int(nr, FALSE); r.SkipWhitespace; r.Int(len, FALSE); r.SkipLn;
+					r.Int32(nr, FALSE); r.SkipWhitespace; r.Int32(len, FALSE); r.SkipLn;
 					KernelLog.String("Message"); KernelLog.Int(nr, 2); KernelLog.String(" "); KernelLog.Int(len, 0);  KernelLog.Ln;
 				END;
 				r.SkipLn

@@ -888,7 +888,7 @@ VAR
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(svr); context.arg.SkipWhitespace;
 	IF (context.arg.Peek() < "0") OR (context.arg.Peek() > "9") THEN context.arg.String(pwd) END;
-	context.arg.SkipWhitespace; context.arg.Int(port, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(port, FALSE);
 	IF (context.arg.res = Streams.Ok) OR (context.arg.res = Streams.EOF) THEN
 		DNS.HostByName(svr, server, res);
 		IF (res = Ok) & (port # 0) THEN
@@ -916,7 +916,7 @@ END Open;
 PROCEDURE Paste*(context : Commands.Context);	(** connection text *)
 VAR i: SIGNED32; c: Connection;
 BEGIN
-	context.arg.SkipWhitespace; context.arg.Int(i, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(i, FALSE);
 	c := pool.Find(i);
 	IF (c # NIL) & (c.sender # NIL) THEN
 		IF context.arg.Peek() = " " THEN context.arg.SkipBytes(1) END;

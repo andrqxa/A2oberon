@@ -303,7 +303,7 @@ VAR
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(name);
 	(* steps *)
-	context.arg.SkipWhitespace; context.arg.Int(interval, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(interval, FALSE);
 	IF interval = 0 THEN interval := 30000; END;
 	NEW(w, interval, name);
 END Watch;

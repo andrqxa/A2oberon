@@ -840,7 +840,7 @@ BEGIN {EXCLUSIVE}
 			|"X": INCL(flags, Override);
 			|"C":
 				context.arg.Char(ch); (* consume ":" *)
-				context.arg.Int(cacheSize, FALSE);
+				context.arg.Int32(cacheSize, FALSE);
 		ELSE
 			stop := TRUE;
 		END;

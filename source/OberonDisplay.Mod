@@ -406,12 +406,12 @@ BEGIN
 	IF win = NIL THEN
 		w := 0; h := 0; name := "";
 		context.arg.SkipWhitespace; context.arg.String(name);
-		context.arg.SkipWhitespace; context.arg.Int(w, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(w, FALSE);
 		context.arg.SkipBytes(1); (* skip "x" or single space *)
-		context.arg.SkipWhitespace; context.arg.Int(h, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(h, FALSE);
 		x := 0; y := 0;
-		context.arg.SkipWhitespace; context.arg.Int(x, FALSE);
-		context.arg.SkipWhitespace; context.arg.Int(y, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(x, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(y, FALSE);
 
 		IF name = "" THEN name := DefaultDisplayName END;
 

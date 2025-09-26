@@ -1060,10 +1060,10 @@ TYPE
 			ELSE
 				settingsEdit.GetAsString(s);
 				NEW(r, 64); r.Set(s); r.SkipWhitespace;
-				r.Int(portNr, FALSE);  r.SkipWhitespace;
-				r.Int(bps, FALSE); r.SkipWhitespace;
-				r.Int(databits, FALSE); r.SkipWhitespace;
-				r.Int(stop, FALSE); r.SkipWhitespace;
+				r.Int32(portNr, FALSE);  r.SkipWhitespace;
+				r.Int32(bps, FALSE); r.SkipWhitespace;
+				r.Int32(databits, FALSE); r.SkipWhitespace;
+				r.Int32(stop, FALSE); r.SkipWhitespace;
 				r.Char(parityChar);
 
 				port := Serials.GetPort(portNr);

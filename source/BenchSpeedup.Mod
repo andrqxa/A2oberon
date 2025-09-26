@@ -33,8 +33,8 @@ TYPE
 PROCEDURE Mark*(context : Commands.Context);	(** procs n *)
 VAR i, p, n, t: SIGNED32; w: POINTER TO ARRAY OF Work;
 BEGIN
-	context.arg.SkipWhitespace; context.arg.Int(p, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(n, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(p, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(n, FALSE);
 	IF p > 0 THEN
 		NEW(w, p);
 		i := Kernel.GetTicks();

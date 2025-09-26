@@ -1576,7 +1576,7 @@ PROCEDURE TransitionTo*(context : Commands.Context); (** <filename> [transitionD
 VAR filename, msg : ARRAY 256 OF CHAR; duration : SIGNED32; res : INTEGER;
 BEGIN {EXCLUSIVE}
 	context.arg.SkipWhitespace; context.arg.String(filename);
-	context.arg.SkipWhitespace; context.arg.Int(duration, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(duration, FALSE);
 	IF (context.arg.res # Streams.Ok) OR (duration < 1) THEN duration := 25; END;
 	IF mplayer # NIL THEN
 		mplayer.DoTransition(filename, 0, duration, msg, res);

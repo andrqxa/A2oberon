@@ -491,8 +491,8 @@ TYPE
 		log.Enter; log.String( "" );  log.Exit;
 
 		context.arg.SkipWhitespace; context.arg.String( url);
-		context.arg.SkipWhitespace; context.arg.Int( start, FALSE );
-		context.arg.SkipWhitespace; context.arg.Int( end, FALSE );
+		context.arg.SkipWhitespace; context.arg.Int32( start, FALSE );
+		context.arg.SkipWhitespace; context.arg.Int32( end, FALSE );
 		IF context.arg.res = Commands.Ok THEN
 			Propfind(url, "D:version-controlled-configuration", props, err);
 			IF err = "" THEN
@@ -604,7 +604,7 @@ TYPE
 		log.Enter; log.String( "" );  log.Exit;
 
 		context.arg.SkipWhitespace; context.arg.String( pathName );
-		context.arg.SkipWhitespace; context.arg.Int( version, FALSE );
+		context.arg.SkipWhitespace; context.arg.Int32( version, FALSE );
 		context.arg.SkipWhitespace; context.arg.String( workName );
 
 		IF context.arg.res = Commands.Ok THEN
