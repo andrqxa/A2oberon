@@ -341,9 +341,9 @@ MODULE PCOFPE; (** AUTHOR "ejz"; PURPOSE "Parallel Compiler: PE object file plug
 					W.SetPos(offset);
 					IF rt # NIL THEN
 						AddImportReloc(code, offset, obj, FALSE, FALSE, FALSE);
-						W.RawLInt(0)
+						W.RawInt32(0)
 					ELSE
-						W.RawLInt(p.adr(PCBT.Procedure).codeoffset-(offset+4))
+						W.RawInt32(p.adr(PCBT.Procedure).codeoffset-(offset+4))
 					END;
 					l := l.next
 				END;
@@ -404,19 +404,19 @@ MODULE PCOFPE; (** AUTHOR "ejz"; PURPOSE "Parallel Compiler: PE object file plug
 							StringPool.GetString(proc.name, name);
 							W.Bytes(name, 0, 32);
 							AddOfsReloc(type, W.Pos(), code);
-							W.RawLInt(ofs); W.RawLInt(0)
+							W.RawInt32(ofs); W.RawInt32(0)
 						ELSIF (proc.scope.firstPar # NIL) & (proc.scope.firstPar.nextPar = NIL) & (proc.scope.firstPar.type = PCT.Ptr) & (proc.type = PCT.Ptr) THEN
 							StringPool.GetString(proc.name, name);
 							W.Bytes(name, 0, 32);
 							AddOfsReloc(type, W.Pos()+4, code);
-							W.RawLInt(0); W.RawLInt(ofs)
+							W.RawInt32(0); W.RawInt32(ofs)
 						END
 					END;
 					proc := proc.nextProc
 				END;
 				name := "";
 				W.Bytes(name, 0, 32); (* sentinel *)
-				W.RawLInt(0); W.RawLInt(0);
+				W.RawInt32(0); W.RawInt32(0);
 				W.Update()
 			END Commands;
 
@@ -433,7 +433,7 @@ MODULE PCOFPE; (** AUTHOR "ejz"; PURPOSE "Parallel Compiler: PE object file plug
 				TypeAlign4(); desc.modules := type.used;
 				W := type.W; W.SetPos(type.used);
 				(* detect imported modules *)
-				IF mod.imports = NIL THEN W.RawLInt(0); W.Update(); RETURN END;
+				IF mod.imports = NIL THEN W.RawInt32(0); W.Update(); RETURN END;
 				i := 0;
 				WHILE (i < LEN(mod.imports)) & (mod.imports[i] # NIL) DO
 					mod.imports[i].adr(PCBT.Module).nr := 0;
@@ -458,7 +458,7 @@ MODULE PCOFPE; (** AUTHOR "ejz"; PURPOSE "Parallel Compiler: PE object file plug
 					END;
 					rec := rec.link
 				END;
-				W.RawLInt(nofImp);
+				W.RawInt32(nofImp);
 				i := 0; j := 0;
 				WHILE (i < LEN(mod.imports)) & (mod.imports[i] # NIL) DO
 					m := mod.imports[i];
@@ -482,7 +482,7 @@ MODULE PCOFPE; (** AUTHOR "ejz"; PURPOSE "Parallel Compiler: PE object file plug
 					offset := l.offset*addressFactor;
 ASSERT(code.data[offset-1] # 0E8X);
 					AddOfsReloc(code, offset, code);
-					W.SetPos(offset); W.RawLInt(p.codeoffset);
+					W.SetPos(offset); W.RawInt32(p.codeoffset);
 					l := l.next
 				END;
 				W.Update()
@@ -500,13 +500,13 @@ ASSERT(code.data[offset-1] # 0E8X);
 						IF p IS PCBT.Method THEN
 							p.entryNr := nofMethods; INC(nofMethods);
 							AddOfsReloc(type, W.Pos(), code);
-							W.RawLInt(p.codeoffset)
+							W.RawInt32(p.codeoffset)
 						END;
 						IF p.link # NIL THEN FixupProc(p) END
 					END;
 					p := p.next
 				END;
-				W.RawLInt(0); (* sentinel *)
+				W.RawInt32(0); (* sentinel *)
 				W.Update()
 			END FixupOwnProcs;
 
@@ -516,10 +516,10 @@ ASSERT(code.data[offset-1] # 0E8X);
 				IF ~type.size(PCBT.Size).containPtrs THEN RETURN END;
 				IF PCT.IsPointer(type) THEN
 					IF fixadr THEN AddOfsReloc(SELF.type, W.Pos(), var) END;
-					W.RawLInt(offset)
+					W.RawInt32(offset)
 				ELSIF (type IS PCT.Delegate) & ~(PCT.StaticMethodsOnly IN type.flags) THEN
 					IF fixadr THEN AddOfsReloc(SELF.type, W.Pos(), var) END;
-					W.RawLInt(offset+4)
+					W.RawInt32(offset+4)
 				ELSIF type IS PCT.Record THEN
 					WITH type: PCT.Record DO
 						IF type.brec # NIL THEN PtrAdr(W, offset, type.brec, fixadr) END;
@@ -567,7 +567,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 					END;
 					p := p.nextVar
 				END;
-				W.RawLInt(0); (* sentinel *)
+				W.RawInt32(0); (* sentinel *)
 				W.Update()
 			END Pointers;
 
@@ -577,14 +577,14 @@ ASSERT(code.data[offset-1] # 0E8X);
 				W := code.W; R := code.R; l := p.link;
 				WHILE l # NIL DO
 					offset := l.offset*addressFactor;
-					R.SetPos(offset); R.RawLInt(x);
+					R.SetPos(offset); R.RawInt32(x);
 					W.SetPos(offset);
 					IF p.offset < 0 THEN (* var *)
 						AddOfsReloc(code, offset, var);
-						W.RawLInt(var.head.VirtualSize + x)
+						W.RawInt32(var.head.VirtualSize + x)
 					ELSE (* const *)
 						AddOfsReloc(code, offset, const);
-						W.RawLInt(x)
+						W.RawInt32(x)
 					END;
 					l := l.next
 				END;
@@ -639,7 +639,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 							count := 0;
 							INC(nofstr); sym.uref := nofstr;	(*remember it's exported*)
 							W.RawNum(t.size(PCBT.RecSize).td.offset);	(* link address in the constant section*)
-							pos := W.Pos(); W.RawInt(2);	(* number of entries *)
+							pos := W.Pos(); W.RawInt16(2);	(* number of entries *)
 							ExportType(W, t.btyp);
 							W.RawNum(sym.pbfp); W.RawNum(sym.pvfp);
 							v := t.scope.firstVar;
@@ -658,7 +658,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 							END;
 							IF count # 0 THEN
 								bak := W.Pos(); W.SetPos(pos);
-								W.RawInt(SHORT(count+2));
+								W.RawInt16(SHORT(count+2));
 								W.SetPos(bak)
 							END;
 							W.Char(EUEnd)
@@ -763,14 +763,14 @@ ASSERT(code.data[offset-1] # 0E8X);
 				TypeAlign4(); desc.exports := type.used;
 				NEW(explist, 256); exppos := 0; explen := 256;
 				nofstr := 0; count := 0; pos := type.used;
-				W := type.W; W.SetPos(pos); W.RawInt(0);
+				W := type.W; W.SetPos(pos); W.RawInt16(0);
 				ExportConsts(W);
 				ExportVars(W);
 				ExportTypes(W);
 				ExportProcs(W);
 				IF count # 0 THEN
 					i := W.Pos(); W.SetPos(pos);
-					W.RawInt(SHORT(count));
+					W.RawInt16(SHORT(count));
 					W.SetPos(i)
 				END;
 				W.Char(EUEnd);
@@ -963,8 +963,8 @@ ASSERT(code.data[offset-1] # 0E8X);
 			BEGIN
 				PCT.GetTypeName(rec, name);
 				size := rec.size(PCBT.RecSize);
-				W.RawLInt(size.size);
-				W.RawInt(SHORT(size.td.offset));
+				W.RawInt32(size.size);
+				W.RawInt16(SHORT(size.td.offset));
 				IF rec.brec = NIL THEN
 					oldmth := 0;
 					basenr := -1;
@@ -987,21 +987,21 @@ ASSERT(code.data[offset-1] # 0E8X);
 					END;
 					oldmth := base.size(PCBT.RecSize).nofMethods;
 				END;
-				W.RawInt(basenr);
-				W.RawLInt(baseid);
-				W.RawInt(SHORT(size.nofMethods));	(*NofMethods*)
-				W.RawInt(SHORT(oldmth));	(*InheritedMethods*)
-				W.RawInt(SHORT(size.nofLocalMethods));	(*NewMethods*)
+				W.RawInt16(basenr);
+				W.RawInt32(baseid);
+				W.RawInt16(SHORT(size.nofMethods));	(*NofMethods*)
+				W.RawInt16(SHORT(oldmth));	(*InheritedMethods*)
+				W.RawInt16(SHORT(size.nofLocalMethods));	(*NewMethods*)
 				pos := W.Pos();
-				W.RawInt(0);
+				W.RawInt16(0);
 				W.RawString(name);
 
 				(*New Methods in Record*)
 				i := 0; m := rec.scope.firstMeth;
 				WHILE m # NIL DO
 					adr := m.adr(PCBT.Method);
-					W.RawInt(SHORT(adr.mthNo));
-					W.RawInt(SHORT(adr.entryNr));
+					W.RawInt16(SHORT(adr.mthNo));
+					W.RawInt16(SHORT(adr.entryNr));
 					INC(i);
 					m := m.nextMeth
 				END;
@@ -1014,7 +1014,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 				IF nofptrs > MAX(SIGNED16) THEN PCM.Error(221, PCM.InvalidPosition, "") END;
 				IF nofptrs # 0 THEN
 					i := W.Pos(); W.SetPos(pos);
-					W.RawInt(SHORT(nofptrs));
+					W.RawInt16(SHORT(nofptrs));
 					W.SetPos(i)
 				END
 			END WriteType;
@@ -1024,7 +1024,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 			BEGIN
 				TypeAlign4(); desc.types := type.used;
 				W := type.W; W.SetPos(type.used);
-				W.RawLInt(mod.scope.nofRecs);
+				W.RawInt32(mod.scope.nofRecs);
 				rec := mod.scope.records;
 				WHILE rec # NIL DO
 					IF PCT.interface IN rec.mode THEN
@@ -1052,54 +1052,54 @@ ASSERT(code.data[offset-1] # 0E8X);
 				VAR W: SectionWriter; sect: Section; r: ImportReloc;
 			BEGIN
 				W := type.W; W.SetPos(type.used);
-				W.RawLInt(0); (* hmod *)
+				W.RawInt32(0); (* hmod *)
 				AddOfsReloc(type, W.Pos(), type); (* image base *)
-				W.RawLInt(-BaseRVA);
+				W.RawInt32(-BaseRVA);
 				AddOfsReloc(type, W.Pos(), type);
-				W.RawLInt(desc.modules);
+				W.RawInt32(desc.modules);
 				AddOfsReloc(type, W.Pos(), type);
-				W.RawLInt(desc.commands);
+				W.RawInt32(desc.commands);
 				AddOfsReloc(type, W.Pos(), type);
-				W.RawLInt(desc.methods);
+				W.RawInt32(desc.methods);
 				AddOfsReloc(type, W.Pos(), type);
-				W.RawLInt(desc.pointers);
+				W.RawInt32(desc.pointers);
 				AddOfsReloc(type, W.Pos(), type);
-				W.RawLInt(desc.exports);
+				W.RawInt32(desc.exports);
 				AddOfsReloc(type, W.Pos(), type);
-				W.RawLInt(desc.imports);
+				W.RawInt32(desc.imports);
 				AddOfsReloc(type, W.Pos(), type);
-				W.RawLInt(desc.types);
+				W.RawInt32(desc.types);
 				IF var # NIL THEN
 					AddOfsReloc(type, W.Pos(), var)
 				ELSE
 					AddOfsReloc(type, W.Pos(), const)
 				END;
-				W.RawLInt(0);
+				W.RawInt32(0);
 				AddOfsReloc(type, W.Pos(), const);
-				W.RawLInt(const.used-1);
+				W.RawInt32(const.used-1);
 				AddOfsReloc(type, W.Pos(), code);
-				W.RawLInt(0);
+				W.RawInt32(0);
 				AddOfsReloc(type, W.Pos(), code);
-				W.RawLInt(code.used-1);
+				W.RawInt32(code.used-1);
 				AddOfsReloc(type, W.Pos(), const); (* SB *)
-				W.RawLInt(0);
+				W.RawInt32(0);
 				AddOfsReloc(type, W.Pos(), idata);
-				W.RawLInt(0);
+				W.RawInt32(0);
 				AddOfsReloc(type, W.Pos(), edata);
-				W.RawLInt(0);
+				W.RawInt32(0);
 				desc.iatfix := W.Pos()(SIGNED32);
 				sect := sects;
 				WHILE sect # NIL DO
 					r := sect.imports;
 					WHILE r # NIL DO
 						IF ~r.iat THEN
-							W.RawInt(0); W.RawLInt(0); W.RawLInt(0)
+							W.RawInt16(0); W.RawInt32(0); W.RawInt32(0)
 						END;
 						r := r.next
 					END;
 					sect := sect.next
 				END;
-				W.RawInt(-1); W.RawLInt(0); W.RawLInt(0);
+				W.RawInt16(-1); W.RawInt32(0); W.RawInt32(0);
 				W.Update()
 			END ModDesc;
 
@@ -1125,18 +1125,18 @@ ASSERT(code.data[offset-1] # 0E8X);
 							IF sect = code THEN
 								IF r.abs THEN
 									IF r.uofs THEN
-										W.RawInt(3)
+										W.RawInt16(3)
 									ELSE
-										W.RawInt(2)
+										W.RawInt16(2)
 									END
 								ELSE
 									ASSERT(~r.uofs);
-									W.RawInt(0)
+									W.RawInt16(0)
 								END;
 								AddOfsReloc(type, W.Pos(), code);
-								W.RawLInt(r.ofs(SIGNED32));
+								W.RawInt32(r.ofs(SIGNED32));
 								AddOfsReloc(type, W.Pos(), idata);
-								W.RawLInt(r.obj.iat - idata.head.VirtualAddress)
+								W.RawInt32(r.obj.iat - idata.head.VirtualAddress)
 							ELSE
 								HALT(99)
 							END
@@ -1145,7 +1145,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 					END;
 					sect := sect.next
 				END;
-				W.RawInt(-1); W.RawLInt(0); W.RawLInt(0);
+				W.RawInt16(-1); W.RawInt32(0); W.RawInt32(0);
 				W.Update()
 			END IATFix;
 
@@ -1160,7 +1160,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 				W.Char(0BAX); (* MOV EDX, mod *)
 				TypeAlign4();
 				AddOfsReloc(code, W.Pos(), type);
-				W.RawLInt(type.used); (* ModDesc *)
+				W.RawInt32(type.used); (* ModDesc *)
 				IF name # Loader THEN
 					loader := AddImportMod(Loader);
 					W.Char(0FFX); W.Char(025X); (* JMP Main *)
@@ -1172,7 +1172,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 						HALT(99)
 					END;
 					AddImportReloc(code, W.Pos(), obj, TRUE, TRUE, FALSE);
-					W.RawLInt(0)
+					W.RawInt32(0)
 				ELSE
 					ASSERT(mode = ModeDLL);
 					main := "DllMain";
@@ -1183,7 +1183,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 					END;
 					ASSERT(p # NIL);
 					W.Char(0E9X); (* JMP Main *)
-					W.RawLInt(p.adr(PCBT.Procedure).codeoffset-(W.Pos()(SIGNED32)+4))
+					W.RawInt32(p.adr(PCBT.Procedure).codeoffset-(W.Pos()(SIGNED32)+4))
 				END;
 				W.Update();
 				ModDesc()
@@ -1222,9 +1222,9 @@ ASSERT(code.data[offset-1] # 0E8X);
 					mod.desc.Characteristics := W.Pos()(SIGNED32);
 					obj := mod.objs;
 					WHILE obj # NIL DO
-						W.RawLInt(0); obj := obj.next
+						W.RawInt32(0); obj := obj.next
 					END;
-					W.RawLInt(0);
+					W.RawInt32(0);
 					mod := mod.next
 				END;
 				ofs := W.Pos();
@@ -1234,9 +1234,9 @@ ASSERT(code.data[offset-1] # 0E8X);
 					mod.desc.FirstThunk := W.Pos()(SIGNED32);
 					obj := mod.objs;
 					WHILE obj # NIL DO
-						W.RawLInt(0); obj := obj.next
+						W.RawInt32(0); obj := obj.next
 					END;
-					W.RawLInt(0);
+					W.RawInt32(0);
 					mod := mod.next
 				END;
 				W.Update();
@@ -1246,12 +1246,12 @@ ASSERT(code.data[offset-1] # 0E8X);
 					obj := mod.objs; j := 0;
 					WHILE obj # NIL DO
 						W.SetPos(mod.desc.Characteristics + j);
-						W.RawLInt(base + idata.used);
+						W.RawInt32(base + idata.used);
 						W.SetPos(mod.desc.FirstThunk + j);
 						obj.iat := base + mod.desc.FirstThunk + j;
-						W.RawLInt(base + idata.used);
+						W.RawInt32(base + idata.used);
 						W.SetPos(idata.used);
-						W.RawInt(0);
+						W.RawInt16(0);
 						PutName(W, obj.name);
 						obj := obj.next; INC(j, 4)
 					END;
@@ -1274,7 +1274,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 							ASSERT(r.abs & ~r.uofs);
 							AddOfsReloc(sect, r.ofs, idata);
 							W := sect.W; W.SetPos(r.ofs);
-							W.RawLInt(r.obj.iat - base)
+							W.RawInt32(r.obj.iat - base)
 						END;
 						r := r.next
 					END;
@@ -1308,25 +1308,25 @@ ASSERT(code.data[offset-1] # 0E8X);
 				dir.AddressOfFunctions := base + W.Pos()(SIGNED32);
 				e := exports;
 				WHILE e # NIL DO
-					W.RawLInt(e.sect.head.VirtualAddress + e.ofs);
+					W.RawInt32(e.sect.head.VirtualAddress + e.ofs);
 					e := e.next
 				END;
 				dir.AddressOfNames := base + W.Pos()(SIGNED32);
 				fix := W.Pos(); i := 0;
 				WHILE i < n DO
-					W.RawLInt(0); INC(i)
+					W.RawInt32(0); INC(i)
 				END;
 				dir.AddressOfNameOrdinals := base + W.Pos()(SIGNED32);
 				i := 0;
 				WHILE i < n DO
-					W.RawInt(SHORT(i)); INC(i)
+					W.RawInt16(SHORT(i)); INC(i)
 				END;
 				dir.Name := base + W.Pos()(SIGNED32);
 				PutName(W, name);
 				e := exports;
 				WHILE e # NIL DO
 					W.SetPos(fix);
-					W.RawLInt(base + edata.used);
+					W.RawInt32(base + edata.used);
 					W.SetPos(edata.used);
 					PutName(W, e.name);
 					W.Update();
@@ -1341,20 +1341,20 @@ ASSERT(code.data[offset-1] # 0E8X);
 			PROCEDURE BeginBlock(W: SectionWriter; adr: SIGNED32; VAR blockva, blocksize: SIGNED32; VAR blockfix: Streams.Position);
 			BEGIN
 				blockva := adr - (adr MOD PageSize); blocksize := 8;
-				W.RawLInt(blockva);
+				W.RawInt32(blockva);
 				blockfix := W.Pos();
-				W.RawLInt(blocksize)
+				W.RawInt32(blocksize)
 			END BeginBlock;
 
 			PROCEDURE EndBlock(W: SectionWriter; blockfix: Streams.Position; VAR blocksize: SIGNED32);
 				VAR ofs: Streams.Position;
 			BEGIN
-				W.RawInt(0); INC(blocksize, 2);
+				W.RawInt16(0); INC(blocksize, 2);
 				IF (blocksize MOD 4) # 0 THEN
-					W.RawInt(0); INC(blocksize, 2)
+					W.RawInt16(0); INC(blocksize, 2)
 				END;
 				ofs := W.Pos(); W.SetPos(blockfix);
-				W.RawLInt(blocksize);
+				W.RawInt32(blocksize);
 				W.SetPos(ofs)
 			END EndBlock;
 
@@ -1367,9 +1367,9 @@ ASSERT(code.data[offset-1] # 0E8X);
 					r := sect.relocs;
 					WHILE r # NIL DO
 						R.SetPos(r.ofs);
-						R.RawLInt(x);
+						R.RawInt32(x);
 						W.SetPos(r.ofs);
-						W.RawLInt(x + optHdr.ImageBase + r.base.head.VirtualAddress);
+						W.RawInt32(x + optHdr.ImageBase + r.base.head.VirtualAddress);
 						r := r.next
 					END;
 					W.Update();
@@ -1398,7 +1398,7 @@ ASSERT(code.data[offset-1] # 0E8X);
 							BeginBlock(W, x, blockva, blocksize, blockfix)
 						END;
 						bak := x; DEC(x, blockva);
-						W.RawInt(SHORT(x + LSH(SIGNED32(ImageRelBasedHighLow), 12)));
+						W.RawInt16(SHORT(x + LSH(SIGNED32(ImageRelBasedHighLow), 12)));
 						INC(blocksize, 2);
 						r := r.next
 					END;
@@ -1429,9 +1429,9 @@ KernelLog.String("PCOFPE "); KernelLog.String(file);
 				SELF.optHdr.BaseOfCode := SELF.code.head.VirtualAddress;
 				F := Files.New(file);
 				Files.OpenWriter(W, F, 0);
-				W.RawInt(ImageDosSignature);
+				W.RawInt16(ImageDosSignature);
 				i := W.Pos()(SIGNED32); WHILE i < 60 DO W.Char(0X); INC(i) END;
-				W.RawLInt(128);
+				W.RawInt32(128);
 				i := W.Pos()(SIGNED32); WHILE i < 128 DO W.Char(0X); INC(i) END;
 				size := 128 + 4 + SIZEOF(ImageFileHeader) + SIZEOF(ImageOptionalHeader) + SELF.fileHdr.NumberOfSections*SIZEOF(ImageSectionHeader);
 				size := Align(size, DefaultFileAlign);
@@ -1451,7 +1451,7 @@ KernelLog.String("PCOFPE "); KernelLog.String(file);
 					sect := sect.next
 				END;
 				SELF.optHdr.SizeOfImage := size;
-				W.RawLInt(ImageNtSignature);
+				W.RawInt32(ImageNtSignature);
 				WriteImageFileHeader(W, SELF.fileHdr);
 				WriteImageOptionalHeader(W, SELF.optHdr);
 				i := SELF.optHdr.SizeOfHeaders;
@@ -1575,52 +1575,52 @@ KernelLog.String("PCOFPE "); KernelLog.String(file);
 
 	PROCEDURE WriteImageFileHeader(W: Streams.Writer; VAR head: ImageFileHeader);
 	BEGIN
-		W.RawInt(head.Machine);
-		W.RawInt(head.NumberOfSections);
-		W.RawLInt(head.TimeDateStamp);
-		W.RawLInt(head.PointerToSymbolTable);
-		W.RawLInt(head.NumberOfSymbols);
-		W.RawInt(head.SizeOfOptionalHeader);
-		W.RawInt(head.Characteristics)
+		W.RawInt16(head.Machine);
+		W.RawInt16(head.NumberOfSections);
+		W.RawInt32(head.TimeDateStamp);
+		W.RawInt32(head.PointerToSymbolTable);
+		W.RawInt32(head.NumberOfSymbols);
+		W.RawInt16(head.SizeOfOptionalHeader);
+		W.RawInt16(head.Characteristics)
 	END WriteImageFileHeader;
 
 	PROCEDURE WriteImageOptionalHeader(W: Streams.Writer; VAR head: ImageOptionalHeader);
 		VAR i: SIGNED32;
 	BEGIN
-		W.RawInt(head.Magic);
+		W.RawInt16(head.Magic);
 		W.Char(head.MajorLinkerVersion);
 		W.Char(head.MinorLinkerVersion);
-		W.RawLInt(head.SizeOfCode);
-		W.RawLInt(head.SizeOfInitializedData);
-		W.RawLInt(head.SizeOfUninitializedData);
-		W.RawLInt(head.AddressOfEntryPoint);
-		W.RawLInt(head.BaseOfCode);
-		W.RawLInt(head.BaseOfData);
-		W.RawLInt(head.ImageBase);
-		W.RawLInt(head.SectionAlignment);
-		W.RawLInt(head.FileAlignment);
-		W.RawInt(head.MajorOperatingSystemVersion);
-		W.RawInt(head.MinorOperatingSystemVersion);
-		W.RawInt(head.MajorImageVersion);
-		W.RawInt(head.MinorImageVersion);
-		W.RawInt(head.MajorSubsystemVersion);
-		W.RawInt(head.MinorSubsystemVersion);
-		W.RawLInt(head.Win32VersionValue);
-		W.RawLInt(head.SizeOfImage);
-		W.RawLInt(head.SizeOfHeaders);
-		W.RawLInt(head.CheckSum);
-		W.RawInt(head.Subsystem);
-		W.RawInt(head.DllCharacteristics);
-		W.RawLInt(head.SizeOfStackReserve);
-		W.RawLInt(head.SizeOfStackCommit);
-		W.RawLInt(head.SizeOfHeapReserve);
-		W.RawLInt(head.SizeOfHeapCommit);
-		W.RawLInt(head.LoaderFlags);
-		W.RawLInt(head.NumberOfRvaAndSizes);
+		W.RawInt32(head.SizeOfCode);
+		W.RawInt32(head.SizeOfInitializedData);
+		W.RawInt32(head.SizeOfUninitializedData);
+		W.RawInt32(head.AddressOfEntryPoint);
+		W.RawInt32(head.BaseOfCode);
+		W.RawInt32(head.BaseOfData);
+		W.RawInt32(head.ImageBase);
+		W.RawInt32(head.SectionAlignment);
+		W.RawInt32(head.FileAlignment);
+		W.RawInt16(head.MajorOperatingSystemVersion);
+		W.RawInt16(head.MinorOperatingSystemVersion);
+		W.RawInt16(head.MajorImageVersion);
+		W.RawInt16(head.MinorImageVersion);
+		W.RawInt16(head.MajorSubsystemVersion);
+		W.RawInt16(head.MinorSubsystemVersion);
+		W.RawInt32(head.Win32VersionValue);
+		W.RawInt32(head.SizeOfImage);
+		W.RawInt32(head.SizeOfHeaders);
+		W.RawInt32(head.CheckSum);
+		W.RawInt16(head.Subsystem);
+		W.RawInt16(head.DllCharacteristics);
+		W.RawInt32(head.SizeOfStackReserve);
+		W.RawInt32(head.SizeOfStackCommit);
+		W.RawInt32(head.SizeOfHeapReserve);
+		W.RawInt32(head.SizeOfHeapCommit);
+		W.RawInt32(head.LoaderFlags);
+		W.RawInt32(head.NumberOfRvaAndSizes);
 		i := 0;
 		WHILE i < ImageNumberOfDirectoryEntries DO
-			W.RawLInt(head.DataDirectory[i].VirtualAddress);
-			W.RawLInt(head.DataDirectory[i].Size);
+			W.RawInt32(head.DataDirectory[i].VirtualAddress);
+			W.RawInt32(head.DataDirectory[i].Size);
 			INC(i)
 		END
 	END WriteImageOptionalHeader;
@@ -1628,39 +1628,39 @@ KernelLog.String("PCOFPE "); KernelLog.String(file);
 	PROCEDURE WriteImageSectionHeader(W: Streams.Writer; VAR head: ImageSectionHeader);
 	BEGIN
 		W.Bytes(head.Name, 0, ImageSizeOfShortName);
-		W.RawLInt(head.VirtualSize);
-		W.RawLInt(head.VirtualAddress);
-		W.RawLInt(head.SizeOfRawData);
-		W.RawLInt(head.PointerToRawData);
-		W.RawLInt(head.PointerToRelocations);
-		W.RawLInt(head.PointerToLinenumbers);
-		W.RawInt(head.NumberOfRelocations);
-		W.RawInt(head.NumberOfLinenumbers);
+		W.RawInt32(head.VirtualSize);
+		W.RawInt32(head.VirtualAddress);
+		W.RawInt32(head.SizeOfRawData);
+		W.RawInt32(head.PointerToRawData);
+		W.RawInt32(head.PointerToRelocations);
+		W.RawInt32(head.PointerToLinenumbers);
+		W.RawInt16(head.NumberOfRelocations);
+		W.RawInt16(head.NumberOfLinenumbers);
 		W.RawSet(head.Characteristics)
 	END WriteImageSectionHeader;
 
 	PROCEDURE WriteImageImportDescriptor(W: Streams.Writer; VAR desc: ImageImportDescriptor);
 	BEGIN
-		W.RawLInt(desc.Characteristics);
-		W.RawLInt(desc.TimeDateStamp);
-		W.RawLInt(desc.ForwarderChain);
-		W.RawLInt(desc.Name);
-		W.RawLInt(desc.FirstThunk)
+		W.RawInt32(desc.Characteristics);
+		W.RawInt32(desc.TimeDateStamp);
+		W.RawInt32(desc.ForwarderChain);
+		W.RawInt32(desc.Name);
+		W.RawInt32(desc.FirstThunk)
 	END WriteImageImportDescriptor;
 
 	PROCEDURE WriteImageExportDirectory(W: Streams.Writer; VAR dir: ImageExportDirectory);
 	BEGIN
-		W.RawLInt(dir.Characteristics);
-		W.RawLInt(dir.TimeDateStamp);
-		W.RawInt(dir.MajorVersion);
-		W.RawInt(dir.MinorVersion);
-		W.RawLInt(dir.Name);
-		W.RawLInt(dir.Base);
-		W.RawLInt(dir.NumberOfFunctions);
-		W.RawLInt(dir.NumberOfNames);
-		W.RawLInt(dir.AddressOfFunctions);
-		W.RawLInt(dir.AddressOfNames);
-		W.RawLInt(dir.AddressOfNameOrdinals)
+		W.RawInt32(dir.Characteristics);
+		W.RawInt32(dir.TimeDateStamp);
+		W.RawInt16(dir.MajorVersion);
+		W.RawInt16(dir.MinorVersion);
+		W.RawInt32(dir.Name);
+		W.RawInt32(dir.Base);
+		W.RawInt32(dir.NumberOfFunctions);
+		W.RawInt32(dir.NumberOfNames);
+		W.RawInt32(dir.AddressOfFunctions);
+		W.RawInt32(dir.AddressOfNames);
+		W.RawInt32(dir.AddressOfNameOrdinals)
 	END WriteImageExportDirectory;
 
 	PROCEDURE TimeDateStamp(): SIGNED32;

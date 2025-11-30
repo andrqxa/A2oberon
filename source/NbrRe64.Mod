@@ -321,13 +321,13 @@ VAR
 	BEGIN
 		R.Char( char );
 		CASE char OF
-		"S":       R.RawSInt( sInt );  x := NbrInt32.Long( NbrInt16.Long( sInt ) )
-		| "I":     R.RawInt( int );  x := LONG( int )
-		| "L":     R.RawLInt( lInt );  x := lInt
+		"S":       R.RawInt8( sInt );  x := NbrInt32.Long( NbrInt16.Long( sInt ) )
+		| "I":     R.RawInt16( int );  x := LONG( int )
+		| "L":     R.RawInt32( lInt );  x := lInt
 		| "H":     NbrInt64.Load( R, hInt );  x := hInt;
-		| "E":     R.RawReal( re );  x := Long( re )
+		| "E":     R.RawFloat32( re );  x := Long( re )
 		ELSE  (* char = "D" *)
-			R.RawLReal( x )
+			R.RawFloat64( x )
 		END
 	END Load;
 
@@ -341,15 +341,15 @@ VAR
 				lInt := NbrInt64.Short( hInt );
 				IF NbrInt32.IsInt16( lInt ) THEN
 					int := NbrInt32.Short( lInt );
-					IF NbrInt16.IsInt8( int ) THEN sInt := NbrInt16.Short( int );  W.Char( "S" );  W.RawSInt( sInt )
-					ELSE W.Char( "I" );  W.RawInt( int )
+					IF NbrInt16.IsInt8( int ) THEN sInt := NbrInt16.Short( int );  W.Char( "S" );  W.RawInt8( sInt )
+					ELSE W.Char( "I" );  W.RawInt16( int )
 					END
-				ELSE W.Char( "L" );  W.RawLInt( lInt )
+				ELSE W.Char( "L" );  W.RawInt32( lInt )
 				END
 			ELSE W.Char( "H" );  NbrInt64.Store( W, hInt )
 			END
 		ELSE
-			IF IsRe32( x ) THEN re := Short( x );  W.Char( "E" );  W.RawReal( re ) ELSE W.Char( "D" );  W.RawLReal( x ) END
+			IF IsRe32( x ) THEN re := Short( x );  W.Char( "E" );  W.RawFloat32( re ) ELSE W.Char( "D" );  W.RawFloat64( x ) END
 		END
 	END Store;
 

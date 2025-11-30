@@ -127,9 +127,9 @@ VAR
 	VAR char: CHAR;  sInt: NbrInt8.Integer;  int: NbrInt16.Integer;
 	BEGIN
 		R.Char( char );
-		IF char = "S" THEN R.RawSInt( sInt );  x := Long( NbrInt16.Long( sInt ) )
-		ELSIF char = "I" THEN R.RawInt( int );  x := Long( int )
-		ELSE  (* char = "L" *) R.RawLInt( x )
+		IF char = "S" THEN R.RawInt8( sInt );  x := Long( NbrInt16.Long( sInt ) )
+		ELSIF char = "I" THEN R.RawInt16( int );  x := Long( int )
+		ELSE  (* char = "L" *) R.RawInt32( x )
 		END
 	END Load;
 
@@ -138,10 +138,10 @@ VAR
 	BEGIN
 		IF IsInt16( x ) THEN
 			int := Short( x );
-			IF NbrInt16.IsInt8( int ) THEN sInt := NbrInt16.Short( int );  W.Char( "S" );  W.RawSInt( sInt )
-			ELSE W.Char( "I" );  W.RawInt( int )
+			IF NbrInt16.IsInt8( int ) THEN sInt := NbrInt16.Short( int );  W.Char( "S" );  W.RawInt8( sInt )
+			ELSE W.Char( "I" );  W.RawInt16( int )
 			END
-		ELSE W.Char( "L" );  W.RawLInt( x )
+		ELSE W.Char( "L" );  W.RawInt32( x )
 		END
 	END Store;
 

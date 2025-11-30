@@ -1426,21 +1426,21 @@ END Assemble;
 			f := Files.Old(FileName);
 			IF f # NIL THEN
 				Files.OpenReader(r, f, 0);
-				r.RawInt(s); InstrTabLen := s;  NEW(InstrTab, InstrTabLen);
+				r.RawInt16(s); InstrTabLen := s;  NEW(InstrTab, InstrTabLen);
 				FOR i := 0 TO InstrTabLen-1 DO
 					r.RawString(InstrTab[i].name);
 					IF InstrTab[i].name # "" THEN
-						r.RawInt(InstrTab[i].start);
-						r.RawInt(InstrTab[i].end);
+						r.RawInt16(InstrTab[i].start);
+						r.RawInt16(InstrTab[i].end);
 						r.RawSet(InstrTab[i].target)
 					END
 				END;
-				r.RawInt(s); OpTabLen := s;  NEW(OpTab, OpTabLen);
+				r.RawInt16(s); OpTabLen := s;  NEW(OpTab, OpTabLen);
 				FOR i:= 0 TO OpTabLen-1 DO
-					r.RawInt(OpTab[i].op[0]); r.RawInt(OpTab[i].op[1]); r.RawInt(OpTab[i].op[2]);
-					r.RawInt(OpTab[i].op0); r.RawInt(OpTab[i].op1);
-					r.RawInt(OpTab[i].op2);
-					r.RawInt(OpTab[i].opc); r.RawInt(OpTab[i].reg)
+					r.RawInt16(OpTab[i].op[0]); r.RawInt16(OpTab[i].op[1]); r.RawInt16(OpTab[i].op[2]);
+					r.RawInt16(OpTab[i].op0); r.RawInt16(OpTab[i].op1);
+					r.RawInt16(OpTab[i].op2);
+					r.RawInt16(OpTab[i].opc); r.RawInt16(OpTab[i].reg)
 				END
 			ELSE
 				PCM.LogWLn; PCM.LogWStr(FileName); PCM.LogWStr(" not found, ASM not ready")

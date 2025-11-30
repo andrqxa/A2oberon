@@ -1322,16 +1322,16 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 			| SFtypInt32:	R.RawNum(i);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / LInt / "); PCM.LogWNum(i) END;
 									c := PCT.NewIntConst(i, PCT.Int32)
-			| SFtypInt64:	R.RawLReal(lr);
+			| SFtypInt64:	R.RawFloat64(lr);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / HInt / ") END;
 									c := PCT.NewInt64Const(SYSTEM.VAL(SIGNED64, lr))
 			| SFtypSet:	R.RawNum(SYSTEM.VAL(SIGNED32, set));
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / Set / "); PCM.LogWHex(SIGNED32(set)) END;
 									c := PCT.NewSetConst(set)
-			| SFtypFloat32:	R.RawReal(r);
+			| SFtypFloat32:	R.RawFloat32(r);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / Real / ") END;
 									RETURN PCT.NewFloatConst(r, PCT.Float32)
-			| SFtypFloat64:	R.RawLReal(lr);
+			| SFtypFloat64:	R.RawFloat64(lr);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / LongReal / ") END;
 									c := PCT.NewFloatConst(lr, PCT.Float64)
 			| SFtypString:	readString(R, str);

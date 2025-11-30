@@ -414,7 +414,7 @@ TYPE
 	PROCEDURE LoadObj( R: DataIO.Reader;  VAR obj: OBJECT );
 	VAR version: SIGNED8;  ver: NbrInt.Integer;  new: Tree;
 	BEGIN
-		R.RawSInt( version );
+		R.RawInt8( version );
 		IF version = -1 THEN
 			obj := NIL  (* Version tag is -1 for NIL. *)
 		ELSE
@@ -428,7 +428,7 @@ TYPE
 	PROCEDURE StoreObj( W: DataIO.Writer;  obj: OBJECT );
 	VAR old: Tree;
 	BEGIN
-		IF obj = NIL THEN W.RawSInt( -1 ) ELSE W.RawSInt( VERSION );  old := obj( Tree );  old.Write( W ) END
+		IF obj = NIL THEN W.RawInt8( -1 ) ELSE W.RawInt8( VERSION );  old := obj( Tree );  old.Write( W ) END
 	END StoreObj;
 
 	PROCEDURE Register;

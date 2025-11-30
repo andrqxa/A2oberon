@@ -412,8 +412,8 @@ TYPE
 		BEGIN
 			Global.ModuleFileName(module.module.name,module.module.context,moduleName);
 			fp := fingerprinter.SymbolFP(module.module);
-			w.RawString(moduleName); w.RawLInt(SIGNED32(fp.public));
-			w.RawLInt(FixSelf()(SIGNED32));
+			w.RawString(moduleName); w.RawInt32(SIGNED32(fp.public));
+			w.RawInt32(FixSelf()(SIGNED32));
 			Imports;
 			Commands;
 			Entries(bodyOffset);
@@ -475,12 +475,12 @@ TYPE
 					END;
 					w.RawString(name);
 					fp := fingerprinter.SymbolFP(import.module);
-					w.RawLInt(SIGNED32(fp.public));
+					w.RawInt32(SIGNED32(fp.public));
 
 					(* get all imported entries of imported module *)
 					GetEntries(import.module.moduleScope, numberEntries, entries);
 					(* generate fixups to all non-zero entries *)
-					w.RawLInt(MakeFixups()(SIGNED32));
+					w.RawInt32(MakeFixups()(SIGNED32));
 				END;
 				import := import.nextImport;
 			END;
@@ -504,7 +504,7 @@ TYPE
 							D.Str("Command : "); D.Str(name); D.Str(" @ "); D.Int(p.offset ,1);
 						END;
 						w.RawString(name);
-						w.RawLInt((p.offset DIV 4)(SIGNED32));
+						w.RawInt32((p.offset DIV 4)(SIGNED32));
 						IF Trace THEN D.Ln END
 					END
 				END
@@ -518,18 +518,18 @@ TYPE
 			i,numberEntries: SIZE; entry: ARRAY 256 OF IntermediateCode.Section; (* more is not allowed anyway in the runtime system *)
 		BEGIN
 			GetEntries(moduleScope, numberEntries, entry);
-			w.RawLInt(numberEntries(SIGNED32));
-			w.RawLInt(0); (* body entry: body is fixed at position 0, cf. MakeSectionOffsets *)
+			w.RawInt32(numberEntries(SIGNED32));
+			w.RawInt32(0); (* body entry: body is fixed at position 0, cf. MakeSectionOffsets *)
 			FOR i := 1 TO numberEntries DO
 				ASSERT(entry[i].offset MOD 4 = 0);
-				w.RawLInt((entry[i].offset)(SIGNED32) DIV 4); (* entries here must be byte wise because jumps take place with absolute fixup - I cannot distinguish here *)
+				w.RawInt32((entry[i].offset)(SIGNED32) DIV 4); (* entries here must be byte wise because jumps take place with absolute fixup - I cannot distinguish here *)
 			END;
 		END Entries;
 
 		(* dataSize:Int32 *)
 		PROCEDURE Data;
 		BEGIN
-			w.RawLInt(dataSize(SIGNED32));
+			w.RawInt32(dataSize(SIGNED32));
 		END Data;
 
 		(* codeLen:Int32 {code:Int32}:codeLen *)
@@ -537,7 +537,7 @@ TYPE
 		VAR i: SIZE;
 		BEGIN
 			ASSERT(codeSize MOD 4 = 0);
-			w.RawLInt((codeSize DIV 4)(SIGNED32));
+			w.RawInt32((codeSize DIV 4)(SIGNED32));
 			FOR i := 0 TO codeSize-1 DO
 				w.Char(code[i]);
 			END;

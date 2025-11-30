@@ -56,14 +56,14 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 
 				PROCEDURE Type(t: IntermediateCode.Type);
 				BEGIN
-					w.RawSInt(t.form);
-					w.RawInt(t.sizeInBits);
+					w.RawInt8(t.form);
+					w.RawInt16(t.sizeInBits);
 				END Type;
 
 				PROCEDURE RegisterClass(c: IntermediateCode.RegisterClass);
 				BEGIN
-					w.RawSInt(c.class);
-					w.RawInt(c.number);
+					w.RawInt8(c.class);
+					w.RawInt16(c.number);
 				END RegisterClass;
 
 			BEGIN
@@ -83,7 +83,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 							w.RawNum(operand.offset);
 						ELSE
 							w.RawNum(2);
-							w.RawHInt(operand.intValue)
+							w.RawInt64(operand.intValue)
 						END;
 				|IntermediateCode.ModeRegister:
 					w.RawNum(operand.register);
@@ -98,16 +98,16 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 					ELSE
 						w.RawNum(1);
 						IF operand.type.form IN IntermediateCode.Integer THEN
-							w.RawHInt(operand.intValue);
+							w.RawInt64(operand.intValue);
 						ELSE
-							w.RawLReal(operand.floatValue);
+							w.RawFloat64(operand.floatValue);
 						END;
 					END;
 				|IntermediateCode.ModeString:
 					w.RawNum(Strings.Length(operand.string^));
 					w.RawString(operand.string^);
 				|IntermediateCode.ModeNumber:
-					w.RawHInt(operand.intValue);
+					w.RawInt64(operand.intValue);
 				END;
 
 			END WriteOperand;
@@ -124,7 +124,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 			PROCEDURE WriteSection(section: IntermediateCode.Section);
 			VAR i: SIZE;
 			BEGIN
-				w.RawLInt(section.type);
+				w.RawInt32(section.type);
 				SectionName(section.name);
 				w.RawBool(section.fixed);
 				w.RawNum(section.positionOrAlignment);
@@ -235,16 +235,16 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 				PROCEDURE Type(VAR t: IntermediateCode.Type);
 				VAR form: SIGNED8; sizeInBits: SIGNED16;
 				BEGIN
-					r.RawSInt(form);
-					r.RawInt(sizeInBits);
+					r.RawInt8(form);
+					r.RawInt16(sizeInBits);
 					IntermediateCode.InitType(t, form, sizeInBits)
 				END Type;
 
 				PROCEDURE RegisterClass(VAR c: IntermediateCode.RegisterClass);
 				VAR class: SIGNED8; number: SIGNED16;
 				BEGIN
-					r.RawSInt(class);
-					r.RawInt(number);
+					r.RawInt8(class);
+					r.RawInt16(number);
 					IntermediateCode.InitRegisterClass(c, class, number)
 				END RegisterClass;
 
@@ -269,7 +269,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 						ELSE
 							offset := 0;
 							ASSERT(subMode = 2);
-							r.RawHInt(int);
+							r.RawInt64(int);
 							IntermediateCode.InitImmediate(operand, addressType, int);
 						END;
 						IntermediateCode.InitMemory(operand, type, operand, offset);
@@ -288,10 +288,10 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 					ELSE
 						ASSERT(subMode = 1);
 						IF operand.type.form IN IntermediateCode.Integer THEN
-							r.RawHInt(int);
+							r.RawInt64(int);
 							IntermediateCode.InitImmediate(operand, type, int);
 						ELSE
-							r.RawLReal(real);
+							r.RawFloat64(real);
 							IntermediateCode.InitFloatImmediate(operand, type, real);
 						END;
 					END;
@@ -301,7 +301,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 					r.RawString(string^);
 					IntermediateCode.InitString(operand, string);
 				|IntermediateCode.ModeNumber:
-					r.RawHInt(int);
+					r.RawInt64(int);
 					IntermediateCode.InitNumber(operand, int)
 				END;
 			END ReadOperand;
@@ -331,7 +331,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 				positionOrAlignment, fingerprint, bitsPerUnit: SIGNED32;
 				pc,i: SIGNED32;
 			BEGIN
-				r.RawLInt(type);
+				r.RawInt32(type);
 				SectionName(name);
 				r.RawBool(fixed);
 				r.RawNum(positionOrAlignment);

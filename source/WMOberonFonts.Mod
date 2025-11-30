@@ -138,12 +138,12 @@ BEGIN
 	r.Char(font.typech); (* metric or font *)
 	r.Char(font.famch); (* family *)
 	r.Char(font.varch); (* variant *)
-	r.RawInt(font.height);
-	r.RawInt(font.minX);
-	r.RawInt(font.maxX);
-	r.RawInt(minY); font.descent := -minY;
-	r.RawInt(maxY); font.ascent := maxY;
-	r.RawInt(font.nofRuns);
+	r.RawInt16(font.height);
+	r.RawInt16(font.minX);
+	r.RawInt16(font.maxX);
+	r.RawInt16(minY); font.descent := -minY;
+	r.RawInt16(maxY); font.ascent := maxY;
+	r.RawInt16(font.nofRuns);
 	IF TraceImport THEN
 		KernelLog.String("id :"); KernelLog.Int(ORD(font.idch), 4); KernelLog.Ln;
 		KernelLog.String("type :"); KernelLog.Int(ORD(font.typech), 4); KernelLog.Ln;
@@ -159,8 +159,8 @@ BEGIN
 
 	nofGlyphs := 0; i := 0;
 	WHILE i < font.nofRuns DO
-		r.RawInt(rbeg); font.runs[i].beg := rbeg;
-		r.RawInt(rend); font.runs[i].end := rend;
+		r.RawInt16(rbeg); font.runs[i].beg := rbeg;
+		r.RawInt16(rend); font.runs[i].end := rend;
 		nofGlyphs := nofGlyphs + rend - rbeg;
 		INC(i)
 	END;
@@ -168,11 +168,11 @@ BEGIN
 	run := 0;
 	i := font.runs[run].beg;
 	FOR j := 0 TO nofGlyphs  - 1 DO
-		r.RawInt(t); font.glyphs[i].dx := t;
-		r.RawInt(t); font.glyphs[i].x := t;
-		r.RawInt(t); font.glyphs[i].y := t;
-		r.RawInt(t); font.glyphs[i].w := t;
-		r.RawInt(t); font.glyphs[i].h := t;
+		r.RawInt16(t); font.glyphs[i].dx := t;
+		r.RawInt16(t); font.glyphs[i].x := t;
+		r.RawInt16(t); font.glyphs[i].y := t;
+		r.RawInt16(t); font.glyphs[i].w := t;
+		r.RawInt16(t); font.glyphs[i].h := t;
 		font.glyphs[i].available := TRUE;
 		INC(i);
 		IF i >= font.runs[run].end THEN INC(run); i := font.runs[run].beg END
@@ -247,17 +247,17 @@ BEGIN
 	w.Char(font.typech); (* metric or font *)
 	w.Char(font.famch); (* family *)
 	w.Char(font.varch); (* variant *)
-	w.RawInt(font.height);
-	w.RawInt(font.minX);
-	w.RawInt(font.maxX);
-	w.RawInt(-SIGNED16(font.descent));
-	w.RawInt(SIGNED16(font.ascent));
-	w.RawInt(font.nofRuns);
+	w.RawInt16(font.height);
+	w.RawInt16(font.minX);
+	w.RawInt16(font.maxX);
+	w.RawInt16(-SIGNED16(font.descent));
+	w.RawInt16(SIGNED16(font.ascent));
+	w.RawInt16(font.nofRuns);
 
 	nofGlyphs := 0; i := 0;
 	WHILE i < font.nofRuns DO
-		w.RawInt(SHORT(font.runs[i].beg));
-		w.RawInt(SHORT(font.runs[i].end));
+		w.RawInt16(SHORT(font.runs[i].beg));
+		w.RawInt16(SHORT(font.runs[i].end));
 		nofGlyphs := nofGlyphs + font.runs[i].end - font.runs[i].beg;
 		INC(i)
 	END;
@@ -265,11 +265,11 @@ BEGIN
 	run := 0;
 	i := font.runs[run].beg;
 	FOR j := 0 TO nofGlyphs  - 1 DO
-		w.RawInt(SHORT(font.glyphs[i].dx));
-		w.RawInt(SHORT(font.glyphs[i].x));
-		w.RawInt(SHORT(font.glyphs[i].y));
-		w.RawInt(SHORT(font.glyphs[i].w));
-		w.RawInt(SHORT(font.glyphs[i].h));
+		w.RawInt16(SHORT(font.glyphs[i].dx));
+		w.RawInt16(SHORT(font.glyphs[i].x));
+		w.RawInt16(SHORT(font.glyphs[i].y));
+		w.RawInt16(SHORT(font.glyphs[i].w));
+		w.RawInt16(SHORT(font.glyphs[i].h));
 		INC(i);
 		IF i >= font.runs[run].end THEN INC(run); i := font.runs[run].beg END
 	END;

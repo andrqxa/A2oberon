@@ -2366,7 +2366,7 @@ TYPE
 						IF samplingResolution = 8 THEN
 							writer.Char(CHR(current))
 						ELSIF samplingResolution = 16 THEN
-							writer.RawInt(SHORT(current))
+							writer.RawInt16(SHORT(current))
 						END
 					END
 				END

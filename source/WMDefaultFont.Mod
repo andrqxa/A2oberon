@@ -137,18 +137,18 @@ BEGIN
 	r.Char(typech); (* metric or font *)
 	r.Char(famch); (* family *)
 	r.Char(varch); (* variant *)
-	r.RawInt(height);
-	r.RawInt(minX);
-	r.RawInt(maxX);
-	r.RawInt(minY);
-	r.RawInt(maxY);
-	r.RawInt(nofRuns);
+	r.RawInt16(height);
+	r.RawInt16(minX);
+	r.RawInt16(maxX);
+	r.RawInt16(minY);
+	r.RawInt16(maxY);
+	r.RawInt16(nofRuns);
 	font.ascent := maxY; font.descent := -minY;
 
 	nofGlyphs := 0; i := 0;
 	WHILE i < nofRuns DO
-		r.RawInt(rbeg); runs[i].beg := rbeg;
-		r.RawInt(rend); runs[i].end := rend;
+		r.RawInt16(rbeg); runs[i].beg := rbeg;
+		r.RawInt16(rend); runs[i].end := rend;
 		nofGlyphs := nofGlyphs + rend - rbeg;
 		INC(i)
 	END;
@@ -156,11 +156,11 @@ BEGIN
 	run := 0;
 	i := runs[run].beg;
 	FOR j := 0 TO nofGlyphs  - 1 DO
-		r.RawInt(t); font.glyphs[i].dx := t;
-		r.RawInt(t); font.glyphs[i].x := t;
-		r.RawInt(t); font.glyphs[i].y := t;
-		r.RawInt(t); font.glyphs[i].w := t;
-		r.RawInt(t); font.glyphs[i].h := t;
+		r.RawInt16(t); font.glyphs[i].dx := t;
+		r.RawInt16(t); font.glyphs[i].x := t;
+		r.RawInt16(t); font.glyphs[i].y := t;
+		r.RawInt16(t); font.glyphs[i].w := t;
+		r.RawInt16(t); font.glyphs[i].h := t;
 		font.glyphs[i].available := TRUE;
 		INC(i);
 		IF i >= runs[run].end THEN INC(run); i := runs[run].beg END

@@ -52,7 +52,7 @@ BEGIN
 				IF (w # NIL) & (binW # NIL) THEN
 					Strings.HexStrToInt (token, l, res);
 					IF res = Strings.Ok THEN
-						binW.RawLInt (l);
+						binW.RawInt32 (l);
 					ELSE
 						context.error.String("Error!!!"); context.error.Ln;
 					END;

@@ -332,7 +332,7 @@ TYPE
 	PROCEDURE LoadHCube( R: DataIO.Reader;  VAR obj: OBJECT );
 	VAR a: HCube;  version: SIGNED8;  ver: NbrInt.Integer;
 	BEGIN
-		R.RawSInt( version );
+		R.RawInt8( version );
 		IF version = -1 THEN
 			obj := NIL  (* Version tag is -1 for NIL. *)
 		ELSIF version = VERSION THEN NEW( a, 0, 0, 0, 0, 0, 0, 0, 0 );  a.Read( R );  obj := a
@@ -343,7 +343,7 @@ TYPE
 	PROCEDURE StoreHCube( W: DataIO.Writer;  obj: OBJECT );
 	VAR a: HCube;
 	BEGIN
-		IF obj = NIL THEN W.RawSInt( -1 ) ELSE W.RawSInt( VERSION );  a := obj( HCube );  a.Write( W ) END
+		IF obj = NIL THEN W.RawInt8( -1 ) ELSE W.RawInt8( VERSION );  a := obj( HCube );  a.Write( W ) END
 	END StoreHCube;
 
 	PROCEDURE Register;

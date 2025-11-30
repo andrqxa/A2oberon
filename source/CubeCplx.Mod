@@ -500,7 +500,7 @@ TYPE
 	PROCEDURE LoadCube( R: DataIO.Reader;  VAR obj: OBJECT );
 	VAR a: Cube;  version: SIGNED8;  ver: NbrInt.Integer;
 	BEGIN
-		R.RawSInt( version );
+		R.RawInt8( version );
 		IF version = -1 THEN
 			obj := NIL  (* Version tag is -1 for NIL. *)
 		ELSIF version = VERSION THEN NEW( a, 0, 0, 0, 0, 0, 0 );  a.Read( R );  obj := a
@@ -511,7 +511,7 @@ TYPE
 	PROCEDURE StoreCube( W: DataIO.Writer;  obj: OBJECT );
 	VAR a: Cube;
 	BEGIN
-		IF obj = NIL THEN W.RawSInt( -1 ) ELSE W.RawSInt( VERSION );  a := obj( Cube );  a.Write( W ) END
+		IF obj = NIL THEN W.RawInt8( -1 ) ELSE W.RawInt8( VERSION );  a := obj( Cube );  a.Write( W ) END
 	END StoreCube;
 
 	PROCEDURE Register;
