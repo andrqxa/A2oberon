@@ -129,12 +129,12 @@ TYPE
 
 		PROCEDURE WriteRaw*(w: Streams.Writer);
 		BEGIN
-			w.RawInt(type);
+			w.RawInt16(type);
 			Basic.WriteSegmentedName(w,name);
 			w.RawBool(fixed);
-			w.RawLInt(positionOrAlignment(SIGNED32));
-			w.RawHInt(fingerprint);
-			w.RawLInt(bitsPerUnit);
+			w.RawInt32(positionOrAlignment(SIGNED32));
+			w.RawInt64(fingerprint);
+			w.RawInt32(bitsPerUnit);
 		END WriteRaw;
 
 		PROCEDURE DumpName*(w: Streams.Writer);

@@ -68,7 +68,7 @@ VAR
 	VAR N: Files.FileName;  F: Files.File;  R: Files.Reader;
 	BEGIN
 		NEW( rng );  COPY( "MathRandomSeed.dat", N );  F := Files.Old( N );
-		IF F = NIL THEN nbr := 1 ELSE Files.OpenReader( R, F, 0 );  R.RawLInt( nbr ) END;
+		IF F = NIL THEN nbr := 1 ELSE Files.OpenReader( R, F, 0 );  R.RawInt32( nbr ) END;
 		rng.InitSeed( nbr )
 	END Open;
 
@@ -78,7 +78,7 @@ VAR
 	BEGIN
 		COPY( "MathRandomSeed.dat", N );  F := Files.Old( N );
 		IF F = NIL THEN F := Files.New( N ) END;
-		Files.OpenWriter( W, F, 0 );  W.RawLInt( nbr );  W.Update;  Files.Register( F )
+		Files.OpenWriter( W, F, 0 );  W.RawInt32( nbr );  W.Update;  Files.Register( F )
 	END Close;
 
 BEGIN

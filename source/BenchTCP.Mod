@@ -143,7 +143,7 @@ PROCEDURE Discard*(context : Commands.Context);
 VAR t: Tester; num: SIGNED32; server: ARRAY 64 OF CHAR;
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(server);
-	context.arg.SkipWhitespace; context.arg.Int(num, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(num, FALSE);
 	NEW(t, server, num, DiscardPort);
 END Discard;
 
@@ -153,7 +153,7 @@ PROCEDURE Echo*(context : Commands.Context);
 VAR t: Tester; num: SIGNED32; server: ARRAY 64 OF CHAR;
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(server);
-	context.arg.SkipWhitespace; context.arg.Int(num, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(num, FALSE);
 	NEW(t, server, num, EchoPort);
 END Echo;
 

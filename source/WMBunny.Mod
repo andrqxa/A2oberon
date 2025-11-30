@@ -150,7 +150,7 @@ VAR fn : ARRAY 65 OF CHAR;	(* a filename equivalent to Files.FileName - do not i
 		int := def;
 		context.arg.SkipWhitespace;
 		IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') OR (context.arg.Peek() = '-') THEN
-			context.arg.Int(int, FALSE);
+			context.arg.Int32(int, FALSE);
 		END;
 		RETURN int;
 	END SetVal;

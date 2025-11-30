@@ -138,7 +138,7 @@ VAR
 	stats : ProcessStats; parameter : ProcessStatsParameter;
 	process : Objects.Process;
 BEGIN
-	context.arg.SkipWhitespace; context.arg.Int(id, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(id, FALSE);
 	process := ProcessInfo.GetProcess(id);
 	IF (process # NIL) THEN
 		NEW(parameter, process);

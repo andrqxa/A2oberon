@@ -350,9 +350,9 @@ TYPE StateWindow= OBJECT(WMComponents.FormWindow)
 							|6:	(* SIGNED32 *)
 								SYSTEM.GET(adr, lval);  w.Int( lval, 1)
 							|7:	(* FLOAT32 *)
-								SYSTEM.GET(adr, rval);  w.RawReal(rval)
+								SYSTEM.GET(adr, rval);  w.RawFloat32(rval)
 							|8:	(* FLOAT64 *)
-								SYSTEM.GET(adr, lrval);  w.RawLReal(lrval)
+								SYSTEM.GET(adr, lrval);  w.RawFloat64(lrval)
 							|9:	(* SET *)
 								SYSTEM.GET(adr, set);  w.Set(set)
 							|13, 29:	(* POINTER *)
@@ -518,7 +518,7 @@ VAR
 	stateWin: StateWindow;
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(name);
-	context.arg.SkipWhitespace; context.arg.Int(interval, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(interval, FALSE);
 	IF interval < 1 THEN interval := 2000 END;	(* default interval *)
 
 	NEW(stateWin, "Module State", interval, name);

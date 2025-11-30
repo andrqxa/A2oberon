@@ -127,8 +127,8 @@ TYPE
 				END;
 				ZlibDeflate.Close(SELF.s);
 				SELF.res := SELF.s.res;
-				writer.RawLInt(crc32);
-				writer.RawLInt(inputsize(SIGNED32));
+				writer.RawInt32(crc32);
+				writer.RawInt32(inputsize(SIGNED32));
 				writer.Update();
 				TRACE("deflator", SELF.res);
 			END;
@@ -385,13 +385,13 @@ BEGIN
 	Files.OpenWriter(fw,f,0);
 	NEW(w,fw);
 	
-	FOR i:=0 TO LEN(rand)-1 DO w.RawLReal(rand[i]); END; w.Char(" "); w.Update;
+	FOR i:=0 TO LEN(rand)-1 DO w.RawFloat64(rand[i]); END; w.Char(" "); w.Update;
 	w.String("Hello World"); w.Update;
 	
 	f1:=Files.Old("TestGZipStreams.gz");
 	Files.OpenReader(fr,f1,0);
 	NEW(r,fr);
-	FOR i:=0 TO LEN(rand1)-1 DO r.RawLReal(rand1[i]) END;
+	FOR i:=0 TO LEN(rand1)-1 DO r.RawFloat64(rand1[i]) END;
 	WHILE r.GetString(string) DO
 		context.out.String(string); context.out.String(" "); context.out.Update;
 	END;

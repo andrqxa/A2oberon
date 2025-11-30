@@ -605,10 +605,10 @@ TYPE JPEGDecoder*= OBJECT(Codecs.ImageDecoder)
 		length:SIGNED16;
 	BEGIN
 		length := SHORT(cInfo.reader.Net16());
-		cInfo.reader.RawSInt(cInfo.dataPrecision);
+		cInfo.reader.RawInt8(cInfo.dataPrecision);
 		IF ~ReadUINT16(cInfo.imageHeight) THEN RETURN FALSE END;
 		IF ~ReadUINT16(cInfo.imageWidth) THEN RETURN FALSE END;
-		cInfo.reader.RawSInt(cInfo.numComponents);
+		cInfo.reader.RawInt8(cInfo.numComponents);
 		DEC(length,8);
 
 		IF cInfo.marker.sawSOF THEN
@@ -669,7 +669,7 @@ TYPE JPEGDecoder*= OBJECT(Codecs.ImageDecoder)
 			ErrMsg( "no SOF block found", 8); RETURN FALSE
 		END;
 		length := SHORT(cInfo.reader.Net16());
-		cInfo.reader.RawSInt(n);
+		cInfo.reader.RawInt8(n);
 		IF (length # (n*2 + 6)) OR (n<1) OR (n> MAXCOMPSINSCAN) THEN
 			ErrMsg( "wrong data length", 9); RETURN FALSE
 		END;
@@ -778,7 +778,7 @@ TYPE JPEGDecoder*= OBJECT(Codecs.ImageDecoder)
 		DEC(length,2);
 
 		WHILE length > 0 DO
-			cInfo.reader.RawSInt(index);
+			cInfo.reader.RawInt8(index);
 			IF ~ReadUINT8(val) THEN RETURN FALSE END;
 			DEC(length,2);
 

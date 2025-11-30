@@ -43,9 +43,9 @@ VAR
 
 PROCEDURE SetValues*(context : Commands.Context); (** Nvalue1 Nvalue2 Nvalue3 ~ *)
 BEGIN
-	context.arg.SkipWhitespace; context.arg.Int(Nvalue1, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(Nvalue2, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(Nvalue3, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(Nvalue1, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(Nvalue2, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(Nvalue3, FALSE);
 END SetValues;
 
 PROCEDURE Install*; (** ~ *)

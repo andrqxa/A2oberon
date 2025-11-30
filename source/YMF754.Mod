@@ -358,7 +358,7 @@ TYPE
 			Files.OpenReader(r, f, 0);
 			offset := PCCRegDSPInstRAM; (* begin with DSP instruction code *)
 			WHILE offset < (PCCRegCtrlInstRAM + SizeCtrlInstRAM) DO
-				r.RawLInt(data);
+				r.RawInt32(data);
 				RegWrite32(offset, data);
 				INC(offset, SIZEOF(SIGNED32));
 				IF offset = PCCRegDSPInstRAM + SizeDSPInstRAM THEN

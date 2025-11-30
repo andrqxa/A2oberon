@@ -969,7 +969,7 @@ BEGIN {EXCLUSIVE}
 	context.arg.SkipWhitespace;
 	context.arg.Token(username); context.arg.SkipWhitespace;
 	context.arg.String(password); context.arg.SkipWhitespace;
-	context.arg.Int(maxlogins, FALSE); context.arg.SkipWhitespace;
+	context.arg.Int32(maxlogins, FALSE); context.arg.SkipWhitespace;
 	context.arg.Token(permissions); context.arg.SkipWhitespace;
 	context.arg.String(root);
 
@@ -1083,7 +1083,7 @@ BEGIN
 		Files.OpenReader(r, f, 0);
 		WHILE (r.res = Streams.Ok) DO
 			NEW(u);
-			r.RawString(u.name); r.RawLInt(u.password); r.RawLInt(u.maxlogins);
+			r.RawString(u.name); r.RawInt32(u.password); r.RawInt32(u.maxlogins);
 			r.RawSet(u.permissions); r.RawString(u.root);
 			IF (r.res = Streams.Ok) THEN
 				u.next := users;
@@ -1100,7 +1100,7 @@ BEGIN
 	IF (f # NIL) THEN
 		Files.OpenWriter(w, f, 0);
 		WHILE (w.res = Streams.Ok) & (users # NIL) DO
-			w.RawString(users.name); w.RawLInt(users.password); w.RawLInt(users.maxlogins);
+			w.RawString(users.name); w.RawInt32(users.password); w.RawInt32(users.maxlogins);
 			w.RawSet(users.permissions); w.RawString(users.root);
 			users := users.next
 		END;

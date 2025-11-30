@@ -179,7 +179,7 @@ IMPORT
 				IF version = FileVersion THEN
 				r.RawNum(dummy);	(*skip symfile size*)
 				ELSIF version = FileVersionOC THEN
-				r.RawLInt(dummy);
+				r.RawInt32(dummy);
 				END;
 				res := TRUE
 			END
@@ -203,10 +203,10 @@ IMPORT
 	BEGIN  WriteString(R.symmod, str) END SymWMod;
 
 	PROCEDURE SymWReal*(VAR R: Rider; r: FLOAT32);
-	BEGIN  R.sym.RawReal(r)  END SymWReal;
+	BEGIN  R.sym.RawFloat32(r)  END SymWReal;
 
 	PROCEDURE SymWLReal*(VAR R: Rider; r: FLOAT64);
-	BEGIN  R.sym.RawLReal(r)  END SymWLReal;
+	BEGIN  R.sym.RawFloat64(r)  END SymWLReal;
 
 
 	PROCEDURE ObjWGetPos*(VAR R: Rider; VAR pos: Files.Position);
@@ -222,7 +222,7 @@ IMPORT
 	END ObjWNum;
 
 	PROCEDURE ObjWInt*(VAR R: Rider; i: SIGNED16);
-	BEGIN R.obj.RawInt(i)
+	BEGIN R.obj.RawInt16(i)
 	END ObjWInt;
 
 	PROCEDURE ObjWIntAt*(VAR R: Rider; pos: SIGNED32; i: SIGNED16);
@@ -230,12 +230,12 @@ IMPORT
 	BEGIN
 		R.obj.Update;
 		Files.OpenWriter(w, R.objF, pos);
-		w.RawInt(i);
+		w.RawInt16(i);
 		w.Update
 	END ObjWIntAt;
 
 	PROCEDURE ObjWLInt*(VAR R: Rider; i: SIGNED32);
-	BEGIN R.obj.RawLInt(i)
+	BEGIN R.obj.RawInt32(i)
 	END ObjWLInt;
 
 	PROCEDURE ObjWLIntAt*(VAR R: Rider; pos: Files.Position; i: SIGNED32);
@@ -243,7 +243,7 @@ IMPORT
 	BEGIN
 		R.obj.Update;
 		Files.OpenWriter(w, R.objF, pos);
-		w.RawLInt(i);
+		w.RawInt32(i);
 		w.Update
 	END ObjWLIntAt;
 

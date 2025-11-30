@@ -206,7 +206,7 @@ TYPE
 		VAR
 			i : SIGNED16;
 		BEGIN
-			reader.RawInt(i);
+			reader.RawInt16(i);
 			IF reader.res = Streams.Ok THEN
 				SYSTEM.MOVE(ADDRESSOF(i), ADDRESSOF(codeBuffer[currentBufferPos]), 2);
 				INC(currentBufferPos, 2)
@@ -1273,7 +1273,7 @@ TYPE
 			FOR i := 0 TO nofVarConstLinks-1 DO
 				ch := r.Get();
 				r.RawNum(num);
-				r.RawLInt(count);
+				r.RawInt32(count);
 				varConstLinks[i].num := i;
 				varConstLinks[i].ch := ch;
 				NEW(varConstLinks[i].links,count);
@@ -1323,7 +1323,7 @@ TYPE
 			PROCEDURE LoadScope (level: SIGNED32);
 			VAR adr, fp, off, i, len, exp: SIGNED32; check: POINTER TO ARRAY OF SIGNED32;export: Export;
 			BEGIN
-				r.RawLInt(exp);
+				r.RawInt32(exp);
 				r.RawNum(fp);
 				len := 0;
 				IF fp # 0 THEN NEW(check, exp) END;
@@ -1450,9 +1450,9 @@ TYPE
 				r.RawNum(moduleBase); r.RawNum(entry);
 				(* read Count *)
 				r.RawNum(nofMethods); nofMethods := ABS (nofMethods);
-				r.RawNum(nofInhMethods); r.RawNum(nofNewMethods); r.RawLInt(nofPointers);
+				r.RawNum(nofInhMethods); r.RawNum(nofNewMethods); r.RawInt32(nofPointers);
 				r.RawString(name);
-				r.RawLInt(tdSize); (* ug *)
+				r.RawInt32(tdSize); (* ug *)
 				NEW(type, name);
 				IF type.name = "" THEN type.name := "[anonymous]" END;
 				types[i] := type;
@@ -1523,7 +1523,7 @@ TYPE
 				gcInfo[i].codeOffset := codeoffset;
 				gcInfo[i].beginOffset := beginOffset;
 				gcInfo[i].endOffset := endOffset;
-				r.RawLInt(nofptrs);
+				r.RawInt32(nofptrs);
 				NEW(gcInfo[i].pointers,nofptrs);
 				FOR j := 0 TO nofptrs - 1 DO
 					r.RawNum(p);
@@ -1558,32 +1558,32 @@ TYPE
 			IF version = 0B1H THEN (* PACO object file *)
 				r.RawNum(symSize);
 			ELSIF (version >= 0B2H) THEN (*fof: OC object file *)
-				r.RawLInt(symSize);
+				r.RawInt32(symSize);
 			END;
 			r.SkipBytes(symSize); (* skip symbol file *)
 
-			r.RawLInt(tmp); header.refSize := tmp;
-			r.RawLInt(tmp); header.entries := tmp;
-			r.RawLInt(tmp); header.commands := tmp;
-			r.RawLInt(tmp); header.pointers := tmp;
-			r.RawLInt(tmp); header.types := tmp;
-			r.RawLInt(tmp); header.modules := tmp;
-			r.RawLInt(tmp); nofVarConstLinks := tmp;
-			r.RawLInt(tmp); nofLinks := tmp;
-			r.RawLInt(tmp); header.dataSize := tmp;
-			r.RawLInt(tmp); header.constSize := tmp;
-			r.RawLInt(tmp); header.codeSize := tmp;
+			r.RawInt32(tmp); header.refSize := tmp;
+			r.RawInt32(tmp); header.entries := tmp;
+			r.RawInt32(tmp); header.commands := tmp;
+			r.RawInt32(tmp); header.pointers := tmp;
+			r.RawInt32(tmp); header.types := tmp;
+			r.RawInt32(tmp); header.modules := tmp;
+			r.RawInt32(tmp); nofVarConstLinks := tmp;
+			r.RawInt32(tmp); nofLinks := tmp;
+			r.RawInt32(tmp); header.dataSize := tmp;
+			r.RawInt32(tmp); header.constSize := tmp;
+			r.RawInt32(tmp); header.codeSize := tmp;
 
 			IF (codeScaleCallback # NIL) THEN codeScaleCallback(header.codeSize) END;
 
 			(* Sz: Exception handling *)
-			r.RawLInt(tmp); header.exTableLen := tmp;
+			r.RawInt32(tmp); header.exTableLen := tmp;
 
 			(* ug: Pointers in procedures, maxPtrs, staticTdSize: *)
-			r.RawLInt(noProcs);
-			r.RawLInt(tmp); (* ug: skip maxPtrs *)
-			r.RawLInt(tmp); (* ug: skip staticTdSize *)
-			IF version > 0B3H THEN r.RawLInt(header.crc) END;
+			r.RawInt32(noProcs);
+			r.RawInt32(tmp); (* ug: skip maxPtrs *)
+			r.RawInt32(tmp); (* ug: skip staticTdSize *)
+			IF version > 0B3H THEN r.RawInt32(header.crc) END;
 			r.RawString(name);
 			(* skip to code block *)
 			DecodeEntries;
@@ -2025,7 +2025,7 @@ VAR
 			context.arg.Token(name);
 			IF name # "" THEN win.OutlineProcedure (name) END
 		ELSIF (context.arg.Peek() >= "0") & (context.arg.Peek() <= "9") THEN
-			context.arg.Int(pc, FALSE);
+			context.arg.Int32(pc, FALSE);
 			IF pc > 0 THEN win.OutlinePC(pc) END
 		END;
 	END Open;

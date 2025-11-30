@@ -126,7 +126,7 @@ TYPE
 
 		PROCEDURE GetInteger(r : Streams.Reader; VAR integer : SIGNED32) : BOOLEAN;
 		BEGIN
-			r.SkipWhitespace; r.Int(integer, FALSE);
+			r.SkipWhitespace; r.Int32(integer, FALSE);
 			IF (r.res # Streams.Ok) THEN
 				log.Ln; log.String("Parse error: Expected integer value, pos = "); log.Int(r.Pos(), 0); log.Ln;
 			END;
@@ -675,8 +675,8 @@ VAR
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(path);
 	context.arg.SkipWhitespace; context.arg.String(filename);
-	context.arg.SkipWhitespace; context.arg.Int(seed, FALSE);
-	context.arg.SkipWhitespace; context.arg.Int(nofRuns, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(seed, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(nofRuns, FALSE);
 	COPY(path, fullname); Strings.Append(fullname, filename);
 	context.out.String("    RandomReadWrite on file '"); context.out.String(fullname); context.out.String("' (");
 	context.out.Int(nofRuns, 0); context.out.String(" runs)' ... ");

@@ -205,6 +205,7 @@ TYPE
 		BEGIN
 			reader.text.AcquireRead;
 			len := 0; res := Streams.Ok;
+			offs := ofs;
 			WHILE len < size DO
 				IF remainder # 0 THEN
 					ucs32 := remainder; remainder := 0;
@@ -457,22 +458,22 @@ TYPE
 			ch := reader.Get();
 
 			IF ch = DocBlockId THEN (* skip doc header *)
-				reader.RawString(name); reader.RawInt(x); reader.RawInt(y); reader.RawInt(w); reader.RawInt(h);
+				reader.RawString(name); reader.RawInt16(x); reader.RawInt16(y); reader.RawInt16(w); reader.RawInt16(h);
 				ch := reader.Get();
 				IF ch = 0F7X THEN	(* skip meta info *)
-					ch := reader.Get(); IF ch = 08X THEN reader.RawLInt(len); reader.Bytes(temp, 0, len, buflen); ch := reader.Get(); END;
+					ch := reader.Get(); IF ch = 08X THEN reader.RawInt32(len); reader.Bytes(temp, 0, len, buflen); ch := reader.Get(); END;
 				END
 			END;
 			pos := reader.Pos();
 			IF (ch = TextBlockId) OR (ch = OldTextBlockId) THEN
 				type := reader.Get();
-				reader.RawLInt(hlen);
+				reader.RawInt32(hlen);
 
 				NEW(sreader, buffer.GetLength());
 				tempInt := pos - 1 + hlen - 4;
 				sreader.SetRaw(string^, 0, buffer.GetLength());
 				sreader.SetPos(tempInt);
-				sreader.RawLInt(tlen);
+				sreader.RawInt32(tlen);
 
 				IF (type = TextSpex) OR (type = OldTextSpex) THEN (*T.obs := NIL; flen := 0 *)
 				ELSE (* NEW(T.obs); Objects.OpenLibrary(T.obs); *)
@@ -486,7 +487,7 @@ TYPE
 				n := 1;
 				off := pos(SIZE) - 1 + hlen;
 				WHILE reader.Pos() < pos - 1 + hlen - 5 DO
-					reader.RawSInt(lib);
+					reader.RawInt8(lib);
 					IF lib = n THEN
 						reader.RawString(lName);
 
@@ -500,9 +501,9 @@ TYPE
 							tattr := fonts[lib];
 						END
 					END;
-					reader.RawSInt(col);
-					reader.RawSInt(voff); voff := - voff;
-					reader.RawLInt(len);
+					reader.RawInt8(col);
+					reader.RawInt8(voff); voff := - voff;
+					reader.RawInt32(len);
 					IF len < 0 THEN KernelLog.Enter; KernelLog.String(" LoadAscii (T, f);"); KernelLog.Int(len, 0); KernelLog.Exit; RETURN END;
 					NEW(attr);
 					CASE col OF
@@ -616,10 +617,10 @@ TYPE
 				i := 0; WHILE (i < nofFonts)  &  (~fonts[i].IsEqual(font)) DO INC(i) END;
 				IF (i = nofFonts) THEN
 					IF ToOberonFont(font.name, font.size, font.style, oname) THEN
-						w.RawSInt(SIGNED8(i+1));
+						w.RawInt8(SIGNED8(i+1));
 						IF i = nofFonts THEN w.RawString(oname); fonts[nofFonts] := font; INC(nofFonts) END
 					ELSE
-						w.RawSInt(1);
+						w.RawInt8(1);
 						IF firstPiece THEN
 							w.RawString("Oberon10.Scn.Fnt");
 							NEW(fonts[nofFonts]);
@@ -627,10 +628,10 @@ TYPE
 							INC(nofFonts)
 						END;
 					END
-				ELSE w.RawSInt(SIGNED8(i+1));
+				ELSE w.RawInt8(SIGNED8(i+1));
 				END
 			ELSE
-				w.RawSInt(1);
+				w.RawInt8(1);
 				IF firstPiece THEN
 					w.RawString("Oberon10.Scn.Fnt");
 					NEW(fonts[nofFonts]);
@@ -639,9 +640,9 @@ TYPE
 				END;
 			END;
 			firstPiece := FALSE;
-			w.RawSInt(SHORT(SHORT(GetOberonColor(color))));
-			w.RawSInt(SHORT(SHORT(-voff)));
-			w.RawLInt(len(SIGNED32));
+			w.RawInt8(SHORT(SHORT(GetOberonColor(color))));
+			w.RawInt8(SHORT(SHORT(-voff)));
+			w.RawInt32(len(SIGNED32));
 		END WritePiece;
 
 		PROCEDURE WriteText*(text : Texts.Text; VAR res : INTEGER);
@@ -667,7 +668,7 @@ TYPE
 
 			w.Char(TextBlockId);
 			w.Char(01X); (* simple text *)
-			w.RawLInt(0); (* header len place holder *)
+			w.RawInt32(0); (* header len place holder *)
 			startPos := 1; len := 0;
 			REPEAT
 				r.ReadCh(ch);
@@ -683,7 +684,7 @@ TYPE
 			UNTIL r.eot;
 			WritePiece(len + 1 - startPos);
 			w.Char(0X); (* ??? *)
-			w.RawLInt(len(SIGNED32)); (* tLen ? *)
+			w.RawInt32(len(SIGNED32)); (* tLen ? *)
 			w.Update;
 			hLen := w.Pos()(SIGNED32);
 
@@ -700,7 +701,7 @@ TYPE
 			w2.Bytes(string^, 0, LEN(string));
 			tempInt := w2.Pos();
 			w2.SetPos(2);
-			w2.RawLInt(hLen);
+			w2.RawInt32(hLen);
 			w2.SetPos(tempInt); w2.Update;
 
 			(* write string to output stream *)

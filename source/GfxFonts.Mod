@@ -557,7 +557,7 @@ MODULE GfxFonts; (** non-portable *)	(* eos  *)
 		file := Files.Old(fname);
 		IF file # NIL THEN
 			Files.OpenReader(r, file, 0);
-			r.RawInt(tag);
+			r.RawInt16(tag);
 			IF (tag = OldMetaFontTag) OR (tag = MetaFontTag) THEN
 				NEW(outline); LoadOutline(outline, r);
 				RETURN outline
@@ -575,25 +575,25 @@ MODULE GfxFonts; (** non-portable *)	(* eos  *)
 		file := Files.Old(name);
 		IF file = NIL THEN RETURN NIL END;
 		Files.OpenReader(r, file, 0);
-		r.Char(id); r.RawSInt(type);
+		r.Char(id); r.RawInt8(type);
 		IF (id = FontId) & (type = 0) THEN
 			NEW(rfile);
-			r.Char(ch); r.Char(ch); r.RawInt(height);
-			r.RawInt(rfile.xmin); r.RawInt(rfile.xmax);
-			r.RawInt(rfile.ymin); r.RawInt(rfile.ymax);
-			r.RawInt(runs);
+			r.Char(ch); r.Char(ch); r.RawInt16(height);
+			r.RawInt16(rfile.xmin); r.RawInt16(rfile.xmax);
+			r.RawInt16(rfile.ymin); r.RawInt16(rfile.ymax);
+			r.RawInt16(runs);
 			i := 0;
 			WHILE i < runs DO
-				r.RawInt(beg[i]); r.RawInt(end[i]); INC(i)
+				r.RawInt16(beg[i]); r.RawInt16(end[i]); INC(i)
 			END;
 			i := 0; size := 0;
 			WHILE i < runs DO
 				j := beg[i];
 				WHILE j < end[i] DO
 					NEW(rfile.char[j]);
-					r.RawInt(rfile.char[j].dx);
-					r.RawInt(rfile.char[j].x); r.RawInt(rfile.char[j].y);
-					r.RawInt(rfile.char[j].w); r.RawInt(rfile.char[j].h);
+					r.RawInt16(rfile.char[j].dx);
+					r.RawInt16(rfile.char[j].x); r.RawInt16(rfile.char[j].y);
+					r.RawInt16(rfile.char[j].w); r.RawInt16(rfile.char[j].h);
 					size := size + (rfile.char[j].w + 7) DIV 8 * rfile.char[j].h;
 					INC(j)
 				END;

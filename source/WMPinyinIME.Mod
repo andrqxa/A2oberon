@@ -63,7 +63,7 @@ TYPE
 			END;
 			Files.OpenReader(r, f, 0);
 
-			r.Int(nofChars, FALSE); r.SkipLn;
+			r.Int32(nofChars, FALSE); r.SkipLn;
 			IF nofChars <= 0 THEN
 				KernelLog.String("PinyinIMETable.txt size illegal"); KernelLog.Ln;
 				RETURN
@@ -76,7 +76,7 @@ TYPE
 				r.Token(characters[i].pinyin); r.SkipWhitespace;
 				IF ~ TextUtilities.GetUTF8Char(r, characters[i].ucs) THEN errors := TRUE END;
 				r.SkipWhitespace;
-				r.Int(characters[i].freq, FALSE);
+				r.Int32(characters[i].freq, FALSE);
 				r.Ln(info);
 				IF info # ""  THEN characters[i].info := Strings.NewString(info) END;
 				INC(i);

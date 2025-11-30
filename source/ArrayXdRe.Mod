@@ -1191,7 +1191,7 @@ TYPE
 	PROCEDURE LoadArray( R: DataIO.Reader;  VAR obj: OBJECT );
 	VAR a: Array;  version: SIGNED8;  ver: NbrInt.Integer;
 	BEGIN
-		R.RawSInt( version );
+		R.RawInt8( version );
 		IF version = -1 THEN
 			obj := NIL  (* Version tag is -1 for NIL. *)
 		ELSE
@@ -1205,7 +1205,7 @@ TYPE
 	PROCEDURE StoreArray( W: DataIO.Writer;  obj: OBJECT );
 	VAR old: Array;
 	BEGIN
-		IF obj = NIL THEN W.RawSInt( -1 ) ELSE W.RawSInt( VERSION );  old := obj( Array );  old.StoreXd( W, TRUE ) END
+		IF obj = NIL THEN W.RawInt8( -1 ) ELSE W.RawInt8( VERSION );  old := obj( Array );  old.StoreXd( W, TRUE ) END
 	END StoreArray;
 
 	PROCEDURE Register;

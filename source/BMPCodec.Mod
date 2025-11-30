@@ -47,25 +47,25 @@ TYPE
 			(* bitmap file header *)
 			IF (in.Get() # "B") OR (in.Get() # "M") THEN Error("Not a BMP stream"); RETURN END;
 
-			in.RawLInt(size); in.RawLInt(reserved); in.RawLInt(offset);
+			in.RawInt32(size); in.RawInt32(reserved); in.RawInt32(offset);
 
 			(* bitmap info header *)
-			in.RawLInt(size);	(* size of bitmap info header *)
+			in.RawInt32(size);	(* size of bitmap info header *)
 			IF size > 40 THEN Log("ignoring extra header fields") END;
-			in.RawLInt(width); in.RawLInt(height);
-			in.RawInt(planes);
+			in.RawInt32(width); in.RawInt32(height);
+			in.RawInt16(planes);
 			IF planes # 1 THEN Error("Can not handle multi-plane files"); RETURN  END;
-			in.RawInt(bpp);
+			in.RawInt16(bpp);
 			IF ~((bpp = 1) OR (bpp = 4) OR (bpp = 8) OR (bpp = 16) OR (bpp = 24) OR (bpp = 32)) THEN
 				 Log("Can not handle this bpp."); KernelLog.String("bpp = "); KernelLog.Int(bpp, 0); KernelLog.Ln; RETURN
 			END;
-			in.RawLInt(compression);
+			in.RawInt32(compression);
 			IF ~(compression IN {RGB, RLE8, RLE4, BITFIELDS}) THEN
 				Log("can't deal with compression type "); KernelLog.String("compression = "); KernelLog.Int(compression, 0); RETURN
 			END;
-			in.SkipBytes(12); in.RawLInt(colors);
+			in.SkipBytes(12); in.RawInt32(colors);
 			IF (colors = 0) & (bpp < 16) THEN colors := ASH(1, bpp) END;
-			in.RawLInt(importantColors);
+			in.RawInt32(importantColors);
 
 			(* 54 bytes consumed by "in" up to here *)
 
@@ -80,7 +80,7 @@ TYPE
 				END;
 				Raster.InitPalette(pal, SHORT(colors), 2 + bpp DIV 4)
 			ELSIF ((bpp = 16) OR (bpp = 32)) & (compression = BITFIELDS) THEN
-				in.RawLInt(redMask); in.RawLInt(greenMask); in.RawLInt(blueMask)
+				in.RawInt32(redMask); in.RawInt32(greenMask); in.RawInt32(blueMask)
 			END;
 			NEW(img);
 			(* bitmap data *)
@@ -174,16 +174,16 @@ TYPE
 				(img.fmt.code = Raster.bgr555) OR (img.fmt.code = Raster.bgr565)
 			THEN
 				(* additional size of color masks *)
-				out.RawLInt(12 + 14 + 40 + palentries * 4 + dataSize); out.RawLInt(0); out.RawLInt(12 + 14 + 40 + palentries * 4);
+				out.RawInt32(12 + 14 + 40 + palentries * 4 + dataSize); out.RawInt32(0); out.RawInt32(12 + 14 + 40 + palentries * 4);
 			ELSE
-				out.RawLInt(14 + 40 + palentries * 4 + dataSize); out.RawLInt(0); out.RawLInt(14 + 40 + palentries * 4);
+				out.RawInt32(14 + 40 + palentries * 4 + dataSize); out.RawInt32(0); out.RawInt32(14 + 40 + palentries * 4);
 			END;
 
 			(* Bitmap info header *)
-			out.RawLInt(40); (* header size *)
-			out.RawLInt(img.width(SIGNED32));
-			out.RawLInt(img.height(SIGNED32));
-			out.RawInt(1);	(* biPlanes *)
+			out.RawInt32(40); (* header size *)
+			out.RawInt32(img.width(SIGNED32));
+			out.RawInt32(img.height(SIGNED32));
+			out.RawInt16(1);	(* biPlanes *)
 			IF img.fmt.pal # NIL THEN
 				CASE img.fmt.pal.used OF
 					  2: bpp := 1
@@ -196,22 +196,22 @@ TYPE
 			ELSIF img.fmt.code = Raster.bgr888 THEN bpp := 24
 			ELSIF img.fmt.code = Raster.bgra8888 THEN bpp := 32
 			END;
-			out.RawInt(bpp);	(* biBitCount *)
+			out.RawInt16(bpp);	(* biBitCount *)
 			(* biCompression *)
 			CASE img.fmt.code OF
-				  Raster.bgr565: out.RawLInt(BITFIELDS)	(* BITFIELDS compression *)
-				| Raster.bgr555: out.RawLInt(BITFIELDS)	(* BITFIELDS compression *)
-				| Raster.bgr466: out.RawLInt(BITFIELDS)	(* BITFIELDS compression *)
-				| Raster.bgra8888: out.RawLInt(BITFIELDS)	(* BITFIELDS compression *)
+				  Raster.bgr565: out.RawInt32(BITFIELDS)	(* BITFIELDS compression *)
+				| Raster.bgr555: out.RawInt32(BITFIELDS)	(* BITFIELDS compression *)
+				| Raster.bgr466: out.RawInt32(BITFIELDS)	(* BITFIELDS compression *)
+				| Raster.bgra8888: out.RawInt32(BITFIELDS)	(* BITFIELDS compression *)
 			ELSE
-				out.RawLInt(0)
+				out.RawInt32(0)
 			END;
-			out.RawLInt(dataSize);(* biSizeImage *)
-			out.RawLInt(0);(* biXPelsPerMeter *)
-			out.RawLInt(0);(* biYPelsPerMeter *)
+			out.RawInt32(dataSize);(* biSizeImage *)
+			out.RawInt32(0);(* biXPelsPerMeter *)
+			out.RawInt32(0);(* biYPelsPerMeter *)
 			IF img.fmt.pal # NIL THEN
-				out.RawLInt(img.fmt.pal.used);	(* biClrUsed *)
-				out.RawLInt(img.fmt.pal.used);	(* biClrImportant *)
+				out.RawInt32(img.fmt.pal.used);	(* biClrUsed *)
+				out.RawInt32(img.fmt.pal.used);	(* biClrImportant *)
 				(* RGBQUAD color table *)
 				col := 0;
 				WHILE col < img.fmt.pal.used DO
@@ -222,16 +222,16 @@ TYPE
 					INC(col)
 				END
 			ELSE
-				out.RawLInt(0);
-				out.RawLInt(0)
+				out.RawInt32(0);
+				out.RawInt32(0)
 			END;
 
 			CASE img.fmt.code OF
-				  Raster.bgr565: out.RawLInt(0F800H); out.RawLInt(07E0H); out.RawLInt(01FH)
-				| Raster.bgr555: out.RawLInt(07C00H); out.RawLInt(03E0H); out.RawLInt(01FH)
-				| Raster.bgr466: out.RawLInt(0FC00H); out.RawLInt(03F0H); out.RawLInt(00FH)
-				| Raster.bgr888: out.RawLInt(0FF00H); out.RawLInt(0FF0H); out.RawLInt(0FFH)
-				| Raster.bgra8888: out.RawLInt(0FF0000H); out.RawLInt(0FF00H); out.RawLInt(0FFH)
+				  Raster.bgr565: out.RawInt32(0F800H); out.RawInt32(07E0H); out.RawInt32(01FH)
+				| Raster.bgr555: out.RawInt32(07C00H); out.RawInt32(03E0H); out.RawInt32(01FH)
+				| Raster.bgr466: out.RawInt32(0FC00H); out.RawInt32(03F0H); out.RawInt32(00FH)
+				| Raster.bgr888: out.RawInt32(0FF00H); out.RawInt32(0FF0H); out.RawInt32(0FFH)
+				| Raster.bgra8888: out.RawInt32(0FF0000H); out.RawInt32(0FF00H); out.RawInt32(0FFH)
 			ELSE
 			END;
 

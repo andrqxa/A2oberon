@@ -562,8 +562,8 @@ VAR
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(ident); context.arg.SkipWhitespace;
 	FOR i := 0 TO LEN(lap)-1 DO lap[i] := HexToChar(context.arg.Get(), context.arg.Get()) END;
-	context.arg.SkipWhitespace; context.arg.Int(length, TRUE);
-	context.arg.SkipWhitespace; context.arg.Int(numResponses, TRUE);
+	context.arg.SkipWhitespace; context.arg.Int32(length, TRUE);
+	context.arg.SkipWhitespace; context.arg.Int32(numResponses, TRUE);
 	IF (context.arg.res = Streams.Ok) THEN
 		IF (0 < length) & (length <= 30H) & (0 <= numResponses) & (numResponses < 100H) THEN
 			d := Find(ident);
@@ -628,7 +628,7 @@ VAR
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(ident); context.arg.SkipWhitespace;
 	FOR i := 0 TO LEN(remote)-1 DO remote[i] := HexToChar(context.arg.Get(), context.arg.Get()) END;
-	context.arg.SkipWhitespace; context.arg.Int(offset, TRUE);
+	context.arg.SkipWhitespace; context.arg.Int32(offset, TRUE);
 	IF (context.arg.res = Streams.Ok) THEN
 		d := Find(ident);
 		IF (d # NIL) THEN

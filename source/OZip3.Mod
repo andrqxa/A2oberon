@@ -44,7 +44,7 @@ CONST
 			IF f1 # NIL THEN
 				f2 := Files.New( name2 ); 
 				Files.OpenReader( r, f1, 0 );  Files.OpenWriter( w, f2, 0 );
-				w.RawLInt( ComprTag );
+				w.RawInt32( ComprTag );
 				BWHCompressor.Compress( r, w );  Files.Register( f2 );
 				c.out.String( " => " );  c.out.String( name2 );  c.out.Ln;  c.out.Update
 			ELSE
@@ -76,7 +76,7 @@ CONST
 			f1 := Files.Old( name1 );
 			IF f1 # NIL THEN
 				Files.OpenReader( r, f1, 0 );
-				r.RawLInt( tag );
+				r.RawInt32( tag );
 				IF tag # ComprTag THEN
 					Error( c, "   ### input file not OZip3 compressed" )
 				ELSE

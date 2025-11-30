@@ -1860,10 +1860,10 @@ BEGIN
 
 	IF options.Parse(context.arg, context.error) THEN
 		x := 0; y := 0; w := 0; h := 0;
-		context.arg.SkipWhitespace; context.arg.Int(x, FALSE);
-		context.arg.SkipWhitespace; context.arg.Int(y, FALSE);
-		context.arg.SkipWhitespace; context.arg.Int(w, FALSE);
-		context.arg.SkipWhitespace; context.arg.Int(h, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(x, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(y, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(w, FALSE);
+		context.arg.SkipWhitespace; context.arg.Int32(h, FALSE);
 
 		IF options.GetFlag("display") THEN
 			x := x * width; w := w * width;

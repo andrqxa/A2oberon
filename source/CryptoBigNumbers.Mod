@@ -863,18 +863,18 @@ VAR
 	PROCEDURE FileRead*( r: Streams.Reader;  VAR b: BigNumber );
 	VAR i, j, v: INTEGER;
 	BEGIN
-		r.RawLInt( j );
+		r.RawInt32( j );
 		NEW( b, 32 * j );
 		b.len := j;
-		FOR i := 0 TO j - 1 DO  r.RawLInt( v ); b.d[ i ] := v  END
+		FOR i := 0 TO j - 1 DO  r.RawInt32( v ); b.d[ i ] := v  END
 	END FileRead;
 
 	PROCEDURE FileWrite*( w: Streams.Writer;  b: BigNumber );
 	VAR i, j, v: INTEGER;
 	BEGIN
 		j := INTEGER( b.len );
-		w.RawLInt( j );
-		FOR i := 0 TO j - 1 DO  w.RawLInt( v ); b.d[ i ] := v  END
+		w.RawInt32( j );
+		FOR i := 0 TO j - 1 DO  w.RawInt32( v ); b.d[ i ] := v  END
 	END FileWrite;
 
 

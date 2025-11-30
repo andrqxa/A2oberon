@@ -319,7 +319,7 @@ VAR
 		NEW( file.R, file.F, 0 );  file.R.file := file;
 		IF existingFile THEN
 			(* Read in the library. *)
-			file.R.RawLInt( libPos );  NEW( libR, file.F, libPos );  file.lib.Read( libR )
+			file.R.RawInt32( libPos );  NEW( libR, file.F, libPos );  file.lib.Read( libR )
 		END;
 		file.R.lib := file.lib;
 		(* Attach the writer. *)
@@ -330,7 +330,7 @@ VAR
 		ELSE
 			NEW( file.W, file.F, 0 );
 			(* Handle the place holder locating the library. *)
-			file.W.RawLInt( dummy );  file.R.RawLInt( dummy )
+			file.W.RawInt32( dummy );  file.R.RawInt32( dummy )
 		END;
 		file.W.lib := file.lib;  file.W.file := file;  RETURN file
 	END Open;
@@ -344,7 +344,7 @@ VAR
 		IF f # NIL THEN
 			NEW( f.lib );  NEW( f.R, f.F, 0 );  NEW( f.W, f.F, 0 );  f.initialwpos := 0;  f.R.lib := f.lib;  f.R.file := f;  f.W.lib := f.lib;  f.W.file := f;
 			(* Handle the place holder locating the library. *)
-			f.W.RawLInt( dummy );  f.R.RawLInt( dummy )
+			f.W.RawInt32( dummy );  f.R.RawInt32( dummy )
 		END
 	END Rewind;
 
@@ -356,7 +356,7 @@ VAR
 	BEGIN
 		f.W.Update;  NEW( libPosW, f.F, 0 );   (* writing library position to very first position *)
 
-		libPosW.RawLInt( f.W.Pos()(SIGNED32) + f.initialwpos );  libPosW.Update;  f.lib.Write( f.W );
+		libPosW.RawInt32( f.W.Pos()(SIGNED32) + f.initialwpos );  libPosW.Update;  f.lib.Write( f.W );
 
 		f.W.Update;  Files.Register( f.F );  f.F := NIL;  f.lib := NIL;  f.R := NIL;  f.W := NIL
 	END Close;

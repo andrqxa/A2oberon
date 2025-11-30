@@ -247,14 +247,14 @@ BEGIN
 	pb := arr.relocInfo.patchBlock; relocations := 0;
 	WHILE pb # NIL DO
 		FOR i := 0 TO pb.addresses -1 DO
-			w.RawLInt( pb.address[i] );  INC( relocations );
+			w.RawInt32( pb.address[i] );  INC( relocations );
 		END;
 		pb := pb.next;
 	END;
 	(* now patch header (cf  Unix.Glue.Mod)  *)
 	w.SetPos( 24 );
-	w.RawLInt( binsize(SIGNED32) );
-	w.RawLInt( relocations(SIGNED32) );
+	w.RawInt32( binsize(SIGNED32) );
+	w.RawInt32( relocations(SIGNED32) );
 END WriteRelocations;
 
 PROCEDURE WriteOutputFile* (arrangement: Arrangement; CONST fileName: Files.FileName; linker: GenericLinker.Linker; fileFormat: FileFormat);

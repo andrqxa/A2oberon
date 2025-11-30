@@ -241,20 +241,20 @@ BEGIN
 
 	(* port *)
 	port := 5901;
-	IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int(port, TRUE) END;
+	IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int32(port, TRUE) END;
 	context.arg.SkipWhitespace;
 	(* dx *)
 	dx := 0;
-	IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') OR (context.arg.Peek()='-') THEN context.arg.Int(dx, TRUE) END;
+	IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') OR (context.arg.Peek()='-') THEN context.arg.Int32(dx, TRUE) END;
 	context.arg.SkipWhitespace;
 	(* dy *)
-	dy := 0; IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') OR (context.arg.Peek()='-') THEN context.arg.Int(dy, TRUE) END;
+	dy := 0; IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') OR (context.arg.Peek()='-') THEN context.arg.Int32(dy, TRUE) END;
 	context.arg.SkipWhitespace;
 	(* w *)
-	w := 1024; IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int(w, TRUE) END;
+	w := 1024; IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int32(w, TRUE) END;
 	context.arg.SkipWhitespace;
 	(* h *)
-	h := 768; IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int(h, TRUE) END;
+	h := 768; IF (context.arg.Peek() >= '0') & (context.arg.Peek() <= '9') THEN context.arg.Int32(h, TRUE) END;
 	context.arg.SkipWhitespace;
 
 	NEW(nv, WMWindowManager.GetDefaultManager(), port, dx, dy, w, h, name, password);

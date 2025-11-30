@@ -2441,7 +2441,7 @@ BEGIN
 	Strings.StrToFloat(dstring, lreal); ml := SHORT(lreal);
 	context.arg.SkipWhitespace; context.arg.Token(dstring);
 	Strings.StrToFloat(dstring, lreal); mr := SHORT(lreal);
-	context.arg.SkipWhitespace; context.arg.Int(f, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(f, FALSE);
 
 	IF f = 0 THEN fp := FALSE ELSE fp:= TRUE END;
 	NEW(instance, NIL);

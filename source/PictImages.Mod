@@ -83,14 +83,14 @@ MODULE PictImages; (** non-portable *)	(* eos  **)
 	BEGIN
 		file := Files.Old(fname);
 		IF file # NIL THEN
-			Files.OpenReader(r, file, 0); r.RawInt(id);
+			Files.OpenReader(r, file, 0); r.RawInt16(id);
 			IF id = 07F7H THEN	(* document *)
 				r.RawString(gen); r.SkipBytes(4*2);
-				r.RawInt(id)
+				r.RawInt16(id)
 			END;
 
 			IF id = -4093 THEN	(* Pictures.PictFileId *)
-				r.RawInt(w); r.RawInt(h); r.RawInt(depth);
+				r.RawInt16(w); r.RawInt16(h); r.RawInt16(depth);
 
 				(* load picture palette *)
 				i := 0; n := ASH(1, depth); NEW(pal);
@@ -156,8 +156,8 @@ MODULE PictImages; (** non-portable *)	(* eos  **)
 		IF file # NIL THEN
 			Raster.InitMode(SrcCopy, Raster.srcCopy);
 			Files.OpenWriter(w, file, 0);
-			w.RawInt(-4093);	(* Pictures.PictFileId *)
-			w.RawInt(SIGNED16(img.width)); w.RawInt(SIGNED16(img.height));
+			w.RawInt16(-4093);	(* Pictures.PictFileId *)
+			w.RawInt16(SIGNED16(img.width)); w.RawInt16(SIGNED16(img.height));
 
 			(* find out which format to use *)
 			pal := img.fmt.pal;
@@ -180,7 +180,7 @@ MODULE PictImages; (** non-portable *)	(* eos  **)
 			END;
 
 			(* write palette *)
-			w.RawInt(depth);
+			w.RawInt16(depth);
 			i := 0;
 			WHILE i < ASH(1, depth) DO
 				w.Char(pal.col[i, R]); w.Char(pal.col[i, G]); w.Char(pal.col[i, B]);

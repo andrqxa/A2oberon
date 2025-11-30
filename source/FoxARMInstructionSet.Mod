@@ -2833,7 +2833,7 @@ CONST
 		NEW(r, file, 0);
 		NEW(bitSet,0);
 		WHILE r.Available()>0 DO
-			r.RawLInt(val);
+			r.RawInt32(val);
 			INC(adr);
 			bitSet.Resize(adr*32);
 			bitSet.SetBits((adr-1)*32,32,val);

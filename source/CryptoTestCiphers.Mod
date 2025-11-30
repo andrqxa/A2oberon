@@ -11,7 +11,7 @@ IMPORT
 	BEGIN
 		(* read in the parameter *)
 		c.arg.SkipWhitespace; c.arg.String(modname);
-		c.arg.SkipWhitespace; c.arg.Int(keybits, FALSE);
+		c.arg.SkipWhitespace; c.arg.Int32(keybits, FALSE);
 		(* encryption *)
 		cipher := Ciphers.NewCipher( modname );
 		hex := "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
@@ -41,7 +41,7 @@ IMPORT
 	BEGIN
 		(* read in the parameter *)
 		c.arg.SkipWhitespace; c.arg.String(modname);
-		c.arg.SkipWhitespace; c.arg.Int(keybits, FALSE);
+		c.arg.SkipWhitespace; c.arg.Int32(keybits, FALSE);
 				(* encryption *)
 		cipher := Ciphers.NewCipher( modname );
 		hex := "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
@@ -75,7 +75,7 @@ IMPORT
 	BEGIN
 		(* read in the parameter *)
 		c.arg.SkipWhitespace; c.arg.String(modname);
-		c.arg.SkipWhitespace; c.arg.Int(keybits, FALSE);
+		c.arg.SkipWhitespace; c.arg.Int32(keybits, FALSE);
 				(* encryption *)
 		cipher := Ciphers.NewCipher( modname );
 		hex := "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
@@ -224,7 +224,7 @@ IMPORT
 		(* read in the parameter *)
 		c.arg.SkipWhitespace; c.arg.String(modname);
 		c.arg.SkipWhitespace; c.arg.String(mode);
-		c.arg.SkipWhitespace; c.arg.Int(keybits, FALSE);
+		c.arg.SkipWhitespace; c.arg.Int32(keybits, FALSE);
 		(* measure time *)
 		FOR i := 0 TO 1023 DO	buf[i] := 'a'	END;
 		cipher := Ciphers.NewCipher( modname );
@@ -379,7 +379,7 @@ IMPORT
 	BEGIN
 		(* read in the parameter *)
 		c.arg.SkipWhitespace; c.arg.String(modname);
-		c.arg.SkipWhitespace; c.arg.Int(keybits, FALSE);
+		c.arg.SkipWhitespace; c.arg.Int32(keybits, FALSE);
 				(* encryption *)
 		cipher := Ciphers.NewCipher( modname );
 		U.RandomBytes(binkey, 0, keybits DIV 8);

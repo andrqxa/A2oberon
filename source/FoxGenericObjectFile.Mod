@@ -448,7 +448,7 @@ TYPE
 		IF ~binary THEN ASSERT(string="FoxOFT") END;
 		reader.SkipWhitespace;
 		reader.Char(ch); ASSERT(ch='v');
-		reader.Int(version,FALSE);
+		reader.Int32(version,FALSE);
 		IF version # ObjectFile.Version THEN KernelLog.String("warning: invalid object file encountered, recompile all sources"); KernelLog.Ln END;
 		reader.Char(ch); ASSERT(ch='.');
 		IF ~binary THEN reader.SkipWhitespace

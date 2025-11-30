@@ -172,7 +172,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	END;
 END GetFileName;
@@ -271,7 +271,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 		RETURN;
 	END;
@@ -281,8 +281,8 @@ BEGIN
 	WriteSMBHeader(c);
 	c.out.Net8(1);			(* word count *)
 	c.fid := GetFID();
-	c.out.RawInt(c.fid);
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(c.fid);
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleCreateNew;
 
@@ -310,7 +310,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleCreateDir;
 
@@ -339,7 +339,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleDeleteDir;
 
@@ -352,8 +352,8 @@ BEGIN
 	IF Trace THEN KernelLog.String("Handle Echo: "); KernelLog.Int(c.cmd, 0); KernelLog.Ln(); END;
 
 	c.in.SkipBytes(1);	(* skip wordCount *)
-	c.in.RawInt(echoCount);
-	c.in.RawInt(byteCount);
+	c.in.RawInt16(echoCount);
+	c.in.RawInt16(byteCount);
 	c.in.Bytes(buffer, 0, byteCount, len);
 
 	FOR i := 1 TO echoCount DO
@@ -361,8 +361,8 @@ BEGIN
 		c.netbios := 32 + 5 + SIGNED16(len);
 		WriteSMBHeader(c);
 		c.out.Net8(1);	(* word count *)
-		c.out.RawInt(SHORT(i));
-		c.out.RawInt(SIGNED16(len));	(* bytecount *)
+		c.out.RawInt16(SHORT(i));
+		c.out.RawInt16(SIGNED16(len));	(* bytecount *)
 		c.out.Bytes(buffer, 0, len);
 		c.out.Update();
 	END;
@@ -379,7 +379,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleLMTrans;
 
@@ -394,7 +394,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleTrans;
 
@@ -411,14 +411,14 @@ BEGIN
 
 	(* RECEIVE *)
 	c.in.SkipBytes(5);
-	c.in.RawInt(fidToRead);
+	c.in.RawInt16(fidToRead);
 	GetFileName(fidToRead, filename);
 	ReplaceSlash(filename);
 
 	IF Trace THEN KernelLog.String(" -- File to read: "); KernelLog.String(filename); KernelLog.Ln(); END;
 
-	c.in.RawLInt(offset);
-	c.in.RawInt(maxCount);
+	c.in.RawInt32(offset);
+	c.in.RawInt16(maxCount);
 	f := Files.Old(filename);
 
 	IF (f # NIL) THEN
@@ -430,15 +430,15 @@ BEGIN
 		c.out.Net8(255);		(* andx *)
 		c.out.Net8(0);			(* reserved *)
 		c.out.Net16(0);			(* andx offset *)
-		c.out.RawInt(-1);		(* remaining: reserved, must be -1 *)
-		c.out.RawInt(0); 		(* dataCompactionMode *)
-		c.out.RawInt(0); 		(* reserved *)
-		c.out.RawInt(SIGNED16(len));	(* low order length bytes *)
-		c.out.RawInt(59);
-		c.out.RawLInt(0);		(* no write-large-capability -> datalengthhigh is 0 *)
-		c.out.RawInt(0);
-		c.out.RawLInt(0); 		(* 6 bytes reserved *)
-		c.out.RawInt(SIGNED16(len)); 	(* ByteCount *)
+		c.out.RawInt16(-1);		(* remaining: reserved, must be -1 *)
+		c.out.RawInt16(0); 		(* dataCompactionMode *)
+		c.out.RawInt16(0); 		(* reserved *)
+		c.out.RawInt16(SIGNED16(len));	(* low order length bytes *)
+		c.out.RawInt16(59);
+		c.out.RawInt32(0);		(* no write-large-capability -> datalengthhigh is 0 *)
+		c.out.RawInt16(0);
+		c.out.RawInt32(0); 		(* 6 bytes reserved *)
+		c.out.RawInt16(SIGNED16(len)); 	(* ByteCount *)
 
 		(* write data *)
 		c.out.Bytes(buffer, 0, len);
@@ -453,7 +453,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	END;
 END HandleRead;
@@ -471,14 +471,14 @@ BEGIN
 
 	(* RECEIVE *)
 	c.in.SkipBytes(1);
-	c.in.RawInt(fidToWrite);
+	c.in.RawInt16(fidToWrite);
 	GetFileName(fidToWrite, filename);
 	ReplaceSlash(filename);
 
 	IF Trace THEN KernelLog.String(" -- File to write: "); KernelLog.String(filename); KernelLog.Ln(); END;
 
-	c.in.RawInt(count);
-	c.in.RawLInt(offset);
+	c.in.RawInt16(count);
+	c.in.RawInt32(offset);
 	c.in.SkipBytes(7);
 
 	IF count = 0 THEN
@@ -491,7 +491,7 @@ BEGIN
 		c.netbios := 32 + 5;
 		WriteSMBHeader(c);
 		c.out.Net8(1);			(* word count *)
-		c.out.RawInt(0);			(* count *)
+		c.out.RawInt16(0);			(* count *)
 		c.out.Net16(0);			(* byte count *)
 		c.out.Update();
 		RETURN;
@@ -509,7 +509,7 @@ BEGIN
 		c.netbios := 32 + 5;
 		WriteSMBHeader(c);
 		c.out.Net8(1);			(* word count *)
-		c.out.RawInt(count);	(* count *)
+		c.out.RawInt16(count);	(* count *)
 		c.out.Net16(0);			(* byte count *)
 		c.out.Update();
 	ELSE (* FID invalid *)
@@ -521,7 +521,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	END;
 END HandleWrite;
@@ -539,16 +539,16 @@ BEGIN
 
 	(* RECEIVE *)
 	c.in.SkipBytes(5);
-	c.in.RawInt(fidToWrite);
+	c.in.RawInt16(fidToWrite);
 	GetFileName(fidToWrite, filename);
 	ReplaceSlash(filename);
 
 	IF Trace THEN KernelLog.String(" -- File to write: "); KernelLog.String(filename); KernelLog.Ln(); END;
 
-	c.in.RawLInt(offset);
+	c.in.RawInt32(offset);
 	c.in.SkipBytes(12);
-	c.in.RawInt(dataOffset);
-	c.in.RawInt(byteCount);
+	c.in.RawInt16(dataOffset);
+	c.in.RawInt16(byteCount);
 
 	IF (dataOffset = 0) OR (byteCount = 0) THEN
 		f := NIL;
@@ -571,11 +571,11 @@ BEGIN
 		c.out.Net8(255);		(* andx *)
 		c.out.Net8(0);			(* reserved *)
 		c.out.Net16(0);			(* andx offset *)
-		c.out.RawInt(SIGNED16(len));	(* len written *)
-		c.out.RawInt(-1);		(* remaining *)
-		c.out.RawInt(0);			(* count high *)
-		c.out.RawInt(0);			(* reserved *)
-		c.out.RawInt(0);			(* byte count *)
+		c.out.RawInt16(SIGNED16(len));	(* len written *)
+		c.out.RawInt16(-1);		(* remaining *)
+		c.out.RawInt16(0);			(* count high *)
+		c.out.RawInt16(0);			(* reserved *)
+		c.out.RawInt16(0);			(* byte count *)
 		c.out.Update();
 	ELSE (* FID invalid *)
 		IF Trace THEN KernelLog.String(" -- FID invalid!"); KernelLog.Ln(); END;
@@ -586,7 +586,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	END;
 END HandleWriteAndX;
@@ -619,27 +619,27 @@ BEGIN
 		WriteSMBHeader(c);
 		c.out.Net8(10);			(* word count *)
 		IF (filename = c.sharename) OR (Files.Directory IN f.flags)  THEN (* is Directory *)
-			c.out.RawInt(10H);
+			c.out.RawInt16(10H);
 		ELSE
-			c.out.RawInt(0H);
+			c.out.RawInt16(0H);
 		END;
 
 		IF (f # NIL) THEN
 			f.GetDate(t,d);
 			dTime := Dates.OberonToDateTime(d,t);
 			GetUnixTimeStamp(dTime, t);
-			c.out.RawLInt(t);		(* last write *)
-			c.out.RawLInt(f.Length()(SIGNED32));		(* file size *)
+			c.out.RawInt32(t);		(* last write *)
+			c.out.RawInt32(f.Length()(SIGNED32));		(* file size *)
 		ELSE
-			c.out.RawLInt(0);		(* last write *)
-			c.out.RawLInt(0);		(* file size *)
+			c.out.RawInt32(0);		(* last write *)
+			c.out.RawInt32(0);		(* file size *)
 		END;
 
 		FOR i := 1 TO 5 DO
-			c.out.RawInt(0);
+			c.out.RawInt16(0);
 		END;
 
-		c.out.RawInt(0);
+		c.out.RawInt16(0);
 		c.out.Update();
 	ELSE
 		IF Trace THEN KernelLog.String(" -- File not found!"); KernelLog.Ln(); END;
@@ -650,7 +650,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	END;
 
@@ -684,21 +684,21 @@ BEGIN
 		WriteSMBHeader(c);
 		c.out.Net8(7);			(* word count *)
 		c.fid := GetFID();
-		c.out.RawInt(c.fid);		(* FID *)
+		c.out.RawInt16(c.fid);		(* FID *)
 
 		IF (Files.Directory IN f.flags) THEN
-			c.out.RawInt(10H);
+			c.out.RawInt16(10H);
 		ELSE
-			c.out.RawInt(0H);
+			c.out.RawInt16(0H);
 		END;
 
 		f.GetDate(t,d);
 		dTime := Dates.OberonToDateTime(d,t);
 		GetUnixTimeStamp(dTime, t);
-		c.out.RawLInt(t);		(* last write *)
-		c.out.RawLInt(f.Length()(SIGNED32));			(* datasize *)
-		c.out.RawInt(0);			(* granted access *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt32(t);		(* last write *)
+		c.out.RawInt32(f.Length()(SIGNED32));			(* datasize *)
+		c.out.RawInt16(0);			(* granted access *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	ELSE
 		IF Trace THEN KernelLog.String(" -- File not found!"); KernelLog.Ln(); END;
@@ -710,7 +710,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	END;
 END HandleOpenOld;
@@ -758,21 +758,21 @@ BEGIN
 	c.netbios := 32 + 37 + 10 + SIGNED16(Strings.Length(PrimaryDomain) + Strings.Length(Server));
 	WriteSMBHeader(c);
 	c.out.Net8(17);			(* word count *)
-	c.out.RawInt(dialectIndex);
+	c.out.RawInt16(dialectIndex);
 	c.out.Net8(1);			(* security mode *)
-	c.out.RawInt(1);			(* max mpx count *)
-	c.out.RawInt(1);			(* max vc *)
-	c.out.RawLInt(32767);	(* max buffer size *)
-	c.out.RawLInt(32767);	(* max raw buffer *)
-	c.out.RawLInt(0);		(* sessionkey *)
-	c.out.RawLInt(0);		(* capabilities *)
+	c.out.RawInt16(1);			(* max mpx count *)
+	c.out.RawInt16(1);			(* max vc *)
+	c.out.RawInt32(32767);	(* max buffer size *)
+	c.out.RawInt32(32767);	(* max raw buffer *)
+	c.out.RawInt32(0);		(* sessionkey *)
+	c.out.RawInt32(0);		(* capabilities *)
 	GetSMBTimeStamp(Dates.Now(), t);
-	c.out.RawLInt(t[0]);		(* system time *)
-	c.out.RawLInt(t[1]);		(* system time*)
+	c.out.RawInt32(t[0]);		(* system time *)
+	c.out.RawInt32(t[1]);		(* system time*)
 	c.out.Char(CHR(0));		(* time zone *)
 	c.out.Char(CHR(0));		(* time zone *)
 	c.out.Net8(8);			(* key length *)
-	c.out.RawInt(SIGNED16(Strings.Length(PrimaryDomain) + Strings.Length(Server)));
+	c.out.RawInt16(SIGNED16(Strings.Length(PrimaryDomain) + Strings.Length(Server)));
 	c.out.String("serverpw");
 	c.out.RawString(PrimaryDomain);
 	c.out.RawString(Server);
@@ -792,8 +792,8 @@ BEGIN
 
 	(* RECEIVE *)
 	c.in.SkipBytes(15);
-	c.in.RawInt(ansiPwLen);
-	c.in.RawInt(ucPwLen);
+	c.in.RawInt16(ansiPwLen);
+	c.in.RawInt16(ucPwLen);
 	c.in.SkipBytes(10);
 
 	IF ansiPwLen > 0 THEN
@@ -816,7 +816,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 		RETURN;
 	END;
@@ -828,8 +828,8 @@ BEGIN
 	c.out.Char(CHR(255));	(* and x *)
 	c.out.Net8(0);			(* reserved *)
 	c.out.Net16(0);			(* andx offset *)
-	c.out.RawInt(1);			(* logged in as guest *)
-	c.out.RawInt(3 + SIGNED16(Strings.Length(NativeOS) + Strings.Length(PrimaryDomain) + Strings.Length(LANManager)));	(* max vc *)
+	c.out.RawInt16(1);			(* logged in as guest *)
+	c.out.RawInt16(3 + SIGNED16(Strings.Length(NativeOS) + Strings.Length(PrimaryDomain) + Strings.Length(LANManager)));	(* max vc *)
 	c.out.RawString(NativeOS);
 	c.out.RawString(LANManager);
 	c.out.RawString(PrimaryDomain);
@@ -851,8 +851,8 @@ BEGIN
 
 	(* RECEIVE *)
 	c.in.SkipBytes(7);
-	c.in.RawInt(pwLen);
-	c.in.RawInt(byteCount);
+	c.in.RawInt16(pwLen);
+	c.in.RawInt16(byteCount);
 
 	IF pwLen > 0 THEN
 		c.in.Bytes(password, 0, pwLen, i);
@@ -895,7 +895,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	END;
 
@@ -906,10 +906,10 @@ BEGIN
 	c.out.Char(CHR(255));		(* and x *)
 	c.out.Net8(0);				(* reserved *)
 	c.out.Net16(0);				(* andx offset *)
-	c.out.RawInt(0);				(* optional support *)
-	c.out.RawLInt(268435456); 	(* rights *)
-	c.out.RawLInt(268435456); 	(* rights *)
-	c.out.RawInt(2 + SIGNED16(Strings.Length(FileSystem) + Strings.Length(service)));
+	c.out.RawInt16(0);				(* optional support *)
+	c.out.RawInt32(268435456); 	(* rights *)
+	c.out.RawInt32(268435456); 	(* rights *)
+	c.out.RawInt16(2 + SIGNED16(Strings.Length(FileSystem) + Strings.Length(service)));
 	c.out.RawString(service);
 	c.out.RawString(FileSystem);
 	c.out.Update();
@@ -923,7 +923,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 
 	c.client.Discard();
@@ -942,9 +942,9 @@ BEGIN
 
 	(* RECEIVE *)
 	c.in.SkipBytes(17);
-	c.in.RawInt(openFunc);
+	c.in.RawInt16(openFunc);
 	c.in.SkipBytes(12);
-	c.in.RawInt(byteCount);
+	c.in.RawInt16(byteCount);
 	c.in.RawString(filename);
 
 	ReplaceSlash(filename);
@@ -968,32 +968,32 @@ BEGIN
 		c.out.Net8(0);			(* reserved *)
 		c.out.Net16(0);			(* andx offset *)
 		c.fid := GetFID();
-		c.out.RawInt(c.fid);		(* FID *)
+		c.out.RawInt16(c.fid);		(* FID *)
 
 		IF ((f # NIL) & (Files.Directory IN f.flags)) OR (filename = c.sharename) THEN (* is Directory *)
-			c.out.RawInt(10H);
+			c.out.RawInt16(10H);
 		ELSE
-			c.out.RawInt(0H);
+			c.out.RawInt16(0H);
 		END;
 
 		IF (f # NIL) THEN
 			f.GetDate(t,d);
 			dTime := Dates.OberonToDateTime(d,t);
 			GetUnixTimeStamp(dTime, t);
-			c.out.RawLInt(t);		(* last write *)
-			c.out.RawLInt(f.Length()(SIGNED32));		(* file size *)
+			c.out.RawInt32(t);		(* last write *)
+			c.out.RawInt32(f.Length()(SIGNED32));		(* file size *)
 		ELSE
-			c.out.RawLInt(0);		(* last write *)
-			c.out.RawLInt(0);		(* file size *)
+			c.out.RawInt32(0);		(* last write *)
+			c.out.RawInt32(0);		(* file size *)
 		END;
 
-		c.out.RawInt(0);			(* granted access *)
-		c.out.RawInt(0);			(* filetype *)
-		c.out.RawInt(0);			(* ipc state *)
-		c.out.RawInt(1);			(* action *)
-		c.out.RawLInt(0);		(* serverfid*)
-		c.out.RawInt(0);			(* reserved *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* granted access *)
+		c.out.RawInt16(0);			(* filetype *)
+		c.out.RawInt16(0);			(* ipc state *)
+		c.out.RawInt16(1);			(* action *)
+		c.out.RawInt32(0);		(* serverfid*)
+		c.out.RawInt16(0);			(* reserved *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	ELSIF (f = NIL) & (4 IN SET( openFunc)) THEN
 		IF Trace THEN KernelLog.String(" -- creating file..."); KernelLog.Ln(); END;
@@ -1010,18 +1010,18 @@ BEGIN
 		c.out.Net8(0);			(* reserved *)
 		c.out.Net16(0);			(* andx offset *)
 		c.fid := GetFID();
-		c.out.RawInt(c.fid);		(* FID *)
-		c.out.RawInt(0H);
+		c.out.RawInt16(c.fid);		(* FID *)
+		c.out.RawInt16(0H);
 		GetUnixTimeStamp(Dates.Now(), t);
-		c.out.RawLInt(t);		(* last write *)
-		c.out.RawLInt(f.Length()(SIGNED32));		 (* filesize *)
-		c.out.RawInt(0);			(* granted access *)
-		c.out.RawInt(0);			(* filetype *)
-		c.out.RawInt(0);			(* ipc state *)
-		c.out.RawInt(2);			(* action *)
-		c.out.RawLInt(0);		(* serverfid*)
-		c.out.RawInt(0);			(* reserved *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt32(t);		(* last write *)
+		c.out.RawInt32(f.Length()(SIGNED32));		 (* filesize *)
+		c.out.RawInt16(0);			(* granted access *)
+		c.out.RawInt16(0);			(* filetype *)
+		c.out.RawInt16(0);			(* ipc state *)
+		c.out.RawInt16(2);			(* action *)
+		c.out.RawInt32(0);		(* serverfid*)
+		c.out.RawInt16(0);			(* reserved *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	ELSIF (f # NIL) & ~(0 IN SET( openFunc)) THEN
 		IF Trace THEN KernelLog.String(" -- Invalid open mode!."); KernelLog.Ln(); END;
@@ -1033,7 +1033,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	ELSIF Strings.StartsWith("/PIPE/", 0, filename) THEN
 		IF Trace THEN KernelLog.String(" -- opening pipe..."); KernelLog.Ln(); END;
@@ -1048,17 +1048,17 @@ BEGIN
 		c.out.Net8(0);			(* reserved *)
 		c.out.Net16(0);			(* andx offset *)
 		c.fid := GetFID();
-		c.out.RawInt(c.fid);		(* FID *)
-		c.out.RawInt(0H);
-		c.out.RawLInt(0);		(* lastwrite *)
-		c.out.RawLInt(0);		(* filesize *)
-		c.out.RawInt(0);			(* granted access *)
-		c.out.RawInt(0);			(* filetype *)
-		c.out.RawInt(0);			(* ipc state *)
-		c.out.RawInt(1);			(* action *)
-		c.out.RawLInt(0);		(* serverfid*)
-		c.out.RawInt(0);			(* reserved *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(c.fid);		(* FID *)
+		c.out.RawInt16(0H);
+		c.out.RawInt32(0);		(* lastwrite *)
+		c.out.RawInt32(0);		(* filesize *)
+		c.out.RawInt16(0);			(* granted access *)
+		c.out.RawInt16(0);			(* filetype *)
+		c.out.RawInt16(0);			(* ipc state *)
+		c.out.RawInt16(1);			(* action *)
+		c.out.RawInt32(0);		(* serverfid*)
+		c.out.RawInt16(0);			(* reserved *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	ELSE
 		IF Trace THEN KernelLog.String(" -- File not found!"); KernelLog.Ln(); END;
@@ -1070,7 +1070,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	END;
 END HandleOpen;
@@ -1083,7 +1083,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleClose;
 
@@ -1095,7 +1095,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleFindClose2;
 
@@ -1107,7 +1107,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleFlush;
 
@@ -1147,7 +1147,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleRename;
 
@@ -1177,7 +1177,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleDelete;
 
@@ -1193,7 +1193,7 @@ BEGIN
 
 	(* RECEIVE *)
 	c.in.SkipBytes(1);
-	c.in.RawInt(fid);
+	c.in.RawInt16(fid);
 	GetFileName(fid, filename);
 	ReplaceSlash(filename);
 
@@ -1206,16 +1206,16 @@ BEGIN
 		c.netbios := 32 + 25;
 		WriteSMBHeader(c);
 		c.out.Net8(11);			(* word count *)
-		c.out.RawLInt(0);		(* creation time *)
-		c.out.RawLInt(0);		(* last access *)
+		c.out.RawInt32(0);		(* creation time *)
+		c.out.RawInt32(0);		(* last access *)
 		f.GetDate(t,d);
 		dTime := Dates.OberonToDateTime(d,t);
 		GetDOSTimeStamp(dTime, t);
-		c.out.RawLInt(t);		(* last write *)
-		c.out.RawLInt(f.Length()(SIGNED32));		(* file data size *)
-		c.out.RawLInt(f.Length()(SIGNED32));		(* file alloc *)
-		c.out.RawInt(0);		(* attr *)
-		c.out.RawInt(0);		(* byte count *)
+		c.out.RawInt32(t);		(* last write *)
+		c.out.RawInt32(f.Length()(SIGNED32));		(* file data size *)
+		c.out.RawInt32(f.Length()(SIGNED32));		(* file alloc *)
+		c.out.RawInt16(0);		(* attr *)
+		c.out.RawInt16(0);		(* byte count *)
 		c.out.Update();
 	ELSE
 		IF Trace THEN KernelLog.String(" -- File not found!"); KernelLog.Ln(); END;
@@ -1227,7 +1227,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 	END;
 END HandleQueryInfo2;
@@ -1239,7 +1239,7 @@ BEGIN
 	c.netbios := 32 + 3;
 	WriteSMBHeader(c);
 	c.out.Net8(0);			(* word count *)
-	c.out.RawInt(0);			(* bytecount *)
+	c.out.RawInt16(0);			(* bytecount *)
 	c.out.Update();
 END HandleSetInfo2;
 
@@ -1252,10 +1252,10 @@ BEGIN
 
 	(* RECEIVE *)
 	c.in.SkipBytes(21);
-	c.in.RawInt(offset);
+	c.in.RawInt16(offset);
 	offset := offset - 63;
 	c.in.SkipBytes(6);
-	c.in.RawInt(subcommand);
+	c.in.RawInt16(subcommand);
 	c.in.SkipBytes(offset);
 
 	IF Trace THEN KernelLog.String(" -- Subcommand: "); KernelLog.Int(subcommand, 0); KernelLog.Ln(); END;
@@ -1287,7 +1287,7 @@ BEGIN
 		c.netbios := 32 + 3;
 		WriteSMBHeader(c);
 		c.out.Net8(0);			(* word count *)
-		c.out.RawInt(0);			(* bytecount *)
+		c.out.RawInt16(0);			(* bytecount *)
 		c.out.Update();
 		RETURN;
 	ELSIF (subcmd = 3)  THEN
@@ -1297,21 +1297,21 @@ BEGIN
 		c.netbios := 32 + 25 + 10 + SIGNED16(Strings.Length(FileSystem) + 1);
 		WriteSMBHeader(c);
 		c.out.Net8(10);
-		c.out.RawInt(0);
-		c.out.RawInt(12 + SIGNED16(Strings.Length(FileSystem) + 1));
+		c.out.RawInt16(0);
+		c.out.RawInt16(12 + SIGNED16(Strings.Length(FileSystem) + 1));
 		c.out.Net16(0);
-		c.out.RawInt(0);
-		c.out.RawInt(55);
-		c.out.RawInt(0);
-		c.out.RawInt(12 + SIGNED16(Strings.Length(FileSystem) + 1));
-		c.out.RawInt(55);
-		c.out.RawInt(0);
+		c.out.RawInt16(0);
+		c.out.RawInt16(55);
+		c.out.RawInt16(0);
+		c.out.RawInt16(12 + SIGNED16(Strings.Length(FileSystem) + 1));
+		c.out.RawInt16(55);
+		c.out.RawInt16(0);
 		c.out.Net8(0);
 		c.out.Net8(0);
-		c.out.RawInt(12 + SIGNED16(Strings.Length(FileSystem) + 1));
-		c.out.RawLInt(32);
-		c.out.RawLInt(64);
-		c.out.RawLInt(SIGNED32(Strings.Length(FileSystem) + 1));
+		c.out.RawInt16(12 + SIGNED16(Strings.Length(FileSystem) + 1));
+		c.out.RawInt32(32);
+		c.out.RawInt32(64);
+		c.out.RawInt32(SIGNED32(Strings.Length(FileSystem) + 1));
 		c.out.RawString(FileSystem);
 		c.out.Update();
 	ELSIF (subcmd = 5)  THEN
@@ -1334,7 +1334,7 @@ BEGIN
 			c.netbios := 32 + 3;
 			WriteSMBHeader(c);
 			c.out.Net8(0);			(* word count *)
-			c.out.RawInt(0);			(* bytecount *)
+			c.out.RawInt16(0);			(* bytecount *)
 			c.out.Update();
 			RETURN;
 		END;
@@ -1343,43 +1343,43 @@ BEGIN
 		c.netbios := SIGNED16(32 + 89 + Strings.Length(eName));
 		WriteSMBHeader(c);
 		c.out.Net8(10);			(* Word count *)
-		c.out.RawInt(2);			(* total para count *)
-		c.out.RawInt(82);		(* total data count *)
+		c.out.RawInt16(2);			(* total para count *)
+		c.out.RawInt16(82);		(* total data count *)
 		c.out.Net16(0);			(* reserved *)
-		c.out.RawInt(2);			(* parameter count *)
-		c.out.RawInt(55);		(* para offset *)
-		c.out.RawInt(0);			(* para displacement *)
-		c.out.RawInt(82);		(* data count *)
-		c.out.RawInt(57);		(* data offset *)
-		c.out.RawInt(0);			(* data displacement *)
+		c.out.RawInt16(2);			(* parameter count *)
+		c.out.RawInt16(55);		(* para offset *)
+		c.out.RawInt16(0);			(* para displacement *)
+		c.out.RawInt16(82);		(* data count *)
+		c.out.RawInt16(57);		(* data offset *)
+		c.out.RawInt16(0);			(* data displacement *)
 		c.out.Net8(0);			(* setup count *)
 		c.out.Net8(0);			(* reserved *)
-		c.out.RawInt(84);		(* byte count *)
+		c.out.RawInt16(84);		(* byte count *)
 
 		(* query path info params *)
-		c.out.RawInt(0);			(* ea error offset *)
+		c.out.RawInt16(0);			(* ea error offset *)
 
 		(* query path info data*)
-		c.out.RawLInt(0);		(* created *)
-		c.out.RawLInt(0);		(* created *)
-		c.out.RawLInt(0);		(* last access *)
-		c.out.RawLInt(0);		(* last access *)
-		c.out.RawLInt(0);		(* last write *)
-		c.out.RawLInt(0);		(* last write *)
-		c.out.RawLInt(0);		(* change *)
-		c.out.RawLInt(0);		(* change *)
+		c.out.RawInt32(0);		(* created *)
+		c.out.RawInt32(0);		(* created *)
+		c.out.RawInt32(0);		(* last access *)
+		c.out.RawInt32(0);		(* last access *)
+		c.out.RawInt32(0);		(* last write *)
+		c.out.RawInt32(0);		(* last write *)
+		c.out.RawInt32(0);		(* change *)
+		c.out.RawInt32(0);		(* change *)
 
 		IF eName[0] = 0X THEN
-			c.out.RawInt(16);	(* attr *)
+			c.out.RawInt16(16);	(* attr *)
 		ELSE
-			c.out.RawInt(0);		(* attr *)
+			c.out.RawInt16(0);		(* attr *)
 		END;
 
-		c.out.RawLInt(0);		(* alloc *)
-		c.out.RawLInt(0);		(* alloc *)
-		c.out.RawLInt(0);		(* eof *)
-		c.out.RawLInt(0);		(* eof *)
-		c.out.RawLInt(1);		(* link count *)
+		c.out.RawInt32(0);		(* alloc *)
+		c.out.RawInt32(0);		(* alloc *)
+		c.out.RawInt32(0);		(* eof *)
+		c.out.RawInt32(0);		(* eof *)
+		c.out.RawInt32(1);		(* link count *)
 		c.out.Net8(0);			(* delete pending *)
 
 		IF eName[0] = 0X THEN
@@ -1388,17 +1388,17 @@ BEGIN
 			c.out.Net8(0);		(* is dir *)
 		END;
 
-		c.out.RawLInt(0);		(* ea list *)
-		c.out.RawLInt(SIGNED32(Strings.Length(eName)));		(* filename len*)
+		c.out.RawInt32(0);		(* ea list *)
+		c.out.RawInt32(SIGNED32(Strings.Length(eName)));		(* filename len*)
 		c.out.RawString(eName);		(* file name*)
 		c.out.Update();
 	ELSIF (subcmd = 1) THEN
 		IF Trace THEN KernelLog.String(" -- FIND FIRST 2"); KernelLog.Ln(); END;
 
 		c.in.SkipBytes(2);
-		c.in.RawInt(searchCount);
+		c.in.RawInt16(searchCount);
 		c.in.SkipBytes(2);
-		c.in.RawInt(loi);
+		c.in.RawInt16(loi);
 		c.in.SkipBytes(4);
 		c.in.RawString(pattern);
 
@@ -1455,7 +1455,7 @@ BEGIN
 			c.netbios := 32 + 3;
 			WriteSMBHeader(c);
 			c.out.Net8(0);			(* word count *)
-			c.out.RawInt(0);			(* bytecount *)
+			c.out.RawInt16(0);			(* bytecount *)
 			c.out.Update();
 			RETURN;
 		END;
@@ -1475,30 +1475,30 @@ BEGIN
 		c.netbios := 32 + 23 + 10 + j;
 		WriteSMBHeader(c);
 		c.out.Net8(10);
-		c.out.RawInt(10); 		(* total parameter count *)
-		c.out.RawInt(j); 			(* total data count *)
+		c.out.RawInt16(10); 		(* total parameter count *)
+		c.out.RawInt16(j); 			(* total data count *)
 		c.out.Net16(0);
-		c.out.RawInt(10);  		(* parameter count *)
-		c.out.RawInt(55); 		(* parameter offset *)
-		c.out.RawInt(0);
-		c.out.RawInt(j); 			(* data count *)
-		c.out.RawInt(65); 		(* data offset *)
-		c.out.RawInt(0);
+		c.out.RawInt16(10);  		(* parameter count *)
+		c.out.RawInt16(55); 		(* parameter offset *)
+		c.out.RawInt16(0);
+		c.out.RawInt16(j); 			(* data count *)
+		c.out.RawInt16(65); 		(* data offset *)
+		c.out.RawInt16(0);
 		c.out.Net8(0);
 		c.out.Net8(0);
-		c.out.RawInt(10 +  j); 	(* byte count *)
+		c.out.RawInt16(10 +  j); 	(* byte count *)
 		c.sid := GetSID();
-		c.out.RawInt(c.sid);		(* search id *)
-		c.out.RawInt(i); 			(* search count *)
+		c.out.RawInt16(c.sid);		(* search id *)
+		c.out.RawInt16(i); 			(* search count *)
 
 		IF eos THEN
-			c.out.RawInt(1); 	(* end of search *)
+			c.out.RawInt16(1); 	(* end of search *)
 		ELSE
-			c.out.RawInt(0); 	(* end of search *)
+			c.out.RawInt16(0); 	(* end of search *)
 		END;
 
-		c.out.RawInt(0); 		(* ea error *)
-		c.out.RawInt(j - lastlen);(* lastnameoffset *)
+		c.out.RawInt16(0); 		(* ea error *)
+		c.out.RawInt16(j - lastlen);(* lastnameoffset *)
 		enum.Reset();
 
 		WHILE (i > 0) DO
@@ -1510,79 +1510,79 @@ BEGIN
 				f := Files.Old(eName);
 
 				IF loi = 260 THEN
-					c.out.RawLInt(96 + SIGNED32(Strings.Length(eName)));		(* next entry offset *)
-					c.out.RawLInt(0);		(* file index*)
-					c.out.RawLInt(0);		(* created *)
-					c.out.RawLInt(0);		(* created *)
-					c.out.RawLInt(0);		(* last access *)
-					c.out.RawLInt(0);		(* last access *)
+					c.out.RawInt32(96 + SIGNED32(Strings.Length(eName)));		(* next entry offset *)
+					c.out.RawInt32(0);		(* file index*)
+					c.out.RawInt32(0);		(* created *)
+					c.out.RawInt32(0);		(* created *)
+					c.out.RawInt32(0);		(* last access *)
+					c.out.RawInt32(0);		(* last access *)
 					IF (f # NIL) THEN
 						f.GetDate(t,d);
 						dTime := Dates.OberonToDateTime(d,t);
 						GetSMBTimeStamp(dTime, tarray);
-						c.out.RawLInt(tarray[0]);		(* last write *)
-						c.out.RawLInt(tarray[1]);		(* last write *)
+						c.out.RawInt32(tarray[0]);		(* last write *)
+						c.out.RawInt32(tarray[1]);		(* last write *)
 					ELSE
-						c.out.RawLInt(0);		(* last write *)
-						c.out.RawLInt(0);		(* last write *)
+						c.out.RawInt32(0);		(* last write *)
+						c.out.RawInt32(0);		(* last write *)
 					END;
 
-					c.out.RawLInt(0);		(* change *)
-					c.out.RawLInt(0);		(* change *)
+					c.out.RawInt32(0);		(* change *)
+					c.out.RawInt32(0);		(* change *)
 
 					IF (f # NIL) THEN
-						c.out.RawLInt(f.Length()(SIGNED32));		(* eof *)
-						c.out.RawLInt(0);		(* eof *)
+						c.out.RawInt32(f.Length()(SIGNED32));		(* eof *)
+						c.out.RawInt32(0);		(* eof *)
 					ELSE
-						c.out.RawLInt(0);		(* eof *)
-						c.out.RawLInt(0);		(* eof *)
+						c.out.RawInt32(0);		(* eof *)
+						c.out.RawInt32(0);		(* eof *)
 					END;
 
 					IF (f # NIL) THEN
-						c.out.RawLInt(f.Length()(SIGNED32));		(* alloc *)
+						c.out.RawInt32(f.Length()(SIGNED32));		(* alloc *)
 					ELSE
-						c.out.RawLInt(0);		(* alloc *)
+						c.out.RawInt32(0);		(* alloc *)
 					END;
 
-					c.out.RawLInt(0);		(* alloc *)
+					c.out.RawInt32(0);		(* alloc *)
 					flags := {};
 					IF (Files.Directory IN eFlags) THEN INCL(flags, 4); END;
 					IF (Files.ReadOnly IN eFlags) THEN INCL(flags, 0) END;
-					c.out.RawLInt(SIGNED32( flags));		(* file attr *)
-					c.out.RawLInt(1 + SIGNED32(Strings.Length(eName)));		(* filename len *)
-					c.out.RawLInt(0);		(* ea list *)
-					c.out.RawSInt(0);		(* short fn len *)
-					c.out.RawSInt(0);		(* reserved *)
+					c.out.RawInt32(SIGNED32( flags));		(* file attr *)
+					c.out.RawInt32(1 + SIGNED32(Strings.Length(eName)));		(* filename len *)
+					c.out.RawInt32(0);		(* ea list *)
+					c.out.RawInt8(0);		(* short fn len *)
+					c.out.RawInt8(0);		(* reserved *)
 
 					FOR z := 1 TO 24 DO
 						c.out.Net8(0);
 					END;				(* short filename *)
 
 					c.out.RawString(eName);		(* file name*)
-					c.out.RawSInt(0);		(* padding *)
+					c.out.RawInt8(0);		(* padding *)
 				ELSIF loi = 1 THEN
-					c.out.RawLInt(0);		(* resume key *)
-					c.out.RawLInt(0);		(* created *)
-					c.out.RawLInt(0);		(* last access *)
+					c.out.RawInt32(0);		(* resume key *)
+					c.out.RawInt32(0);		(* created *)
+					c.out.RawInt32(0);		(* last access *)
 
 					IF (f # NIL) THEN
 						f.GetDate(t,d);
 						dTime := Dates.OberonToDateTime(d,t);
 						GetUnixTimeStamp(dTime, t);
-						c.out.RawLInt(t);		(* last write *)
-						c.out.RawLInt(f.Length()(SIGNED32));		(* data size *)
-						c.out.RawLInt(f.Length()(SIGNED32));		(* alloc size *)
+						c.out.RawInt32(t);		(* last write *)
+						c.out.RawInt32(f.Length()(SIGNED32));		(* data size *)
+						c.out.RawInt32(f.Length()(SIGNED32));		(* alloc size *)
 					ELSE
-						c.out.RawLInt(0);		(* last write *)
-						c.out.RawLInt(0);
-						c.out.RawLInt(0);
+						c.out.RawInt32(0);		(* last write *)
+						c.out.RawInt32(0);
+						c.out.RawInt32(0);
 					END;
 
 					flags := {};
 					IF (Files.Directory IN eFlags) THEN INCL(flags, 4); END;
 					IF (Files.ReadOnly IN eFlags) THEN INCL(flags, 0) END;
-					c.out.RawInt(SIGNED16(flags));			(* file attri *)
-					c.out.RawSInt(SIGNED8(Strings.Length(eName)));	(* filename len *)
+					c.out.RawInt16(SIGNED16(flags));			(* file attri *)
+					c.out.RawInt8(SIGNED8(Strings.Length(eName)));	(* filename len *)
 					c.out.RawString(eName);		(* file name*)
 				END;
 			END;
@@ -1592,9 +1592,9 @@ BEGIN
 		enum.Close();
 	ELSIF (subcmd = 2) THEN
 		IF Trace THEN KernelLog.String(" -- FIND Next 2"); KernelLog.Ln(); END;
-		c.in.RawInt(sidnext);
-		c.in.RawInt(searchCount);
-		c.in.RawInt(loi);
+		c.in.RawInt16(sidnext);
+		c.in.RawInt16(searchCount);
+		c.in.RawInt16(loi);
 		c.in.SkipBytes(6);
 		c.in.RawString(resumeFn);
 		GetPattern(sidnext, pattern);
@@ -1661,28 +1661,28 @@ BEGIN
 		c.netbios := 32 + 23 + 8 + j;
 		WriteSMBHeader(c);
 		c.out.Net8(8);
-		c.out.RawInt(8); 		(* total parameter count *)
-		c.out.RawInt(j); 			(* total data count *)
+		c.out.RawInt16(8); 		(* total parameter count *)
+		c.out.RawInt16(j); 			(* total data count *)
 		c.out.Net16(0);
-		c.out.RawInt(8);  		(* parameter count *)
-		c.out.RawInt(55); 		(* parameter offset *)
-		c.out.RawInt(0);
-		c.out.RawInt(j); 			(* data count *)
-		c.out.RawInt(63); 		(* data offset *)
-		c.out.RawInt(0);
+		c.out.RawInt16(8);  		(* parameter count *)
+		c.out.RawInt16(55); 		(* parameter offset *)
+		c.out.RawInt16(0);
+		c.out.RawInt16(j); 			(* data count *)
+		c.out.RawInt16(63); 		(* data offset *)
+		c.out.RawInt16(0);
 		c.out.Net8(0);
 		c.out.Net8(0);
-		c.out.RawInt(10 +  j); 	(* byte count *)
-		c.out.RawInt(i); 			(* search count *)
+		c.out.RawInt16(10 +  j); 	(* byte count *)
+		c.out.RawInt16(i); 			(* search count *)
 
 		IF eos THEN
-			c.out.RawInt(1); 	(* end of search *)
+			c.out.RawInt16(1); 	(* end of search *)
 		ELSE
-			c.out.RawInt(0); 	(* end of search *)
+			c.out.RawInt16(0); 	(* end of search *)
 		END;
 
-		c.out.RawInt(0); 		(* ea error *)
-		c.out.RawInt(j - lastlen);(* lastnameoffset *)
+		c.out.RawInt16(0); 		(* ea error *)
+		c.out.RawInt16(j - lastlen);(* lastnameoffset *)
 		enum.Reset();
 
 		WHILE (eName # resumeFn) & (enum.HasMoreEntries()) DO
@@ -1701,82 +1701,82 @@ BEGIN
 				f := Files.Old(eName);
 
 				IF loi = 260 THEN
-					c.out.RawLInt(96 + SIGNED32(Strings.Length(eName)));		(* next entry offset *)
-					c.out.RawLInt(0);		(* file index*)
-					c.out.RawLInt(0);		(* created *)
-					c.out.RawLInt(0);		(* created *)
-					c.out.RawLInt(0);		(* last access *)
-					c.out.RawLInt(0);		(* last access *)
+					c.out.RawInt32(96 + SIGNED32(Strings.Length(eName)));		(* next entry offset *)
+					c.out.RawInt32(0);		(* file index*)
+					c.out.RawInt32(0);		(* created *)
+					c.out.RawInt32(0);		(* created *)
+					c.out.RawInt32(0);		(* last access *)
+					c.out.RawInt32(0);		(* last access *)
 
 					IF (f # NIL) THEN
 						f.GetDate(t,d);
 						dTime := Dates.OberonToDateTime(d,t);
 						GetSMBTimeStamp(dTime, tarray);
-						c.out.RawLInt(tarray[0]);		(* last write *)
-						c.out.RawLInt(tarray[1]);		(* last write *)
+						c.out.RawInt32(tarray[0]);		(* last write *)
+						c.out.RawInt32(tarray[1]);		(* last write *)
 					ELSE
-						c.out.RawLInt(0);		(* last write *)
-						c.out.RawLInt(0);		(* last write *)
+						c.out.RawInt32(0);		(* last write *)
+						c.out.RawInt32(0);		(* last write *)
 					END;
 
-					c.out.RawLInt(0);		(* change *)
-					c.out.RawLInt(0);		(* change *)
+					c.out.RawInt32(0);		(* change *)
+					c.out.RawInt32(0);		(* change *)
 
 					IF (f # NIL) THEN
-						c.out.RawLInt(f.Length()(SIGNED32));		(* eof *)
-						c.out.RawLInt(0);		(* eof *)
-						c.out.RawLInt(f.Length()(SIGNED32));		(* alloc *)
-						c.out.RawLInt(0);		(* alloc *)
+						c.out.RawInt32(f.Length()(SIGNED32));		(* eof *)
+						c.out.RawInt32(0);		(* eof *)
+						c.out.RawInt32(f.Length()(SIGNED32));		(* alloc *)
+						c.out.RawInt32(0);		(* alloc *)
 					ELSE
-						c.out.RawLInt(0);		(* eof *)
-						c.out.RawLInt(0);		(* eof *)
-						c.out.RawLInt(0);		(* alloc *)
-						c.out.RawLInt(0);		(* alloc *)
+						c.out.RawInt32(0);		(* eof *)
+						c.out.RawInt32(0);		(* eof *)
+						c.out.RawInt32(0);		(* alloc *)
+						c.out.RawInt32(0);		(* alloc *)
 					END;
 
 					flags := {};
 					IF (Files.Directory IN eFlags) THEN INCL(flags, 4); END;
 					IF (Files.ReadOnly IN eFlags) THEN INCL(flags, 0) END;
-					c.out.RawLInt(SIGNED32( flags));		(* file attr *)
+					c.out.RawInt32(SIGNED32( flags));		(* file attr *)
 
-					c.out.RawLInt(1 + SIGNED32(Strings.Length(eName)));		(* filename len *)
-					c.out.RawLInt(0);		(* ea list *)
-					c.out.RawSInt(0);		(* short fn len *)
-					c.out.RawSInt(0);		(* reserved *)
+					c.out.RawInt32(1 + SIGNED32(Strings.Length(eName)));		(* filename len *)
+					c.out.RawInt32(0);		(* ea list *)
+					c.out.RawInt8(0);		(* short fn len *)
+					c.out.RawInt8(0);		(* reserved *)
 
 					FOR z := 1 TO 24 DO
 						c.out.Net8(0);
 					END;				(* short filename *)
 
 					c.out.RawString(eName);		(* file name*)
-					c.out.RawSInt(0);		(* padding *)
+					c.out.RawInt8(0);		(* padding *)
 				ELSIF loi = 1 THEN
-					c.out.RawLInt(0);		(* resume key *)
-					c.out.RawLInt(0);		(* created *)
-					c.out.RawLInt(0);		(* last access *)
+					c.out.RawInt32(0);		(* resume key *)
+					c.out.RawInt32(0);		(* created *)
+					c.out.RawInt32(0);		(* last access *)
 
 					IF (f # NIL) THEN
 						f.GetDate(t,d);
 						dTime := Dates.OberonToDateTime(d,t);
 						GetUnixTimeStamp(dTime, t);
-						c.out.RawLInt(t);		(* last write *)
-						c.out.RawLInt(f.Length()(SIGNED32));		(* data size *)
+						c.out.RawInt32(t);		(* last write *)
+						c.out.RawInt32(f.Length()(SIGNED32));		(* data size *)
 					ELSE
-						c.out.RawLInt(0);		(* last write *)
-						c.out.RawLInt(0);
+						c.out.RawInt32(0);		(* last write *)
+						c.out.RawInt32(0);
 					END;
 
 					IF (f # NIL) THEN
-						c.out.RawLInt(f.Length()(SIGNED32));		(* alloc size *)
+						c.out.RawInt32(f.Length()(SIGNED32));		(* alloc size *)
 					ELSE
-						c.out.RawLInt(0);
+						c.out.RawInt32(0);
 					END;
 
 					flags := {};
 					IF (Files.Directory IN eFlags) THEN INCL(flags, 4); END;
 					IF (Files.ReadOnly IN eFlags) THEN INCL(flags, 0) END;
-					c.out.RawInt(SIGNED16(flags));			(* file attri *)
-					c.out.RawSInt(SIGNED8(Strings.Length(eName)));	(* filename len *)
+					c.out.RawInt16(SIGNED16(flags));			(* file attri *)
+					c.out.RawInt8(SIGNED8(Strings.Length(eName)));	(* filename len *)
 					c.out.RawString(eName);		(* file name*)
 				END;
 			END;
@@ -1800,11 +1800,11 @@ BEGIN
 	IF ~c.error THEN
 		c.out.Net32(0);		(* status code *)
 	ELSE
-		c.out.RawLInt(c.errorcode);
+		c.out.RawInt32(c.errorcode);
 	END;
 
 	c.out.Net8(90H);		(* FLAGS *)
-	c.out.RawInt(1);			(* FLAGS 2 *)
+	c.out.RawInt16(1);			(* FLAGS 2 *)
 	c.out.Net32(0);
 	c.out.Net32(0);			(* EXTRA *)
 	c.out.Net32(0);
@@ -1813,15 +1813,15 @@ BEGIN
 		c.tid := GetTID();
 	END;
 
-	c.out.RawInt(c.tid);		(* TID *)
-	c.out.RawInt(c.pid);		(* PID *)
+	c.out.RawInt16(c.tid);		(* TID *)
+	c.out.RawInt16(c.pid);		(* PID *)
 
 	IF (c.cmd = ORD(73X)) THEN
 		c.uid := GetUID();
 	END;
 
-	c.out.RawInt(c.uid);		(* UID *)
-	c.out.RawInt(c.mid);		(* MID *)
+	c.out.RawInt16(c.uid);		(* UID *)
+	c.out.RawInt16(c.mid);		(* MID *)
 END WriteSMBHeader;
 
 PROCEDURE CheckSMBHeader(VAR c: Connection): BOOLEAN;
@@ -1846,12 +1846,12 @@ BEGIN
 	END;
 
 	c.flags := c.in.Net8();
-	c.in.RawInt(c.flags2);
+	c.in.RawInt16(c.flags2);
 	c.in.SkipBytes(12);
-	c.in.RawInt(c.tid);
-	c.in.RawInt(c.pid);
-	c.in.RawInt(c.uid);
-	c.in.RawInt(c.mid);
+	c.in.RawInt16(c.tid);
+	c.in.RawInt16(c.pid);
+	c.in.RawInt16(c.uid);
+	c.in.RawInt16(c.mid);
 	RETURN FALSE;
 END CheckSMBHeader;
 

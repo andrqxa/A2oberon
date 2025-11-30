@@ -70,7 +70,7 @@ BEGIN
 	w.Char(1X); (* descriptor version; 1 for el torito 1.0 specification from january 25, 1995 *)
 	WriteStringWithPadding(w, ElToritoSysId, 0X, 32); (* boot system id *)
 	WriteByteRep(w, 0X, 32); (* unused *)
-	w.RawLInt(NumSystemSectors + 1 + 1 + 1); (* absolute pointer to sector (LBA) of boot catalog *)
+	w.RawInt32(NumSystemSectors + 1 + 1 + 1); (* absolute pointer to sector (LBA) of boot catalog *)
 	WriteByteRep(w, 0X, 1973); (* unused *)
 END WriteElToritoDescriptor;
 
@@ -112,32 +112,32 @@ BEGIN
 
 	w.Char(22X); (* length of directory record *)
 	w.Char(0X); (* extended attribute record length *)
-	w.RawLInt(NumSystemSectors + 4); w.Net32(NumSystemSectors + 4); (* location of extent *)
-	w.RawLInt(CDSectorSize); w.Net32(CDSectorSize); (* data length *)
+	w.RawInt32(NumSystemSectors + 4); w.Net32(NumSystemSectors + 4); (* location of extent *)
+	w.RawInt32(CDSectorSize); w.Net32(CDSectorSize); (* data length *)
 	WriteByteRep(w, 0X, 7);
-	(*w.RawSInt(SHORT(SHORT(now.Year - 1900)));
-	w.RawSInt(SHORT(SHORT(now.Month + 1)));
-	w.RawSInt(SHORT(SHORT(now.Day)));
-	w.RawSInt(SHORT(SHORT(now.Hour)));
-	w.RawSInt(SHORT(SHORT(now.Minute)));
-	w.RawSInt(SHORT(SHORT(now.Second)));
+	(*w.RawInt8(SHORT(SHORT(now.Year - 1900)));
+	w.RawInt8(SHORT(SHORT(now.Month + 1)));
+	w.RawInt8(SHORT(SHORT(now.Day)));
+	w.RawInt8(SHORT(SHORT(now.Hour)));
+	w.RawInt8(SHORT(SHORT(now.Minute)));
+	w.RawInt8(SHORT(SHORT(now.Second)));
 	w.Char(0X);*)
 	w.Char(2X); (* file flags: this is a directory *)
 	w.Char(0X); (* file unit size *)
 	w.Char(0X); (* interleave gap size *)
-	w.RawInt(1); w.Net16(1); (* volume sequence number *)
+	w.RawInt16(1); w.Net16(1); (* volume sequence number *)
 	w.Char(1X); (* length of file identifier *)
 	w.Char(0X); (* file id: 0X indicates first entry of directory *)
 
 	w.Char(22X); (* length of directory record *)
 	w.Char(0X); (* extended attribute record length *)
-	w.RawLInt(NumSystemSectors + 4); w.Net32(NumSystemSectors + 4); (* location of extent *)
-	w.RawLInt(CDSectorSize); w.Net32(CDSectorSize); (* data length *)
+	w.RawInt32(NumSystemSectors + 4); w.Net32(NumSystemSectors + 4); (* location of extent *)
+	w.RawInt32(CDSectorSize); w.Net32(CDSectorSize); (* data length *)
 	WriteByteRep(w, 0X, 7);
 	w.Char(2X); (* file flags: this is a directory *)
 	w.Char(0X); (* file unit size *)
 	w.Char(0X); (* interleave gap size *)
-	w.RawInt(1); w.Net16(1); (* volume sequence number *)
+	w.RawInt16(1); w.Net16(1); (* volume sequence number *)
 	w.Char(1X); (* length of file identifier *)
 	w.Char(1X); (* file id: 0X indicates first entry of directory *)
 
@@ -151,8 +151,8 @@ PROCEDURE WriteTypeLPathTable(w: Streams.Writer);
 BEGIN
 	w.Char(1X); (* length of directory identifier *)
 	w.Char(0X); (* extended attribute record length *)
-	w.RawLInt(NumSystemSectors + 4); (* location of extent *)
-	w.RawInt(1); (* parent directory number *)
+	w.RawInt32(NumSystemSectors + 4); (* location of extent *)
+	w.RawInt16(1); (* parent directory number *)
 	w.Char(0X); (* directory identifier *)
 
 	WriteByteRep(w, 0X, CDSectorSize - 9);
@@ -188,10 +188,10 @@ BEGIN
 	WriteBothByteOrder16(w, 1); (* volume sequence number *)
 	WriteBothByteOrder16(w, CDSectorSize); (* logical block size *)
 	WriteBothByteOrder32(w, 10); (* path table size *)
-	w.RawLInt(NumSystemSectors + 1 + 1 + 1 + 1 + 1); (* location (LBA) of occurrence of type L path table *)
-	w.RawLInt(0); (* location (LBA) of optional occurrence of type L path table *)
+	w.RawInt32(NumSystemSectors + 1 + 1 + 1 + 1 + 1); (* location (LBA) of occurrence of type L path table *)
+	w.RawInt32(0); (* location (LBA) of optional occurrence of type L path table *)
 	w.Net32(NumSystemSectors + 1 + 1 + 1 + 1 + 1 + 1); (* location (LBA) of occurrence of type M path table *)
-	w.RawLInt(0); (* location (LBA) of optional occurrence of type M path table *)
+	w.RawInt32(0); (* location (LBA) of optional occurrence of type M path table *)
 	WriteDirectoryRecord(w); (* directory record for root directory *)
 	WriteByteRep(w, ' ', 128); (* volume set id *)
 	WriteStringWithPadding(w, BBPublisher, ' ', 128);
@@ -220,18 +220,18 @@ VAR now: Dates.DateTime;
 BEGIN
 	now := Dates.Now();
 
-	w.RawSInt(22H); (* length of this directory record *)
+	w.RawInt8(22H); (* length of this directory record *)
 	w.Char(0X); (* extended attribute record length *)
 	WriteBothByteOrder32(w, NumSystemSectors + 1 + 1 + 1 + 1); (* location (LBA) of extent *)
 	WriteBothByteOrder32(w, CDSectorSize); (* data length *)
 
 	(* recording date and time, one byte per field; year, month, day, hour, minute, second, time zone offset *)
-	w.RawSInt(SHORT(SHORT(now.year - 1900)));
-	w.RawSInt(SHORT(SHORT(now.month + 1)));
-	w.RawSInt(SHORT(SHORT(now.day)));
-	w.RawSInt(SHORT(SHORT(now.hour)));
-	w.RawSInt(SHORT(SHORT(now.minute)));
-	w.RawSInt(SHORT(SHORT(now.second)));
+	w.RawInt8(SHORT(SHORT(now.year - 1900)));
+	w.RawInt8(SHORT(SHORT(now.month + 1)));
+	w.RawInt8(SHORT(SHORT(now.day)));
+	w.RawInt8(SHORT(SHORT(now.hour)));
+	w.RawInt8(SHORT(SHORT(now.minute)));
+	w.RawInt8(SHORT(SHORT(now.second)));
 	w.Char(0X); (* use zero time offset *)
 	w.Char(2X); (* file flags: this is a directory *)
 	w.Char(0X); (* file unit size *)
@@ -260,13 +260,13 @@ END CalcIsoImageSectorCount;
 
 PROCEDURE WriteBothByteOrder32(w: Streams.Writer; x: SIGNED32);
 BEGIN
-	w.RawLInt(x);
+	w.RawInt32(x);
 	w.Net32(x);
 END WriteBothByteOrder32;
 
 PROCEDURE WriteBothByteOrder16(w: Streams.Writer; x:SIGNED16);
 BEGIN
-	w.RawInt(x);
+	w.RawInt16(x);
 	w.Net16(x);
 END WriteBothByteOrder16;
 
@@ -292,7 +292,7 @@ BEGIN
 	nLongs := CDSectorSize DIV 4; (* number of 32bits per sector *)
 	FOR s := 1 TO n DO
 		FOR i := 1 TO nLongs DO
-			w.RawLInt(0);
+			w.RawInt32(0);
 		END;
 	END;
 END WriteEmptySectors;

@@ -43,9 +43,9 @@ TYPE
 		PROCEDURE WriteCodeBlock(len, adr: SIGNED32);
 		VAR i: SIGNED32;
 		BEGIN
-			IF plain THEN SetPos (adr - base) ELSE Rout.RawLInt (len); Rout.RawLInt (adr) END;
-			WHILE i < len DO Rout.RawLInt( code[i]); INC(i) END;
-			IF ~plain & (len # 0) THEN Rout.RawLInt( 0) END
+			IF plain THEN SetPos (adr - base) ELSE Rout.RawInt32 (len); Rout.RawInt32 (adr) END;
+			WHILE i < len DO Rout.RawInt32( code[i]); INC(i) END;
+			IF ~plain & (len # 0) THEN Rout.RawInt32( 0) END
 		END WriteCodeBlock;
 
 		PROCEDURE Fixup(fixloc, offset, base: SIGNED32; VAR entry: ARRAY OF SIGNED32);
@@ -90,12 +90,12 @@ TYPE
 				IF F # NIL THEN
 					Files.OpenReader(R, F, 0);
 					NEW(mod); mod.next := NIL; mod.refcnt := 0;
-					R.RawString( mod.name); R.RawLInt( mod.key);
-					R.RawLInt( fixself);
+					R.RawString( mod.name); R.RawInt32( mod.key);
+					R.RawInt32( fixself);
 					R.RawString( name); success := TRUE; i := 0;
 					W.String( "module "); W.String( mod.name); W.String(" key: "); W.Hex( mod.key, -9); W.Ln();
 					WHILE (name[0] # 0X) & success DO
-						R.RawLInt (key); R.RawLInt (fix);
+						R.RawInt32 (key); R.RawInt32 (fix);
 (*						W.String ("    importing "); W.String(name); W.String(" Key: " );
 						W.Hex (key, 9); W.String(" fix: "); W.Int (fix, 6); W.Ln; W.Update;
 *)						imp := ThisMod(name, success);
@@ -117,15 +117,15 @@ TYPE
 						IF first = NIL THEN first := mod ELSE last.next := mod END; last := mod;
 						i := 0; R.RawString( mod.command[i].name);
 						WHILE mod.command[i].name[0] # 0X DO  (*skip commands*)
-							R.RawLInt( mod.command[i].offset); INC (i);
+							R.RawInt32( mod.command[i].offset); INC (i);
 							R.RawString( mod.command[i].name);
 						END ;
-						R.RawLInt( nofentries); R.RawLInt( mod.entry[0]); i := 0;
+						R.RawInt32( nofentries); R.RawInt32( mod.entry[0]); i := 0;
 						W.String("modEntry ="); W.Int(mod.entry[0],1); W.Ln;
-						WHILE i < nofentries DO INC(i); R.RawLInt( mod.entry[i]) END ; INC (i); mod.entry[i] := 0; mod.entries := i;
-						mod.dbase := heap; R.RawLInt( datasize); INC (heap, datasize); mod.pbase := heap;
-						R.RawLInt( codelen); mod.size := codelen*4; INC (heap, mod.size); i := 0;
-						WHILE i < codelen DO R.RawLInt( code[i]); INC(i) END ;
+						WHILE i < nofentries DO INC(i); R.RawInt32( mod.entry[i]) END ; INC (i); mod.entry[i] := 0; mod.entries := i;
+						mod.dbase := heap; R.RawInt32( datasize); INC (heap, datasize); mod.pbase := heap;
+						R.RawInt32( codelen); mod.size := codelen*4; INC (heap, mod.size); i := 0;
+						WHILE i < codelen DO R.RawInt32( code[i]); INC(i) END ;
 						FixSelf(fixself, mod.pbase); i := 0;
 						WHILE i < nofimp DO
 							Fixup(fixroot[i], (import[i].pbase - mod.pbase) DIV 4, import[i].pbase, import[i].entry); INC(i)
@@ -229,7 +229,7 @@ TYPE
 				ELSE
 			 		Files.OpenReader(in, header, 0);
 			 		WHILE in.Available() >= 4 DO
-			 			in.RawLInt(data); code[i] := data; INC(heap, 4); INC(i);
+			 			in.RawInt32(data); code[i] := data; INC(heap, 4); INC(i);
 			 		END;
 
 					WriteCodeBlock(i, base);
@@ -309,7 +309,7 @@ VAR
 		ELSE
 			fileHeader := "";
 		END;
-		S.SkipWhitespace;  S.Int( base, TRUE );
+		S.SkipWhitespace;  S.Int32( base, TRUE );
 		S.SkipWhitespace;  S.String( fileOut );
 		Files.Delete(fileOut, intRes);				(* Try to delete an existing output file *)
 		linker.Begin (base, fileOut, fileHeader, success);

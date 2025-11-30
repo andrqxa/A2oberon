@@ -1958,7 +1958,7 @@ PROCEDURE SetFontSize*(context : Commands.Context); (** ("Absolute"|"IncrementBy
 VAR changeInfo : ChangeInfo; modeStr : ARRAY 16 OF CHAR; mode, value : SIGNED32;
 BEGIN
 	context.arg.SkipWhitespace; context.arg.String(modeStr);
-	context.arg.SkipWhitespace; context.arg.Int(value, FALSE);
+	context.arg.SkipWhitespace; context.arg.Int32(value, FALSE);
 	Strings.UpperCase(modeStr);
 	IF (modeStr = "ABSOLUTE") THEN mode := Absolute;
 	ELSIF (modeStr = "INCREMENTBY") THEN mode := IncrementBy;
@@ -1998,8 +1998,8 @@ END SetFontStyle;
 PROCEDURE SetFontColor*(context : Commands.Context); (** [fgColor] [bgColor] ~ *)
 VAR fgColor, bgColor : SIGNED32; changeInfo : ChangeInfo;
 BEGIN
-	context.arg.SkipWhitespace; context.arg.Int(fgColor, TRUE);
-	context.arg.SkipWhitespace; context.arg.Int(bgColor, TRUE);
+	context.arg.SkipWhitespace; context.arg.Int32(fgColor, TRUE);
+	context.arg.SkipWhitespace; context.arg.Int32(bgColor, TRUE);
 	NEW(changeInfo);
 	changeInfo.fields := ChangeFgColor;
 	changeInfo.fgColor := fgColor;

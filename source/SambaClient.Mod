@@ -103,8 +103,8 @@ TYPE
 			(* SEND *)
 			SendSMBHeader(SIGNED16(39 + Strings.Length(nameTrimmed)), 06X, c);
 			c.out.Net8(1);								(* Word count *)
-			c.out.RawInt(22);							(* search attributes *)
-			c.out.RawInt(SIGNED16(2 + Strings.Length(nameTrimmed)));
+			c.out.RawInt16(22);							(* search attributes *)
+			c.out.RawInt16(SIGNED16(2 + Strings.Length(nameTrimmed)));
 			c.out.Net8(4);								(* ascii *)
 			c.out.RawString(nameTrimmed);						(* name *)
 			c.out.Update();
@@ -148,8 +148,8 @@ TYPE
 			(* SEND *)
 			SendSMBHeader(SIGNED16(41 + Strings.Length(new1) + Strings.Length(old1)), 07X, c);
 			c.out.Net8(1);			(* Word count *)
-			c.out.RawInt(22);		(* search attributes *)
-			c.out.RawInt(SIGNED16(4 + Strings.Length(new1) + Strings.Length(old1)));
+			c.out.RawInt16(22);		(* search attributes *)
+			c.out.RawInt16(SIGNED16(4 + Strings.Length(new1) + Strings.Length(old1)));
 			c.out.Net8(4);			(* ascii *)
 			c.out.RawString(old1);	(* old name *)
 			c.out.Net8(4);			(* ascii *)
@@ -233,10 +233,10 @@ TYPE
 				c.in.SkipBytes(2);		(* data count *)
 				c.in.SkipBytes(2);		(* reserved *)
 				c.in.SkipBytes(2);		(* parameter count *)
-				c.in.RawInt(paraOff);	(* parameter offset *)
+				c.in.RawInt16(paraOff);	(* parameter offset *)
 				c.in.SkipBytes(2);		(* parameter displacement *)
-				c.in.RawInt(byteCount);	(* data count *)
-				c.in.RawInt(dataOff);	(* data offset *)
+				c.in.RawInt16(byteCount);	(* data count *)
+				c.in.RawInt16(dataOff);	(* data offset *)
 				c.in.SkipBytes(2);		(* data displacement *)
 				c.in.SkipBytes(1);		(* setup count *)
 				c.in.SkipBytes(1);		(* reserved *)
@@ -244,11 +244,11 @@ TYPE
 				c.in.SkipBytes(paraOff - 55);
 
 				IF findFirst THEN
-					c.in.RawInt(c.sid);	(* search id *)
+					c.in.RawInt16(c.sid);	(* search id *)
 				END;
 
 				c.in.SkipBytes(2);		(* search count *)
-				c.in.RawInt(eos);		(* end of search *)
+				c.in.RawInt16(eos);		(* end of search *)
 
 				IF eos = 1 THEN
 					endOfSearch := TRUE;
@@ -268,7 +268,7 @@ TYPE
 
 				WHILE progress < byteCount DO
 					curPos := c.in.Pos();
-					c.in.RawLInt(nextEntryOff);
+					c.in.RawInt32(nextEntryOff);
 					IF nextEntryOff = 0 THEN
 						check := FALSE;
 						progress := byteCount;
@@ -279,8 +279,8 @@ TYPE
 					c.in.SkipBytes(4);		(* file index *)
 					c.in.SkipBytes(8);		(* creation time *)
 					c.in.SkipBytes(8);		(* last access *)
-					c.in.RawLInt(t[0]);
-					c.in.RawLInt(t[1]);		(* last write *)
+					c.in.RawInt32(t[0]);
+					c.in.RawInt32(t[1]);		(* last write *)
 					GetDateTime(t, dt);
 					IF ~Dates.ValidDateTime(dt) THEN
 						dt := Dates.Now();
@@ -288,10 +288,10 @@ TYPE
 					END;
 					Dates.DateTimeToOberon(dt, date, time);
 					c.in.SkipBytes(8);		(* change *)
-					c.in.RawLInt(size);
+					c.in.RawInt32(size);
 					c.in.SkipBytes(4);		(* end of file *)
 					c.in.SkipBytes(8);		(* allocation *)
-					c.in.RawLInt(attr);		(* attributes *)
+					c.in.RawInt32(attr);		(* attributes *)
 					fileFlags := {};
 					IF (4 IN SET(attr)) THEN INCL(fileFlags, Files.Directory); END;
 					IF (0 IN SET(attr)) THEN INCL(fileFlags, Files.ReadOnly); END;
@@ -342,7 +342,7 @@ TYPE
 			(* SEND *)
 			SendSMBHeader(SIGNED16(37+ Strings.Length(name)), 00X, c);
 			c.out.Net8(0);											(* Word count *)
-			c.out.RawInt(SIGNED16(2 + Strings.Length(name)));			(* byte count *)
+			c.out.RawInt16(SIGNED16(2 + Strings.Length(name)));			(* byte count *)
 			c.out.Net8(4);											(* buffer format *)
 			c.out.RawString(name);
 			c.out.Update();
@@ -374,7 +374,7 @@ TYPE
 			(* SEND *)
 			SendSMBHeader(SIGNED16(37+ Strings.Length(name)), 01X, c);
 			c.out.Net8(0);											(* Word count *)
-			c.out.RawInt(SIGNED16(2 + Strings.Length(name)));			(* byte count *)
+			c.out.RawInt16(SIGNED16(2 + Strings.Length(name)));			(* byte count *)
 			c.out.Net8(4);											(* buffer format *)
 			c.out.RawString(name);
 			c.out.Update();
@@ -474,14 +474,14 @@ TYPE
 			 	c.out.Net8(10);				(* word count *)
 			 	c.out.Net8(255);			(* andx*)
 			 	c.out.Net8(0);				(* reserved *)
-			 	c.out.RawInt(0);				(* andx offset *)
-			 	c.out.RawInt(SHORT(key));	(* fid *)
-			 	c.out.RawLInt(r.apos(SIGNED32));	(* offset *)
-			 	c.out.RawInt(adjLen);		(* max count low *)
-			 	c.out.RawInt(adjLen);		(* min count *)
+			 	c.out.RawInt16(0);				(* andx offset *)
+			 	c.out.RawInt16(SHORT(key));	(* fid *)
+			 	c.out.RawInt32(r.apos(SIGNED32));	(* offset *)
+			 	c.out.RawInt16(adjLen);		(* max count low *)
+			 	c.out.RawInt16(adjLen);		(* min count *)
 			 	c.out.Net32(0);				(* max count 64k *)
-			 	c.out.RawInt(0);				(* remaining *)
-			 	c.out.RawInt(0);				(* byte count *)
+			 	c.out.RawInt16(0);				(* remaining *)
+			 	c.out.RawInt16(0);				(* byte count *)
 			 	c.out.Update();
 
 			 	(* RECEIVE *)
@@ -495,9 +495,9 @@ TYPE
 				END;
 
 				c.in.SkipBytes(13);
-				c.in.RawInt(dataOff);
+				c.in.RawInt16(dataOff);
 				c.in.SkipBytes(10);
-				c.in.RawInt(byteCount);
+				c.in.RawInt16(byteCount);
 
 				IF (dataOff = 0) THEN
 					r.res := r.res + len;
@@ -579,16 +579,16 @@ TYPE
 			 	c.out.Net8(12);				(* word count *)
 			 	c.out.Net8(255);			(* andx*)
 			 	c.out.Net8(0);				(* reserved *)
-			 	c.out.RawInt(0);				(* andx offset *)
-			 	c.out.RawInt(SHORT(key));	(* fid *)
-			 	c.out.RawLInt(r.apos(SIGNED32));	(* offset *)
-			 	c.out.RawLInt(0);			(* reserved *)
-			 	c.out.RawInt(0);				(* write mode *)
-			 	c.out.RawInt(0);				(* remaining *)
-			 	c.out.RawInt(0);				(* max count 64k *)
-			 	c.out.RawInt(adjLen);		(* max count low *)
-			 	c.out.RawInt(59);			(* data offset*)
-			 	c.out.RawInt(adjLen);		(* byte count *)
+			 	c.out.RawInt16(0);				(* andx offset *)
+			 	c.out.RawInt16(SHORT(key));	(* fid *)
+			 	c.out.RawInt32(r.apos(SIGNED32));	(* offset *)
+			 	c.out.RawInt32(0);			(* reserved *)
+			 	c.out.RawInt16(0);				(* write mode *)
+			 	c.out.RawInt16(0);				(* remaining *)
+			 	c.out.RawInt16(0);				(* max count 64k *)
+			 	c.out.RawInt16(adjLen);		(* max count low *)
+			 	c.out.RawInt16(59);			(* data offset*)
+			 	c.out.RawInt16(adjLen);		(* byte count *)
 
 			 	IF adjLen # 0 THEN
 			 		IF Trace THEN KernelLog.String(" -- Write bytes: "); KernelLog.Int(adjLen, 0); KernelLog.Ln(); END;
@@ -608,7 +608,7 @@ TYPE
 				END;
 
 				c.in.SkipBytes(5);
-				c.in.RawInt(bytesWritten);
+				c.in.RawInt16(bytesWritten);
 
 				IF Trace THEN
 					KernelLog.String(" -- Bytes written: "); KernelLog.Int(bytesWritten, 0); KernelLog.Ln();
@@ -638,7 +638,7 @@ TYPE
 		 	(* SEND *)
 		 	SendSMBHeader(37 + SIGNED16(Strings.Length(filename)), 08X, c);
 			c.out.Net8(0);											(* word count *)
-			c.out.RawInt(SIGNED16(Strings.Length(filename)) + 1);		(* byte count *)
+			c.out.RawInt16(SIGNED16(Strings.Length(filename)) + 1);		(* byte count *)
 			c.out.Net8(4);											(* buffer format ascii *)
 			c.out.RawString(filename);								(* filename *)
 			c.out.Update();
@@ -657,7 +657,7 @@ TYPE
 			END;
 
 			c.in.SkipBytes(7);
-			c.in.RawLInt(filesize);
+			c.in.RawInt32(filesize);
 
 			fs(FileSystem).lock.Release();
 
@@ -736,14 +736,14 @@ BEGIN
 	c.out.Char(cmd);		(* Command *)
 	c.out.Net32(0);			(* status code *)
 	c.out.Net8(24);			(* FLAGS *)
-	c.out.RawInt(1);			(* FLAGS 2 *)
+	c.out.RawInt16(1);			(* FLAGS 2 *)
 	c.out.Net32(0);
 	c.out.Net32(0);			(* EXTRA *)
 	c.out.Net32(0);
-	c.out.RawInt(c.tid);		(* TID *)
-	c.out.RawInt(PID);		(* PID *)
-	c.out.RawInt(c.uid);		(* UID *)
-	c.out.RawInt(0);			(* MID *)
+	c.out.RawInt16(c.tid);		(* TID *)
+	c.out.RawInt16(PID);		(* PID *)
+	c.out.RawInt16(c.uid);		(* UID *)
+	c.out.RawInt16(0);			(* MID *)
 END SendSMBHeader;
 
 PROCEDURE RecieveResponse(cmd: CHAR; c: Connection): BOOLEAN;
@@ -783,7 +783,7 @@ BEGIN
 	END;
 
 	c.in.SkipBytes(15);
-	c.in.RawInt(variable);
+	c.in.RawInt16(variable);
 
 	IF (c.tid = 0) & (variable > 0) THEN
 		c.tid := variable;
@@ -797,14 +797,14 @@ BEGIN
 		RETURN FALSE;
 	END;
 
-	c.in.RawInt(variable);
+	c.in.RawInt16(variable);
 
 	IF variable # PID THEN
 		IF Trace THEN KernelLog.String(" -- PID does not match"); KernelLog.Ln(); END;
 		RETURN FALSE;
 	END;
 
-	c.in.RawInt(variable);
+	c.in.RawInt16(variable);
 
 	IF (c.uid = 0) & (variable > 0) THEN
 		c.uid := variable;
@@ -826,13 +826,13 @@ PROCEDURE CheckFFSMB(c: Connection): BOOLEAN;
 VAR
 	variable: SIGNED8;
 BEGIN
-	c.in.RawSInt(variable);
+	c.in.RawInt8(variable);
 	IF variable = -1 THEN
-		c.in.RawSInt(variable);
+		c.in.RawInt8(variable);
 		IF variable = 83 THEN
-			c.in.RawSInt(variable);
+			c.in.RawInt8(variable);
 			IF variable = 77 THEN
-				c.in.RawSInt(variable);
+				c.in.RawInt8(variable);
 				IF variable = 66 THEN
 					RETURN TRUE;
 				END;
@@ -908,13 +908,13 @@ BEGIN
 	c.out.Net8(13);			(* Word count *)
 	c.out.Net8(255);		(* no andx *)
 	c.out.Net8(0);			(* reserved *)
-	c.out.RawInt(0);			(* andx offset *)
-	c.out.RawInt(32767);	(* buffersize *)
-	c.out.RawInt(2);			(* mpx *)
-	c.out.RawInt(0);			(* Vc *)
+	c.out.RawInt16(0);			(* andx offset *)
+	c.out.RawInt16(32767);	(* buffersize *)
+	c.out.RawInt16(2);			(* mpx *)
+	c.out.RawInt16(0);			(* Vc *)
 	c.out.Net32(0);			(* session key *)
-	c.out.RawInt(SIGNED16(Strings.Length(c.pw)+1));	(* ANSI len *)
-	c.out.RawInt(0);	(* UNICODE len *)
+	c.out.RawInt16(SIGNED16(Strings.Length(c.pw)+1));	(* ANSI len *)
+	c.out.RawInt16(0);	(* UNICODE len *)
 	c.out.Net32(0);			(* reserved *)
 	c.out.Net32(268435456);	(* capabilities *)
 	c.out.Net8(byteCount + 5);
@@ -948,10 +948,10 @@ BEGIN
 	c.out.Net8(4);			(* Word count *)
 	c.out.Net8(255);		(* no andx *)
 	c.out.Net8(0);			(* reserved *)
-	c.out.RawInt(0);			(* andx offset *)
-	c.out.RawInt(0);			(* disconnected tid *)
-	c.out.RawInt(SIGNED16(Strings.Length(c.pw)+1));	(* pw length *)
-	c.out.RawInt(SIGNED16(11 + Strings.Length(c.ipaddr) + Strings.Length(c.path) + Strings.Length(c.pw)));		(* bcc *)
+	c.out.RawInt16(0);			(* andx offset *)
+	c.out.RawInt16(0);			(* disconnected tid *)
+	c.out.RawInt16(SIGNED16(Strings.Length(c.pw)+1));	(* pw length *)
+	c.out.RawInt16(SIGNED16(11 + Strings.Length(c.ipaddr) + Strings.Length(c.path) + Strings.Length(c.pw)));		(* bcc *)
 	c.out.RawString(c.pw);
 	c.out.String("\\");
 	c.out.String(c.ipaddr);
@@ -992,40 +992,40 @@ BEGIN
 	(* SEND *)
 	SendSMBHeader(81 + len, 32X, c);
 	c.out.Net8(15);			(* Word count *)
-	c.out.RawInt(13+len);	(* parameter count 18 *)
-	c.out.RawInt(0);			(* data count *)
-	c.out.RawInt(10);		(* max par count *)
-	c.out.RawInt(-1);		(* max data count *)
+	c.out.RawInt16(13+len);	(* parameter count 18 *)
+	c.out.RawInt16(0);			(* data count *)
+	c.out.RawInt16(10);		(* max par count *)
+	c.out.RawInt16(-1);		(* max data count *)
 	c.out.Net8(0);			(* max setup *)
 	c.out.Net8(0);			(* reserved *)
-	c.out.RawInt(0);			(* flags *)
+	c.out.RawInt16(0);			(* flags *)
 	c.out.Net32(0);			(* timeout *)
-	c.out.RawInt(0);			(* reserved *)
-	c.out.RawInt(13+len);	(* parameter count 18 *)
-	c.out.RawInt(68);		(* par offset *)
-	c.out.RawInt(0);			(* data count *)
-	c.out.RawInt(0);			(* data offset 86 *)
+	c.out.RawInt16(0);			(* reserved *)
+	c.out.RawInt16(13+len);	(* parameter count 18 *)
+	c.out.RawInt16(68);		(* par offset *)
+	c.out.RawInt16(0);			(* data count *)
+	c.out.RawInt16(0);			(* data offset 86 *)
 	c.out.Net8(1);			(* setup count *)
 	c.out.Net8(0);			(* reserved *)
-	c.out.RawInt(cmd);		(* subcommand *)
-	c.out.RawInt(16+len);	(* byte cnt 21 *)
+	c.out.RawInt16(cmd);		(* subcommand *)
+	c.out.RawInt16(16+len);	(* byte cnt 21 *)
 	c.out.Net8(0);			(* padding *)
 	c.out.Net8(0);			(* padding *)
 	c.out.Net8(0);			(* padding *)
 
 	IF cmd = 1 THEN
-		c.out.RawInt(22);		(* search attri *)
-		c.out.RawInt(25);		(* search count 10 *)
-		c.out.RawInt(6);			(* flags *)
-		c.out.RawInt(260);		(* loi *)
+		c.out.RawInt16(22);		(* search attri *)
+		c.out.RawInt16(25);		(* search count 10 *)
+		c.out.RawInt16(6);			(* flags *)
+		c.out.RawInt16(260);		(* loi *)
 		c.out.Net32(0);			(* storage *)
 		c.out.RawString(c.mask);
 	ELSIF cmd = 2 THEN
-		c.out.RawInt(c.sid);		(* sid *)
-		c.out.RawInt(25);		(* search count 10 *)
-		c.out.RawInt(260);		(* loi *)
+		c.out.RawInt16(c.sid);		(* sid *)
+		c.out.RawInt16(25);		(* search count 10 *)
+		c.out.RawInt16(260);		(* loi *)
 		c.out.Net32(0);			(* resume *)
-		c.out.RawInt(6);			(* flags *)
+		c.out.RawInt16(6);			(* flags *)
 		c.out.RawString(c.fnLast);
 	ELSE
 		RETURN FALSE;
@@ -1061,23 +1061,23 @@ BEGIN
 	c.out.Net8(15);			(* word count *)
 	c.out.Net8(255);		(* andx*)
 	c.out.Net8(0); 			(* reserved *)
-	c.out.RawInt(0);			(* andx offset *)
-	c.out.RawInt(0);			(* flags *)
-	c.out.RawInt(access);	(* desired access *)
-	c.out.RawInt(6);			(* search attributes *)
-	c.out.RawInt(0);			(* file attributes *)
+	c.out.RawInt16(0);			(* andx offset *)
+	c.out.RawInt16(0);			(* flags *)
+	c.out.RawInt16(access);	(* desired access *)
+	c.out.RawInt16(6);			(* search attributes *)
+	c.out.RawInt16(0);			(* file attributes *)
 	c.out.Net32(0); 			(* create.time *)
 
 	IF create THEN
-		c.out.RawInt(17);
+		c.out.RawInt16(17);
 	ELSE
-		c.out.RawInt(1);		(* open function *)
+		c.out.RawInt16(1);		(* open function *)
 	END;
 
 	c.out.Net32(0);			(* allocation size *)
 	c.out.Net32(0);			(* timeout *)
 	c.out.Net32(0);			(* reserved *)
-	c.out.RawInt(1 + SIGNED16(Strings.Length(name)));	(* byte count *)
+	c.out.RawInt16(1 + SIGNED16(Strings.Length(name)));	(* byte count *)
 	c.out.RawString(name);
 	c.out.Update();
 
@@ -1090,7 +1090,7 @@ BEGIN
 	END;
 
 	c.in.SkipBytes(5);
-	c.in.RawInt(fid);
+	c.in.RawInt16(fid);
 
 	IF Trace THEN KernelLog.String(" -- FID: "); KernelLog.Int(fid, 0); KernelLog.Ln(); END;
 
@@ -1106,9 +1106,9 @@ BEGIN
 	(* SEND *)
 	SendSMBHeader(41, 04X, c);
 	c.out.Net8(3);					(* Word count *)
-	c.out.RawInt(SHORT(key));		(* fid *)
+	c.out.RawInt16(SHORT(key));		(* fid *)
 	c.out.Net32(0);					(* last write *)
-	c.out.RawInt(0);					(* byte count *)
+	c.out.RawInt16(0);					(* byte count *)
 	c.out.Update();
 
 	(* RECEIVE *)

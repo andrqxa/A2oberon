@@ -191,7 +191,7 @@ END Tabulator;
 
 PROCEDURE ReadBoolean (r: Streams.Reader; VAR boolean: BOOLEAN): BOOLEAN;
 VAR value: INTEGER;
-BEGIN r.Int (value, FALSE); boolean := value = 1; RETURN r.res = Streams.Ok
+BEGIN r.Int32 (value, FALSE); boolean := value = 1; RETURN r.res = Streams.Ok
 END ReadBoolean;
 
 PROCEDURE ReadResults (r: Streams.Reader; VAR list: TestResultList);

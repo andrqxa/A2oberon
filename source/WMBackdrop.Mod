@@ -321,10 +321,10 @@ BEGIN {EXCLUSIVE}
 		context.arg.SkipWhitespace; context.arg.String(name);
 
 		IF options.GetFlag("fullscreen") THEN
-			context.arg.SkipWhitespace;context.arg.Int(fx, FALSE);
-			context.arg.SkipWhitespace;context.arg.Int(fy, FALSE);
-			context.arg.SkipWhitespace;context.arg.Int(fw, FALSE);
-			context.arg.SkipWhitespace; context.arg.Int(fh, FALSE);
+			context.arg.SkipWhitespace;context.arg.Int32(fx, FALSE);
+			context.arg.SkipWhitespace;context.arg.Int32(fy, FALSE);
+			context.arg.SkipWhitespace;context.arg.Int32(fw, FALSE);
+			context.arg.SkipWhitespace; context.arg.Int32(fh, FALSE);
 			IF (fw = 0) THEN fw := 1; END;
 			IF (fh = 0) THEN fh := 1; END;
 			view := WMWindowManager.GetDefaultView();

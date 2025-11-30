@@ -110,7 +110,7 @@ TYPE
 		VAR temp : ARRAY 1024 OF CHAR; tcode: ARRAY 4 OF CHAR; t : SIGNED32;
 			stop : BOOLEAN;
 		BEGIN
-			r.Int(code, FALSE); COPY("", reply);
+			r.Int32(code, FALSE); COPY("", reply);
 			IF r.Peek() = "-" THEN (* multi line response *)
 				stop := FALSE;
 				REPEAT
@@ -159,7 +159,7 @@ TYPE
 		BEGIN
 			IF passiveTransfer THEN
 				w.String("PASV"); w.Ln; w.Update;
-				r.Int(code, FALSE);
+				r.Int32(code, FALSE);
 				IF Debug THEN
 					KernelLog.String("PASV");
 					KernelLog.String("code = "); KernelLog.Int(code, 0); KernelLog.Ln;
@@ -184,9 +184,9 @@ TYPE
 				IF r.res # 0 THEN Fail; RETURN END;
 
 				(* read the port *)
-				r.Int(p0, FALSE); ch := r.Get();
+				r.Int32(p0, FALSE); ch := r.Get();
 				IF ch # "," THEN Fail; RETURN END;
-				r.Int(p1, FALSE);
+				r.Int32(p1, FALSE);
 				r.SkipLn;
 				port := p0 * 256 + p1;
 				IF Debug THEN
