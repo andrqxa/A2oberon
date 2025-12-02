@@ -112,14 +112,14 @@ TYPE
 		PROCEDURE Receive(VAR buf: ARRAY OF CHAR; ofs, size, min: SIZE; VAR len: SIZE; VAR res: INTEGER);
 		BEGIN
 			IF max = 0 THEN
-				res := Streams.Invalid;
+				len := 0;
+				res := Streams.EOF;
 				RETURN
 			END;
 			IF size < min THEN size := min END;
 			IF size > max THEN size := max END;
 
 			ReadBytes(r, buf, ofs, size, len);
-
 			DEC(max, len);
 
 			IF len > 0 THEN
@@ -127,7 +127,6 @@ TYPE
 			ELSE
 				res := Streams.EOF
 			END
-
 		END Receive;
 
 	END SizeReader;
