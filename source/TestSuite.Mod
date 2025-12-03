@@ -182,7 +182,7 @@ BEGIN
 END ReadType;
 
 PROCEDURE ReadText (r: Streams.Reader; VAR text: ARRAY OF CHAR): BOOLEAN;
-BEGIN r.Ln (text); RETURN r.res = Streams.Ok
+BEGIN r.Ln (text); RETURN text # ""
 END ReadText;
 
 PROCEDURE Tabulator (r: Streams.Reader): BOOLEAN;
