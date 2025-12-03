@@ -10,7 +10,7 @@ CONST
 
 	EOT* = 1AX;   (** EOT character *)
 
-	StringFull = 4202;
+	StringFull* = 4202;
 	FormatError* = 4203;   (** error returned when ReadInt/Utf* fails *)
 	Incomplete* = 4204;
 
