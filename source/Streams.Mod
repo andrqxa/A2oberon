@@ -10,8 +10,9 @@ CONST
 
 	EOT* = 1AX;   (** EOT character *)
 
-	StringFull = 4202;
-	FormatError* = 4203;   (** error returned when ReadInt fails *)
+	StringFull* = 4202;
+	FormatError* = 4203;   (** error returned when ReadInt/Utf* fails *)
+	Incomplete* = 4204;
 
 	DefaultWriterSize* = 4096;
 	DefaultReaderSize* = 4096;
@@ -569,6 +570,8 @@ TYPE
 				Bytes( utf, 0, count );
 				RETURN res = Ok;
 			END;
+
+			IF res = Ok THEN res := FormatError END;
 			RETURN FALSE;
 		END UTF8Char;
 
@@ -598,6 +601,8 @@ TYPE
 				END;
 				RETURN res = Ok;
 			END;
+
+			IF res = Ok THEN res := FormatError END;
 			RETURN FALSE;
 		END UTF16Char;
 
@@ -619,6 +624,7 @@ TYPE
 				RETURN res = Ok;
 			END;
 
+			IF res = Ok THEN res := FormatError END;
 			RETURN FALSE;
 		END UTF32Char;
 
@@ -1418,16 +1424,16 @@ TYPE
 		PROCEDURE UTF8Char*( VAR ucs: Char32 ): BOOLEAN;
 		VAR utf: ARRAY 4 OF CHAR; b0, b1, b2, b3: UNSIGNED32; temp: UNSIGNED32;
 		BEGIN
-			IF ~PeekBytes( 1, utf ) THEN RETURN FALSE END;
+			IF ~PeekBytes( 1, utf ) THEN IF res = Ok THEN res := Incomplete END; RETURN FALSE END;
 			b0 := ORD( utf[0] );
 			IF b0 < 0x80 THEN
 				SkipBytes( 1 );
 				ucs := Char32( b0 );
 				RETURN TRUE
 			ELSIF ( b0 >= 0xC2 ) & ( b0 < 0xE0 ) THEN
-				IF ~PeekBytes( 2, utf ) THEN RETURN FALSE END;
+				IF ~PeekBytes( 2, utf ) THEN IF res = Ok THEN res := Incomplete END; RETURN FALSE END;
 				b1 := ORD32( utf[1] );
-				IF SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 ) THEN RETURN FALSE END;
+				IF SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 ) THEN IF res = Ok THEN res := FormatError END; RETURN FALSE END;
 				temp := LSH( b0 MOD 0x20, 6 ) + ( b1 MOD 0x40 );
 				IF temp >= 0x80 THEN
 					SkipBytes( 2 );
@@ -1435,12 +1441,12 @@ TYPE
 					RETURN TRUE;
 				END;
 			ELSIF ( b0 < 0xF0 ) THEN
-				IF ~PeekBytes( 3, utf ) THEN RETURN FALSE END;
+				IF ~PeekBytes( 3, utf ) THEN IF res = Ok THEN res := Incomplete END; RETURN FALSE END;
 				b1 := ORD32( utf[1] ); b2 := ORD32( utf[2] );
 				IF ( SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) OR
-						( SET32( b2 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) THEN RETURN FALSE END;
-				IF ( b0 = 0xE0 ) & ( b1 < 0xA0 ) THEN RETURN FALSE END;  (* overlong *)
-				IF ( b0 = 0xED ) & ( b1 > 0x9F ) THEN RETURN FALSE END;  (* surrogate *)
+						( SET32( b2 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) THEN IF res = Ok THEN res := FormatError END; RETURN FALSE END;
+				IF ( b0 = 0xE0 ) & ( b1 < 0xA0 ) THEN IF res = Ok THEN res := FormatError END; RETURN FALSE END;  (* overlong *)
+				IF ( b0 = 0xED ) & ( b1 > 0x9F ) THEN IF res = Ok THEN res := FormatError END; RETURN FALSE END;  (* surrogate *)
 				temp := LSH( b0 MOD 0x10, 12 ) + LSH( b1 MOD 0x40, 6 ) + ( b2 MOD 0x40 );
 				IF temp >= 0x800 THEN
 					SkipBytes( 3 );
@@ -1448,13 +1454,13 @@ TYPE
 					RETURN TRUE;
 				END;
 			ELSIF ( b0 <= 0xF4 ) THEN
-				IF ~PeekBytes( 4, utf ) THEN RETURN FALSE END;
+				IF ~PeekBytes( 4, utf ) THEN IF res = Ok THEN res := Incomplete END; RETURN FALSE END;
 				b1 := ORD32( utf[1] ); b2 := ORD32( utf[2] ); b3 := ORD32( utf[3] );
 				IF ( SET32( b1 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) OR
 						( SET32( b2 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) OR
-						( SET32( b3 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) THEN RETURN FALSE END;
-				IF ( b0 = 0xF0 ) & ( b1 < 0x90 ) THEN RETURN FALSE END;  (* overlong *)
-				IF ( b0 = 0xF4 ) & ( b1 > 0x8F ) THEN RETURN FALSE END;  (* > U+10FFFF *)
+						( SET32( b3 ) * SET32( 0xC0 ) # SET32 ( 0x80 )) THEN IF res = Ok THEN res := FormatError END; RETURN FALSE END;
+				IF ( b0 = 0xF0 ) & ( b1 < 0x90 ) THEN IF res = Ok THEN res := FormatError END; RETURN FALSE END;  (* overlong *)
+				IF ( b0 = 0xF4 ) & ( b1 > 0x8F ) THEN IF res = Ok THEN res := FormatError END; RETURN FALSE END;  (* > U+10FFFF *)
 				temp := LSH( b0 MOD 0x08, 18 ) + LSH( b1 MOD 0x40, 12 ) + LSH( b2 MOD 0x40, 6 ) + ( b3 MOD 0x40 );
 				IF ( temp >= 0x10000 ) & ( temp <= 0x10FFFF ) THEN
 					SkipBytes( 4 );
@@ -1462,6 +1468,8 @@ TYPE
 					RETURN TRUE;
 				END;
 			END;
+
+			IF res = Ok THEN res := FormatError END;
 			RETURN FALSE
 		END UTF8Char;
 
@@ -1476,7 +1484,7 @@ TYPE
 		CONST SURROGATEOFFSET = LSH( 0x00D800, 10 ) + 0x00DC00 - 0x010000;
 		VAR utf: RECORD u0, u1: UNSIGNED16 END;
 		BEGIN
-			IF ~PeekBytes( 2, SYSTEM.VAL( Bytes2, utf.u0 )) THEN RETURN FALSE END;
+			IF ~PeekBytes( 2, SYSTEM.VAL( Bytes2, utf.u0 )) THEN IF res = Ok THEN res := Incomplete END; RETURN FALSE END;
 			IF ( byteOrder = ByteOrder.BigEndian ) THEN
 				utf.u0 := ROL( utf.u0, 8 );
 			END;
@@ -1502,6 +1510,7 @@ TYPE
 				END;
 			END;
 
+			IF res = Ok THEN res := FormatError END; 
 			RETURN FALSE; (* lone surrogate *)
 		END UTF16Char;
 
@@ -1515,7 +1524,7 @@ TYPE
 		PROCEDURE UTF32Char*( VAR ucs: Char32 ): BOOLEAN;
 		VAR unicode: RECORD u0, u1: UNSIGNED16; ucs {OFFSET=0}: UNSIGNED32 END;
 		BEGIN
-			IF ~PeekBytes(4, SYSTEM.VAL(Bytes4, unicode)) THEN RETURN FALSE END;
+			IF ~PeekBytes(4, SYSTEM.VAL(Bytes4, unicode)) THEN IF res = Ok THEN res := Incomplete END; RETURN FALSE END;
 			IF byteOrder = ByteOrder.BigEndian THEN
 				unicode.u0 := ROL( unicode.u0, 8 );
 				unicode.u1 := ROL( unicode.u1, 8 );
@@ -1527,7 +1536,8 @@ TYPE
 				SkipBytes( 4 );
 				RETURN TRUE;
 			END;
-
+			
+			IF res = Ok THEN res := FormatError END; 
 			RETURN FALSE;
 		END UTF32Char;
 
