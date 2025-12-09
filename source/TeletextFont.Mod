@@ -291,7 +291,7 @@ TYPE
 		BEGIN
 			f := Files.New(filename);f.Set(w, 0);
 			(* write number of ranges *)
-			Files.WriteLInt(w, nofGlyphRanges);
+			Files.WriteInt32(w, nofGlyphRanges);
 			(* write ranges *)
 			FOR i := 0 TO nofGlyphRanges - 1 DO
 				Files.WriteChar32(w, glyphRanges[i].firstCode);
@@ -302,7 +302,7 @@ TYPE
 			(* reserve space for per character file position table *)
 			FOR i := 0 TO nofGlyphRanges - 1 DO
 				FOR j := 0 TO SIGNED32(glyphRanges[i].lastCode - glyphRanges[i].firstCode) DO
-					Files.WriteLInt(w, 0);
+					Files.WriteInt32(w, 0);
 				END
 			END;
 			c := 0;
@@ -325,7 +325,7 @@ TYPE
 				FOR j := 0 TO SIGNED32(glyphRanges[i].lastCode - glyphRanges[i].firstCode) DO
 					INC(c);
 					IF c < 319 THEN
-						Files.WriteLInt(w, glyphRanges[i].glyphs[j].fpos)
+						Files.WriteInt32(w, glyphRanges[i].glyphs[j].fpos)
 					END
 				END
 			END;
@@ -380,7 +380,7 @@ TYPE
 			f := Files.Old(filename); f.Set(r, 0);
 			fontFile := f;
 			(* read number of ranges *)
-			Files.ReadLInt(r, nofGlyphRanges);
+			Files.ReadInt32(r, nofGlyphRanges);
 			(* read ranges *)
 			NEW(glyphRanges, nofGlyphRanges);
 			FOR i := 0 TO nofGlyphRanges - 1 DO
@@ -391,7 +391,7 @@ TYPE
 			END;
 			FOR i := 0 TO nofGlyphRanges - 1 DO
 				FOR j := 0 TO SIGNED32(glyphRanges[i].lastCode - glyphRanges[i].firstCode) DO
-					Files.ReadLInt(r, glyphRanges[i].glyphs[j].fpos);
+					Files.ReadInt32(r, glyphRanges[i].glyphs[j].fpos);
 				END
 			END;
 			(* for now no indexing *)

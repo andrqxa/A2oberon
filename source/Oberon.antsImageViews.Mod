@@ -105,10 +105,10 @@ VAR
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  antsViews.Handler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  antsViews.Handler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF (objsub # NIL ) & (objsub IS antsArrayImages.tObject) THEN obj.E := objsub( antsArrayImages.tObject ) END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  antsViews.Handler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.E )
+			Files.WriteInt16( msg.R, 0 );  antsViews.Handler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.E )
 		ELSE antsViews.Handler( obj, msg )
 		END
 	END HandleFileMsg;

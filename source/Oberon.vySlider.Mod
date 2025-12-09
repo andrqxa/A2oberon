@@ -278,24 +278,24 @@ VAR
 
 	PROCEDURE Store0( obj: tSlider;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteInt( M.R, obj.Xr );  Files.WriteInt( M.R, obj.Yr );  Files.WriteInt( M.R, obj.Wr );  Files.WriteInt( M.R, obj.Hr );
-		Files.WriteInt( M.R, obj.X );  Files.WriteInt( M.R, obj.Y );  Files.WriteInt( M.R, obj.W );  Files.WriteInt( M.R, obj.H );
-		Files.WriteInt( M.R, obj.barBegin );  Files.WriteInt( M.R, obj.barEnd );  Files.WriteInt( M.R, obj.pos );
-		Files.WriteInt( M.R, obj.rlx );  Files.WriteInt( M.R, obj.lx );  Files.WriteInt( M.R, obj.rx );  Files.WriteInt( M.R, obj.rrx );
-		Files.WriteInt( M.R, obj.by );  Files.WriteInt( M.R, obj.sx );  Files.WriteInt( M.R, obj.sy );
-		Files.WriteReal( M.R, obj.min );  Files.WriteReal( M.R, obj.max );  Files.WriteReal( M.R, obj.value );
-		Files.WriteInt( M.R, obj.ticks );  Files.WriteString( M.R, obj.cmd )
+		Files.WriteInt16( M.R, obj.Xr );  Files.WriteInt16( M.R, obj.Yr );  Files.WriteInt16( M.R, obj.Wr );  Files.WriteInt16( M.R, obj.Hr );
+		Files.WriteInt16( M.R, obj.X );  Files.WriteInt16( M.R, obj.Y );  Files.WriteInt16( M.R, obj.W );  Files.WriteInt16( M.R, obj.H );
+		Files.WriteInt16( M.R, obj.barBegin );  Files.WriteInt16( M.R, obj.barEnd );  Files.WriteInt16( M.R, obj.pos );
+		Files.WriteInt16( M.R, obj.rlx );  Files.WriteInt16( M.R, obj.lx );  Files.WriteInt16( M.R, obj.rx );  Files.WriteInt16( M.R, obj.rrx );
+		Files.WriteInt16( M.R, obj.by );  Files.WriteInt16( M.R, obj.sx );  Files.WriteInt16( M.R, obj.sy );
+		Files.WriteFloat32( M.R, obj.min );  Files.WriteFloat32( M.R, obj.max );  Files.WriteFloat32( M.R, obj.value );
+		Files.WriteInt16( M.R, obj.ticks );  Files.WriteString( M.R, obj.cmd )
 	END Store0;
 
 	PROCEDURE Load0( obj: tSlider;  VAR M: Objects.FileMsg );
 	BEGIN
-		dlink := M.dlink;  Files.ReadInt( M.R, obj.Xr );  Files.ReadInt( M.R, obj.Yr );  Files.ReadInt( M.R, obj.Wr );
-		Files.ReadInt( M.R, obj.Hr );  Files.ReadInt( M.R, obj.X );  Files.ReadInt( M.R, obj.Y );  Files.ReadInt( M.R, obj.W );
-		Files.ReadInt( M.R, obj.H );  Files.ReadInt( M.R, obj.barBegin );  Files.ReadInt( M.R, obj.barEnd );
-		Files.ReadInt( M.R, obj.pos );  Files.ReadInt( M.R, obj.rlx );  Files.ReadInt( M.R, obj.lx );  Files.ReadInt( M.R, obj.rx );
-		Files.ReadInt( M.R, obj.rrx );  Files.ReadInt( M.R, obj.by );  Files.ReadInt( M.R, obj.sx );  Files.ReadInt( M.R, obj.sy );
-		Files.ReadReal( M.R, obj.min );  Files.ReadReal( M.R, obj.max );  Files.ReadReal( M.R, obj.value );
-		Files.ReadInt( M.R, obj.ticks );  Files.ReadString( M.R, obj.cmd )
+		dlink := M.dlink;  Files.ReadInt16( M.R, obj.Xr );  Files.ReadInt16( M.R, obj.Yr );  Files.ReadInt16( M.R, obj.Wr );
+		Files.ReadInt16( M.R, obj.Hr );  Files.ReadInt16( M.R, obj.X );  Files.ReadInt16( M.R, obj.Y );  Files.ReadInt16( M.R, obj.W );
+		Files.ReadInt16( M.R, obj.H );  Files.ReadInt16( M.R, obj.barBegin );  Files.ReadInt16( M.R, obj.barEnd );
+		Files.ReadInt16( M.R, obj.pos );  Files.ReadInt16( M.R, obj.rlx );  Files.ReadInt16( M.R, obj.lx );  Files.ReadInt16( M.R, obj.rx );
+		Files.ReadInt16( M.R, obj.rrx );  Files.ReadInt16( M.R, obj.by );  Files.ReadInt16( M.R, obj.sx );  Files.ReadInt16( M.R, obj.sy );
+		Files.ReadFloat32( M.R, obj.min );  Files.ReadFloat32( M.R, obj.max );  Files.ReadFloat32( M.R, obj.value );
+		Files.ReadInt16( M.R, obj.ticks );  Files.ReadString( M.R, obj.cmd )
 	END Load0;
 
 	PROCEDURE Handler*( obj: Objects.Object;  VAR msg: Objects.ObjMsg );

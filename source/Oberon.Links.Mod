@@ -25,21 +25,21 @@ END Atom;
 
 PROCEDURE WriteRef(VAR r: Files.Rider; lib: Objects.Library; obj: Objects.Object);
 BEGIN
-	IF obj = NIL THEN Files.WriteInt(r, -1)
+	IF obj = NIL THEN Files.WriteInt16(r, -1)
 	ELSE
 		IF obj.lib # NIL THEN
 			IF obj.lib # lib THEN
 				IF obj.lib.name = "" THEN (* private library *)
-					Files.WriteInt(r, -1);
+					Files.WriteInt16(r, -1);
 					(* Warning: Object belonging to private library referenced in *)
 				ELSE
-					Files.WriteInt(r, obj.ref); Files.WriteInt(r, Atom(lib, obj.lib.name));
+					Files.WriteInt16(r, obj.ref); Files.WriteInt16(r, Atom(lib, obj.lib.name));
 				END
 			ELSE
-				Files.WriteInt(r, obj.ref);
-				Files.WriteInt(r, Atom(lib, "")); (* belongs to this library *)
+				Files.WriteInt16(r, obj.ref);
+				Files.WriteInt16(r, Atom(lib, "")); (* belongs to this library *)
 			END
-		ELSE Files.WriteInt(r, -1)
+		ELSE Files.WriteInt16(r, -1)
 			(* Warning: Object without library referenced in lib.name *)
 		END
 	END
@@ -48,10 +48,10 @@ END WriteRef;
 PROCEDURE ReadRef(VAR r: Files.Rider; lib: Objects.Library; VAR obj: Objects.Object);
 VAR i, l: SIGNED16; F: Objects.Library; name: ARRAY 32 OF CHAR;
 BEGIN
-	Files.ReadInt(r, i);
+	Files.ReadInt16(r, i);
 	IF i = -1 THEN obj := NIL
 	ELSE
-		Files.ReadInt(r, l);
+		Files.ReadInt16(r, l);
 		Objects.GetName(lib.dict, l, name);
 		IF name[0] = 0X THEN F := lib; COPY(lib.name, name); ELSE F := Objects.ThisLibrary(name); END;
 		IF F # NIL THEN

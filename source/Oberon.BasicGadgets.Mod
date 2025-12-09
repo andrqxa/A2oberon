@@ -116,7 +116,7 @@ END WriteVersion;
 
 PROCEDURE ReadVersion(VAR R: Files.Rider);
 VAR x: SIGNED32;
-BEGIN Files.ReadNum(R, x);
+BEGIN Files.ReadNum32(R, x);
 	IF x # VersionNo THEN
 		Texts.WriteString(W, "Version "); Texts.WriteInt(W, VersionNo, 3);
 		Texts.WriteString(W, " of BasicGadgets cannot read version "); Texts.WriteInt(W, x, 3); Texts.WriteLn(W); Log;
@@ -156,11 +156,11 @@ BEGIN
 				IF M.id = Objects.store THEN
 					Files.WriteNum(M.R, VersionAbstract); Files.WriteBool(M.R, obj.val);
 					Gadgets.objecthandle(obj, M);
-					(* WriteVersion(M.R); IF obj.val THEN Files.WriteInt(M.R, 1); ELSE Files.WriteInt(M.R, 0); END; *)
+					(* WriteVersion(M.R); IF obj.val THEN Files.WriteInt16(M.R, 1); ELSE Files.WriteInt16(M.R, 0); END; *)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver = VersionNo THEN (* old *)
-						Files.ReadInt(M.R, x); obj.val := (x = 1);
+						Files.ReadInt16(M.R, x); obj.val := (x = 1);
 					ELSIF ver = VersionAbstract THEN
 						Files.ReadBool(M.R, obj.val); Gadgets.objecthandle(obj, M);
 					ELSE
@@ -225,7 +225,7 @@ BEGIN
 					Files.WriteNum(M.R, VersionAbstract); Files.WriteString(M.R, obj.val);
 					Gadgets.objecthandle(obj, M);
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver = VersionNo THEN (* old *)
 						Files.ReadString(M.R, obj.val)
 					ELSIF ver = VersionAbstract THEN
@@ -289,13 +289,13 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteNum(M.R, VersionAbstract); Files.WriteLInt(M.R, obj.val); Gadgets.objecthandle(obj, M)
+					Files.WriteNum(M.R, VersionAbstract); Files.WriteInt32(M.R, obj.val); Gadgets.objecthandle(obj, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver = VersionNo THEN (* old *)
-						Files.ReadLInt(M.R, obj.val);
+						Files.ReadInt32(M.R, obj.val);
 					ELSIF ver = VersionAbstract THEN
-						Files.ReadLInt(M.R, obj.val); Gadgets.objecthandle(obj, M);
+						Files.ReadInt32(M.R, obj.val); Gadgets.objecthandle(obj, M);
 					ELSE
 						Texts.WriteString(W, "Version "); Texts.WriteInt(W, VersionAbstract, 3);
 						Texts.WriteString(W, " of integer cannot read version "); Texts.WriteInt(W, ver, 3); Texts.WriteLn(W); Log;
@@ -358,13 +358,13 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteNum(M.R, VersionAbstract); Files.WriteLReal(M.R, obj.val); Gadgets.objecthandle(obj, M)
+					Files.WriteNum(M.R, VersionAbstract); Files.WriteFloat64(M.R, obj.val); Gadgets.objecthandle(obj, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver = VersionNo THEN (* old *)
-						Files.ReadLReal(M.R, obj.val);
+						Files.ReadFloat64(M.R, obj.val);
 					ELSIF ver = VersionAbstract THEN
-						Files.ReadLReal(M.R, obj.val); Gadgets.objecthandle(obj, M);
+						Files.ReadFloat64(M.R, obj.val); Gadgets.objecthandle(obj, M);
 					ELSE
 						Texts.WriteString(W, "Version "); Texts.WriteInt(W, VersionAbstract, 3);
 						Texts.WriteString(W, " of real cannot read version "); Texts.WriteInt(W, ver, 3); Texts.WriteLn(W); Log;
@@ -772,33 +772,33 @@ BEGIN
 				IF M.id = Objects.store THEN
 					IF ~F.led OR (F.ledcol # Display3.red) THEN
 						Files.WriteNum(M.R, VersionNewButton);
-						IF F.led THEN Files.WriteInt(M.R, 1); ELSE Files.WriteInt(M.R, 0); END;
-						Files.WriteInt(M.R, F.ledcol)
+						IF F.led THEN Files.WriteInt16(M.R, 1); ELSE Files.WriteInt16(M.R, 0); END;
+						Files.WriteInt16(M.R, F.ledcol)
 					ELSE Files.WriteNum(M.R, 3)
 					END;
 					Files.WriteString(M.R, F.caption);
-					IF F.val THEN Files.WriteInt(M.R, 1); ELSE Files.WriteInt(M.R, 0); END;
-					IF F.popout THEN Files.WriteInt(M.R, 1); ELSE Files.WriteInt(M.R, 0); END;
-					Files.WriteInt(M.R,F.setval);
+					IF F.val THEN Files.WriteInt16(M.R, 1); ELSE Files.WriteInt16(M.R, 0); END;
+					IF F.popout THEN Files.WriteInt16(M.R, 1); ELSE Files.WriteInt16(M.R, 0); END;
+					Files.WriteInt16(M.R,F.setval);
 					Gadgets.WriteRef(M.R, F.lib, F.look);
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver = VersionNo THEN
 						Files.ReadString(M.R, F.caption);
-						Files.ReadInt(M.R, x); F.val := (x = 1);
-						Files.ReadInt(M.R, x); F.popout := (x = 1);
+						Files.ReadInt16(M.R, x); F.val := (x = 1);
+						Files.ReadInt16(M.R, x); F.popout := (x = 1);
 						Gadgets.framehandle(F, M);
-						IF (F.obj # NIL) & (F.obj IS Integer) THEN Files.ReadInt(M.R, x); F.setval := SHORT(x) END;
+						IF (F.obj # NIL) & (F.obj IS Integer) THEN Files.ReadInt16(M.R, x); F.setval := SHORT(x) END;
 					ELSIF ver >= 3 THEN
 						IF ver = VersionNewButton THEN
-							Files.ReadInt(M.R, x); F.led := (x = 1);
-							Files.ReadInt(M.R, F.ledcol)
+							Files.ReadInt16(M.R, x); F.led := (x = 1);
+							Files.ReadInt16(M.R, F.ledcol)
 						END;
 						Files.ReadString(M.R, F.caption);
-						Files.ReadInt(M.R, x); F.val := (x = 1);
-						Files.ReadInt(M.R, x); F.popout := (x = 1); IF F.popout THEN F.val := FALSE END;
-						Files.ReadInt(M.R,F.setval);
+						Files.ReadInt16(M.R, x); F.val := (x = 1);
+						Files.ReadInt16(M.R, x); F.popout := (x = 1); IF F.popout THEN F.val := FALSE END;
+						Files.ReadInt16(M.R,F.setval);
 						Gadgets.ReadRef(M.R, F.lib, F.look);
 						Gadgets.framehandle(F, M);
 					ELSE
@@ -1154,17 +1154,17 @@ BEGIN
 				IF M.id = Objects.store THEN
 					Files.WriteNum(M.R, VersionNewCheckbox);
 					Files.WriteBool(M.R, F.val);
-					Files.WriteInt(M.R, F.setval);
+					Files.WriteInt16(M.R, F.setval);
 					Gadgets.framehandle(F, M);
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver = VersionNo THEN
-						Files.ReadInt(M.R, x); F.val := (x = 1);
+						Files.ReadInt16(M.R, x); F.val := (x = 1);
 						Gadgets.framehandle(F, M);
-						IF (F.obj # NIL) & (F.obj IS Integer) THEN Files.ReadInt(M.R, x); F.setval := x END
+						IF (F.obj # NIL) & (F.obj IS Integer) THEN Files.ReadInt16(M.R, x); F.setval := x END
 					ELSIF ver = VersionNewCheckbox THEN
 						Files.ReadBool(M.R, F.val);
-						Files.ReadInt(M.R, F.setval);
+						Files.ReadInt16(M.R, F.setval);
 						Gadgets.framehandle(F, M);
 					ELSE
 						Texts.WriteString(W, "Version "); Texts.WriteInt(W, VersionNewCheckbox, 3);
@@ -1373,11 +1373,11 @@ BEGIN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
 					WriteVersion(M.R);
-					Files.WriteLInt(M.R, F.min); Files.WriteLInt(M.R, F.max); Files.WriteLInt(M.R, F.val);
+					Files.WriteInt32(M.R, F.min); Files.WriteInt32(M.R, F.max); Files.WriteInt32(M.R, F.val);
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN
 					ReadVersion(M.R);
-					Files.ReadLInt(M.R, F.min); Files.ReadLInt(M.R, F.max); Files.ReadLInt(M.R, F.val);
+					Files.ReadInt32(M.R, F.min); Files.ReadInt32(M.R, F.max); Files.ReadInt32(M.R, F.val);
 					Gadgets.framehandle(F, M)
 				END
 			END

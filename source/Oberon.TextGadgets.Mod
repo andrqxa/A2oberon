@@ -1571,23 +1571,23 @@ BEGIN
 				IF M.id = Objects.store THEN (* store private data here *)
 					Files.WriteSet(M.R, {0..15, 20});
 					Files.WriteSet(M.R, F.mode);
-					Files.WriteInt(M.R, F.leftM);
-					Files.WriteInt(M.R, F.width);
-					Files.WriteInt(M.R, F.noTabs);
-					x := 0; WHILE x < F.noTabs DO Files.WriteInt(M.R, F.tab[x]); INC(x) END;
+					Files.WriteInt16(M.R, F.leftM);
+					Files.WriteInt16(M.R, F.width);
+					Files.WriteInt16(M.R, F.noTabs);
+					x := 0; WHILE x < F.noTabs DO Files.WriteInt16(M.R, F.tab[x]); INC(x) END;
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN (* load private data here *)
 					Files.ReadSet(M.R, F.mode);
 					IF F.mode = {0..15, 20} THEN (* new format *)
 						Files.ReadSet(M.R, F.mode);
-						Files.ReadInt(M.R, F.leftM);
-						Files.ReadInt(M.R, F.width);
-						Files.ReadInt(M.R, y); F.noTabs := SHORT(y);
-						x := 0; WHILE x < F.noTabs DO Files.ReadInt(M.R, F.tab[x]); INC(x) END;
+						Files.ReadInt16(M.R, F.leftM);
+						Files.ReadInt16(M.R, F.width);
+						Files.ReadInt16(M.R, y); F.noTabs := SHORT(y);
+						x := 0; WHILE x < F.noTabs DO Files.ReadInt16(M.R, F.tab[x]); INC(x) END;
 						Gadgets.framehandle(F, M)
 					ELSE (* old format *)
-						Files.ReadInt(M.R, F.leftM);
-						Files.ReadInt(M.R, F.width);
+						Files.ReadInt16(M.R, F.leftM);
+						Files.ReadInt16(M.R, F.width);
 						Gadgets.framehandle(F, M)
 					END;
 					IF printerW IN F.mode THEN

@@ -270,10 +270,22 @@ BEGIN
 	x := LONG(x1) * 100H + LONG(x0) MOD 100H
 END ReadInt;
 
+PROCEDURE ReadInt16*(VAR r: Rider; VAR x: SIGNED16);
+VAR x0, x1: SIGNED8;
+BEGIN
+	Read(r, x0); Read(r, x1);
+	x := LONG(x1) * 100H + LONG(x0) MOD 100H
+END ReadInt16;
+
 PROCEDURE ReadLInt*(VAR r: Rider; VAR x: SIGNED32);
 BEGIN
 	ReadBytes(r, SYSTEM.VAL(Bytes4, x), 4)
 END ReadLInt;
+
+PROCEDURE ReadInt32*(VAR r: Rider; VAR x: SIGNED32);
+BEGIN
+	ReadBytes(r, SYSTEM.VAL(Bytes4, x), 4)
+END ReadInt32;
 
 PROCEDURE ReadSet*(VAR r: Rider; VAR x: SET);
 VAR s: SET32;
@@ -293,10 +305,20 @@ BEGIN
 	ReadBytes(r, SYSTEM.VAL(Bytes4, x), 4)
 END ReadReal;
 
+PROCEDURE ReadFloat32*(VAR r: Rider; VAR x: FLOAT32);
+BEGIN
+	ReadBytes(r, SYSTEM.VAL(Bytes4, x), 4)
+END ReadFloat32;
+
 PROCEDURE ReadLReal*(VAR r: Rider; VAR x: FLOAT64);
 BEGIN
 	ReadBytes(r, SYSTEM.VAL(Bytes8, x), 8)
 END ReadLReal;
+
+PROCEDURE ReadFloat64*(VAR r: Rider; VAR x: FLOAT64);
+BEGIN
+	ReadBytes(r, SYSTEM.VAL(Bytes8, x), 8)
+END ReadFloat64;
 
 PROCEDURE ReadString*(VAR r: Rider; VAR x: ARRAY OF CHAR);
 VAR i: SIGNED16; ch: CHAR;
@@ -319,6 +341,14 @@ BEGIN
 	WHILE ch >= 80X DO INC(y, LSH(LONG(ORD(ch)) - 128, n)); INC(n, 7); Read(r, ch) END;
 	x := ASH(LSH(LONG(ORD(ch)), 25), n-25) + y
 END ReadNum;
+
+PROCEDURE ReadNum32*(VAR r: Rider; VAR x: SIGNED32);
+VAR ch: CHAR; n: SIGNED16; y: SIGNED32;
+BEGIN
+	n := 0; y := 0; Read(r, ch);
+	WHILE ch >= 80X DO INC(y, LSH(LONG(ORD(ch)) - 128, n)); INC(n, 7); Read(r, ch) END;
+	x := ASH(LSH(LONG(ORD(ch)), 25), n-25) + y
+END ReadNum32;
 
 (** Writes a byte into the file at the Rider position, advancing the Rider by one. *)
 PROCEDURE Write*(VAR r: Rider; x: SYSTEM.BYTE);
@@ -402,10 +432,20 @@ BEGIN
 	Write(r, SHORT(x)); Write(r, SHORT(x DIV 100H))
 END WriteInt;
 
+PROCEDURE WriteInt16*(VAR r: Rider; x: SIGNED16);
+BEGIN
+	Write(r, SHORT(x)); Write(r, SHORT(x DIV 100H))
+END WriteInt16;
+
 PROCEDURE WriteLInt*(VAR r: Rider; x: SIGNED32);
 BEGIN
 	WriteBytes(r, SYSTEM.VAL(Bytes4, x), 4)
 END WriteLInt;
+
+PROCEDURE WriteInt32*(VAR r: Rider; x: SIGNED32);
+BEGIN
+	WriteBytes(r, SYSTEM.VAL(Bytes4, x), 4)
+END WriteInt32;
 
 PROCEDURE WriteSet*(VAR r: Rider; x: SET);
 VAR s: SET32;
@@ -424,10 +464,20 @@ BEGIN
 	WriteBytes(r, SYSTEM.VAL(Bytes4, x), 4)
 END WriteReal;
 
+PROCEDURE WriteFloat32*(VAR r: Rider; x: FLOAT32);
+BEGIN
+	WriteBytes(r, SYSTEM.VAL(Bytes4, x), 4)
+END WriteFloat32;
+
 PROCEDURE WriteLReal*(VAR r: Rider; x: FLOAT64);
 BEGIN
 	WriteBytes(r, SYSTEM.VAL(Bytes8, x), 8)
 END WriteLReal;
+
+PROCEDURE WriteFloat64*(VAR r: Rider; x: FLOAT64);
+BEGIN
+	WriteBytes(r, SYSTEM.VAL(Bytes8, x), 8)
+END WriteFloat64;
 
 PROCEDURE WriteString*(VAR r: Rider; CONST x: ARRAY OF CHAR);
 VAR i: SIGNED16; ch: CHAR;

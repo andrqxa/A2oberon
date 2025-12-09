@@ -145,12 +145,12 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteInt(M.R, F.errno);
+					Files.WriteInt16(M.R, F.errno);
 					Files.WriteBool(M.R,F.showstr);
 					Files.WriteString(M.R, F.str);
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadInt(M.R, F.errno);
+					Files.ReadInt16(M.R, F.errno);
 					Files.ReadBool(M.R,F.showstr);
 					Files.ReadString(M.R, F.str);
 					Gadgets.framehandle(F, M)

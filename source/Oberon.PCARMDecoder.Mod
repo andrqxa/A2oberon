@@ -369,7 +369,7 @@ PROCEDURE DecoderPlugin(VAR pc: SIGNED32; VAR r: Files.Rider; VAR w: Texts.Write
 VAR opcode: SIGNED32;
 BEGIN
 	W := w;
-	Files.ReadLInt(r, opcode);
+	Files.ReadInt32(r, opcode);
 	IF bigEndian THEN SwapBytes(opcode); END;
 	FixHex(opcode); Str("    "); decode(pc, opcode);
 	w := W;
@@ -402,10 +402,10 @@ BEGIN
 			Files.Set(R, f, 0);
 			NEW(T); Texts.Open(T, ""); Texts.OpenWriter(W);
 			Texts.SetFont(W, Fonts.This("Courier10.Scn.Fnt"));
-			Files.ReadLInt(R, opcode);
+			Files.ReadInt32(R, opcode);
 			WHILE ~R.eof DO
 				Decode(pc, opcode, FALSE); INC(pc, 4);
-				Files.ReadLInt(R, opcode)
+				Files.ReadInt32(R, opcode)
 			END;
 			Texts.WriteString(w, "done.");
 			Texts.Append(T, W.buf);

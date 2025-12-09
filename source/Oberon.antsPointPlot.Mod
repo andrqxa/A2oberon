@@ -183,7 +183,7 @@ VAR
 
 	PROCEDURE Store0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteInt( M.R, 0 );  Gadgets.WriteRef( M.R, obj.lib, obj.x )
+		Files.WriteInt16( M.R, 0 );  Gadgets.WriteRef( M.R, obj.lib, obj.x )
 	END Store0;
 
 	PROCEDURE Load0( obj: tLayer;  VAR M: Objects.FileMsg );
@@ -191,7 +191,7 @@ VAR
 	VAR objsub: Objects.Object;  version: SIGNED16;
 
 	BEGIN
-		Files.ReadInt( M.R, version );  dlink := M.dlink;  Gadgets.ReadRef( M.R, obj.lib, objsub );
+		Files.ReadInt16( M.R, version );  dlink := M.dlink;  Gadgets.ReadRef( M.R, obj.lib, objsub );
 		IF (objsub # NIL ) & (objsub IS vyBase.tVector) THEN obj.x := objsub( vyBase.tVector ) END
 	END Load0;
 

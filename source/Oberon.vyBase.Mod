@@ -794,12 +794,12 @@ END UnSubscribe;
 (** Misc **)
 PROCEDURE StoreObject0* (ob: Object;        VAR M: Objects.FileMsg);
 BEGIN	ASSERT(ob # NIL);        (*! dummy *)
-	Files.WriteLInt(M.R, maxVersion);
-	Files.WriteLInt(M.R, ob.ObjectId);
+	Files.WriteInt32(M.R, maxVersion);
+	Files.WriteInt32(M.R, ob.ObjectId);
 	Gadgets.WriteRef(M.R, ob.lib, ob.Name);
 	(*IF ob.Name=NIL THEN  Files.Write(M.R,0X) ELSE Files.Write(M.R,01X);  ob.Name.handle(ob.Name,M) END;*)
-	Files.WriteLInt(M.R, ob.createdT);       Files.WriteLInt(M.R, ob.createdD);
-	Files.WriteLInt(M.R, ob.modifiedT);       Files.WriteLInt(M.R, ob.modifiedD);
+	Files.WriteInt32(M.R, ob.createdT);       Files.WriteInt32(M.R, ob.createdD);
+	Files.WriteInt32(M.R, ob.modifiedT);       Files.WriteInt32(M.R, ob.modifiedD);
 	Gadgets.WriteRef(M.R, ob.lib, ob.key);
 	Files.Write(M.R, 1X);      (* sync placeholder: struct *)
 	Files.WriteSet(M.R, ob.disposition);
@@ -814,15 +814,15 @@ BEGIN	ASSERT(ob # NIL);        (*! dummy *)
 	*)
 	(*?	vyLinks.StoreLinks(M.R, ob.lib, ob.users);*)
 	vyLinks.StoreLinks(M.R, ob.lib, ob.sources);
-	Files.WriteLInt(M.R, 05678H)  (* terminates *)
+	Files.WriteInt32(M.R, 05678H)  (* terminates *)
 END StoreObject0;
 
 PROCEDURE LoadObject0* (ob: Object;        VAR M: Objects.FileMsg);
 	VAR version, uid: SIGNED32;       ch: CHAR;       obsub: Objects.Object;    name: tName;    list: vyLinks.Link;
 BEGIN	ASSERT(ob # NIL);        	(*! dummy *)
-	Files.ReadLInt(M.R, version);
+	Files.ReadInt32(M.R, version);
 	ASSERT((version >= minVersion) &  (version <= maxVersion), precc);
-	Files.ReadLInt(M.R, ob.ObjectId);
+	Files.ReadInt32(M.R, ob.ObjectId);
 	Gadgets.ReadRef(M.R, ob.lib, obsub);
 	IF (obsub # NIL) & (obsub IS tName) THEN
 		IF (obsub.dlink # NIL) & (obsub.dlink IS tName) THEN
@@ -835,8 +835,8 @@ BEGIN	ASSERT(ob # NIL);        	(*! dummy *)
 		Links.SetLink(name, 'Object', ob)
 	ELSE Register(ob)
 	END;
-	Files.ReadLInt(M.R, ob.createdT);       Files.ReadLInt(M.R, ob.createdD);
-	Files.ReadLInt(M.R, ob.modifiedT);       Files.ReadLInt(M.R, ob.modifiedD);
+	Files.ReadInt32(M.R, ob.createdT);       Files.ReadInt32(M.R, ob.createdD);
+	Files.ReadInt32(M.R, ob.modifiedT);       Files.ReadInt32(M.R, ob.modifiedD);
 	Gadgets.ReadRef(M.R, ob.lib, ob.key);
 	Files.Read(M.R, ch);     (* placeholder: struct *)ASSERT(ch = 1X, precc + 1);
 	Files.ReadSet(M.R, ob.disposition);
@@ -853,7 +853,7 @@ BEGIN	ASSERT(ob # NIL);        	(*! dummy *)
 	vyLinks.LoadLinks(M.R, ob.lib, ob.sources);    (*! may need an explicit subscribe *)
 	list := ob.sources;
 	WHILE list # NIL DO		Subscribe ((*for messages from source*)list.obj, ob);    list := list.link END;
-	Files.ReadLInt(M.R, uid);       ASSERT(uid = 05678H, precc + 5)
+	Files.ReadInt32(M.R, uid);       ASSERT(uid = 05678H, precc + 5)
 END LoadObject0;
 
 PROCEDURE CopyObject* (VAR M: Objects.CopyMsg;     src, dest: Object);      (*vs 0.0d0 gs. mode 0:shallow, 1 deep *)
@@ -980,14 +980,14 @@ END HandleItemAttributes;
 PROCEDURE LoadItem* (ob: vyLinks.Link; VAR M:Objects.FileMsg);
 VAR version,uid: SIGNED32;
 BEGIN	(*ASSERT(ob # NIL); 	(*! dummy *)
-Files.ReadLInt(M.R,version);
+Files.ReadInt32(M.R,version);
 ASSERT((version>=minVersion) &  (version<=maxVersion));
-Files.ReadLInt(M.R, ob.ObjectId);
-Files.ReadLInt(M.R, ob.createdT); Files.ReadLInt(M.R, ob.createdD);
-Files.ReadLInt(M.R, ob.modifiedT); Files.ReadLInt(M.R, ob.modifiedD);
+Files.ReadInt32(M.R, ob.ObjectId);
+Files.ReadInt32(M.R, ob.createdT); Files.ReadInt32(M.R, ob.createdD);
+Files.ReadInt32(M.R, ob.modifiedT); Files.ReadInt32(M.R, ob.modifiedD);
 (*! support inverse user list
 REPEAT
-Files.ReadLInt(M.R, uid);  (*! write to temporary list & patch back!*)
+Files.ReadInt32(M.R, uid);  (*! write to temporary list & patch back!*)
 UNTIL uid = 0 *)
 *)
 END LoadItem;
@@ -995,16 +995,16 @@ END LoadItem;
 PROCEDURE StoreItem* (ob: vyLinks.Link; VAR M:Objects.FileMsg);
 VAR u: vyLinks.Link;
 BEGIN (*	ASSERT(ob # NIL); (*! dummy *)
-Files.WriteLInt(M.R,maxVersion);
-Files.WriteLInt(M.R, ob.ObjectId);
-Files.WriteLInt(M.R, ob.createdT); Files.WriteLInt(M.R, ob.createdD);
-Files.WriteLInt(M.R, ob.modifiedT); Files.WriteLInt(M.R, ob.modifiedD);
+Files.WriteInt32(M.R,maxVersion);
+Files.WriteInt32(M.R, ob.ObjectId);
+Files.WriteInt32(M.R, ob.createdT); Files.WriteInt32(M.R, ob.createdD);
+Files.WriteInt32(M.R, ob.modifiedT); Files.WriteInt32(M.R, ob.modifiedD);
 (*! support inverse user list
 u := ob.users;  WHILE u # NIL DO
-IF u IS vyLinks.Link THEN Files.WriteLInt(M.R, u(vyLinks.Link).ObjectId) END;
+IF u IS vyLinks.Link THEN Files.WriteInt32(M.R, u(vyLinks.Link).ObjectId) END;
 u := u.link
 END;
-Files.WriteLInt(M.R, 0)  (* terminates use list *) *) *)
+Files.WriteInt32(M.R, 0)  (* terminates use list *) *) *)
 END StoreItem;
 
 PROCEDURE CopyItem* (VAR M:Objects.CopyMsg;src, dest: vyLinks.Link); (*vs 0.0d0 gs. mode 0:shallow, 1 deep *)
@@ -1273,8 +1273,8 @@ PROCEDURE HandleFrameFileMsg (obj: Frame;    VAR M: Objects.FileMsg);
 BEGIN
 	IF M.id = Objects.load THEN
 		Gadgets.framehandle(obj, M);
-		(*	Files.ReadInt(M.R, obj.defunctx);       Files.ReadInt(M.R, obj.defuncty);    *)
-		Files.ReadInt(M.R, obj.borderW);
+		(*	Files.ReadInt16(M.R, obj.defunctx);       Files.ReadInt16(M.R, obj.defuncty);    *)
+		Files.ReadInt16(M.R, obj.borderW);
 		Files.ReadBool(M.R, obj.hotupdate);
 		vyLinks.CacheErrors;
 		vyLinks.LoadLinkObj(M.R, obj.lib, tempobj);
@@ -1286,8 +1286,8 @@ BEGIN
 		vyLinks.LoadLinks(M.R, obj.lib, obj.vylinks)
 	ELSIF M.id = Objects.store THEN
 		Gadgets.framehandle(obj, M);
-		(*	Files.WriteInt(M.R, obj.defunctx);       Files.WriteInt(M.R, obj.defuncty);*)
-		Files.WriteInt(M.R, obj.borderW);
+		(*	Files.WriteInt16(M.R, obj.defunctx);       Files.WriteInt16(M.R, obj.defuncty);*)
+		Files.WriteInt16(M.R, obj.borderW);
 		Files.WriteBool(M.R, obj.hotupdate);
 
 		vyLinks.CacheErrors;

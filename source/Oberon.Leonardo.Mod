@@ -996,10 +996,10 @@ MODULE Leonardo IN Oberon; (** portable **)	(* eos  *)
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 2)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					IF ver = 1 THEN
-						Files.ReadInt(msg.R, int); Files.ReadInt(msg.R, int); Files.ReadInt(msg.R, int); Files.ReadInt(msg.R, int);
-						Files.ReadReal(msg.R, real)
+						Files.ReadInt16(msg.R, int); Files.ReadInt16(msg.R, int); Files.ReadInt16(msg.R, int); Files.ReadInt16(msg.R, int);
+						Files.ReadFloat32(msg.R, real)
 					END
 				END
 			END
@@ -1409,7 +1409,7 @@ MODULE Leonardo IN Oberon; (** portable **)	(* eos  *)
 					Files.WriteNum(msg.R, 1);
 					WriteComponents(msg.R, cont.lib, cont.bottom)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					ReadComponents(msg.R, cont.lib, cont.bottom, cont.top);
 					cur := cont.bottom;
 					WHILE cur # NIL DO
@@ -1554,7 +1554,7 @@ MODULE Leonardo IN Oberon; (** portable **)	(* eos  *)
 					Files.WriteBool(msg.R, layer.display); Files.WriteBool(msg.R, layer.print);
 					Files.WriteBool(msg.R, layer.align)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					IF ver IN {1, 2} THEN
 						Files.ReadString(msg.R, layer.name);
 						Files.ReadBool(msg.R, layer.display); Files.ReadBool(msg.R, layer.print);
@@ -1793,9 +1793,9 @@ MODULE Leonardo IN Oberon; (** portable **)	(* eos  *)
 					Files.Set(msg.R, Files.Base(msg.R), Files.Pos(msg.R) + len);
 					WriteComponents(msg.R, bm.lib, fig.bottom);
 					Gadgets.WriteRef(msg.R, bm.lib, fig.active);
-					Files.WriteInt(msg.R, fig.maxCmds)
+					Files.WriteInt16(msg.R, fig.maxCmds)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Files.Read(msg.R, id);
 					NEW(lib); Objects.OpenLibrary(lib);
 					Objects.LoadLibrary(lib, Files.Base(msg.R), Files.Pos(msg.R), len);
@@ -1810,7 +1810,7 @@ MODULE Leonardo IN Oberon; (** portable **)	(* eos  *)
 						IF s IS Layer THEN s(Layer).fig := fig END;
 						s := s.up
 					END;
-					Files.ReadInt(msg.R, fig.maxCmds)
+					Files.ReadInt16(msg.R, fig.maxCmds)
 				END
 			END
 		END
@@ -1853,7 +1853,7 @@ MODULE Leonardo IN Oberon; (** portable **)	(* eos  *)
 			WITH msg: Objects.FileMsg DO
 				IF msg.id = Objects.load THEN
 					Gadgets.framehandle(frame, msg);
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					ASSERT(ver = 1, 110);
 					Gadgets.ReadRef(msg.R, frame.lib, obj);
 					IF (obj = NIL) OR ~(obj IS Gadgets.Frame) THEN

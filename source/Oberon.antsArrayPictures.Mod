@@ -91,15 +91,15 @@ TYPE
 		(*! store Picts as GIF for color preserving or store colors *)
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadLInt( msg.R, w );
-			Files.ReadLInt( msg.R, h );  Files.ReadLInt( msg.R, depth );  obj.w := w;  obj.h := h;  obj.depth := depth;
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadInt32( msg.R, w );
+			Files.ReadInt32( msg.R, h );  Files.ReadInt32( msg.R, depth );  obj.w := w;  obj.h := h;  obj.depth := depth;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF (objsub # NIL ) & (objsub IS Pictures.Picture) THEN obj.pict := objsub( Pictures.Picture ) END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF (objsub # NIL ) & (objsub IS antsArrayObjects.tObject) THEN obj.A := objsub( antsArrayObjects.tINTEGERObject ) END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteLInt( msg.R, SIGNED32(obj.w) );
-			Files.WriteLInt( msg.R, SIGNED32(obj.h) );  Files.WriteLInt( msg.R, obj.depth );  Gadgets.WriteRef( msg.R, obj.lib, obj.pict );
+			Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteInt32( msg.R, SIGNED32(obj.w) );
+			Files.WriteInt32( msg.R, SIGNED32(obj.h) );  Files.WriteInt32( msg.R, obj.depth );  Gadgets.WriteRef( msg.R, obj.lib, obj.pict );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.A )
 		ELSE vyBase.objecthandle( obj, msg )
 		END

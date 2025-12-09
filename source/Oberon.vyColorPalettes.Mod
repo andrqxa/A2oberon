@@ -50,12 +50,12 @@ VAR
 	VAR objsub: Objects.Object;  i: SIGNED16;  r, g, b: FLOAT32;  version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );   (* version id *)
-			vyBase.objecthandle( obj, msg );  Files.WriteInt( msg.R, obj.used );
+			Files.WriteInt16( msg.R, 0 );   (* version id *)
+			vyBase.objecthandle( obj, msg );  Files.WriteInt16( msg.R, obj.used );
 			FOR i := 0 TO obj.used - 1 DO Gadgets.WriteRef( msg.R, obj.lib, obj.col[i] ) END;
-			Files.WriteInt( msg.R, obj.first );  Files.WriteInt( msg.R, obj.last )
+			Files.WriteInt16( msg.R, obj.first );  Files.WriteInt16( msg.R, obj.last )
 		ELSIF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadInt( msg.R, obj.used );
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadInt16( msg.R, obj.used );
 			FOR i := 0 TO obj.used - 1 DO
 				Gadgets.ReadRef( msg.R, obj.lib, objsub );
 				WITH objsub: Colors.Color DO
@@ -63,7 +63,7 @@ VAR
 					Images.SetRGB( obj.icol[i], SHORT( ENTIER( r * 255 + 0.5 ) ), SHORT( ENTIER( g * 255 + 0.5 ) ), SHORT( ENTIER( b * 255 + 0.5 ) ) );
 				END;
 			END;
-			Files.ReadInt( msg.R, obj.first );  Files.ReadInt( msg.R, obj.last );
+			Files.ReadInt16( msg.R, obj.first );  Files.ReadInt16( msg.R, obj.last );
 		ELSE vyBase.objecthandle( obj, msg )
 		END
 	END PHandleFileMsg;

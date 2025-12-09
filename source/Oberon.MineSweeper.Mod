@@ -481,10 +481,10 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteInt(M.R, F.W); Files.WriteInt(M.R, F.H); Files.WriteInt(M.R, F.mines);
+					Files.WriteInt16(M.R, F.W); Files.WriteInt16(M.R, F.H); Files.WriteInt16(M.R, F.mines);
 					Gadgets.objecthandle(F, M);
 				ELSIF M.id = Objects.load THEN
-					Files.ReadInt(M.R, w); Files.ReadInt(M.R, h); Files.ReadInt(M.R, mines);
+					Files.ReadInt16(M.R, w); Files.ReadInt16(M.R, h); Files.ReadInt16(M.R, mines);
 					Gadgets.objecthandle(F, M);
 					InitField(F, w, h, mines, FALSE);
 				END
@@ -1152,10 +1152,10 @@ BEGIN
 
 	F:= Files.Old(D.name);
 	IF F # NIL THEN
-		Files.Set(R, F, 0); Files.ReadInt(R, tag);
+		Files.Set(R, F, 0); Files.ReadInt16(R, tag);
 		IF tag = Documents.Id THEN
 			Files.ReadString(R, name);	(* skip over generator name *)
-			Files.ReadInt(R, D.X); Files.ReadInt(R, D.Y); Files.ReadInt(R, D.W); Files.ReadInt(R, D.H);
+			Files.ReadInt16(R, D.X); Files.ReadInt16(R, D.Y); Files.ReadInt16(R, D.W); Files.ReadInt16(R, D.H);
 			Files.Read(R, ch);
 			IF ch = Objects.LibBlockId THEN
 				(* there's a library stored, so make a new (privat) library and let the library do the work *)
@@ -1224,9 +1224,9 @@ BEGIN
 
 			F:= Files.New(D.name); Files.Set(R, F, 0);
 			(* store Documents.Id and the document's generator name *)
-			Files.WriteInt(R, Documents.Id); Files.WriteString(R, "MineSweeper.NewDoc");
+			Files.WriteInt16(R, Documents.Id); Files.WriteString(R, "MineSweeper.NewDoc");
 			(* store the document's position and size *)
-			Files.WriteInt(R, D.X); Files.WriteInt(R, D.Y); Files.WriteInt(R, D.W); Files.WriteInt(R, D.H);
+			Files.WriteInt16(R, D.X); Files.WriteInt16(R, D.Y); Files.WriteInt16(R, D.W); Files.WriteInt16(R, D.H);
 			(* store the library (with all the gadgets) *)
 			Objects.StoreLibrary(B.lib, F, Files.Pos(R), len);
 

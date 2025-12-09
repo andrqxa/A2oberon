@@ -520,18 +520,18 @@ MODULE LeoCaptions IN Oberon; (** portable **)	(* eos  *)
 					Files.WriteNum(msg.R, cap.len);
 					Files.WriteString(msg.R, cap.text^);
 					Objects.GetKey(cap.lib.dict, cap.font.name, key);
-					Files.WriteInt(msg.R, key);
-					Files.WriteInt(msg.R, cap.font.ptsize);
+					Files.WriteInt16(msg.R, key);
+					Files.WriteInt16(msg.R, cap.font.ptsize);
 					Files.Write(msg.R, CHR(cap.color.r)); Files.Write(msg.R, CHR(cap.color.g)); Files.Write(msg.R, CHR(cap.color.b));
 					GfxMatrix.Write(msg.R, cap.mat)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
-					Files.ReadNum(msg.R, cap.len);
+					Files.ReadNum32(msg.R, ver);
+					Files.ReadNum32(msg.R, cap.len);
 					NEW(cap.text, -((-cap.len-1) DIV BlockSize) * BlockSize);
 					Files.ReadString(msg.R, cap.text^);
-					Files.ReadInt(msg.R, key);
+					Files.ReadInt16(msg.R, key);
 					Objects.GetName(cap.lib.dict, key, name);
-					Files.ReadInt(msg.R, ptsize);
+					Files.ReadInt16(msg.R, ptsize);
 					cap.font := GfxFonts.Open(name, ptsize, FontMat);
 					Files.Read(msg.R, ch); cap.color.r := ORD(ch);
 					Files.Read(msg.R, ch); cap.color.g := ORD(ch);

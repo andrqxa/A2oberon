@@ -156,37 +156,37 @@ VAR
 	intDummy, nameLen, extraLen, commentLen: SIGNED16;
 	longDummy: SIGNED32;
 BEGIN
-	Files.ReadLInt(r, longDummy);
+	Files.ReadInt32(r, longDummy);
 	IF longDummy = CentralFileHeaderSignature THEN
 		NEW(ent);
 		ent.offsetCentralDir := Files.Pos(r) - 4;
 		ent.support := 0;
-		Files.ReadInt(r, intDummy);	(* version made by *)
-		Files.ReadInt(r, intDummy);	(* version needed to extract *)
+		Files.ReadInt16(r, intDummy);	(* version made by *)
+		Files.ReadInt16(r, intDummy);	(* version needed to extract *)
 		IF (intDummy MOD 100H) / 10 < CompatibleVersions THEN
 			ent.support := IncompatibleVersion
 		END;
-		Files.ReadInt(r, ent.genPurpBitFlag);	(* general purpose bit flag *)
+		Files.ReadInt16(r, ent.genPurpBitFlag);	(* general purpose bit flag *)
 		IF ODD(ent.genPurpBitFlag) THEN
 			ent.support := Encrypted	(* bit 0: if set, file encrypted *)
 		END;
 		ent.dataDescriptor := ODD(intDummy DIV 8);	(* bit 3: data descriptor after (compressed) file data *)
-		Files.ReadInt(r, ent.method);	(* compression method *)
+		Files.ReadInt16(r, ent.method);	(* compression method *)
 		IF (ent.support = Supported) & ~(ent.method IN SupportedCompMethods) THEN
 			ent.support := UnsupCompMethod
 		END;
-		Files.ReadInt(r, intDummy); ent.time := DosToOberonTime(intDummy);	(* last mod file time *)
-		Files.ReadInt(r, intDummy); ent.date := DosToOberonDate(intDummy);	(* last mod file date *)
-		Files.ReadLInt(r, ent.crc32);	(* crc-32 *)
-		Files.ReadLInt(r, ent.compSize);	(* compressed size *)
-		Files.ReadLInt(r, ent.uncompSize);	(* uncompressed size *)
-		Files.ReadInt(r, nameLen);	(* filename length *)
-		Files.ReadInt(r, extraLen);	(* extra field length *)
-		Files.ReadInt(r, commentLen);	(* file comment length *)
-		Files.ReadInt(r, intDummy);	(* disk number start *)
-		Files.ReadInt(r, ent.intFileAttr);	(* internal file attributes *)
-		Files.ReadLInt(r, ent.extFileAttr);	(* external file attributes *)
-		Files.ReadLInt(r, ent.offsetLocal);	(* relative offset of local header *)
+		Files.ReadInt16(r, intDummy); ent.time := DosToOberonTime(intDummy);	(* last mod file time *)
+		Files.ReadInt16(r, intDummy); ent.date := DosToOberonDate(intDummy);	(* last mod file date *)
+		Files.ReadInt32(r, ent.crc32);	(* crc-32 *)
+		Files.ReadInt32(r, ent.compSize);	(* compressed size *)
+		Files.ReadInt32(r, ent.uncompSize);	(* uncompressed size *)
+		Files.ReadInt16(r, nameLen);	(* filename length *)
+		Files.ReadInt16(r, extraLen);	(* extra field length *)
+		Files.ReadInt16(r, commentLen);	(* file comment length *)
+		Files.ReadInt16(r, intDummy);	(* disk number start *)
+		Files.ReadInt16(r, ent.intFileAttr);	(* internal file attributes *)
+		Files.ReadInt32(r, ent.extFileAttr);	(* external file attributes *)
+		Files.ReadInt32(r, ent.offsetLocal);	(* relative offset of local header *)
 		Files.ReadBytes(r, ent.name, nameLen);	(* filename *)
 		IF extraLen # 0 THEN
 			NEW(ent.extraField, extraLen);
@@ -199,7 +199,7 @@ BEGIN
 		(* read extra field length in the local file header (can be different from extra field length stored in the file header...) *)
 		longDummy := Files.Pos(r);	(* store actual position of file reader *)
 		Files.Set(r, Files.Base(r), ent.offsetLocal + 28);	(* set r to position of extra field length in local file header *)
-		Files.ReadInt(r, extraLen);	(* extra field length *)
+		Files.ReadInt16(r, extraLen);	(* extra field length *)
 		ent.offsetFileData := ent.offsetLocal + 30 + nameLen + extraLen;	(* compute offset of file data *)
 		Files.Set(r, Files.Base(r), longDummy);	(* set position of file reader to previous position *)
 		IF r.eof THEN	(* if file is a zip-archive, r is not at end of file *)
@@ -212,20 +212,20 @@ END ReadEntry;
 (* Writes a local file header *)
 PROCEDURE WriteLocalFileHeader(ent: Entry; VAR r: Files.Rider);
 BEGIN
-	Files.WriteLInt(r, LocalFileHeaderSignature);	(* local file header signature *)
-	Files.WriteInt(r, CompatibleVersions * 10);	(* version needed to extract *)
-	Files.WriteInt(r, ent.genPurpBitFlag);	(* general purpose bit flag *)
-	Files.WriteInt(r, ent.method);	(* compression method *)
-	Files.WriteInt(r, OberonToDosTime(ent.time));	(* last mod file time *)
-	Files.WriteInt(r, OberonToDosDate(ent.date));	(* last mod file date *)
-	Files.WriteLInt(r, ent.crc32);	(* crc-32 *)
-	Files.WriteLInt(r, ent.compSize);	(* compressed size *)
-	Files.WriteLInt(r, ent.uncompSize);	(* uncompressed size *)
-	Files.WriteInt(r, SIGNED16(StringLength(ent.name)));	(* filename length *)
+	Files.WriteInt32(r, LocalFileHeaderSignature);	(* local file header signature *)
+	Files.WriteInt16(r, CompatibleVersions * 10);	(* version needed to extract *)
+	Files.WriteInt16(r, ent.genPurpBitFlag);	(* general purpose bit flag *)
+	Files.WriteInt16(r, ent.method);	(* compression method *)
+	Files.WriteInt16(r, OberonToDosTime(ent.time));	(* last mod file time *)
+	Files.WriteInt16(r, OberonToDosDate(ent.date));	(* last mod file date *)
+	Files.WriteInt32(r, ent.crc32);	(* crc-32 *)
+	Files.WriteInt32(r, ent.compSize);	(* compressed size *)
+	Files.WriteInt32(r, ent.uncompSize);	(* uncompressed size *)
+	Files.WriteInt16(r, SIGNED16(StringLength(ent.name)));	(* filename length *)
 	IF ent.extraField # NIL THEN
-		Files.WriteInt(r, SIGNED16(LEN(ent.extraField^)))	(* extra field length *)
+		Files.WriteInt16(r, SIGNED16(LEN(ent.extraField^)))	(* extra field length *)
 	ELSE
-		Files.WriteInt(r, 0)
+		Files.WriteInt16(r, 0)
 	END;
 	Files.WriteBytes(r, ent.name, StringLength(ent.name)(SIGNED32));	(* filename *)
 	IF ent.extraField # NIL THEN
@@ -237,31 +237,31 @@ END WriteLocalFileHeader;
 PROCEDURE WriteFileHeader(ent: Entry; VAR r: Files.Rider);
 BEGIN
 	ent.offsetCentralDir := Files.Pos(r);
-	Files.WriteLInt(r, CentralFileHeaderSignature);	(* central file header signature *)
-	Files.WriteInt(r, CompatibleVersions * 10);	(* version made by *)
-	Files.WriteInt(r, CompatibleVersions * 10);	(* version needed to extract *)
-	Files.WriteInt(r, ent.genPurpBitFlag);	(* general purpose bit flag *)
-	Files.WriteInt(r, ent.method);	(* compression method *)
-	Files.WriteInt(r, OberonToDosTime(ent.time));	(* last mod file time *)
-	Files.WriteInt(r, OberonToDosDate(ent.date));	(* last mod file date *)
-	Files.WriteLInt(r, ent.crc32);	(* crc-32 *)
-	Files.WriteLInt(r, ent.compSize);	(* compressed size *)
-	Files.WriteLInt(r, ent.uncompSize);	(* uncompressed size *)
-	Files.WriteInt(r, SIGNED16(StringLength(ent.name)));	(* filename length *)
+	Files.WriteInt32(r, CentralFileHeaderSignature);	(* central file header signature *)
+	Files.WriteInt16(r, CompatibleVersions * 10);	(* version made by *)
+	Files.WriteInt16(r, CompatibleVersions * 10);	(* version needed to extract *)
+	Files.WriteInt16(r, ent.genPurpBitFlag);	(* general purpose bit flag *)
+	Files.WriteInt16(r, ent.method);	(* compression method *)
+	Files.WriteInt16(r, OberonToDosTime(ent.time));	(* last mod file time *)
+	Files.WriteInt16(r, OberonToDosDate(ent.date));	(* last mod file date *)
+	Files.WriteInt32(r, ent.crc32);	(* crc-32 *)
+	Files.WriteInt32(r, ent.compSize);	(* compressed size *)
+	Files.WriteInt32(r, ent.uncompSize);	(* uncompressed size *)
+	Files.WriteInt16(r, SIGNED16(StringLength(ent.name)));	(* filename length *)
 	IF ent.extraField = NIL THEN
-		Files.WriteInt(r, 0)
+		Files.WriteInt16(r, 0)
 	ELSE
-		Files.WriteInt(r, SIGNED16(LEN(ent.extraField^)));	(* extra field length *)
+		Files.WriteInt16(r, SIGNED16(LEN(ent.extraField^)));	(* extra field length *)
 	END;
 	IF ent.comment = NIL THEN
-		Files.WriteInt(r, 0)
+		Files.WriteInt16(r, 0)
 	ELSE
-		Files.WriteInt(r, SIGNED16(LEN(ent.comment^)));	(* file comment length *)
+		Files.WriteInt16(r, SIGNED16(LEN(ent.comment^)));	(* file comment length *)
 	END;
-	Files.WriteInt(r, 0);	(* disk number start *)
-	Files.WriteInt(r, ent.intFileAttr);	(* internal file attributes *)
-	Files.WriteLInt(r, ent.extFileAttr);	(* external file attributes *)
-	Files.WriteLInt(r, ent.offsetLocal);	(* relative offset of local header *)
+	Files.WriteInt16(r, 0);	(* disk number start *)
+	Files.WriteInt16(r, ent.intFileAttr);	(* internal file attributes *)
+	Files.WriteInt32(r, ent.extFileAttr);	(* external file attributes *)
+	Files.WriteInt32(r, ent.offsetLocal);	(* relative offset of local header *)
 	Files.WriteBytes(r, ent.name, StringLength(ent.name)(SIGNED32));	(* filename *)
 	IF ent.extraField # NIL THEN
 		Files.WriteBytes(r, ent.extraField^, LEN(ent.extraField^)(SIGNED32))	(* extra field *)
@@ -274,25 +274,25 @@ END WriteFileHeader;
 (* Writes end of central directory record *)
 PROCEDURE WriteEndOfCentDir(arc: Archive; VAR r: Files.Rider);
 BEGIN
-	Files.WriteLInt(r, EndOfCentralDirSignature);	(* end of central dir signature *)
-	Files.WriteInt(r, 0);	(* number of this disk *)
-	Files.WriteInt(r, 0);	(* number of the disk with the start of the central directory *)
-	Files.WriteInt(r, arc.nofEntries);	(* total number of entries in the central dir on this disk *)
-	Files.WriteInt(r, arc.nofEntries);	(* total number of entries in the central dir *)
+	Files.WriteInt32(r, EndOfCentralDirSignature);	(* end of central dir signature *)
+	Files.WriteInt16(r, 0);	(* number of this disk *)
+	Files.WriteInt16(r, 0);	(* number of the disk with the start of the central directory *)
+	Files.WriteInt16(r, arc.nofEntries);	(* total number of entries in the central dir on this disk *)
+	Files.WriteInt16(r, arc.nofEntries);	(* total number of entries in the central dir *)
 	IF arc.firstEntry # NIL THEN
-		Files.WriteLInt(r, arc.offset - arc.firstEntry.offsetCentralDir)	(* size of the central directory (without end of central dir record) *)
+		Files.WriteInt32(r, arc.offset - arc.firstEntry.offsetCentralDir)	(* size of the central directory (without end of central dir record) *)
 	ELSE
-		Files.WriteLInt(r, 0)
+		Files.WriteInt32(r, 0)
 	END;
 	IF arc.firstEntry = NIL THEN
-		Files.WriteLInt(r, arc.offset)	(* offset of start of central directory with respect to the starting disk number *)
+		Files.WriteInt32(r, arc.offset)	(* offset of start of central directory with respect to the starting disk number *)
 	ELSE
-		Files.WriteLInt(r, arc.firstEntry.offsetCentralDir)	(* offset of start of central directory with respect to the starting disk number *)
+		Files.WriteInt32(r, arc.firstEntry.offsetCentralDir)	(* offset of start of central directory with respect to the starting disk number *)
 	END;
 	IF arc.comment = NIL THEN
-		Files.WriteInt(r, 0)	(* zipfile comment length *)
+		Files.WriteInt16(r, 0)	(* zipfile comment length *)
 	ELSE
-		Files.WriteInt(r, SIGNED16(LEN(arc.comment^)));	(* zipfile comment length *)
+		Files.WriteInt16(r, SIGNED16(LEN(arc.comment^)));	(* zipfile comment length *)
 		Files.WriteBytes(r, arc.comment^, LEN(arc.comment^)(SIGNED32))	(* zipfile comment *)
 	END
 END WriteEndOfCentDir;
@@ -336,7 +336,7 @@ BEGIN
 		Files.Set(r, f, Files.Length(f) - 17);
 		WHILE (longDummy # EndOfCentralDirSignature) & (Files.Pos(r) > 4) DO
 			Files.Set(r, f, Files.Pos(r) - 5);
-			Files.ReadLInt(r, longDummy)
+			Files.ReadInt32(r, longDummy)
 		END;
 		IF longDummy # EndOfCentralDirSignature THEN
 			res := NotZipArchiveError
@@ -344,13 +344,13 @@ BEGIN
 			NEW(arc);
 			arc.file := f;
 			arc.offset := Files.Pos(r) - 4;
-			Files.ReadInt(r, intDummy);	(* number of this disk *)
-			Files.ReadInt(r, intDummy);	(* number of the disk with the start of the central directory *)
-			Files.ReadInt(r, intDummy);	(* total number of entries in the central dir on this disk *)
-			Files.ReadInt(r, arc.nofEntries);	(* total number of entries in the central dir *)
-			Files.ReadLInt(r, longDummy);	(* size of the central directory *)
-			Files.ReadLInt(r, longDummy);	(* offset of start of central directory with respect to the starting disk number *)
-			Files.ReadInt(r, intDummy);	(* zipfile comment length *)
+			Files.ReadInt16(r, intDummy);	(* number of this disk *)
+			Files.ReadInt16(r, intDummy);	(* number of the disk with the start of the central directory *)
+			Files.ReadInt16(r, intDummy);	(* total number of entries in the central dir on this disk *)
+			Files.ReadInt16(r, arc.nofEntries);	(* total number of entries in the central dir *)
+			Files.ReadInt32(r, longDummy);	(* size of the central directory *)
+			Files.ReadInt32(r, longDummy);	(* offset of start of central directory with respect to the starting disk number *)
+			Files.ReadInt16(r, intDummy);	(* zipfile comment length *)
 			IF intDummy # 0 THEN
 				NEW(arc.comment, intDummy);
 				Files.ReadBytes(r, arc.comment^, intDummy)	(* zipfile comment *)
@@ -550,8 +550,8 @@ BEGIN
 			ent.uncompSize := Files.Pos(src) - start;
 			Files.Close(arc.file);
 			Files.Set(dst, arc.file, ent.offsetLocal + 14);
-			Files.WriteLInt(dst, ent.crc32);
-			Files.WriteLInt(dst, ent.compSize);
+			Files.WriteInt32(dst, ent.crc32);
+			Files.WriteInt32(dst, ent.compSize);
 			Files.Close(arc.file);
 			IF arc.lastEntry # NIL THEN
 				arc.lastEntry.next := ent

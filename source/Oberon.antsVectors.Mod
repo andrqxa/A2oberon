@@ -53,11 +53,11 @@ TYPE
 	VAR version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  vyLinks.LoadLinks( msg.R, obj.lib, obj.vectors );
-			Files.ReadLInt( msg.R, obj.num )
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  vyLinks.LoadLinks( msg.R, obj.lib, obj.vectors );
+			Files.ReadInt32( msg.R, obj.num )
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg );  vyLinks.StoreLinks( msg.R, obj.lib, obj.vectors );
-			Files.WriteLInt( msg.R, obj.num )
+			Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg );  vyLinks.StoreLinks( msg.R, obj.lib, obj.vectors );
+			Files.WriteInt32( msg.R, obj.num )
 		ELSE vyBase.objecthandle( obj, msg )
 		END
 	END HandleFileMsg;

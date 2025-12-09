@@ -110,11 +110,11 @@ TYPE
 	VAR version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyRanBase.Handler( obj, msg );  Files.ReadLInt( msg.R, obj.max );
-			Files.ReadLInt( msg.R, obj.constval )
+			Files.ReadInt16( msg.R, version );  vyRanBase.Handler( obj, msg );  Files.ReadInt32( msg.R, obj.max );
+			Files.ReadInt32( msg.R, obj.constval )
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyRanBase.Handler( obj, msg );  Files.WriteLInt( msg.R, obj.max );
-			Files.WriteLInt( msg.R, obj.constval )
+			Files.WriteInt16( msg.R, 0 );  vyRanBase.Handler( obj, msg );  Files.WriteInt32( msg.R, obj.max );
+			Files.WriteInt32( msg.R, obj.constval )
 		ELSE vyRanBase.Handler( obj, msg )
 		END
 	END HandleFileMsg;

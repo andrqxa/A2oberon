@@ -369,21 +369,21 @@ VAR lastNr, stamp: SIGNED32;
 	BEGIN
 		n := n.next;
 		WHILE n.key # NoKey DO
-			Files.WriteLInt(M.R, n.key); Files.WriteLInt(M.R, n.pos);
+			Files.WriteInt32(M.R, n.key); Files.WriteInt32(M.R, n.pos);
 			node := n.node;
 			IF node.stamp # stamp THEN	(* node not visited yet *)
 				node.stamp := stamp; node.nr := lastNr; INC(lastNr);
-				Files.WriteLInt(M.R, node.nr);
-				Files.WriteLInt(M.R, node.state); Files.WriteString(M.R, node.s);
+				Files.WriteInt32(M.R, node.nr);
+				Files.WriteInt32(M.R, node.state); Files.WriteString(M.R, node.s);
 				IF node.dsc # NIL THEN Files.Write(M.R, 0FFX); WriteLevel(node.dsc)
 				ELSE Files.Write(M.R, 0X)
 				END
 			ELSE
-				Files.WriteLInt(M.R, node.nr)
+				Files.WriteInt32(M.R, node.nr)
 			END;
 			n := n.next
 		END;
-		Files.WriteLInt(M.R, NoKey)
+		Files.WriteInt32(M.R, NoKey)
 	END WriteLevel;
 
 BEGIN
@@ -401,16 +401,16 @@ VAR ver, lastNr: SIGNED32; nodes: Ref;
 	VAR n: Ref; node: Node; key, nr: SIGNED32; ch: CHAR;
 	BEGIN
 		n := tail;
-		Files.ReadLInt(M.R, key);
+		Files.ReadInt32(M.R, key);
 		WHILE key # NoKey DO
 			NEW(n.next); n.next.prev := n; n := n.next;
-			n.key := key; Files.ReadLInt(M.R, n.pos);
-			Files.ReadLInt(M.R, nr);
+			n.key := key; Files.ReadInt32(M.R, n.pos);
+			Files.ReadInt32(M.R, nr);
 			IF nr > lastNr THEN
 				INC(lastNr);
 				NEW(node); InsertNode(nodes, node);
 				node.stamp := MIN(SIGNED32);
-				Files.ReadLInt(M.R, node.state);
+				Files.ReadInt32(M.R, node.state);
 				Files.ReadString(M.R, node.s);
 				Files.Read(M.R, ch);
 				IF ch = 0FFX THEN node.dsc := MakeTail(node); ReadLevel(node.dsc)
@@ -420,13 +420,13 @@ VAR ver, lastNr: SIGNED32; nodes: Ref;
 				node := FindNode(nodes, nr)
 			END;
 			n.node := node;
-			Files.ReadLInt(M.R, key)
+			Files.ReadInt32(M.R, key)
 		END;
 		tail.prev := n; n.next := tail
 	END ReadLevel;
 
 BEGIN
-	Files.ReadNum(M.R, ver);
+	Files.ReadNum32(M.R, ver);
 	IF ver >= 1 THEN
 		Files.ReadSet(M.R, obj.state0);
 		obj.tail := MakeTail(NIL);

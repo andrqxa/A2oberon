@@ -73,24 +73,24 @@ TYPE
 	PROCEDURE WritePars( VAR R: Files.Rider;  par: pars );
 	VAR i: SIZE;
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteLInt( R, SIGNED32(LEN( par^ )) );
-		FOR i := 0 TO LEN( par^ ) - 1 DO Files.WriteLReal( R, par[i] ) END
+		Files.WriteInt16( R, 0 );  Files.WriteInt32( R, SIGNED32(LEN( par^ )) );
+		FOR i := 0 TO LEN( par^ ) - 1 DO Files.WriteFloat64( R, par[i] ) END
 	END WritePars;
 
 	PROCEDURE ReadPars( VAR R: Files.Rider;  VAR par: pars );
 	VAR len, i: SIGNED32;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadLInt( R, len );  NEW( par, len );
-		FOR i := 0 TO len - 1 DO Files.ReadLReal( R, par[i] ) END
+		Files.ReadInt16( R, version );  Files.ReadInt32( R, len );  NEW( par, len );
+		FOR i := 0 TO len - 1 DO Files.ReadFloat64( R, par[i] ) END
 	END ReadPars;
 
 	PROCEDURE WriteNeighbours( VAR R: Files.Rider;  n: Neighbours );
 	VAR i, j: SIGNED16;
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteInt( R, n.dim );
+		Files.WriteInt16( R, 0 );  Files.WriteInt16( R, n.dim );
 		FOR i := 0 TO n.dim - 1 DO
-			Files.WriteInt( R, n.count[i] );
-			FOR j := 0 TO 7 DO Files.WriteInt( R, n.x[i, j] );  Files.WriteInt( R, n.y[i, j] ) END
+			Files.WriteInt16( R, n.count[i] );
+			FOR j := 0 TO 7 DO Files.WriteInt16( R, n.x[i, j] );  Files.WriteInt16( R, n.y[i, j] ) END
 		END;
 		WritePars( R, n.par );  Files.WriteBool( R, n.isotropic )
 	END WriteNeighbours;
@@ -99,10 +99,10 @@ TYPE
 	VAR dim, i, j: SIGNED16;  version: SIGNED16;
 
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadInt( R, dim );  n.dim := dim;  NEW( n.count, dim );  NEW( n.x, dim );  NEW( n.y, dim );
+		Files.ReadInt16( R, version );  Files.ReadInt16( R, dim );  n.dim := dim;  NEW( n.count, dim );  NEW( n.x, dim );  NEW( n.y, dim );
 		FOR i := 0 TO n.dim - 1 DO
-			Files.ReadInt( R, n.count[i] );
-			FOR j := 0 TO 7 DO Files.ReadInt( R, n.x[i, j] );  Files.ReadInt( R, n.y[i, j] ) END
+			Files.ReadInt16( R, n.count[i] );
+			FOR j := 0 TO 7 DO Files.ReadInt16( R, n.x[i, j] );  Files.ReadInt16( R, n.y[i, j] ) END
 		END;
 		ReadPars( R, n.par );  Files.ReadBool( R, n.isotropic );  FillCache( n )
 	END ReadNeighbours;

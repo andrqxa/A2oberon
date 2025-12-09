@@ -957,7 +957,7 @@ MODULE OpenType;	(** AUTHOR "eos, PL"; PURPOSE "Bluebottle port of OpenType"; *)
 			FOR i := 0 TO points-1 DO  flags[i] := 0  END;
 			i := 0;
 			WHILE i < points DO
-				Files.ReadSInt(r, flag); flags[i] := flag;
+				Files.ReadInt8(r, flag); flags[i] := flag;
 				IF ODD(flag DIV 8) THEN	(* repeat flag set *)
 					r.file.Read(r, byte); j := ORD(byte);
 					WHILE j > 0 DO

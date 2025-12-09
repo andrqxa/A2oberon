@@ -107,9 +107,9 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteInt(M.R, F.col); Gadgets.framehandle(F, M)
+					Files.WriteInt16(M.R, F.col); Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadInt(M.R, F.col); Gadgets.framehandle(F, M);
+					Files.ReadInt16(M.R, F.col); Gadgets.framehandle(F, M);
 					IF F.col < 0 THEN F.col := Display3.textbackC END
 				END
 			END

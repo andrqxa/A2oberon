@@ -74,7 +74,7 @@ MODULE LeoBasic IN Oberon; (** portable **)	(* eos  *)
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, ver)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					l.lx := l.x; l.ly := l.y
 				END
 			END
@@ -343,13 +343,13 @@ MODULE LeoBasic IN Oberon; (** portable **)	(* eos  *)
 					GfxMatrix.Write(msg.R, f.mat)
 				ELSIF msg.id = Objects.load THEN
 					pos := Files.Pos(msg.R);
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					IF ver >= 3 THEN
 						Leonardo.HandleContainer(f, msg);
 					ELSE	(* legacy loader *)
 						Files.Set(msg.R, Files.Base(msg.R), pos);
 						Leonardo.HandleShape(f, msg);
-						Files.ReadNum(msg.R, ver);
+						Files.ReadNum32(msg.R, ver);
 						ASSERT(ver IN {1, 2}, 110)
 					END;
 					IF ver >= 2 THEN
@@ -370,9 +370,9 @@ MODULE LeoBasic IN Oberon; (** portable **)	(* eos  *)
 						ELSIF f.pen = NIL THEN
 							f.pen := LeoPens.Default
 						END;
-						Files.ReadReal(msg.R, f.mat[2, 0]); Files.ReadReal(msg.R, f.mat[2, 1]);
-						Files.ReadReal(msg.R, f.mat[0, 0]); Files.ReadReal(msg.R, f.mat[0, 1]);
-						Files.ReadReal(msg.R, f.mat[1, 0]); Files.ReadReal(msg.R, f.mat[1, 1]);
+						Files.ReadFloat32(msg.R, f.mat[2, 0]); Files.ReadFloat32(msg.R, f.mat[2, 1]);
+						Files.ReadFloat32(msg.R, f.mat[0, 0]); Files.ReadFloat32(msg.R, f.mat[0, 1]);
+						Files.ReadFloat32(msg.R, f.mat[1, 0]); Files.ReadFloat32(msg.R, f.mat[1, 1]);
 						f.mat[2, 0] := f.mat[2, 0] - f.mat[0, 0] - f.mat[1, 0];
 						f.mat[2, 1] := f.mat[2, 1] - f.mat[0, 1] - f.mat[1, 1];
 						f.mat[0, 0] := 2*f.mat[0, 0]; f.mat[0, 1] := 2*f.mat[0, 1];

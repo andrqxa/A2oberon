@@ -684,11 +684,11 @@ MODULE BookCompiler IN Oberon;	(** portable *)
 		pos := l.frame.pos2;
 		BookDocs.WriteHeader(R, 0, 0, width, heigth, ind, pos, options, iconStr);
 		fixPos1 := Files.Pos(R);
-		Files.WriteLInt(R, 0);
+		Files.WriteInt32(R, 0);
 		fixPos2:= Files.Pos(R);
-		Files.WriteLInt(R, 0);
+		Files.WriteInt32(R, 0);
 		fixPos3 := Files.Pos(R);
-		Files.WriteLInt(R, 0);
+		Files.WriteInt32(R, 0);
 		ind := 0;
 		il := imports;
 		WHILE il # NIL DO
@@ -704,10 +704,10 @@ MODULE BookCompiler IN Oberon;	(** portable *)
 			IF c.text = noteText THEN
 				pos := Files.Pos(R);
 				Files.Set(R, F, fixPos2);
-				Files.WriteLInt(R, pos);
+				Files.WriteInt32(R, pos);
 				Files.Set(R, F, pos)
 			END;
-			Files.WriteLInt(R, len);
+			Files.WriteInt32(R, len);
 			IF len > 0 THEN
 				pos := Files.Pos(R);
 				Texts.Store(c.text, F, pos, len);
@@ -715,17 +715,17 @@ MODULE BookCompiler IN Oberon;	(** portable *)
 			END;
 			c := c.next
 		END;
-		Files.WriteLInt(R, -1);
+		Files.WriteInt32(R, -1);
 		pos := Files.Pos(R);
 		Files.Set(R, F, fixPos1);
-		Files.WriteLInt(R, pos);
+		Files.WriteInt32(R, pos);
 		Files.Set(R, F, pos);
 		l := labels;
 		WHILE l # NIL DO
 			IF l.export THEN
 				Files.Write(R, l.frame.mode);
-				Files.WriteLInt(R, l.frame.pos1);
-				Files.WriteLInt(R, l.frame.pos2);
+				Files.WriteInt32(R, l.frame.pos1);
+				Files.WriteInt32(R, l.frame.pos2);
 				Files.WriteString(R, l.name)
 			END;
 			l := l.next
@@ -733,7 +733,7 @@ MODULE BookCompiler IN Oberon;	(** portable *)
 		Files.Write(R, Books0.none);
 		pos := Files.Pos(R);
 		Files.Set(R, F, fixPos3);
-		Files.WriteLInt(R, pos);
+		Files.WriteInt32(R, pos);
 		Files.Set(R, F, pos);
 		Files.Register(F);
 		Files.Close(F);
@@ -1915,9 +1915,9 @@ MODULE BookCompiler IN Oberon;	(** portable *)
 				Files.Close(F);
 				RETURN
 			END;
-			Files.ReadLInt(R, fix1);
-			Files.ReadLInt(R, fix2);
-			Files.ReadLInt(R, beg);
+			Files.ReadInt32(R, fix1);
+			Files.ReadInt32(R, fix2);
+			Files.ReadInt32(R, beg);
 			Files.ReadString(R, name);
 			IF name # "" THEN
 				Texts.WriteString(Wr, "Imports: ")

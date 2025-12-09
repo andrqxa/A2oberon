@@ -171,13 +171,13 @@ TYPE
 
 		PROCEDURE  (*VAR seed: tLongintSeedDesc*) Store*( VAR r: Files.Rider );
 		BEGIN
-			Files.WriteLInt( r, (*seed.*)val )
+			Files.WriteInt32( r, (*seed.*)val )
 		END Store;
 
 		PROCEDURE  (*VAR seed: tLongintSeedDesc*) Load*( VAR r: Files.Rider;  seedVersion: SIGNED16 );
 		BEGIN
 			IF seedVersion # cLongintSeedVersion THEN HALT( 100 ) END;
-			Files.ReadLInt( r, (*seed.*)val )
+			Files.ReadInt32( r, (*seed.*)val )
 		END Load;
 
 		PROCEDURE  (*VAR seed: tLongintSeedDesc*) Copy*( ): tSeed;   (* fof 020625 *)
@@ -203,7 +203,7 @@ VAR
 
 	PROCEDURE WriteSeedVersion*( VAR r: Files.Rider;  seedVersion: SIGNED16 );   (* jb 5.5.01 *)
 	BEGIN
-		Files.WriteInt( r, seedVersion )
+		Files.WriteInt16( r, seedVersion )
 	END WriteSeedVersion;
 
 	(*
@@ -215,7 +215,7 @@ VAR
 
 	PROCEDURE ReadSeedVersion*( VAR r: Files.Rider;  VAR seedVersion: SIGNED16 );   (* jb 5.5.01 *)
 	BEGIN
-		Files.ReadInt( r, seedVersion )
+		Files.ReadInt16( r, seedVersion )
 	END ReadSeedVersion;
 
 	(*
@@ -464,15 +464,15 @@ END DefaultRandomV;
 
 	PROCEDURE StoreVersionInformation( VAR r: Files.Rider;  shortid: tShortIdStr;  seedVersion: SIGNED16 );
 	BEGIN
-		Files.WriteString( r, cMagic );  Files.WriteString( r, shortid );  Files.WriteInt( r, cBaseVersion );
-		Files.WriteInt( r, seedVersion )
+		Files.WriteString( r, cMagic );  Files.WriteString( r, shortid );  Files.WriteInt16( r, cBaseVersion );
+		Files.WriteInt16( r, seedVersion )
 	END StoreVersionInformation;
 
 	PROCEDURE LoadVersionInformation( VAR r: Files.Rider;  VAR shortid: tShortIdStr;  VAR baseVersion, seedVersion: SIGNED16 );
 	VAR dummy: tIdStr;
 	BEGIN
 		Files.ReadString( r, shortid );
-		IF shortid = cMagic THEN Files.ReadString( r, shortid );  Files.ReadInt( r, baseVersion );  Files.ReadInt( r, seedVersion )
+		IF shortid = cMagic THEN Files.ReadString( r, shortid );  Files.ReadInt16( r, baseVersion );  Files.ReadInt16( r, seedVersion )
 				ELSE  (* for compatibility with older versions of vyRanBase *)
 			baseVersion := 0;  seedVersion := 0;
 			Files.ReadString( r, dummy ) (* obj.id - no longer stored *)
@@ -604,13 +604,13 @@ END Store;
 (*
 	PROCEDURE ( VAR seed: tLongintSeedDesc)Store*( VAR r: Files.Rider );
 	BEGIN
-		Files.WriteLInt( r, seed.val )
+		Files.WriteInt32( r, seed.val )
 	END Store;
 
 	PROCEDURE ( VAR seed: tLongintSeedDesc)Load*( VAR r: Files.Rider;  seedVersion: SIGNED16 );
 	BEGIN
 		IF seedVersion # cLongintSeedVersion THEN HALT( 100 ) END;
-		Files.ReadLInt( r, seed.val )
+		Files.ReadInt32( r, seed.val )
 	END Load;
 
 	PROCEDURE ( VAR seed: tLongintSeedDesc)Copy*( ): tSeed;   (* fof 020625 *)

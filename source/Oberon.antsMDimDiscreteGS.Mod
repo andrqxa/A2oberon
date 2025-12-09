@@ -42,14 +42,14 @@ TYPE
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteLInt( R, s.dim );  Gadgets.WriteRef( R, s.lib, s.n );
+		Files.WriteInt16( R, 0 );  Files.WriteInt32( R, s.dim );  Gadgets.WriteRef( R, s.lib, s.n );
 		Gadgets.WriteRef( R, s.lib, s.interactionF )
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadLInt( R, s.dim );  Gadgets.ReadRef( R, s.lib, objsub );
+		Files.ReadInt16( R, version );  Files.ReadInt32( R, s.dim );  Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.n := objsub( antsNeighbourhoods.Neighbours ) END;
 		Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.interactionF := objsub( antsFunctions.FunctionXd ) END

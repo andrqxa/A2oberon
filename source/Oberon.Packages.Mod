@@ -82,9 +82,9 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 
 	PROCEDURE WriteResource(VAR R: Files.Rider; VAR res: Resource; tag: SIGNED16; dLen: SIZE);
 	BEGIN
-		Files.WriteInt(R, tag); Files.WriteString(R, res.name); Files.WriteLInt(R, dLen(SIGNED32)+12);
-		Files.WriteLInt(R, res.time); Files.WriteLInt(R, res.date);
-		Files.WriteInt(R, res.minor); Files.WriteInt(R, res.major)
+		Files.WriteInt16(R, tag); Files.WriteString(R, res.name); Files.WriteInt32(R, dLen(SIGNED32)+12);
+		Files.WriteInt32(R, res.time); Files.WriteInt32(R, res.date);
+		Files.WriteInt16(R, res.minor); Files.WriteInt16(R, res.major)
 	END WriteResource;
 
 	PROCEDURE ClosePackage(VAR pack: Package);
@@ -93,10 +93,10 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 		F := Files.Base(pack.R); h.length := Files.Length(F); Files.Set(pack.R, F, 0);
 		F := Files.New(pack.name); Files.Set(R, F, 0);
 		(* Document Head *)
-		Files.WriteInt(R, Documents.Id);
+		Files.WriteInt16(R, Documents.Id);
 		Files.WriteString(R, "Packages.NewDoc");
-		Files.WriteInt(R, 0); Files.WriteInt(R, 0);
-		Files.WriteInt(R, 0); Files.WriteInt(R, 0);
+		Files.WriteInt16(R, 0); Files.WriteInt16(R, 0);
+		Files.WriteInt16(R, 0); Files.WriteInt16(R, 0);
 		h.extensions := {};
 		IF useCrypt THEN
 			INCL(h.extensions, Compress.encryption);
@@ -209,7 +209,7 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 			IF F # NIL THEN
 				Files.GetDate(F, res.time, res.date);
 				WriteResource(pack.R, res, DataTag, 4+Files.Length(F));
-				Files.WriteLInt(pack.R, Files.Length(F));
+				Files.WriteInt32(pack.R, Files.Length(F));
 				Files.Set(R, F, 0);
 				Files.ReadBytes(R, buf, 1024);
 				WHILE ~R.eof DO
@@ -297,10 +297,10 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 		VAR p: SIGNED32;
 	BEGIN
 		p := Files.Pos(R);
-		Files.ReadInt(R, tag); Files.ReadString(R, res.name); Files.ReadLInt(R, dLen);
+		Files.ReadInt16(R, tag); Files.ReadString(R, res.name); Files.ReadInt32(R, dLen);
 		dLen := dLen + Files.Pos(R)-p;
-		Files.ReadLInt(R, res.time); Files.ReadLInt(R, res.date);
-		Files.ReadInt(R, res.minor); Files.ReadInt(R, res.major)
+		Files.ReadInt32(R, res.time); Files.ReadInt32(R, res.date);
+		Files.ReadInt16(R, res.minor); Files.ReadInt16(R, res.major)
 	END ReadResource;
 
 	PROCEDURE FindResource(CONST name: ARRAY OF CHAR; VAR res: Resource);
@@ -309,8 +309,8 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 		BTrees.SearchStr(index, name, org, err);
 		IF err = BTrees.Done THEN
 			Files.Set(R, BTrees.Base(index), org);
-			Files.ReadInt(R, res.major); Files.ReadInt(R, res.minor);
-			Files.ReadLInt(R, res.date); Files.ReadLInt(R, res.time);
+			Files.ReadInt16(R, res.major); Files.ReadInt16(R, res.minor);
+			Files.ReadInt32(R, res.date); Files.ReadInt32(R, res.time);
 			COPY(name, res.name)
 		ELSE
 			res.name := ""
@@ -329,8 +329,8 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 			BTrees.Flush(index)
 		END;
 		Files.Set(R, BTrees.Base(index), org);
-		Files.WriteInt(R, res.major); Files.WriteInt(R, res.minor);
-		Files.WriteLInt(R, res.date); Files.WriteLInt(R, res.time);
+		Files.WriteInt16(R, res.major); Files.WriteInt16(R, res.minor);
+		Files.WriteInt32(R, res.date); Files.WriteInt32(R, res.time);
 		Files.WriteBytes(R, package, LEN(package)(SIGNED32));
 		Files.Close(BTrees.Base(index))
 	END RegisterResource;
@@ -394,12 +394,12 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 	BEGIN
 		Files.Read(R, ch);
 		Files.ReadString(R, name);
-		Files.ReadInt(R, x); Files.ReadInt(R, y);
-		Files.ReadInt(R, w); Files.ReadInt(R, h);
+		Files.ReadInt16(R, x); Files.ReadInt16(R, y);
+		Files.ReadInt16(R, w); Files.ReadInt16(R, h);
 		Files.Read(R, ch);
 		IF ch = 0F7X THEN	(* skip meta info *)
 			Files.Read(R, ch); ASSERT(ch = 08X);
-			Files.ReadLInt(R, len);
+			Files.ReadInt32(R, len);
 			Files.Set(R, Files.Base(R), Files.Pos(R) + len);
 			Files.Read(R, ch)
 		END
@@ -410,11 +410,11 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 			R: Files.Rider; h: Compress.Header; i: SIGNED16;
 			attr, attrs: Attributes.Attr; links: Links.Link; ch: CHAR;
 	BEGIN
-		Files.Set(pack.R, F, 0); Files.ReadInt(pack.R, i);
+		Files.Set(pack.R, F, 0); Files.ReadInt16(pack.R, i);
 		IF i # Documents.Id THEN COPY("not a document", pack.gen); RETURN FALSE END;
 		Files.ReadString(pack.R, pack.gen);
-		Files.ReadInt(pack.R, i); Files.ReadInt(pack.R, i);
-		Files.ReadInt(pack.R, i); Files.ReadInt(pack.R, i);
+		Files.ReadInt16(pack.R, i); Files.ReadInt16(pack.R, i);
+		Files.ReadInt16(pack.R, i); Files.ReadInt16(pack.R, i);
 		Files.Read(pack.R, ch);
 		IF ch = 0F7X THEN	(* skip meta info *)
 			Documents.LoadAttachments(pack.R, attrs, links);
@@ -504,7 +504,7 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 				v := CheckVersion(cRes, pack.options, TRUE);
 				IF v IN {VerNewResource, VerNewBuild, VerNewMinorVersion} THEN
 					Backup(cRes);
-					Files.Set(R, F, res.pos); Files.ReadLInt(R, i);
+					Files.Set(R, F, res.pos); Files.ReadInt32(R, i);
 					F2 := Files.New(""); CopyData(R, F2, i);
 					Files.Set(R2, F2, 0); Files.Read(R2, ch);
 					IF ch = 0F7X THEN ReadDocHeader(R2, ch) END;
@@ -535,7 +535,7 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 				v := CheckVersion(res^, pack.options, TRUE);
 				IF v IN {VerNewResource, VerNewBuild, VerNewMinorVersion} THEN
 					Backup(cRes);
-					Files.Set(R, F, res.pos); Files.ReadLInt(R, i);
+					Files.Set(R, F, res.pos); Files.ReadInt32(R, i);
 					F2 := Files.New(file); CopyData(R, F2, i);
 					Files.Register(F2);
 					RegisterResource(res^, pack.name)
@@ -544,7 +544,7 @@ MODULE Packages IN Oberon; (** portable / source: Native.Packages.Mod *)	(* ejz 
 				END
 			ELSIF (res # NIL) & (cmd.name = "DEF") THEN
 				Strings.GetSuffix(file, value); cRes := res^;
-				Files.Set(R, F, res.pos); Files.ReadLInt(R, i);
+				Files.Set(R, F, res.pos); Files.ReadInt32(R, i);
 				file := "Temp.Def"; F2 := Files.New(file);
 				CopyData(R, F2, i);
 				IF value # "Def" THEN

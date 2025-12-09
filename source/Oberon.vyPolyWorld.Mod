@@ -128,47 +128,47 @@ VAR
 PROCEDURE StoreMap* (VAR R: Files.Rider;  lib: Objects.Library;  m: tMap);
 	VAR id: SIGNED16;
 BEGIN
-	IF m = NIL THEN Files.WriteInt(R, - 1) ELSE Files.WriteInt(R, 0) END;
-	GetRendering(m, id);   Files.WriteInt(R, id);
-	Files.WriteLReal(R, m.x0);
-	Files.WriteLReal(R, m.y0);
-	Files.WriteLReal(R, m.x1);
-	Files.WriteLReal(R, m.y1);
+	IF m = NIL THEN Files.WriteInt16(R, - 1) ELSE Files.WriteInt16(R, 0) END;
+	GetRendering(m, id);   Files.WriteInt16(R, id);
+	Files.WriteFloat64(R, m.x0);
+	Files.WriteFloat64(R, m.y0);
+	Files.WriteFloat64(R, m.x1);
+	Files.WriteFloat64(R, m.y1);
 	Gadgets.WriteRef(R, lib, m.mdata);
-	Files.WriteLReal(R, m.vx);
-	Files.WriteLReal(R, m.vy);
-	Files.WriteLReal(R, m.vz)
+	Files.WriteFloat64(R, m.vx);
+	Files.WriteFloat64(R, m.vy);
+	Files.WriteFloat64(R, m.vz)
 END StoreMap;
 
 PROCEDURE LoadMap* (VAR R: Files.Rider;  lib: Objects.Library;  VAR m: tMap);
 	VAR objsub: Objects.Object;  ver: SIGNED16;  id: SIGNED16;
 BEGIN
-	Files.ReadInt(R, ver);
+	Files.ReadInt16(R, ver);
 	IF ver < 0 THEN m := NIL;  RETURN END;
 	NEW(m);
-	Files.ReadInt(R, id);  SetRendering(m, id);
-	Files.ReadLReal(R, m.x0);
-	Files.ReadLReal(R, m.y0);
-	Files.ReadLReal(R, m.x1);
-	Files.ReadLReal(R, m.y1);
+	Files.ReadInt16(R, id);  SetRendering(m, id);
+	Files.ReadFloat64(R, m.x0);
+	Files.ReadFloat64(R, m.y0);
+	Files.ReadFloat64(R, m.x1);
+	Files.ReadFloat64(R, m.y1);
 	Gadgets.ReadRef(R, lib, objsub);
 	IF objsub # NIL THEN m.mdata := objsub(vyRealVec.tChunkedMatrix) END;
-	Files.ReadLReal(R, m.vx);
-	Files.ReadLReal(R, m.vy);
-	Files.ReadLReal(R, m.vz)
+	Files.ReadFloat64(R, m.vx);
+	Files.ReadFloat64(R, m.vy);
+	Files.ReadFloat64(R, m.vz)
 END LoadMap;
 
 PROCEDURE LoadObj* (VAR R: Files.Rider;  lib: Objects.Library;  VAR m: tObject);
 	VAR ver: SIGNED16;  map: tMap;
 BEGIN
-	Files.ReadInt(R, ver);
+	Files.ReadInt16(R, ver);
 	IF ver < 0 THEN m := NIL;  RETURN END;
 	LoadMap(R, lib, map);  m := map
 END LoadObj;
 
 PROCEDURE StoreObj* (VAR R: Files.Rider;  lib: Objects.Library;  VAR m: tObject);
 BEGIN
-	IF (m # NIL) & ( m IS tMap ) THEN Files.WriteInt(R, 0) ELSE Files.WriteInt(R, - 1);  RETURN END;
+	IF (m # NIL) & ( m IS tMap ) THEN Files.WriteInt16(R, 0) ELSE Files.WriteInt16(R, - 1);  RETURN END;
 	StoreMap(R, lib, m(tMap))
 END StoreObj;
 
@@ -177,30 +177,30 @@ END StoreObj;
 
 PROCEDURE WriteVertex0 (VAR R: Files.Rider; v: tVertex);
 BEGIN
-IF v = NIL THEN Files.WriteInt(R,-1); RETURN  ELSE Files.WriteInt(R,1) END;
-Files.WriteInt(R,v.i);
-Files.WriteInt(R,v.j);
-Files.WriteLReal(R,v.x);
-Files.WriteLReal(R,v.y);
-Files.WriteLReal(R,v.z);
-Files.WriteLReal(R,v.nx);
-Files.WriteLReal(R,v.ny);
-Files.WriteLReal(R,v.nz);
+IF v = NIL THEN Files.WriteInt16(R,-1); RETURN  ELSE Files.WriteInt16(R,1) END;
+Files.WriteInt16(R,v.i);
+Files.WriteInt16(R,v.j);
+Files.WriteFloat64(R,v.x);
+Files.WriteFloat64(R,v.y);
+Files.WriteFloat64(R,v.z);
+Files.WriteFloat64(R,v.nx);
+Files.WriteFloat64(R,v.ny);
+Files.WriteFloat64(R,v.nz);
 END WriteVertex0;
 
 PROCEDURE ReadVertex0 (VAR R: Files.Rider; VAR v: tVertex);
 VAR ver: SIGNED16;
 BEGIN
-Files.ReadInt(R,ver); IF ver < 0 THEN v := NIL; RETURN END;
+Files.ReadInt16(R,ver); IF ver < 0 THEN v := NIL; RETURN END;
 NEW(v);
-Files.ReadInt(R,v.i);
-Files.ReadInt(R,v.j);
-Files.ReadLReal(R,v.x);
-Files.ReadLReal(R,v.y);
-Files.ReadLReal(R,v.z);
-Files.ReadLReal(R,v.nx);
-Files.ReadLReal(R,v.ny);
-Files.ReadLReal(R,v.nz);
+Files.ReadInt16(R,v.i);
+Files.ReadInt16(R,v.j);
+Files.ReadFloat64(R,v.x);
+Files.ReadFloat64(R,v.y);
+Files.ReadFloat64(R,v.z);
+Files.ReadFloat64(R,v.nx);
+Files.ReadFloat64(R,v.ny);
+Files.ReadFloat64(R,v.nz);
 END ReadVertex0;
 
 PROCEDURE WriteVertex (VAR R: Files.Rider; v: tVertex);

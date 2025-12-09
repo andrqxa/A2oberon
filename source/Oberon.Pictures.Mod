@@ -457,10 +457,10 @@ BEGIN
 	F := Files.Old(name);
 	IF color THEN depth := 8 ELSE depth := 1 END;
 	IF F # NIL THEN
-		Files.Set(R,F, 0); x := 0; Files.ReadInt(R, x);
+		Files.Set(R,F, 0); x := 0; Files.ReadInt16(R, x);
 		IF x = 07F7H THEN (* << document *)
-			Files.ReadString(R, dname); Files.ReadInt(R, d); Files.ReadInt(R, d); Files.ReadInt(R, d); Files.ReadInt(R, d);
-			Files.ReadInt(R, x);
+			Files.ReadString(R, dname); Files.ReadInt16(R, d); Files.ReadInt16(R, d); Files.ReadInt16(R, d); Files.ReadInt16(R, d);
+			Files.ReadInt16(R, x);
 		END;
 		IF x = PictFileId THEN Load(P, F, Files.Pos(R), len); P.handle := handler
 		ELSE

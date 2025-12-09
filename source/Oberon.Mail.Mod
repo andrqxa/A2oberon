@@ -236,26 +236,26 @@ MODULE Mail IN Oberon; (** portable *)	(* ejz,  *)
 	PROCEDURE Store(VAR R: Files.Rider; VAR heap: Heap);
 		VAR i: SIGNED32;
 	BEGIN
-		Files.WriteLInt(R, heap.bufLen);
+		Files.WriteInt32(R, heap.bufLen);
 		Files.WriteBytes(R, heap.buffer^, heap.bufLen);
-		Files.WriteLInt(R, heap.idxLen);
+		Files.WriteInt32(R, heap.idxLen);
 		i := 0;
 		WHILE i < heap.idxLen DO
-			Files.WriteLInt(R, heap.index[i]); INC(i)
+			Files.WriteInt32(R, heap.index[i]); INC(i)
 		END
 	END Store;
 
 	PROCEDURE Load(VAR R: Files.Rider; VAR heap: Heap);
 		VAR i: SIGNED32;
 	BEGIN
-		Files.ReadLInt(R, heap.bufLen);
+		Files.ReadInt32(R, heap.bufLen);
 		NEW(heap.buffer, heap.bufLen);
 		Files.ReadBytes(R, heap.buffer^, heap.bufLen);
-		Files.ReadLInt(R, heap.idxLen);
+		Files.ReadInt32(R, heap.idxLen);
 		NEW(heap.index, heap.idxLen);
 		i := 0;
 		WHILE i < heap.idxLen DO
-			Files.ReadLInt(R, heap.index[i]); INC(i)
+			Files.ReadInt32(R, heap.index[i]); INC(i)
 		END
 	END Load;
 
@@ -1741,7 +1741,7 @@ MODULE Mail IN Oberon; (** portable *)	(* ejz,  *)
 		IF f # NIL THEN
 			Files.GetDate(msgsF, t, d); len := Files.Length(msgsF);
 			Files.Set(r, f, 0);
-			Files.WriteLInt(r, IndexFileKey);
+			Files.WriteInt32(r, IndexFileKey);
 			Files.WriteNum(r, t); Files.WriteNum(r, d); Files.WriteNum(r, len);
 			Files.WriteNum(r, noMsgs); Files.WriteNum(r, delMsgs);
 			Files.WriteNum(r, LEN(msgs^)(SIGNED32));	(* size of msgs array *)
@@ -1756,9 +1756,9 @@ MODULE Mail IN Oberon; (** portable *)	(* ejz,  *)
 				Files.WriteSet(r, msgs[i].topics);
 				Files.WriteNum(r, msgs[i].date);
 				Files.WriteNum(r, msgs[i].time);
-				Files.WriteLInt(r, msgs[i].replyTo);
-				Files.WriteLInt(r, msgs[i].subject);
-				Files.WriteLInt(r, SIGNED32(0FFFFFFFFH))
+				Files.WriteInt32(r, msgs[i].replyTo);
+				Files.WriteInt32(r, msgs[i].subject);
+				Files.WriteInt32(r, SIGNED32(0FFFFFFFFH))
 			END;
 			Store(r, heap);
 			IF new THEN Files.Register(f) ELSE Files.Close(f) END
@@ -1796,29 +1796,29 @@ MODULE Mail IN Oberon; (** portable *)	(* ejz,  *)
 		IF msgsF = NIL THEN msgsF := Files.Old(MsgFile) END;
 		IF msgsF = NIL THEN err(2); RETURN FALSE END;
 		Files.Set(r, f, 0);
-		Files.ReadLInt(r, key);
+		Files.ReadInt32(r, key);
 		IF key # IndexFileKey THEN err(3); RETURN FALSE END;
 		Files.GetDate(msgsF, t, d); len := Files.Length(msgsF);
-		Files.ReadNum(r, t0); Files.ReadNum(r, d0); Files.ReadNum(r, len0);
+		Files.ReadNum32(r, t0); Files.ReadNum32(r, d0); Files.ReadNum32(r, len0);
 		IF (t0 # t) OR (d0 # d) OR (len0 # len) THEN err(4); RETURN FALSE END;
-		Files.ReadNum(r, noMsgs); Files.ReadNum(r, delMsgs);
-		Files.ReadNum(r, len); 	(* size of msgs array *)
+		Files.ReadNum32(r, noMsgs); Files.ReadNum32(r, delMsgs);
+		Files.ReadNum32(r, len); 	(* size of msgs array *)
 		IF (msgs = NIL) OR (LEN(msgs^) < len) THEN NEW(msgs, len) END;
-		Files.ReadNum(r, len);	(* number of elements to be read *)
+		Files.ReadNum32(r, len);	(* number of elements to be read *)
 		IF (len > LEN(msgs^)) THEN err(8); RETURN FALSE END;
 		FOR i := 0 TO len - 1 DO
-			Files.ReadNum(r, t); IF (t # i) THEN err(6); RETURN FALSE END;
-			Files.ReadNum(r, msgs[i].pos);
-			Files.ReadNum(r, msgs[i].len);
-			Files.ReadNum(r, msgs[i].state);
-			Files.ReadNum(r, msgs[i].stamp);
+			Files.ReadNum32(r, t); IF (t # i) THEN err(6); RETURN FALSE END;
+			Files.ReadNum32(r, msgs[i].pos);
+			Files.ReadNum32(r, msgs[i].len);
+			Files.ReadNum32(r, msgs[i].state);
+			Files.ReadNum32(r, msgs[i].stamp);
 			Files.ReadSet(r, msgs[i].flags);
 			Files.ReadSet(r, msgs[i].topics);
-			Files.ReadNum(r, msgs[i].date);
-			Files.ReadNum(r, msgs[i].time);
-			Files.ReadLInt(r, msgs[i].replyTo);
-			Files.ReadLInt(r, msgs[i].subject);
-			Files.ReadLInt(r, d); IF (d # 0FFFFFFFFH) THEN err(7); RETURN FALSE END
+			Files.ReadNum32(r, msgs[i].date);
+			Files.ReadNum32(r, msgs[i].time);
+			Files.ReadInt32(r, msgs[i].replyTo);
+			Files.ReadInt32(r, msgs[i].subject);
+			Files.ReadInt32(r, d); IF (d # 0FFFFFFFFH) THEN err(7); RETURN FALSE END
 		END;
 		Load(r, heap);
 		RETURN TRUE
@@ -2725,12 +2725,12 @@ MODULE Mail IN Oberon; (** portable *)	(* ejz,  *)
 			ELSIF M IS Objects.FileMsg THEN
 				WITH M: Objects.FileMsg DO
 					IF M.id = Objects.load THEN
-						Files.ReadInt(M.R, ver); ASSERT(ver = Version);
+						Files.ReadInt16(M.R, ver); ASSERT(ver = Version);
 						Gadgets.ReadRef(M.R, F.lib, F.sortBy);
 						Gadgets.ReadRef(M.R, F.lib, F.ascending);
 						Gadgets.ReadRef(M.R, F.lib, F.query)
 					ELSIF M.id = Objects.store THEN
-						Files.WriteInt(M.R, Version);
+						Files.WriteInt16(M.R, Version);
 						Gadgets.WriteRef(M.R, F.lib, F.sortBy);
 						Gadgets.WriteRef(M.R, F.lib, F.ascending);
 						Gadgets.WriteRef(M.R, F.lib, F.query)

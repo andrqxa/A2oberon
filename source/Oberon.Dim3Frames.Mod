@@ -442,10 +442,10 @@ BEGIN
 			WITH M: Objects.FileMsg DO
 				Gadgets.framehandle(F, M);
 				IF M.id = Objects.store THEN
-					Files.WriteInt(M.R, F.P.depth);
+					Files.WriteInt16(M.R, F.P.depth);
 					Dim3Engine.WriteCamera(M.R, F.camera)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadInt(M.R, depth);
+					Files.ReadInt16(M.R, depth);
 					Pictures.Create(F.P, F.W, F.H, depth);
 					Dim3Engine.ReadCamera(M.R, F.camera)
 				END

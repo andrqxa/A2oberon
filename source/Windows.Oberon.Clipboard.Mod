@@ -24,9 +24,9 @@ MODULE Clipboard IN Oberon; (** non-portable / source: Windows.Clipboard.Mod *)	
 			IF CFOberon # Kernel32.NULL THEN
 				NEW(buf); Texts.OpenBuf(buf); Texts.Save(T, beg, end, buf);
 				NEW(t); Texts.Open(t, ""); Texts.Append(t, buf);
-				f := Files.New(""); Files.Set(r, f, 0); Files.WriteLInt(r, 0);
+				f := Files.New(""); Files.Set(r, f, 0); Files.WriteInt32(r, 0);
 				Texts.Store(t, f, Files.Pos(r), size);
-				Files.Set(r, f, 0); Files.WriteLInt(r, Files.Length(f)-4);
+				Files.Set(r, f, 0); Files.WriteInt32(r, Files.Length(f)-4);
 				hMem := Kernel32.GlobalAlloc({Kernel32.GMemMoveable, Kernel32.GMemDDEShare}, Files.Length(f));
 				adr := Kernel32.GlobalLock(hMem);
 				Files.Set(r, f, 0); Files.Read(r, ch);
@@ -78,13 +78,13 @@ MODULE Clipboard IN Oberon; (** non-portable / source: Windows.Clipboard.Mod *)	
 				FOR i := 0 TO 3 DO
 					SYSTEM.GET(adr, ch); INC(adr); Files.Write(r, ch)
 				END;
-				Files.Set(r, f, 0); Files.ReadLInt(r, i);
+				Files.Set(r, f, 0); Files.ReadInt32(r, i);
 				WHILE i > 0 DO
 					SYSTEM.GET(adr, ch); INC(adr); Files.Write(r, ch);
 					DEC(i)
 				END;
 				IGNORE Kernel32.GlobalUnlock(hMem);
-				Files.Set(r, f, 0); Files.ReadLInt(r, i); Files.Read(r, ch);
+				Files.Set(r, f, 0); Files.ReadInt32(r, i); Files.Read(r, ch);
 				NEW(T); Texts.Load(T, f, Files.Pos(r), i)
 			ELSE
 				hMem := User32.GetClipboardData(User32.CFText);

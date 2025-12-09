@@ -669,7 +669,7 @@ BEGIN
 		Files.WriteNum(M.R, Version)
 	ELSIF M.id = Objects.store THEN
 		Gadgets.framehandle(F, M);
-		Files.ReadNum(M.R, ver);
+		Files.ReadNum32(M.R, ver);
 		IF ver >= 1 THEN
 
 		END

@@ -36,9 +36,9 @@ BEGIN
 	ELSE
 		Files.Read(R, pcxh.version); Files.Read(R, pcxh.encoding);
 		Files.Read(R, pcxh.bits);
-		Files.ReadInt(R, pcxh.xMin); Files.ReadInt(R, pcxh.yMin);
-		Files.ReadInt(R, pcxh.xMax); Files.ReadInt(R, pcxh.yMax);
-		Files.ReadInt(R, pcxh.hRes); Files.ReadInt(R, pcxh.vRes);
+		Files.ReadInt16(R, pcxh.xMin); Files.ReadInt16(R, pcxh.yMin);
+		Files.ReadInt16(R, pcxh.xMax); Files.ReadInt16(R, pcxh.yMax);
+		Files.ReadInt16(R, pcxh.hRes); Files.ReadInt16(R, pcxh.vRes);
 		IF (pcxh.bits <= 4X) OR (pcxh.version = 00X) OR (pcxh.version = 03X) THEN
 			pcxh.palPos := Files.Pos(R)
 		ELSE
@@ -46,7 +46,7 @@ BEGIN
 		END;
 		Files.ReadBytes(R, filler, 48);
 		Files.Read(R, pcxh.vMode); Files.Read(R, pcxh.planes);
-		Files.ReadInt(R, pcxh.bytesPerLine); Files.ReadInt(R, pcxh.paletteInfo);
+		Files.ReadInt16(R, pcxh.bytesPerLine); Files.ReadInt16(R, pcxh.paletteInfo);
 		Files.ReadBytes(R, filler, 58); pcxh.picPos := Files.Pos(R);
 		RETURN(TRUE)
 	END
@@ -60,18 +60,18 @@ BEGIN
 	Files.Write(R, 5X);
 	Files.Write(R, 1X);
 	Files.Write(R, 8X);	(* full 256 colors *)
-	Files.WriteInt(R, 0); Files.WriteInt(R, 0);
-	Files.WriteInt(R, img.width-1); Files.WriteInt(R, img.height-1);
-	Files.WriteInt(R, img.width-1); Files.WriteInt(R, img.height-1);
+	Files.WriteInt16(R, 0); Files.WriteInt16(R, 0);
+	Files.WriteInt16(R, img.width-1); Files.WriteInt16(R, img.height-1);
+	Files.WriteInt16(R, img.width-1); Files.WriteInt16(R, img.height-1);
 	j := 0;
 	WHILE j < 48 DO Files.Write(R, 0X); INC(j) END;
 	Files.Write(R, 0X);
 	IF img.fmt.code = Images.bgr888 THEN
-		Files.Write(R, 3X); Files.WriteInt(R, SHORT(img.bpr DIV 3))
+		Files.Write(R, 3X); Files.WriteInt16(R, SHORT(img.bpr DIV 3))
 	ELSE
-		Files.Write(R, 1X); Files.WriteInt(R, SHORT(img.bpr))
+		Files.Write(R, 1X); Files.WriteInt16(R, SHORT(img.bpr))
 	END;
-	Files.WriteInt(R, 1);
+	Files.WriteInt16(R, 1);
 	j := 0;
 	WHILE j < 58 DO Files.Write(R, 0X); INC(j) END
 END WritePCXHeader;

@@ -2152,7 +2152,7 @@ MODULE Decoder IN Oberon;	(** non-portable *) (* NM 2.3.93 / 26.10.93 *)
 			IF fp # 0 THEN NEW(check, exp) END;
 			WHILE fp # 0 DO
 				IF fp = 1 THEN
-					Files.ReadNum (R, off);
+					Files.ReadNum32 (R, off);
 					IF off >= 0 THEN
 						WriteString(" TD(");  INC(count);  WriteDisp(count);  WriteString(") ");  WriteDWHex(off);
 						LoadScope (level+1(*1*))
@@ -2162,7 +2162,7 @@ MODULE Decoder IN Oberon;	(** non-portable *) (* NM 2.3.93 / 26.10.93 *)
 				ELSE
 					WriteLn; Tab(4+SHORT(level*4)); WriteDWHex(fp);
 					IF level = 0 THEN
-						Files.ReadNum (R, adr);
+						Files.ReadNum32 (R, adr);
 						IF adr > 0 THEN  adr := adr*addressFactor; WriteString(" P ")  ELSIF adr = 0 THEN  WriteString(" T ")  ELSE  WriteString(" V ")  END;
 						WriteDWHex(adr);
 						i := 0;
@@ -2181,7 +2181,7 @@ MODULE Decoder IN Oberon;	(** non-portable *) (* NM 2.3.93 / 26.10.93 *)
 						check[len] := fp; INC(len)
 					END
 				END;
-				Files.ReadNum (R, fp)
+				Files.ReadNum32 (R, fp)
 			END
 		END LoadScope;
 
@@ -2214,9 +2214,9 @@ MODULE Decoder IN Oberon;	(** non-portable *) (* NM 2.3.93 / 26.10.93 *)
 		PROCEDURE CheckUse (level: SIGNED32);
 			VAR fp, link: SIGNED32; tmpErr: BOOLEAN; name: ARRAY 32 OF CHAR;
 		BEGIN tmpErr := (level = -1);
-			Files.ReadNum (R, fp);
+			Files.ReadNum32 (R, fp);
 			WHILE fp # 0 DO
-				IF fp = 1 THEN Files.ReadNum (R, link);
+				IF fp = 1 THEN Files.ReadNum32 (R, link);
 					WriteString(" TD "); WriteDWHex(link);
 					IF tmpErr THEN CheckUse (-1)
 					ELSE CheckUse (1)
@@ -2226,7 +2226,7 @@ MODULE Decoder IN Oberon;	(** non-portable *) (* NM 2.3.93 / 26.10.93 *)
 					WriteLn; Tab(4);  Write("[");  WriteDWHex(fp);  Write("]");
 					IF level >= 0 THEN tmpErr := FALSE;
 						IF level = 0 THEN
-							Files.ReadNum (R, link);
+							Files.ReadNum32 (R, link);
 							Tab(16);
 							IF link >= 0 THEN Write("V") ELSE Write("P") END;
 							Tab(18); WriteDWHex(link)
@@ -2234,7 +2234,7 @@ MODULE Decoder IN Oberon;	(** non-portable *) (* NM 2.3.93 / 26.10.93 *)
 					END;
 					Tab(24); WriteString(name);
 				END;
-				Files.ReadNum (R, fp)
+				Files.ReadNum32 (R, fp)
 			END
 		END CheckUse;
 
@@ -2285,7 +2285,7 @@ MODULE Decoder IN Oberon;	(** non-portable *) (* NM 2.3.93 / 26.10.93 *)
 				IF version = 0ADH THEN GetByte(version) END;
 				WriteByte(version);
 				WriteLn;
-				Files.ReadNum (R, symSize); Files.Set (R, Files.Base (R), Files.Pos (R) + symSize);	(* skip symbol file *)
+				Files.ReadNum32 (R, symSize); Files.Set (R, Files.Base (R), Files.Pos (R) + symSize);	(* skip symbol file *)
 			ELSE
 				WriteString ("  tag not supported or wrong file type!"); WriteLn;
 				IF T # NIL THEN Texts.Append (T, W.buf) END;

@@ -107,10 +107,10 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteInt(M.R, F.coffee);
+					Files.WriteInt16(M.R, F.coffee);
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadInt(M.R, F.coffee);
+					Files.ReadInt16(M.R, F.coffee);
 					Gadgets.framehandle(F, M)
 				END
 			END

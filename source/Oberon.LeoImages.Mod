@@ -243,15 +243,15 @@ MODULE LeoImages IN Oberon; (** portable **)	(* eos  *)
 					Files.WriteNum(msg.R, 1);
 					Gadgets.WriteRef(msg.R, img.lib, img.img);
 					GfxMatrix.Write(msg.R, img.mat);
-					Files.WriteInt(msg.R, img.filter);
+					Files.WriteInt16(msg.R, img.filter);
 					Files.WriteBool(msg.R, img.quick);
 					Files.Write(msg.R, CHR(img.color.r)); Files.Write(msg.R, CHR(img.color.g)); Files.Write(msg.R, CHR(img.color.b))
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Gadgets.ReadRef(msg.R, img.lib, obj);
 					IF (obj # NIL) & (obj IS Images.Image) THEN img.img := obj(Images.Image) END;
 					GfxMatrix.Read(msg.R, img.mat);
-					Files.ReadInt(msg.R, img.filter);
+					Files.ReadInt16(msg.R, img.filter);
 					Files.ReadBool(msg.R, img.quick);
 					Files.Read(msg.R, ch); img.color.r := ORD(ch);
 					Files.Read(msg.R, ch); img.color.g := ORD(ch);

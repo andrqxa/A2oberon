@@ -314,18 +314,18 @@ BEGIN
 END PatToId;
 
 BEGIN
-	Files.WriteLInt(R, s.fcol);    Files.WriteLInt(R, s.bcol);
-	Files.WriteInt(R, s.mode);
+	Files.WriteInt32(R, s.fcol);    Files.WriteInt32(R, s.bcol);
+	Files.WriteInt16(R, s.mode);
 	Files.WriteSet(R, s.style);
-	(*Files.WriteLInt(R, s.pattern);*)Files.WriteInt(R, PatToId(s.pattern));
-	Files.WriteInt(R, s.pensize);
+	(*Files.WriteInt32(R, s.pattern);*)Files.WriteInt16(R, PatToId(s.pattern));
+	Files.WriteInt16(R, s.pensize);
 	Files.WriteString(R, s.fnt);
-	Files.WriteLInt(R, s.fillcol);    Files.WriteLInt(R, s.selectcol);
-	(*Files.WriteLInt(R, s.fillpat); Files.WriteLInt(R, s.selectpat)*)
-	Files.WriteInt(R, PatToId(s.fillpat));
-	Files.WriteInt(R, - 1);   (* hack to get version management *)
-	Files.WriteInt(R, PatToId(s.selectpat));
-	Files.WriteInt(R, s.alpha)
+	Files.WriteInt32(R, s.fillcol);    Files.WriteInt32(R, s.selectcol);
+	(*Files.WriteInt32(R, s.fillpat); Files.WriteInt32(R, s.selectpat)*)
+	Files.WriteInt16(R, PatToId(s.fillpat));
+	Files.WriteInt16(R, - 1);   (* hack to get version management *)
+	Files.WriteInt16(R, PatToId(s.selectpat));
+	Files.WriteInt16(R, s.alpha)
 END WriteStyle;
 PROCEDURE ReadStyle* (VAR R: Files.Rider;    VAR (* OUT *)s: Style);
 	VAR i: SIGNED16;
@@ -346,19 +346,19 @@ END IdToPat;
 
 BEGIN
 	s := defaultStyle;  (* fof 0103xx *)
-	Files.ReadLInt(R, s.fcol);    Files.ReadLInt(R, s.bcol);
-	Files.ReadInt(R, s.mode);
+	Files.ReadInt32(R, s.fcol);    Files.ReadInt32(R, s.bcol);
+	Files.ReadInt16(R, s.mode);
 	Files.ReadSet(R, s.style);
-	(*Files.ReadLInt(R, s.pattern);*)Files.ReadInt(R, i);    s.pattern := IdToPat(i);
-	Files.ReadInt(R, s.pensize);
+	(*Files.ReadInt32(R, s.pattern);*)Files.ReadInt16(R, i);    s.pattern := IdToPat(i);
+	Files.ReadInt16(R, s.pensize);
 	Files.ReadString(R, s.fnt);
-	Files.ReadLInt(R, s.fillcol);    Files.ReadLInt(R, s.selectcol);
-	(*Files.ReadLInt(R, s.fillpat); Files.ReadLInt(R, s.selectpat)*)
-	Files.ReadInt(R, i);    s.fillpat := IdToPat(i);   Files.ReadInt(R, i);
+	Files.ReadInt32(R, s.fillcol);    Files.ReadInt32(R, s.selectcol);
+	(*Files.ReadInt32(R, s.fillpat); Files.ReadInt32(R, s.selectpat)*)
+	Files.ReadInt16(R, i);    s.fillpat := IdToPat(i);   Files.ReadInt16(R, i);
 	IF i = - 1 THEN
-		Files.ReadInt(R, i);
+		Files.ReadInt16(R, i);
 		s.selectpat := IdToPat(i);
-		Files.ReadInt(R, s.alpha)
+		Files.ReadInt16(R, s.alpha)
 	ELSE
 		s.selectpat := IdToPat(i)
 	END
@@ -1002,55 +1002,55 @@ END InstallPalettes;
 PROCEDURE WriteRegion* (VAR R: Files.Rider;    VAR (*IN*)reg: tRegion2d);
 BEGIN
 	WHILE reg # NIL DO
-		Files.WriteInt(R, 1);
-		Files.WriteLReal(R, reg.x);   Files.WriteLReal(R, reg.y);
-		Files.WriteLReal(R, reg.w);   Files.WriteLReal(R, reg.h);
+		Files.WriteInt16(R, 1);
+		Files.WriteFloat64(R, reg.x);   Files.WriteFloat64(R, reg.y);
+		Files.WriteFloat64(R, reg.w);   Files.WriteFloat64(R, reg.h);
 		reg := reg.prev
 	END;
-	Files.WriteInt(R, 0)
+	Files.WriteInt16(R, 0)
 END WriteRegion;
 
 PROCEDURE ReadRegion* (VAR R: Files.Rider;    VAR reg: tRegion2d);
 	VAR flag: SIGNED16;    tempreg: tRegion2d;
 BEGIN
-	Files.ReadInt(R, flag);    IF flag = 0 THEN reg := NIL
+	Files.ReadInt16(R, flag);    IF flag = 0 THEN reg := NIL
 	ELSE IF reg = NIL THEN NEW(reg)  END;
 	tempreg := reg END;
 	WHILE flag # 0 DO
-		Files.ReadLReal(R, tempreg.x);   Files.ReadLReal(R, tempreg.y);
-		Files.ReadLReal(R, tempreg.w);   Files.ReadLReal(R, tempreg.h);
-		Files.ReadInt(R, flag);    IF flag # 0 THEN NEW(tempreg.prev);    tempreg := tempreg.prev END
+		Files.ReadFloat64(R, tempreg.x);   Files.ReadFloat64(R, tempreg.y);
+		Files.ReadFloat64(R, tempreg.w);   Files.ReadFloat64(R, tempreg.h);
+		Files.ReadInt16(R, flag);    IF flag # 0 THEN NEW(tempreg.prev);    tempreg := tempreg.prev END
 	END
 END ReadRegion;
 
 PROCEDURE WriteCoordinate* (VAR R: Files.Rider;    VAR (*IN*)c: tCoordinate2d);
 BEGIN
-	IF c = NIL THEN Files.WriteInt(R, 0)
-	ELSE Files.WriteInt(R, 1);
-		Files.WriteInt(R, c.x0);   Files.WriteInt(R, c.y0)
+	IF c = NIL THEN Files.WriteInt16(R, 0)
+	ELSE Files.WriteInt16(R, 1);
+		Files.WriteInt16(R, c.x0);   Files.WriteInt16(R, c.y0)
 	END
 END WriteCoordinate;
 
 PROCEDURE ReadCoordinate* (VAR R: Files.Rider;    VAR (*OUT*)c: tCoordinate2d);
 	VAR flag: SIGNED16;
 BEGIN
-	Files.ReadInt(R, flag);
+	Files.ReadInt16(R, flag);
 	IF flag = 0 THEN  c := NIL ELSE
 		IF c = NIL THEN NEW(c) END;
-		Files.ReadInt(R, c.x0);   Files.ReadInt(R, c.y0)
+		Files.ReadInt16(R, c.x0);   Files.ReadInt16(R, c.y0)
 	END
 END ReadCoordinate;
 
 PROCEDURE WriteCoordinate2d* (VAR R: Files.Rider;    VAR (*IN*)c: tCoordinate2d);
 BEGIN
-	IF c = NIL THEN Files.WriteInt(R, 0)
-	ELSE Files.WriteInt(R, 87);   (*magic number*)
-		Files.WriteInt(R, c.x);   Files.WriteInt(R, c.y);
-		Files.WriteInt(R, c.w);   Files.WriteInt(R, c.h);
-		Files.WriteLReal(R, c.x2d);   Files.WriteLReal(R, c.y2d);
-		Files.WriteLReal(R, c.w2d);   Files.WriteLReal(R, c.h2d);
-		Files.WriteLReal(R, c.xFact);   Files.WriteLReal(R, c.yFact);
-		(* Files.WriteInt(R, c.x02d);  Files.WriteInt(R, c.y02d); *)
+	IF c = NIL THEN Files.WriteInt16(R, 0)
+	ELSE Files.WriteInt16(R, 87);   (*magic number*)
+		Files.WriteInt16(R, c.x);   Files.WriteInt16(R, c.y);
+		Files.WriteInt16(R, c.w);   Files.WriteInt16(R, c.h);
+		Files.WriteFloat64(R, c.x2d);   Files.WriteFloat64(R, c.y2d);
+		Files.WriteFloat64(R, c.w2d);   Files.WriteFloat64(R, c.h2d);
+		Files.WriteFloat64(R, c.xFact);   Files.WriteFloat64(R, c.yFact);
+		(* Files.WriteInt16(R, c.x02d);  Files.WriteInt16(R, c.y02d); *)
 		WriteRegion(R, c.zoomCache)
 	END
 END WriteCoordinate2d;
@@ -1058,16 +1058,16 @@ END WriteCoordinate2d;
 PROCEDURE ReadCoordinate2d* (VAR R: Files.Rider;    VAR (*IN*)c: tCoordinate2d);
 	VAR flag: SIGNED16;
 BEGIN
-	Files.ReadInt(R, flag);    IF flag = 0 THEN c := NIL
+	Files.ReadInt16(R, flag);    IF flag = 0 THEN c := NIL
 	ELSE
 		ASSERT(flag = 87, 100);   (*magic number*)
 		IF c = NIL THEN NEW(c) END;
-		Files.ReadInt(R, c.x);   Files.ReadInt(R, c.y);
-		Files.ReadInt(R, c.w);   Files.ReadInt(R, c.h);
-		Files.ReadLReal(R, c.x2d);   Files.ReadLReal(R, c.y2d);
-		Files.ReadLReal(R, c.w2d);   Files.ReadLReal(R, c.h2d);
-		Files.ReadLReal(R, c.xFact);   Files.ReadLReal(R, c.yFact);
-		(* Files.ReadInt(R, c.x02d);  Files.ReadInt(R, c.y02d); *)
+		Files.ReadInt16(R, c.x);   Files.ReadInt16(R, c.y);
+		Files.ReadInt16(R, c.w);   Files.ReadInt16(R, c.h);
+		Files.ReadFloat64(R, c.x2d);   Files.ReadFloat64(R, c.y2d);
+		Files.ReadFloat64(R, c.w2d);   Files.ReadFloat64(R, c.h2d);
+		Files.ReadFloat64(R, c.xFact);   Files.ReadFloat64(R, c.yFact);
+		(* Files.ReadInt16(R, c.x02d);  Files.ReadInt16(R, c.y02d); *)
 		ReadRegion(R, c.zoomCache)
 	END
 END ReadCoordinate2d;

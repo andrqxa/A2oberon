@@ -208,19 +208,19 @@ VAR
 
 	PROCEDURE Store0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteInt( M.R, 2 );  Gadgets.WriteRef( M.R, obj.lib, obj.f );  Files.WriteLReal( M.R, obj.xr );
-		Files.WriteLReal( M.R, obj.yr );  Files.WriteLReal( M.R, obj.wr );  Files.WriteLReal( M.R, obj.hr );
-		Files.WriteLReal( M.R, obj.dx );  Files.WriteInt( M.R, obj.grid );  Files.WriteBool( M.R, obj.viewEditWin );
+		Files.WriteInt16( M.R, 2 );  Gadgets.WriteRef( M.R, obj.lib, obj.f );  Files.WriteFloat64( M.R, obj.xr );
+		Files.WriteFloat64( M.R, obj.yr );  Files.WriteFloat64( M.R, obj.wr );  Files.WriteFloat64( M.R, obj.hr );
+		Files.WriteFloat64( M.R, obj.dx );  Files.WriteInt16( M.R, obj.grid );  Files.WriteBool( M.R, obj.viewEditWin );
 		Files.WriteBool( M.R, obj.noLoc )
 	END Store0;
 
 	PROCEDURE Load0( obj: tLayer;  VAR M: Objects.FileMsg );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( M.R, version );  Gadgets.ReadRef( M.R, obj.lib, objsub );
+		Files.ReadInt16( M.R, version );  Gadgets.ReadRef( M.R, obj.lib, objsub );
 		IF objsub # NIL THEN obj.f := objsub( antsFunctions.Function ) END;
-		Files.ReadLReal( M.R, obj.xr );  Files.ReadLReal( M.R, obj.yr );  Files.ReadLReal( M.R, obj.wr );
-		Files.ReadLReal( M.R, obj.hr );  Files.ReadLReal( M.R, obj.dx );  Files.ReadInt( M.R, obj.grid );
+		Files.ReadFloat64( M.R, obj.xr );  Files.ReadFloat64( M.R, obj.yr );  Files.ReadFloat64( M.R, obj.wr );
+		Files.ReadFloat64( M.R, obj.hr );  Files.ReadFloat64( M.R, obj.dx );  Files.ReadInt16( M.R, obj.grid );
 		IF version > 0 THEN Files.ReadBool( M.R, obj.viewEditWin );  END;
 		IF version > 1 THEN Files.ReadBool( M.R, obj.noLoc );  END;
 	END Load0;

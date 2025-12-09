@@ -108,21 +108,21 @@ VAR
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyPort.LayerHandler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  vyPort.LayerHandler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.m := objsub( vyRealVec.tChunkedMatrix ) END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.pal := objsub( antsColors.Palette ) END;
-			vyPolyWorld.LoadObj( msg.R, obj.lib, obj.sp );  Files.ReadReal( msg.R, obj.axisx0 );
-			Files.ReadReal( msg.R, obj.axisx1 );  Files.ReadReal( msg.R, obj.axisxstep );  Files.ReadReal( msg.R, obj.axisy0 );
-			Files.ReadReal( msg.R, obj.axisy1 );  Files.ReadReal( msg.R, obj.axisystep );  Files.ReadReal( msg.R, obj.axisz0 );
-			Files.ReadReal( msg.R, obj.axisz1 );  Files.ReadReal( msg.R, obj.axiszstep );
+			vyPolyWorld.LoadObj( msg.R, obj.lib, obj.sp );  Files.ReadFloat32( msg.R, obj.axisx0 );
+			Files.ReadFloat32( msg.R, obj.axisx1 );  Files.ReadFloat32( msg.R, obj.axisxstep );  Files.ReadFloat32( msg.R, obj.axisy0 );
+			Files.ReadFloat32( msg.R, obj.axisy1 );  Files.ReadFloat32( msg.R, obj.axisystep );  Files.ReadFloat32( msg.R, obj.axisz0 );
+			Files.ReadFloat32( msg.R, obj.axisz1 );  Files.ReadFloat32( msg.R, obj.axiszstep );
 			IF version > 0 THEN Files.ReadBool( msg.R, obj.lines );  END;
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 1 );  vyPort.LayerHandler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.m );
+			Files.WriteInt16( msg.R, 1 );  vyPort.LayerHandler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.m );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.pal );  vyPolyWorld.StoreObj( msg.R, obj.lib, obj.sp );
-			Files.WriteReal( msg.R, obj.axisx0 );  Files.WriteReal( msg.R, obj.axisx1 );  Files.WriteReal( msg.R, obj.axisxstep );
-			Files.WriteReal( msg.R, obj.axisy0 );  Files.WriteReal( msg.R, obj.axisy1 );  Files.WriteReal( msg.R, obj.axisystep );
-			Files.WriteReal( msg.R, obj.axisz0 );  Files.WriteReal( msg.R, obj.axisz1 );  Files.WriteReal( msg.R, obj.axiszstep );
+			Files.WriteFloat32( msg.R, obj.axisx0 );  Files.WriteFloat32( msg.R, obj.axisx1 );  Files.WriteFloat32( msg.R, obj.axisxstep );
+			Files.WriteFloat32( msg.R, obj.axisy0 );  Files.WriteFloat32( msg.R, obj.axisy1 );  Files.WriteFloat32( msg.R, obj.axisystep );
+			Files.WriteFloat32( msg.R, obj.axisz0 );  Files.WriteFloat32( msg.R, obj.axisz1 );  Files.WriteFloat32( msg.R, obj.axiszstep );
 			Files.WriteBool( msg.R, obj.lines );
 		ELSE vyPort.LayerHandler( obj, msg )
 		END

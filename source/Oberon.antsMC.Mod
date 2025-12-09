@@ -323,36 +323,36 @@ END RSetSeed;
 	PROCEDURE StoreSeed( VAR R: Files.Rider;  s: Seed );
 	VAR pos: SIGNED32;
 	BEGIN
-		Files.WriteInt( R, 1 );
+		Files.WriteInt16( R, 1 );
 		(* old
 	GetMinPos(s, pos);
 	WHILE s # NIL DO
-	Files.WriteLInt(R, s.pos);    Files.WriteLInt(R, s.seedval);    s := s.next
+	Files.WriteInt32(R, s.pos);    Files.WriteInt32(R, s.seedval);    s := s.next
 	END;
-	Files.WriteLInt(R, MIN(SIGNED32));    Files.WriteLInt(R, MIN(SIGNED32))
+	Files.WriteInt32(R, MIN(SIGNED32));    Files.WriteInt32(R, MIN(SIGNED32))
 	*)
 		GetMinPos( s, pos );
-		WHILE s # NIL DO Files.WriteLInt( R, s.pos );  s.seed.Store( R );  s := s.next END;
-		Files.WriteLInt( R, MIN( SIGNED32 ) )
+		WHILE s # NIL DO Files.WriteInt32( R, s.pos );  s.seed.Store( R );  s := s.next END;
+		Files.WriteInt32( R, MIN( SIGNED32 ) )
 	END StoreSeed;
 
 	PROCEDURE LoadSeed( VAR R: Files.Rider;  VAR s: Seed;  allocs: vyRanBase.tRandom );
 	VAR pos, val: SIGNED32;  insert: Seed;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );
+		Files.ReadInt16( R, version );
 		IF version < 1 THEN
-			Files.ReadLInt( R, pos );  Files.ReadLInt( R, val );
+			Files.ReadInt32( R, pos );  Files.ReadInt32( R, val );
 			WHILE (pos # MIN( SIGNED32 )) DO
-				NEW( insert );  insert.pos := pos;  insert.seedval := val;  Insert( s, insert );  Files.ReadLInt( R, pos );
-				Files.ReadLInt( R, val );  insert.seed := allocs.AllocSeed()
+				NEW( insert );  insert.pos := pos;  insert.seedval := val;  Insert( s, insert );  Files.ReadInt32( R, pos );
+				Files.ReadInt32( R, val );  insert.seed := allocs.AllocSeed()
 			END;
 			RETURN
 		END;
 
-		Files.ReadLInt( R, pos );
+		Files.ReadInt32( R, pos );
 		WHILE (pos # MIN( SIGNED32 )) DO
 			NEW( insert );  insert.pos := pos;  insert.seed := allocs.AllocSeed();  insert.seed.Load( R, allocs.seedVersion );
-			Insert( s, insert );  Files.ReadLInt( R, pos )
+			Insert( s, insert );  Files.ReadInt32( R, pos )
 		END
 
 	END LoadSeed;
@@ -361,11 +361,11 @@ END RSetSeed;
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
 		IF stop THEN HALT( 100 ) END;
-		Files.ReadInt( R, version );  Gadgets.ReadRef( R, s.lib, objsub );
+		Files.ReadInt16( R, version );  Gadgets.ReadRef( R, s.lib, objsub );
 		WITH objsub: vyRanBase.tRandom DO s.gen := objsub
 		END;
-		Files.ReadLInt( R, s.pos );  Files.ReadLInt( R, s.first );  Files.ReadLInt( R, s.prev );  Files.ReadLInt( R, s.next );
-		Files.ReadLInt( R, s.last );  LoadSeed( R, s.seed, s.gen );  vyLinks.LoadLinks( R, s.lib, s.Kernels );
+		Files.ReadInt32( R, s.pos );  Files.ReadInt32( R, s.first );  Files.ReadInt32( R, s.prev );  Files.ReadInt32( R, s.next );
+		Files.ReadInt32( R, s.last );  LoadSeed( R, s.seed, s.gen );  vyLinks.LoadLinks( R, s.lib, s.Kernels );
 		vyLinks.LoadLinks( R, s.lib, s.initgen );
 		IF (s.initgen # NIL ) & (s.initgen.obj # NIL ) THEN
 			s.initseed := s.initgen.obj( vyRanBase.tRandom ).seed;   (* default init seed *)
@@ -375,8 +375,8 @@ END RSetSeed;
 
 	PROCEDURE Store( VAR R: Files.Rider;  s: Chain );
 	BEGIN
-		Files.WriteInt( R, 1 );  Gadgets.WriteRef( R, s.lib, s.gen );  Files.WriteLInt( R, s.pos );  Files.WriteLInt( R, s.first );
-		Files.WriteLInt( R, s.prev );  Files.WriteLInt( R, s.next );  Files.WriteLInt( R, s.last );  StoreSeed( R, s.seed );
+		Files.WriteInt16( R, 1 );  Gadgets.WriteRef( R, s.lib, s.gen );  Files.WriteInt32( R, s.pos );  Files.WriteInt32( R, s.first );
+		Files.WriteInt32( R, s.prev );  Files.WriteInt32( R, s.next );  Files.WriteInt32( R, s.last );  StoreSeed( R, s.seed );
 		vyLinks.StoreLinks( R, s.lib, s.Kernels );  vyLinks.StoreLinks( R, s.lib, s.initgen );
 		IF (s.initgen # NIL ) & (s.initgen.obj # NIL ) THEN s.initseed.Store( R ) END
 	END Store;

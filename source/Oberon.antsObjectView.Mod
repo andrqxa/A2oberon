@@ -85,12 +85,12 @@ VAR
 
 	PROCEDURE StoreEntry( VAR R: Files.Rider;  lib: Objects.Library;  entry: vyLinks.Link );
 	BEGIN
-		Files.WriteInt( R, 0 );
-		IF entry = NIL THEN Files.WriteInt( R, -1 );  RETURN ELSE Files.WriteInt( R, 0 ) END;
+		Files.WriteInt16( R, 0 );
+		IF entry = NIL THEN Files.WriteInt16( R, -1 );  RETURN ELSE Files.WriteInt16( R, 0 ) END;
 		WITH entry: tEntry DO
 			Files.WriteString( R, entry.name );  Files.WriteString( R, entry.val );  Files.WriteBool( R, entry.selected );
-			Files.WriteBool( R, entry.visible );  Files.WriteInt( R, entry.X );  Files.WriteInt( R, entry.Y );
-			Files.WriteInt( R, entry.W );  Files.WriteInt( R, entry.H );  StoreNode( R, lib, entry.node )
+			Files.WriteBool( R, entry.visible );  Files.WriteInt16( R, entry.X );  Files.WriteInt16( R, entry.Y );
+			Files.WriteInt16( R, entry.W );  Files.WriteInt16( R, entry.H );  StoreNode( R, lib, entry.node )
 		END;
 		StoreEntry( R, lib, entry.link )
 	END StoreEntry;
@@ -98,58 +98,58 @@ VAR
 	PROCEDURE LoadEntry( VAR R: Files.Rider;  lib: Objects.Library;  VAR entry: vyLinks.Link );
 	VAR i: SIGNED16;  mentry: tEntry;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadInt( R, i );
+		Files.ReadInt16( R, version );  Files.ReadInt16( R, i );
 		IF i < 0 THEN entry := NIL;  RETURN END;
 		NEW( mentry );  entry := mentry;
 		WITH entry: tEntry DO
 			Files.ReadString( R, entry.name );  Files.ReadString( R, entry.val );  Files.ReadBool( R, entry.selected );
-			Files.ReadBool( R, entry.visible );  Files.ReadInt( R, entry.X );  Files.ReadInt( R, entry.Y );
-			Files.ReadInt( R, entry.W );  Files.ReadInt( R, entry.H );  LoadNode( R, lib, entry.node )
+			Files.ReadBool( R, entry.visible );  Files.ReadInt16( R, entry.X );  Files.ReadInt16( R, entry.Y );
+			Files.ReadInt16( R, entry.W );  Files.ReadInt16( R, entry.H );  LoadNode( R, lib, entry.node )
 		END;
 		LoadEntry( R, lib, entry.link )
 	END LoadEntry;
 
 	PROCEDURE StoreNode( VAR R: Files.Rider;  lib: Objects.Library;  node: tNode );
 	BEGIN
-		Files.WriteInt( R, 0 );
-		IF node = NIL THEN Files.WriteInt( R, -1 );  RETURN ELSE Files.WriteInt( R, 0 ) END;
+		Files.WriteInt16( R, 0 );
+		IF node = NIL THEN Files.WriteInt16( R, -1 );  RETURN ELSE Files.WriteInt16( R, 0 ) END;
 		StoreEntry( R, lib, node.entries );  Gadgets.WriteRef( R, lib, node.root );  Files.WriteString( R, node.name );
-		Files.WriteString( R, node.val );  Files.WriteBool( R, node.entriesvisible );  Files.WriteLInt( R, node.entriescount );
-		Files.WriteBool( R, node.repetition );  Files.WriteInt( R, node.X );  Files.WriteInt( R, node.Y );
-		Files.WriteInt( R, node.W );  Files.WriteInt( R, node.H );  Files.WriteLReal( R, node.x );  Files.WriteLReal( R, node.y );
+		Files.WriteString( R, node.val );  Files.WriteBool( R, node.entriesvisible );  Files.WriteInt32( R, node.entriescount );
+		Files.WriteBool( R, node.repetition );  Files.WriteInt16( R, node.X );  Files.WriteInt16( R, node.Y );
+		Files.WriteInt16( R, node.W );  Files.WriteInt16( R, node.H );  Files.WriteFloat64( R, node.x );  Files.WriteFloat64( R, node.y );
 		Files.WriteBool( R, node.selected );  Files.WriteBool( R, node.visible )
 	END StoreNode;
 
 	PROCEDURE LoadNode( VAR R: Files.Rider;  lib: Objects.Library;  VAR node: tNode );
 	VAR i: SIGNED16;  subobj: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadInt( R, i );
+		Files.ReadInt16( R, version );  Files.ReadInt16( R, i );
 		IF i < 0 THEN node := NIL;  RETURN END;
 		NEW( node );  LoadEntry( R, lib, node.entries );  Gadgets.ReadRef( R, lib, subobj );
 		IF subobj # NIL THEN node.root := subobj END;
 
 		Files.ReadString( R, node.name );  Files.ReadString( R, node.val );  Files.ReadBool( R, node.entriesvisible );
-		Files.ReadLInt( R, node.entriescount );  Files.ReadBool( R, node.repetition );  Files.ReadInt( R, node.X );
-		Files.ReadInt( R, node.Y );  Files.ReadInt( R, node.W );  Files.ReadInt( R, node.H );  Files.ReadLReal( R, node.x );
-		Files.ReadLReal( R, node.y );  Files.ReadBool( R, node.selected );  Files.ReadBool( R, node.visible )
+		Files.ReadInt32( R, node.entriescount );  Files.ReadBool( R, node.repetition );  Files.ReadInt16( R, node.X );
+		Files.ReadInt16( R, node.Y );  Files.ReadInt16( R, node.W );  Files.ReadInt16( R, node.H );  Files.ReadFloat64( R, node.x );
+		Files.ReadFloat64( R, node.y );  Files.ReadBool( R, node.selected );  Files.ReadBool( R, node.visible )
 	END LoadNode;
 
 	PROCEDURE Store0( o: tLayer;  VAR M: Objects.FileMsg );
 	VAR i: SIGNED16;
 	BEGIN
-		Files.WriteInt( M.R, 0 );  StoreNode( M.R, o.lib, o.node );  Files.WriteInt( M.R, o.distance );
-		Files.WriteInt( M.R, o.forbiddencount );
+		Files.WriteInt16( M.R, 0 );  StoreNode( M.R, o.lib, o.node );  Files.WriteInt16( M.R, o.distance );
+		Files.WriteInt16( M.R, o.forbiddencount );
 		FOR i := 0 TO o.forbiddencount - 1 DO Files.WriteString( M.R, o.forbidden[i] ) END;
-		Files.WriteLInt( M.R, o.lastLink );  Files.WriteBool( M.R, o.lifeUpdate )
+		Files.WriteInt32( M.R, o.lastLink );  Files.WriteBool( M.R, o.lifeUpdate )
 	END Store0;
 
 	PROCEDURE Load0( o: tLayer;  VAR M: Objects.FileMsg );
 	VAR i: SIGNED16;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( M.R, version );  LoadNode( M.R, o.lib, o.node );  Files.ReadInt( M.R, o.distance );
-		Files.ReadInt( M.R, o.forbiddencount );
+		Files.ReadInt16( M.R, version );  LoadNode( M.R, o.lib, o.node );  Files.ReadInt16( M.R, o.distance );
+		Files.ReadInt16( M.R, o.forbiddencount );
 		FOR i := 0 TO o.forbiddencount - 1 DO Files.ReadString( M.R, o.forbidden[i] ) END;
-		Files.ReadLInt( M.R, o.lastLink );  Files.ReadBool( M.R, o.lifeUpdate );
+		Files.ReadInt32( M.R, o.lastLink );  Files.ReadBool( M.R, o.lifeUpdate );
 		IF o.node.root = antsObjects.obj THEN UpdateSpecial( o ) END
 	END Load0;
 

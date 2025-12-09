@@ -36,13 +36,13 @@ TYPE
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	BEGIN
-		Files.WriteInt( R, 0 )
+		Files.WriteInt16( R, 0 )
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version )
+		Files.ReadInt16( R, version )
 	END LoadM;
 
 	PROCEDURE OneSweep( s: antsKernel.Kernel );

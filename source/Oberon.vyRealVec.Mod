@@ -245,50 +245,50 @@ END FillBufMeanCache;
 	(*! use vyReal Store*)
 	VAR b: tBuf;  i: index;
 	BEGIN
-		Files.WriteLInt( R, SIGNED32(o.nrData) );  b := o.buf( tBuf );
+		Files.WriteInt32( R, SIGNED32(o.nrData) );  b := o.buf( tBuf );
 		WHILE b # NIL DO
 			IF b.usedentries > 0 THEN
-				Files.WriteLInt( R, SIGNED32(b.len) );  Files.WriteLInt( R, SIGNED32(b.usedentries) );  i := 0;
-				WHILE i < b.usedentries DO Files.WriteReal( R, b.data[i] );  INC( i ) END
+				Files.WriteInt32( R, SIGNED32(b.len) );  Files.WriteInt32( R, SIGNED32(b.usedentries) );  i := 0;
+				WHILE i < b.usedentries DO Files.WriteFloat32( R, b.data[i] );  INC( i ) END
 			END;
 			IF b.next # NIL THEN b := b.next( tBuf ) ELSE b := NIL END
 		END;
-		Files.WriteLInt( R, 0 )
+		Files.WriteInt32( R, 0 )
 	END Store0;
 
 	PROCEDURE Store0REAL( VAR R: Files.Rider;  o: tREAL );
 	BEGIN
-		Files.WriteReal( R, o.x )
+		Files.WriteFloat32( R, o.x )
 	END Store0REAL;
 
 	PROCEDURE Store0ChunkedMatrix( VAR R: Files.Rider;  o: tChunkedMatrix );
 
 	BEGIN
-		Files.WriteLInt( R, SIGNED32(o.buf.row) );  Files.WriteLInt( R, SIGNED32(o.buf.col) )
+		Files.WriteInt32( R, SIGNED32(o.buf.row) );  Files.WriteInt32( R, SIGNED32(o.buf.col) )
 	END Store0ChunkedMatrix;
 
 	PROCEDURE Load0( VAR R: Files.Rider;  o: tVector );
 	VAR b: tBuf;  i: index;  c: SIGNED32;
 	BEGIN
-		Files.ReadLInt( R, c );  o.nrData := c;  Files.ReadLInt( R, c );
+		Files.ReadInt32( R, c );  o.nrData := c;  Files.ReadInt32( R, c );
 		WHILE c # 0 DO
 			b := NewBufs( c );   (* removed -1 fof 020213 *)
-			b.len := c;  Files.ReadLInt( R, c );  b.usedentries := c;  i := 0;
-			WHILE i < c DO Files.ReadReal( R, b.data[i] );  INC( i ) END;
-			vyBase.ApndChunks( b, o );  Files.ReadLInt( R, c )
+			b.len := c;  Files.ReadInt32( R, c );  b.usedentries := c;  i := 0;
+			WHILE i < c DO Files.ReadFloat32( R, b.data[i] );  INC( i ) END;
+			vyBase.ApndChunks( b, o );  Files.ReadInt32( R, c )
 		END
 	END Load0;
 
 	PROCEDURE Load0REAL( VAR R: Files.Rider;  o: tREAL );
 	BEGIN
-		Files.ReadReal( R, o.x )
+		Files.ReadFloat32( R, o.x )
 	END Load0REAL;
 
 	PROCEDURE Load0ChunkedMatrix( VAR R: Files.Rider;  o: tChunkedMatrix );
 	VAR t: SIGNED32;
 	BEGIN
 		IF o.buf = NIL THEN NEW( o.buf ) END;
-		Files.ReadLInt( R, t); o.buf.row := t;  Files.ReadLInt( R, t); o.buf.col := t;
+		Files.ReadInt32( R, t); o.buf.row := t;  Files.ReadInt32( R, t); o.buf.col := t;
 	END Load0ChunkedMatrix;
 
 	PROCEDURE HandleAttributes( o: tVector;  VAR M: Objects.AttrMsg );

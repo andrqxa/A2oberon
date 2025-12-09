@@ -206,9 +206,9 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteInt(M.R, F.lines); Files.WriteInt(M.R, F.curL); Gadgets.framehandle(F, M)
+					Files.WriteInt16(M.R, F.lines); Files.WriteInt16(M.R, F.curL); Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadInt(M.R, F.lines); Files.ReadInt(M.R, F.curL); Gadgets.framehandle(F, M)
+					Files.ReadInt16(M.R, F.lines); Files.ReadInt16(M.R, F.curL); Gadgets.framehandle(F, M)
 				END
 			END
 		ELSIF M IS Objects.CopyMsg THEN

@@ -94,7 +94,7 @@ MODULE LeoDraw IN Oberon;	(** eos  **)
 					NEW(group); LeoBasic.InitGroup(group, shapes, top);
 					Leonardo.Integrate(MacroFig, group);
 					NEW(mh); mh.shape := group;
-					Files.ReadInt(r, w); Files.ReadInt(r, h);
+					Files.ReadInt16(r, w); Files.ReadInt16(r, h);
 					Files.ReadString(r, mh.name);
 					mh.next := lib.first; lib.first := mh;
 					shapes := LoadElems(r, ctxt)
@@ -220,7 +220,7 @@ MODULE LeoDraw IN Oberon;	(** eos  **)
 	PROCEDURE LoadCurve (VAR r: Files.Rider; x, y, w, h, col: SIGNED16): Leonardo.Shape;
 		VAR len, kind, lw: SIGNED16; shape: Leonardo.Shape;
 	BEGIN
-		Files.ReadInt(r, len); Files.ReadInt(r, kind); Files.ReadInt(r, lw);
+		Files.ReadInt16(r, len); Files.ReadInt16(r, kind); Files.ReadInt16(r, lw);
 		IF kind = 0 THEN	(* up_line *)
 			RETURN CreateLine(x + 0.5, y + 0.5, x + w - 0.5, y + h - 0.5, col, lw)
 		ELSIF kind = 1 THEN	(* down_line *)
@@ -240,27 +240,27 @@ MODULE LeoDraw IN Oberon;	(** eos  **)
 	PROCEDURE LoadRectangle (VAR r: Files.Rider; x, y, w, h, col: SIGNED16): Leonardo.Shape;
 		VAR len: SIGNED16; width, vers: SIGNED8;
 	BEGIN
-		Files.ReadInt(r, len); Files.Read(r, width); Files.Read(r, vers);
+		Files.ReadInt16(r, len); Files.Read(r, width); Files.Read(r, vers);
 		RETURN CreateRectangle(x + 0.5, y + 0.5, x + w - 0.5, y + h - 0.5, col, width, ThisFiller(col, vers))
 	END LoadRectangle;
 
 	PROCEDURE LoadSpline (VAR r: Files.Rider; x, y, col: SIGNED16): Leonardo.Shape;
 		VAR len, n, i: SIGNED16; open: SIGNED8; u, v: ARRAY 21 OF SIGNED16;
 	BEGIN
-		Files.ReadInt(r, len);
+		Files.ReadInt16(r, len);
 		n := (len - 1) DIV 4;
 		Files.Read(r, open);
-		FOR i := 0 TO n - 1 DO Files.ReadInt(r, u[i]); INC(u[i], x) END;
-		FOR i := 0 TO n - 1 DO Files.ReadInt(r, v[i]); INC(v[i], y) END;
+		FOR i := 0 TO n - 1 DO Files.ReadInt16(r, u[i]); INC(u[i], x) END;
+		FOR i := 0 TO n - 1 DO Files.ReadInt16(r, v[i]); INC(v[i], y) END;
 		RETURN CreateSpline(open # 1, u, v, n, col, 1)
 	END LoadSpline;
 
 	PROCEDURE LoadShape (VAR ctxt: Context; VAR r: Files.Rider; CONST gen: ARRAY OF CHAR): Leonardo.Shape;
 		VAR x, y, w, h, col: SIGNED16; shape: Leonardo.Shape;
 	BEGIN
-		Files.ReadInt(r, x); Files.ReadInt(r, y);
-		Files.ReadInt(r, w); Files.ReadInt(r, h);
-		Files.ReadInt(r, col);
+		Files.ReadInt16(r, x); Files.ReadInt16(r, y);
+		Files.ReadInt16(r, w); Files.ReadInt16(r, h);
+		Files.ReadInt16(r, col);
 		IF gen = "Graphics.NewLine" THEN
 			IF w > h THEN
 				RETURN CreateLine(x + 0.5, y + 0.5*h, x + w - 0.5, y + 0.5*h, col, h)
@@ -331,7 +331,7 @@ MODULE LeoDraw IN Oberon;	(** eos  **)
 				IF last = NIL THEN shapes := new ELSE last.slink := new END;
 				last := new
 			ELSE
-				Files.Set(r, Files.Base(r), Files.Pos(r) + 10); Files.ReadInt(r, len);
+				Files.Set(r, Files.Base(r), Files.Pos(r) + 10); Files.ReadInt16(r, len);
 				Files.Set(r, Files.Base(r), Files.Pos(r) + len)
 			END;
 			Files.Read(r, cno)

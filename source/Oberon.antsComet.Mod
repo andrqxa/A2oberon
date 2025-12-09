@@ -44,9 +44,9 @@ VAR  (* localCache: tConstNeighbourCache;  *)
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	VAR i: SIGNED32;
 	BEGIN
-		Files.WriteInt( R, 3 );  Files.WriteLInt( R, s.points );
+		Files.WriteInt16( R, 3 );  Files.WriteInt32( R, s.points );
 		FOR i := 0 TO s.points - 1 DO
-			Files.WriteLReal( R, s.pointsx[i] );  Files.WriteLReal( R, s.pointsy[i] );  Files.WriteLReal( R, s.mass[i] )
+			Files.WriteFloat64( R, s.pointsx[i] );  Files.WriteFloat64( R, s.pointsy[i] );  Files.WriteFloat64( R, s.mass[i] )
 		END;
 		Gadgets.WriteRef( R, s.lib, s.vertmassv )
 	END StoreM;
@@ -54,10 +54,10 @@ VAR  (* localCache: tConstNeighbourCache;  *)
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR version: SIGNED16;  i: SIGNED32;  ref: Objects.Object;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadLInt( R, s.points );  NEW( s.pointsx, s.points );  NEW( s.pointsy, s.points );
+		Files.ReadInt16( R, version );  Files.ReadInt32( R, s.points );  NEW( s.pointsx, s.points );  NEW( s.pointsy, s.points );
 		NEW( s.mass, s.points );
 		FOR i := 0 TO s.points - 1 DO
-			Files.ReadLReal( R, s.pointsx[i] );  Files.ReadLReal( R, s.pointsy[i] );  Files.ReadLReal( R, s.mass[i] )
+			Files.ReadFloat64( R, s.pointsx[i] );  Files.ReadFloat64( R, s.pointsy[i] );  Files.ReadFloat64( R, s.mass[i] )
 		END;
 		IF version < 3 THEN NewPars( s ) ELSE Gadgets.ReadRef( R, s.lib, ref );  s.vertmassv := ref( vyBase.tVector ) END
 

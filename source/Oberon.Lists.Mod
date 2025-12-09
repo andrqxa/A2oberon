@@ -976,7 +976,7 @@ BEGIN
 					Files.WriteBool(M.R, F.sorted);
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN (* load private data here *)
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF (1 <= ver) & (ver <= 4) THEN
 						Files.ReadString(M.R, F.cmd);
 						F.noitems := 0; l := NIL;
@@ -988,7 +988,7 @@ BEGIN
 								NEW(new); Files.ReadString(M.R, new.s)
 							END
 						ELSE
-							Files.ReadNum(M.R, noitems);
+							Files.ReadNum32(M.R, noitems);
 							WHILE F.noitems < noitems DO
 								NEW(new); Files.ReadString(M.R, new.s);
 								IF l = NIL THEN F.items := new ELSE l.next := new; new.prev := l; END;

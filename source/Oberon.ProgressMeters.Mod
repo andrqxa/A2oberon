@@ -442,24 +442,24 @@ MODULE ProgressMeters IN Oberon;	(** portable *) (* ejz,  *)
 				WITH M:Objects.FileMsg DO
 					Gadgets.framehandle(F, M);
 					IF M.id = Objects.store THEN
-						Files.WriteInt(M.R, CurVer);
-						Files.WriteLInt(M.R, F.min);
-						Files.WriteLInt(M.R, F.max);
-						Files.WriteLInt(M.R, F.val);
-						Files.WriteLInt(M.R, F.step);
-						Files.WriteInt(M.R, F.col);
+						Files.WriteInt16(M.R, CurVer);
+						Files.WriteInt32(M.R, F.min);
+						Files.WriteInt32(M.R, F.max);
+						Files.WriteInt32(M.R, F.val);
+						Files.WriteInt32(M.R, F.step);
+						Files.WriteInt16(M.R, F.col);
 						Files.WriteBool(M.R, F.marks);
 						Files.WriteBool(M.R, F.labels)
 					ELSIF M.id = Objects.load THEN
-						Files.ReadInt(M.R, x);
+						Files.ReadInt16(M.R, x);
 						IF x # CurVer THEN
 							HALT(99)
 						END;
-						Files.ReadLInt(M.R, F.min);
-						Files.ReadLInt(M.R, F.max);
-						Files.ReadLInt(M.R, F.val);
-						Files.ReadLInt(M.R, F.step);
-						Files.ReadInt(M.R, F.col);
+						Files.ReadInt32(M.R, F.min);
+						Files.ReadInt32(M.R, F.max);
+						Files.ReadInt32(M.R, F.val);
+						Files.ReadInt32(M.R, F.step);
+						Files.ReadInt16(M.R, F.col);
 						Files.ReadBool(M.R, F.marks);
 						Files.ReadBool(M.R, F.labels)
 					END

@@ -251,23 +251,23 @@ END CopyView;
 PROCEDURE StoreView(F: View; VAR M: Objects.FileMsg);
 BEGIN
 	Files.WriteNum(M.R, VersionNo);
-	Files.WriteInt(M.R, F.vx); Files.WriteInt(M.R, F.vy);
-	Files.WriteInt(M.R, 0); (* hack *)
+	Files.WriteInt16(M.R, F.vx); Files.WriteInt16(M.R, F.vy);
+	Files.WriteInt16(M.R, 0); (* hack *)
 	Gadgets.framehandle(F, M)
 END StoreView;
 
 PROCEDURE LoadView(F: View; VAR M: Objects.FileMsg);
 VAR x: SIGNED32; dummy: SIGNED16;
 BEGIN
-	Files.ReadNum(M.R, x);
+	Files.ReadNum32(M.R, x);
 	IF x # VersionNo THEN
 		Texts.WriteString(W, "Version "); Texts.WriteInt(W, VersionNo, 3);
 		Texts.WriteString(W, " of Views cannot read version "); Texts.WriteInt(W, x, 3);
 		Texts.WriteLn(W); Log;
 		HALT(42)
 	END;
-	Files.ReadInt(M.R, F.vx); Files.ReadInt(M.R, F.vy);
-	Files.ReadInt(M.R, dummy);
+	Files.ReadInt16(M.R, F.vx); Files.ReadInt16(M.R, F.vy);
+	Files.ReadInt16(M.R, dummy);
 	Gadgets.framehandle(F, M);
 	IF (F.obj # NIL) & ~(F.obj IS Display.Frame) THEN
 		F.obj := NIL;

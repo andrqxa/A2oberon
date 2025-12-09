@@ -71,7 +71,7 @@ VAR len: SIGNED32; F: Files.File; ch: CHAR; lib: Objects.Library;
 BEGIN
 	F := Files.Base(R);
 	Files.Read(R, ch); ASSERT(ch = 08X);
-	Files.ReadLInt(R, len);
+	Files.ReadInt32(R, len);
 	Attributes.LoadAttributes(R, attr);
 	NEW(lib); Objects.OpenLibrary(lib);
 	Files.Read(R, ch); ASSERT(ch = Objects.LibBlockId);
@@ -87,7 +87,7 @@ BEGIN
 
 	Files.Write(R, 0F7X); Files.Write(R, 08X);
 	patch := Files.Pos(R);
-	Files.WriteLInt(R, 0); (* patch *)
+	Files.WriteInt32(R, 0); (* patch *)
 	Attributes.StoreAttributes(R, attr);
 	NEW(lib); Objects.OpenLibrary(lib);
 	M.lib := lib; Links.BindLinks(link, M);
@@ -96,7 +96,7 @@ BEGIN
 	Links.StoreLinks(R, lib, link);
 	len := Files.Pos(R) - patch - 4;
 	Files.Set(r, F, patch);
-	Files.WriteLInt(r, len);
+	Files.WriteInt32(r, len);
 END StoreAttachments;
 
 (* How to skip attachments:
@@ -106,7 +106,7 @@ END StoreAttachments;
 	BEGIN
 		F := Files.Base(R);
 		Files.Read(R, ch); ASSERT(ch = 08X);
-		Files.ReadLInt(R, len);
+		Files.ReadInt32(R, len);
 		Files.Set(R, F, Files.Pos(R) + len)
 	END SkipAttachments;
 
@@ -154,7 +154,7 @@ BEGIN
 	F := Files.Old(name);
 	IF F # NIL THEN
 		Files.Set(R, F, 0);
-		Files.ReadInt(R, tag);
+		Files.ReadInt16(R, tag);
 		IF (tag = Id) OR (tag = 0727H) THEN
 			Files.ReadString(R, newproc);
 			D := generic(name, newproc, loaderror)
@@ -633,18 +633,18 @@ BEGIN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN (* store private data here *)
 					IF F.lib.name = "" THEN (* private library *)
-						Files.WriteInt(M.R, 1);
+						Files.WriteInt16(M.R, 1);
 						Files.WriteString(M.R, F.name);
 						Files.WriteSet(M.R, {});
 						Gadgets.framehandle(F, M)
 					ELSE (* public library *)
-						Files.WriteInt(M.R, 2);
+						Files.WriteInt16(M.R, 2);
 						Files.WriteString(M.R, F.name);
 						Gadgets.WriteRef(M.R, F.lib, F.dsc);
 						Gadgets.framehandle(F, M)
 					END
 				ELSIF M.id = Objects.load THEN (* load private data here *)
-					Files.ReadInt(M.R, x);
+					Files.ReadInt16(M.R, x);
 					IF x = 1 THEN (* private library *)
 						Files.ReadString(M.R, F.name);
 						Files.ReadSet(M.R, tmp);

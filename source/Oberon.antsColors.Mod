@@ -134,10 +134,10 @@ VAR
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyPort.LayerHandler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  vyPort.LayerHandler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF (objsub # NIL ) & (objsub IS Palette) THEN obj.p := objsub( Palette ) END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );   (* version id *)
+			Files.WriteInt16( msg.R, 0 );   (* version id *)
 			vyPort.LayerHandler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.p )
 		ELSE vyPort.LayerHandler( obj, msg )
 		END

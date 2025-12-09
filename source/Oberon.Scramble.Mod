@@ -496,34 +496,34 @@ MODULE Scramble IN Oberon;	(** portable *) (* Copyright (C) 1995 by Emil J. Zell
 				WITH M: Objects.FileMsg DO
 					Gadgets.framehandle(F, M);
 					IF M.id = Objects.store THEN
-						Files.WriteInt(M.R, CurVer);
-						Files.WriteInt(M.R, F.n);
-						Files.WriteInt(M.R, F.m);
-						Files.WriteInt(M.R, F.empty.x);
-						Files.WriteInt(M.R, F.empty.y);
+						Files.WriteInt16(M.R, CurVer);
+						Files.WriteInt16(M.R, F.n);
+						Files.WriteInt16(M.R, F.m);
+						Files.WriteInt16(M.R, F.empty.x);
+						Files.WriteInt16(M.R, F.empty.y);
 						Files.WriteBool(M.R, F.done);
 						FOR x := 0 TO F.n-1 DO
 							FOR y := 0 TO F.m-1 DO
-								Files.WriteInt(M.R, F.arrange[x, y].x);
-								Files.WriteInt(M.R, F.arrange[x, y].y)
+								Files.WriteInt16(M.R, F.arrange[x, y].x);
+								Files.WriteInt16(M.R, F.arrange[x, y].y)
 							END
 						END;
 						Files.WriteBool(M.R, F.num)
 					ELSIF M.id = Objects.load THEN
-						Files.ReadInt(M.R, x);
+						Files.ReadInt16(M.R, x);
 						IF x # CurVer THEN
 							HALT(99)
 						END;
 						F.pict := F.obj(Pictures.Picture);
-						Files.ReadInt(M.R, F.n);
-						Files.ReadInt(M.R, F.m);
-						Files.ReadInt(M.R, F.empty.x);
-						Files.ReadInt(M.R, F.empty.y);
+						Files.ReadInt16(M.R, F.n);
+						Files.ReadInt16(M.R, F.m);
+						Files.ReadInt16(M.R, F.empty.x);
+						Files.ReadInt16(M.R, F.empty.y);
 						Files.ReadBool(M.R, F.done);
 						FOR x := 0 TO F.n-1 DO
 							FOR y := 0 TO F.m-1 DO
-								Files.ReadInt(M.R, F.arrange[x, y].x);
-								Files.ReadInt(M.R, F.arrange[x, y].y)
+								Files.ReadInt16(M.R, F.arrange[x, y].x);
+								Files.ReadInt16(M.R, F.arrange[x, y].y)
 							END
 						END;
 						Files.ReadBool(M.R, F.num)
@@ -563,14 +563,14 @@ MODULE Scramble IN Oberon;	(** portable *) (* Copyright (C) 1995 by Emil J. Zell
 		F := Files.Old(D.name);
 		IF F # NIL THEN
 			Files.Set(R, F, 0);
-			Files.ReadInt(R, tag);
+			Files.ReadInt16(R, tag);
 			IF tag = Documents.Id THEN
 				Files.ReadString(R, gen);
-				Files.ReadInt(R, x);
-				Files.ReadInt(R, y);
-				Files.ReadInt(R, w);
-				Files.ReadInt(R, h);
-				Files.ReadInt(R, ref);
+				Files.ReadInt16(R, x);
+				Files.ReadInt16(R, y);
+				Files.ReadInt16(R, w);
+				Files.ReadInt16(R, h);
+				Files.ReadInt16(R, ref);
 				NEW(lib);
 				Objects.OpenLibrary(lib);
 				Objects.LoadLibrary(lib, F, Files.Pos(R)+1, len);
@@ -606,16 +606,16 @@ MODULE Scramble IN Oberon;	(** portable *) (* Copyright (C) 1995 by Emil J. Zell
 			Texts.Write(W, 22X);
 			F := Files.New(D.name);
 			Files.Set(R, F, 0);
-			Files.WriteInt(R, Documents.Id);
+			Files.WriteInt16(R, Documents.Id);
 			Files.WriteString(R, "Scramble.NewDoc");
-			Files.WriteInt(R, D.X);
-			Files.WriteInt(R, D.Y);
-			Files.WriteInt(R, D.W);
-			Files.WriteInt(R, D.H);
+			Files.WriteInt16(R, D.X);
+			Files.WriteInt16(R, D.Y);
+			Files.WriteInt16(R, D.W);
+			Files.WriteInt16(R, D.H);
 			NEW(B.lib);
 			Objects.OpenLibrary(B.lib);
 			D.dsc.handle(D.dsc, B);
-			Files.WriteInt(R, D.dsc.ref);
+			Files.WriteInt16(R, D.dsc.ref);
 			Objects.StoreLibrary(B.lib, F, Files.Pos(R), len);
 			Files.Register(F);
 			Files.Close(F)

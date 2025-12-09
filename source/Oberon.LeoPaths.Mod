@@ -390,18 +390,18 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 				IF msg.id = Objects.store THEN
 					Leonardo.HandleShape(p, msg);
 					Files.WriteNum(msg.R, 3);
-					Files.WriteReal(msg.R, p.x); Files.WriteReal(msg.R, p.y);
+					Files.WriteFloat32(msg.R, p.x); Files.WriteFloat32(msg.R, p.y);
 					Gadgets.WriteRef(msg.R, p.lib, p.link)
 				ELSIF msg.id = Objects.load THEN
 					pos := Files.Pos(msg.R);
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					IF ver = 1 THEN	(* old style point *)
-						Files.ReadReal(msg.R, p.x); Files.ReadReal(msg.R, p.y)
+						Files.ReadFloat32(msg.R, p.x); Files.ReadFloat32(msg.R, p.y)
 					ELSE
 						Files.Set(msg.R, Files.Base(msg.R), pos);	(* re-read version (belongs to shape) *)
 						Leonardo.HandleShape(p, msg);
-						Files.ReadNum(msg.R, ver);
-						Files.ReadReal(msg.R, p.x); Files.ReadReal(msg.R, p.y);
+						Files.ReadNum32(msg.R, ver);
+						Files.ReadFloat32(msg.R, p.x); Files.ReadFloat32(msg.R, p.y);
 						IF ver = 2 THEN
 							Files.Read(msg.R, mode)
 						ELSE
@@ -663,7 +663,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 					Files.WriteNum(msg.R, 1);
 					Gadgets.WriteRef(msg.R, path.lib, path.pen)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Gadgets.ReadRef(msg.R, path.lib, obj);
 					IF (obj # NIL) & (obj IS LeoPens.Pen) THEN
 						path.pen := obj(LeoPens.Pen)
@@ -1394,17 +1394,17 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 					Files.WriteBool(msg.R, seg.closed);
 					Gadgets.WriteRef(msg.R, seg.lib, seg.pen);
 					Files.Write(msg.R, seg.pred); Files.Write(msg.R, seg.succ);
-					IF seg.pred # term THEN Files.WriteReal(msg.R, seg.boff) END;
-					IF seg.succ # term THEN Files.WriteReal(msg.R, seg.eoff) END
+					IF seg.pred # term THEN Files.WriteFloat32(msg.R, seg.boff) END;
+					IF seg.succ # term THEN Files.WriteFloat32(msg.R, seg.eoff) END
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Files.ReadBool(msg.R, seg.closed);
 					Gadgets.ReadRef(msg.R, seg.lib, obj);
 					IF (obj # NIL) & (obj IS LeoPens.Pen) THEN seg.pen := obj(LeoPens.Pen) END;
 					IF ver > 1 THEN
 						Files.Read(msg.R, seg.pred); Files.Read(msg.R, seg.succ);
-						IF seg.pred # term THEN Files.ReadReal(msg.R, seg.boff) END;
-						IF seg.succ # term THEN Files.ReadReal(msg.R, seg.eoff) END
+						IF seg.pred # term THEN Files.ReadFloat32(msg.R, seg.boff) END;
+						IF seg.succ # term THEN Files.ReadFloat32(msg.R, seg.eoff) END
 					END;
 					CalcSegmentBox(seg, GfxMatrix.Identity)
 				END
@@ -2596,7 +2596,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 					Files.Write(msg.R, arc.mode);
 					GfxMatrix.Write(msg.R, arc.mat)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Files.Read(msg.R, arc.mode);
 					GfxMatrix.Read(msg.R, arc.mat);
 					CalcArcBox(arc, GfxMatrix.Identity)
@@ -2655,7 +2655,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver)
+					Files.ReadNum32(msg.R, ver)
 				END
 			END
 		ELSE
@@ -2838,10 +2838,10 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 			cv: ARRAY 64 OF Segment; last: ARRAY 64 OF SIGNED32; p: Leonardo.Shape;
 			curve: Segment; cm: Objects.CopyMsg;
 	BEGIN
-		Files.ReadNum(r, n);
+		Files.ReadNum32(r, n);
 		i := 0;
 		WHILE i < n DO
-			Files.ReadInt(r, key);
+			Files.ReadInt16(r, key);
 			Objects.GetName(path.lib.dict, key, name);
 			IF (name = "LeoPaths.InitArcClass") OR (name = "LeoPaths.NewArcClass") THEN
 				obj := Gadgets.CreateObject("LeoPaths.NewArc")
@@ -2859,8 +2859,8 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 			IF (cv[i] # NIL) & (obj # NIL) & (obj IS LeoPens.Pen) THEN
 				cv[i].pen := obj(LeoPens.Pen)
 			END;
-			Files.ReadNum(r, succ); Files.ReadNum(r, pred);	(* successor and predecessor currently unused *)
-			Files.ReadNum(r, last[i]);
+			Files.ReadNum32(r, succ); Files.ReadNum32(r, pred);	(* successor and predecessor currently unused *)
+			Files.ReadNum32(r, last[i]);
 			INC(i)
 		END;
 
@@ -2904,15 +2904,15 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 				path := obj(Path);
 
 				(* shape part *)
-				Files.ReadNum(msg.R, ver);
+				Files.ReadNum32(msg.R, ver);
 				ASSERT(ver IN {1, 2}, 111);
 				IF ver = 1 THEN
-					Files.ReadInt(msg.R, i); Files.ReadInt(msg.R, i); Files.ReadInt(msg.R, i); Files.ReadInt(msg.R, i);
-					Files.ReadReal(msg.R, real)
+					Files.ReadInt16(msg.R, i); Files.ReadInt16(msg.R, i); Files.ReadInt16(msg.R, i); Files.ReadInt16(msg.R, i);
+					Files.ReadFloat32(msg.R, real)
 				END;
 
 				(* container part *)
-				Files.ReadNum(msg.R, ver);
+				Files.ReadNum32(msg.R, ver);
 				ASSERT(ver IN {1, 2}, 112);
 				REPEAT
 					Gadgets.ReadRef(msg.R, path.lib, obj);
@@ -2929,7 +2929,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 				Leonardo.GetComponentsBox(path.bottom, path.llx, path.lly, path.urx, path.ury, path.bw);
 
 				(* area part *)
-				Files.ReadNum(msg.R, ver);
+				Files.ReadNum32(msg.R, ver);
 				ASSERT(ver IN {1, 2}, 113);
 				Gadgets.ReadRef(msg.R, path.lib, obj);
 				IF (obj # NIL) & (obj IS LeoPens.Pen) THEN

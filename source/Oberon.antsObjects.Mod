@@ -110,13 +110,13 @@ VAR
 
 	PROCEDURE StoreF( VAR R: Files.Rider;  o: tObject );
 	BEGIN
-		Files.WriteInt( R, 0 )
+		Files.WriteInt16( R, 0 )
 	END StoreF;
 
 	PROCEDURE LoadF( VAR R: Files.Rider;  o: tObject );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version )
+		Files.ReadInt16( R, version )
 	END LoadF;
 
 	PROCEDURE HandleLinkMsg( l: vyLinks.Link;  name: ARRAY OF CHAR;  VAR M: Objects.LinkMsg );

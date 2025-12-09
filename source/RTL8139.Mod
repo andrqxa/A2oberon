@@ -126,9 +126,9 @@ TYPE
 			SYSTEM.PUT16(ctrl.base + 3CH, SYSTEM.VAL(SIGNED32, SYSTEM.VAL(SET, LONG(SYSTEM.GET16(ctrl.base + 3CH)))+{0..6, 13..15}));
 			IF logging THEN
 				t := Kernel.Elapsed(logtime);
-				Files.WriteLInt(log, t DIV 1000);
-				Files.WriteLInt(log, (t MOD 1000)*1000+1);
-				Files.WriteLInt(log, totlen);  Files.WriteLInt(log, totlen);
+				Files.WriteInt32(log, t DIV 1000);
+				Files.WriteInt32(log, (t MOD 1000)*1000+1);
+				Files.WriteInt32(log, totlen);  Files.WriteInt32(log, totlen);
 				log.file.WriteBytes(log, ctrl.txBuffers[ctrl.nextTxBuffer]^, 0, totlen)
 			END
 		END DoSend;
@@ -389,9 +389,9 @@ TYPE
 						END;
 						IF logging THEN
 							t := Kernel.Elapsed(logtime);
-							Files.WriteLInt(log, t DIV 1000);
-							Files.WriteLInt(log, (t MOD 1000)*1000+1);
-							Files.WriteLInt(log, pSize);  Files.WriteLInt(log, pSize);
+							Files.WriteInt32(log, t DIV 1000);
+							Files.WriteInt32(log, (t MOD 1000)*1000+1);
+							Files.WriteInt32(log, pSize);  Files.WriteInt32(log, pSize);
 							log.file.WriteBytes(log, rxBuffer^, rxBufPos + 4, pSize);
 						END;
 
@@ -564,9 +564,9 @@ VAR f: Files.File;
 BEGIN
 	Kernel.SetTimer(logtime, 0);
 	f := Files.New("EtherNet.Log");  f.Set(log, 0); Files.Register(f);	(* tcpdump compatible log file *)
-	Files.WriteLInt(log, SIGNED32(0A1B2C3D4H));  Files.WriteInt(log, 2);
-	Files.WriteInt(log, 4);  Files.WriteLInt(log, 0);  Files.WriteLInt(log, 0);
-	Files.WriteLInt(log, 1514);  Files.WriteLInt(log, 1);
+	Files.WriteInt32(log, SIGNED32(0A1B2C3D4H));  Files.WriteInt16(log, 2);
+	Files.WriteInt16(log, 4);  Files.WriteInt32(log, 0);  Files.WriteInt32(log, 0);
+	Files.WriteInt32(log, 1514);  Files.WriteInt32(log, 1);
 	logging := TRUE;
 	KernelLog.Enter; KernelLog.String("EtherNet log started --> dumping to EtherNet.Log."); KernelLog.Exit
 END StartLog;

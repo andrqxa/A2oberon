@@ -49,20 +49,20 @@ END WriteError;
 PROCEDURE ScanFileHeader (VAR R: Files.Rider; VAR header: FileHeader);
 BEGIN
 	Files.ReadBytes(R, header.type, 2); header.type[2] := 0X;
-	Files.ReadLInt(R, header.size);
-	Files.ReadInt(R, header.res1); Files.ReadInt(R, header.res2);
-	Files.ReadLInt(R, header.offBits);
+	Files.ReadInt32(R, header.size);
+	Files.ReadInt16(R, header.res1); Files.ReadInt16(R, header.res2);
+	Files.ReadInt32(R, header.offBits);
 END ScanFileHeader;
 
 PROCEDURE ScanBitmapHeader (VAR R: Files.Rider; VAR header: BitmapHeader);
 BEGIN
-	Files.ReadLInt(R, header.size);
-	Files.ReadLInt(R, header.width); Files.ReadLInt(R, header.height);
-	Files.ReadInt(R, header.planes); Files.ReadInt(R, header.depth);
-	Files.ReadLInt(R, header.compression);
-	Files.ReadLInt(R, header.sizeImage);
-	Files.ReadLInt(R, header.Xppm); Files.ReadLInt(R, header.Yppm);
-	Files.ReadLInt(R, header.clrUsed); Files.ReadLInt(R, header.clrImportant)
+	Files.ReadInt32(R, header.size);
+	Files.ReadInt32(R, header.width); Files.ReadInt32(R, header.height);
+	Files.ReadInt16(R, header.planes); Files.ReadInt16(R, header.depth);
+	Files.ReadInt32(R, header.compression);
+	Files.ReadInt32(R, header.sizeImage);
+	Files.ReadInt32(R, header.Xppm); Files.ReadInt32(R, header.Yppm);
+	Files.ReadInt32(R, header.clrUsed); Files.ReadInt32(R, header.clrImportant)
 END ScanBitmapHeader;
 
 PROCEDURE ScanCol (VAR R: Files.Rider; pict: Pictures.Picture; nrColor: SIGNED32; conversion: BOOLEAN);

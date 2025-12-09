@@ -99,17 +99,17 @@ BEGIN
 	F := Files.Old(Filename);
 	IF F # NIL THEN
 		Files.Set(R, F, 0);
-		Files.ReadInt(R, tag);
-		Files.ReadInt(R, version);
+		Files.ReadInt16(R, tag);
+		Files.ReadInt16(R, version);
 		IF tag # Tag THEN
 			 Out.Ln; Out.String("Data file has wrong format")
 		ELSIF version # Version THEN
 			Out.Ln; Out.String("Data file has old format")
 		ELSE
-			Files.ReadInt(R, numpoint);
-			Files.ReadInt(R, numfig);
-			Files.ReadReal(R, max);
-			Files.ReadReal(R, min);
+			Files.ReadInt16(R, numpoint);
+			Files.ReadInt16(R, numfig);
+			Files.ReadFloat32(R, max);
+			Files.ReadFloat32(R, min);
 			maxint := MAX(SIGNED16) - 2; minint := -maxint;
 			factor := (max - min) / (maxint - minint);
 			NEW(figure, numfig, numpoint);
@@ -118,13 +118,13 @@ BEGIN
 			NEW(attributes, numfig);
 			FOR f := 0 TO numfig - 1 DO
 				Files.ReadSet(R, attributes[f]);
-				Files.ReadReal(R, timefactor[f]);
+				Files.ReadFloat32(R, timefactor[f]);
 				FOR p := 0 TO numpoint - 1 DO
-					Files.ReadInt(R, figure[f, p].x);
-					Files.ReadInt(R, figure[f, p].y);
-					Files.ReadInt(R, figure[f, p].z)
+					Files.ReadInt16(R, figure[f, p].x);
+					Files.ReadInt16(R, figure[f, p].y);
+					Files.ReadInt16(R, figure[f, p].z)
 				END;
-				FOR p := 0 TO numpoint - 1 DO Files.ReadInt(R, move[f, p]) END
+				FOR p := 0 TO numpoint - 1 DO Files.ReadInt16(R, move[f, p]) END
 			END;
 			Files.Close(F);
 			Out.String(" figs="); Out.Int(numfig, 0);

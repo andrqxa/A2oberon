@@ -615,20 +615,20 @@ PROCEDURE FrameFile (F: Frame; VAR M: Objects.FileMsg);
 BEGIN
 	IF M.id = Objects.store THEN
 		Files.WriteNum(M.R, VersionNo);
-		Files.WriteLReal(M.R, F.min); Files.WriteLReal(M.R, F.max);
-		Files.WriteLReal(M.R, F.step); Files.WriteLReal(M.R, F.val);
-		Files.WriteInt(M.R, F.backC); Files.WriteBool(M.R, F.vertical);
+		Files.WriteFloat64(M.R, F.min); Files.WriteFloat64(M.R, F.max);
+		Files.WriteFloat64(M.R, F.step); Files.WriteFloat64(M.R, F.val);
+		Files.WriteInt16(M.R, F.backC); Files.WriteBool(M.R, F.vertical);
 		Files.WriteSet(M.R, F.state0);
 		Gadgets.WriteRef(M.R, F.lib, F.minO);
 		Gadgets.WriteRef(M.R, F.lib, F.maxO);
 		Gadgets.WriteRef(M.R, F.lib, F.stepO);
 		Gadgets.framehandle(F, M)
 	ELSIF M.id = Objects.load THEN
-		Files.ReadNum(M.R, ver);
+		Files.ReadNum32(M.R, ver);
 		IF ver >= 1 THEN
-			Files.ReadLReal(M.R, F.min); Files.ReadLReal(M.R, F.max);
-			Files.ReadLReal(M.R, F.step); Files.ReadLReal(M.R, F.val);
-			Files.ReadInt(M.R, F.backC); Files.ReadBool(M.R, F.vertical);
+			Files.ReadFloat64(M.R, F.min); Files.ReadFloat64(M.R, F.max);
+			Files.ReadFloat64(M.R, F.step); Files.ReadFloat64(M.R, F.val);
+			Files.ReadInt16(M.R, F.backC); Files.ReadBool(M.R, F.vertical);
 			Files.ReadSet(M.R, F.state0);
 			Gadgets.ReadRef(M.R, F.lib, F.minO);
 			Gadgets.ReadRef(M.R, F.lib, F.maxO);

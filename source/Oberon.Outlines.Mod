@@ -381,11 +381,11 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.load THEN
-					Files.ReadInt(M.R, version);
+					Files.ReadInt16(M.R, version);
 					IF version >= 0 THEN F.fstate := version
-					ELSE Files.ReadInt(M.R, F.fstate)
+					ELSE Files.ReadInt16(M.R, F.fstate)
 					END;
-					Files.ReadLInt(M.R, F.len);
+					Files.ReadInt32(M.R, F.len);
 					Files.Read(M.R, ch);
 					IF (F.fstate = folded) & (ch = Texts.TextBlockId) THEN
 						NEW(F.buf); Texts.OpenBuf(F.buf);
@@ -402,9 +402,9 @@ BEGIN
 					END;
 					Gadgets.framehandle(F, M);
 				ELSIF M.id = Objects.store THEN
-					Files.WriteInt(M.R, -1);
-					Files.WriteInt(M.R, F.fstate);
-					Files.WriteLInt(M.R, F.len);
+					Files.WriteInt16(M.R, -1);
+					Files.WriteInt16(M.R, F.fstate);
+					Files.WriteInt32(M.R, F.len);
 					IF (F.fstate = folded) & (F.buf # NIL) THEN (* there is a text to save *)
 						NEW(text); Texts.Open(text, "");
 						Texts.OpenBuf(saveB); Texts.Copy(F.buf, saveB); Texts.Append(text, saveB);

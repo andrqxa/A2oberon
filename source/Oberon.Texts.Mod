@@ -131,13 +131,13 @@ TYPE
     VAR len: SIGNED32; x, y, w, h: SIGNED16; name: ARRAY 256 OF CHAR;
   BEGIN Files.Read(R, ch);
     Files.ReadString(R, name);
-    Files.ReadInt(R, x); Files.ReadInt(R, y);
-    Files.ReadInt(R, w); Files.ReadInt(R, h);
+    Files.ReadInt16(R, x); Files.ReadInt16(R, y);
+    Files.ReadInt16(R, w); Files.ReadInt16(R, h);
 	Files.Read(R, ch);
 	IF ch = 0F7X THEN	(* skip meta info *)
 		Files.Read(R, ch);
 		IF ch = 08X THEN
-			Files.ReadLInt(R, len); Files.Set(R, Files.Base(R), Files.Pos(R) + len); Files.Read(R, ch)
+			Files.ReadInt32(R, len); Files.Set(R, Files.Base(R), Files.Pos(R) + len); Files.Read(R, ch)
 		END
 	END
   END ReadDocHeader;
@@ -159,9 +159,9 @@ TYPE
       p := Q;
       Files.Set(R, f, pos);
       Files.Read(R, type);
-      Files.ReadLInt(R, hlen);
+      Files.ReadInt32(R, hlen);
       Files.Set(S, f, pos - 1 + hlen - 4);
-      Files.ReadLInt(S, tlen);
+      Files.ReadInt32(S, tlen);
       IF (type = TextSpex) OR (type = OldTextSpex) THEN T.obs := NIL; flen := 0
       ELSE NEW(T.obs); Objects.OpenLibrary(T.obs);
         Files.Set(S, f, pos - 1 + hlen + tlen); Files.Read(S, tag);
@@ -188,7 +188,7 @@ TYPE
         END;
         Files.Read(R, q.col);
         Files.Read(R, q.voff);
-        Files.ReadLInt(R, q.len);
+        Files.ReadInt32(R, q.len);
         IF q.len < 0 THEN
           LoadAscii (T, f); RETURN
         END;
@@ -209,7 +209,7 @@ TYPE
       	p := T.trailer.next;
       	WHILE p # T.trailer DO
       		IF p.lib = T.obs THEN
-      			Files.ReadInt(R, i);
+      			Files.ReadInt16(R, i);
       			INC(flen, 2);
       			IF Dict[i DIV 256] = NIL THEN
       				NEW(Dict[i DIV 256]);
@@ -260,7 +260,7 @@ TYPE
     Files.Set(W, f, pos);
     Files.Write(W, TextBlockId);
     Files.Write(W, 0X (*type*)); (*place holder*)
-    Files.WriteLInt(W, 0 (*hlen*)); (*place holder*)
+    Files.WriteInt32(W, 0 (*hlen*)); (*place holder*)
     Dict[0] := "";
     N := 1;
     p := T.trailer.next;
@@ -278,10 +278,10 @@ TYPE
       IF n = N THEN Files.WriteString(W, p.lib.name); INC(N) END;
       Files.Write(W, p.col);
       Files.Write(W, p.voff);
-      Files.WriteLInt(W, rlen);
+      Files.WriteInt32(W, rlen);
       p := q
     END;
-    Files.Write(W, 0X); Files.WriteLInt(W, T.len);
+    Files.Write(W, 0X); Files.WriteInt32(W, T.len);
     NEW(allObjs);
     allObjs.next := NIL;
     curObjs := allObjs;
@@ -344,7 +344,7 @@ TYPE
     					INC(i);
     					IF (i MOD 256) = 0 THEN objs := objs.next END
     				END;
-    				Files.WriteInt(W, i);
+    				Files.WriteInt16(W, i);
     				INC(flen, 2)
     			END;
         		p := p.next
@@ -354,7 +354,7 @@ TYPE
     END;
     Files.Set(W, f, pos + 1);
     Files.Write(W, type); (*fixup*)
-    Files.WriteLInt(W, hlen); (*fixup*)
+    Files.WriteInt32(W, hlen); (*fixup*)
     len := hlen + T.len + flen
   END Store;
 

@@ -136,16 +136,16 @@ VAR
 
 	PROCEDURE Store0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteInt( M.R, obj.xi );  Files.WriteInt( M.R, obj.yi );  Files.WriteInt( M.R, obj.w );  Files.WriteInt( M.R, obj.h );
-		Files.WriteInt( M.R, obj.dsr );  Files.WriteLReal( M.R, obj.xr );  Files.WriteLReal( M.R, obj.yr );
-		Files.WriteInt( M.R, obj.atx );  Files.WriteInt( M.R, obj.aty );  Files.WriteString( M.R, obj.name )
+		Files.WriteInt16( M.R, obj.xi );  Files.WriteInt16( M.R, obj.yi );  Files.WriteInt16( M.R, obj.w );  Files.WriteInt16( M.R, obj.h );
+		Files.WriteInt16( M.R, obj.dsr );  Files.WriteFloat64( M.R, obj.xr );  Files.WriteFloat64( M.R, obj.yr );
+		Files.WriteInt16( M.R, obj.atx );  Files.WriteInt16( M.R, obj.aty );  Files.WriteString( M.R, obj.name )
 	END Store0;
 
 	PROCEDURE Load0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		dlink := M.dlink;  Files.ReadInt( M.R, obj.xi );  Files.ReadInt( M.R, obj.yi );  Files.ReadInt( M.R, obj.w );
-		Files.ReadInt( M.R, obj.h );  Files.ReadInt( M.R, obj.dsr );  Files.ReadLReal( M.R, obj.xr );
-		Files.ReadLReal( M.R, obj.yr );  Files.ReadInt( M.R, obj.atx );  Files.ReadInt( M.R, obj.aty );
+		dlink := M.dlink;  Files.ReadInt16( M.R, obj.xi );  Files.ReadInt16( M.R, obj.yi );  Files.ReadInt16( M.R, obj.w );
+		Files.ReadInt16( M.R, obj.h );  Files.ReadInt16( M.R, obj.dsr );  Files.ReadFloat64( M.R, obj.xr );
+		Files.ReadFloat64( M.R, obj.yr );  Files.ReadInt16( M.R, obj.atx );  Files.ReadInt16( M.R, obj.aty );
 		Files.ReadString( M.R, obj.name )
 	END Load0;
 

@@ -396,7 +396,7 @@ MODULE ImageGadgets IN Oberon; (** portable **)	(* eos  *)
 					Files.WriteNum(msg.R, 1);
 					Files.WriteSet(msg.R, frame.options)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Files.ReadSet(msg.R, frame.options);
 					IF (frame.obj # NIL) & (frame.obj IS Images.Image) THEN
 						img := frame.obj(Images.Image);

@@ -372,30 +372,30 @@ CONST Version = 2;
 VAR i, version: SIGNED32;
 BEGIN
 	IF M.id=Objects.load THEN
-		Files.ReadLInt(M.R, version);
-		FOR i := 0 TO Bins - 1 DO Files.ReadLInt(M.R,F.count[i]) END;
-		Files.ReadInt(M.R, F.nrBins);
-		Files.ReadLReal(M.R,F.offs); Files.ReadLReal(M.R,F.width);Files.ReadLReal(M.R,F.top);
-		Files.ReadLInt(M.R,F.toosmall); Files.ReadLInt(M.R,F.toolarge);Files.ReadLInt(M.R,F.nans);
-		Files.ReadLInt(M.R,F.nrobs); Files.ReadLInt(M.R,F.maxcount);
-		Files.ReadLReal(M.R,F.prevmax);
+		Files.ReadInt32(M.R, version);
+		FOR i := 0 TO Bins - 1 DO Files.ReadInt32(M.R,F.count[i]) END;
+		Files.ReadInt16(M.R, F.nrBins);
+		Files.ReadFloat64(M.R,F.offs); Files.ReadFloat64(M.R,F.width);Files.ReadFloat64(M.R,F.top);
+		Files.ReadInt32(M.R,F.toosmall); Files.ReadInt32(M.R,F.toolarge);Files.ReadInt32(M.R,F.nans);
+		Files.ReadInt32(M.R,F.nrobs); Files.ReadInt32(M.R,F.maxcount);
+		Files.ReadFloat64(M.R,F.prevmax);
 		Files.ReadBool(M.R,F.adapting); Files.ReadBool(M.R,F.moving); Files.ReadBool(M.R,F.suspended);
 		F.upd:=TRUE;
 		IF version >= 2 THEN Files.ReadBool(M.R,F.logtransform); Files.ReadBool(M.R,F.diff)
 		ELSE F.logtransform := FALSE; F.diff := FALSE
 		END;
-		FOR i := 0 TO Mems - 1 DO Files.ReadLReal(M.R, F.mem[i]) END
+		FOR i := 0 TO Mems - 1 DO Files.ReadFloat64(M.R, F.mem[i]) END
 	ELSIF M.id=Objects.store THEN
-		Files.WriteLInt(M.R, Version);
-		FOR i := 0 TO Bins - 1 DO Files.WriteLInt(M.R,F.count[i]) END;
-		Files.WriteInt(M.R,F.nrBins);
-		Files.WriteLReal(M.R,F.offs); Files.WriteLReal(M.R,F.width); Files.WriteLReal(M.R,F.top);
-		Files.WriteLInt(M.R,F.toosmall); Files.WriteLInt(M.R,F.toolarge); Files.WriteLInt(M.R,F.nans);
-		Files.WriteLInt(M.R,F.nrobs); Files.WriteLInt(M.R,F.maxcount);
-		Files.WriteLReal(M.R,F.prevmax);
+		Files.WriteInt32(M.R, Version);
+		FOR i := 0 TO Bins - 1 DO Files.WriteInt32(M.R,F.count[i]) END;
+		Files.WriteInt16(M.R,F.nrBins);
+		Files.WriteFloat64(M.R,F.offs); Files.WriteFloat64(M.R,F.width); Files.WriteFloat64(M.R,F.top);
+		Files.WriteInt32(M.R,F.toosmall); Files.WriteInt32(M.R,F.toolarge); Files.WriteInt32(M.R,F.nans);
+		Files.WriteInt32(M.R,F.nrobs); Files.WriteInt32(M.R,F.maxcount);
+		Files.WriteFloat64(M.R,F.prevmax);
 		Files.WriteBool(M.R,F.adapting); Files.WriteBool(M.R,F.moving); Files.WriteBool(M.R,F.suspended);
 		Files.WriteBool(M.R,F.logtransform); Files.WriteBool(M.R,F.diff);
-		FOR i := 0 TO Mems - 1 DO Files.WriteLReal(M.R,F.mem[i]) END
+		FOR i := 0 TO Mems - 1 DO Files.WriteFloat64(M.R,F.mem[i]) END
 	END;
 	Gadgets.framehandle(F, M)
 END File;

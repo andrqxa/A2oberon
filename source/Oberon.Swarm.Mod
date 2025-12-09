@@ -419,17 +419,17 @@ MODULE Swarm IN Oberon;  (** BES, Oct 16 96 - Oct 25 96 *)
 			ELSIF M IS Objects.FileMsg THEN
 				WITH M: Objects.FileMsg DO
 					IF M.id = Objects.store THEN
-						Files.WriteInt(M.R, Version);  (* write tag to ensure we can enhance swarm without harming old ones *)
-						Files.WriteInt(M.R, F.speed); Files.WriteInt(M.R, F.size); Files.WriteInt(M.R, F.mincol); Files.WriteInt(M.R, F.maxcol);
-						Files.WriteInt(M.R, F.bacc); Files.WriteInt(M.R, F.bvel); Files.WriteInt(M.R, F.wacc); Files.WriteInt(M.R, F.wvel);
-						Files.WriteInt(M.R, F.border); Gadgets.framehandle(F, M)
+						Files.WriteInt16(M.R, Version);  (* write tag to ensure we can enhance swarm without harming old ones *)
+						Files.WriteInt16(M.R, F.speed); Files.WriteInt16(M.R, F.size); Files.WriteInt16(M.R, F.mincol); Files.WriteInt16(M.R, F.maxcol);
+						Files.WriteInt16(M.R, F.bacc); Files.WriteInt16(M.R, F.bvel); Files.WriteInt16(M.R, F.wacc); Files.WriteInt16(M.R, F.wvel);
+						Files.WriteInt16(M.R, F.border); Gadgets.framehandle(F, M)
 					ELSIF M.id = Objects.load THEN
-						Files.ReadInt(M.R, tag);
+						Files.ReadInt16(M.R, tag);
 						IF tag # Version THEN  (* only one version at the moment... *)
 						ELSE
-							Files.ReadInt(M.R, F.speed); Files.ReadInt(M.R, F.size); Files.ReadInt(M.R, F.mincol); Files.ReadInt(M.R, F.maxcol);
-							Files.ReadInt(M.R, F.bacc); Files.ReadInt(M.R, F.bvel); Files.ReadInt(M.R, F.wacc); Files.ReadInt(M.R, F.wvel);
-							Files.ReadInt(M.R, F.border); Gadgets.framehandle(F, M);
+							Files.ReadInt16(M.R, F.speed); Files.ReadInt16(M.R, F.size); Files.ReadInt16(M.R, F.mincol); Files.ReadInt16(M.R, F.maxcol);
+							Files.ReadInt16(M.R, F.bacc); Files.ReadInt16(M.R, F.bvel); Files.ReadInt16(M.R, F.wacc); Files.ReadInt16(M.R, F.wvel);
+							Files.ReadInt16(M.R, F.border); Gadgets.framehandle(F, M);
 							InitSwarm(F, F.speed, F.size, F.W, F.H, F.border, F.mincol, F.maxcol, F.bacc, F.bvel, F.wacc, F.wvel)
 						END
 					END

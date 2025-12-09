@@ -80,7 +80,7 @@ BEGIN
 					Files.WriteNum(M.R, SetVersion); Files.WriteSet(M.R, obj.val);
 					Gadgets.objecthandle(obj, M);
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver = SetVersion THEN
 						Files.ReadSet(M.R, obj.val);
 						Gadgets.objecthandle(obj, M)
@@ -311,7 +311,7 @@ BEGIN
 				IF M.id = Objects.store THEN
 					Files.WriteNum(M.R, FrameVersion); Files.WriteSet(M.R, F.val); Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver = FrameVersion THEN
 						Files.ReadSet(M.R, F.val);
 						Gadgets.framehandle(F, M)

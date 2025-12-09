@@ -509,10 +509,10 @@ BEGIN
 	F := Files.Old(D.name);
 	IF F # NIL THEN
 		Files.Set(R, F, 0);
-		Files.ReadInt(R, x);
+		Files.ReadInt16(R, x);
 		IF x = Documents.Id THEN
 			Files.ReadString(R, name);
-			Files.ReadInt(R, x); Files.ReadInt(R, y); Files.ReadInt(R, w); Files.ReadInt(R, h)
+			Files.ReadInt16(R, x); Files.ReadInt16(R, y); Files.ReadInt16(R, w); Files.ReadInt16(R, h)
 		END
 	ELSE COPY("Shanghai.Game", D.name)
 	END;
@@ -528,8 +528,8 @@ BEGIN
 		IF F = NIL THEN HALT(99) END;
 
 		Files.Set(R, F, 0);
-		Files.WriteInt(R, Documents.Id); Files.WriteString(R, "Shanghai.NewDoc");
-		Files.WriteInt(R, D.X); Files.WriteInt(R, D.Y); Files.WriteInt(R, D.W); Files.WriteInt(R, D.H);
+		Files.WriteInt16(R, Documents.Id); Files.WriteString(R, "Shanghai.NewDoc");
+		Files.WriteInt16(R, D.X); Files.WriteInt16(R, D.Y); Files.WriteInt16(R, D.W); Files.WriteInt16(R, D.H);
 		Files.Register(F);
 
 		Texts.Write(W, 22X); Texts.WriteString(W, D.name); Texts.Write(W, 22X)

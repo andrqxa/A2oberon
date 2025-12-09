@@ -136,8 +136,8 @@ VAR
 
 	PROCEDURE Store0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Gadgets.WriteRef( M.R, obj.lib, obj.x );  Files.WriteLReal( M.R, obj.D1 );  Files.WriteLReal( M.R, obj.D2 );
-		Files.WriteLInt( M.R, obj.ticks );  vyHostDisplay.StorePattern( M.R, obj.sign );
+		Gadgets.WriteRef( M.R, obj.lib, obj.x );  Files.WriteFloat64( M.R, obj.D1 );  Files.WriteFloat64( M.R, obj.D2 );
+		Files.WriteInt32( M.R, obj.ticks );  vyHostDisplay.StorePattern( M.R, obj.sign );
 		(*! How should obj.f and obj.parameter be stored?*)
 	END Store0;
 
@@ -148,7 +148,7 @@ VAR
 	BEGIN
 		dlink := M.dlink;  Gadgets.ReadRef( M.R, obj.lib, objsub );
 		IF (objsub # NIL ) & (objsub IS vyBase.tVector) THEN obj.x := objsub( vyBase.tVector ) END;
-		Files.ReadLReal( M.R, obj.D1 );  Files.ReadLReal( M.R, obj.D2 );  Files.ReadLInt( M.R, obj.ticks );
+		Files.ReadFloat64( M.R, obj.D1 );  Files.ReadFloat64( M.R, obj.D2 );  Files.ReadInt32( M.R, obj.ticks );
 		obj.sign := vyHostDisplay.LoadPattern( M.R );
 		(*! How should obj.f and obj.parameter be loaded?*)
 	END Load0;

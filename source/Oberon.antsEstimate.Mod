@@ -67,11 +67,11 @@ VAR
 			ELSIF M IS Objects.FileMsg THEN
 				WITH M: Objects.FileMsg DO
 					IF M.id = Objects.load THEN
-						Files.ReadInt( M.R, version );  Gadgets.ReadRef( M.R, o.lib, objsub );
+						Files.ReadInt16( M.R, version );  Gadgets.ReadRef( M.R, o.lib, objsub );
 						IF objsub # NIL THEN o.model := objsub( antsMDimDiscreteIsingS.tModel ) ELSE o.model := NIL END;
 						vyBase.objecthandle( o, M )
 					ELSIF M.id = Objects.store THEN
-						Files.WriteInt( M.R, 0 );  Gadgets.WriteRef( M.R, o.lib, o.model );  vyBase.objecthandle( o, M )
+						Files.WriteInt16( M.R, 0 );  Gadgets.WriteRef( M.R, o.lib, o.model );  vyBase.objecthandle( o, M )
 					END
 				END;
 			ELSIF M IS Objects.BindMsg THEN
