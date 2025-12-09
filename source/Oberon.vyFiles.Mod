@@ -32,19 +32,19 @@ VAR (*OUT*)len: POINTER TO ARRAY OF SIGNED32);
 	(* type and version are free for user semantics *)
 	VAR mytag, i: SIGNED32;
 BEGIN
-	Files.ReadLInt(R, mytag);  (*! check version *)
-	Files.ReadLInt(R, type); 	Files.ReadLInt(R, version);  Files.ReadLInt(R, dims);
-	NEW(len, dims); FOR i := 0 TO dims - 1 DO Files.ReadLInt(R, len[i]) END
+	Files.ReadInt32(R, mytag);  (*! check version *)
+	Files.ReadInt32(R, type); 	Files.ReadInt32(R, version);  Files.ReadInt32(R, dims);
+	NEW(len, dims); FOR i := 0 TO dims - 1 DO Files.ReadInt32(R, len[i]) END
 END ReadArrayDesc;
 
 PROCEDURE ReadInt* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF SIGNED16;  start, count: SIGNED32);
 	VAR i: SIGNED32;
-BEGIN	FOR i := start TO count DO Files.ReadInt(R, x[i]) END
+BEGIN	FOR i := start TO count DO Files.ReadInt16(R, x[i]) END
 END ReadInt;
 
 PROCEDURE ReadLInt* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF SIGNED32;  start, count: SIGNED32);
 	VAR i: SIGNED32;
-BEGIN	FOR i := start TO count DO Files.ReadLInt(R, x[i]) END
+BEGIN	FOR i := start TO count DO Files.ReadInt32(R, x[i]) END
 END ReadLInt;
 
 PROCEDURE ReadSet* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF SET;  start, count: SIGNED32);
@@ -59,12 +59,12 @@ END ReadBool;
 
 PROCEDURE ReadReal* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF FLOAT32;  start, count: SIGNED32);
 	VAR i: SIGNED32;
-BEGIN	FOR i := start TO count DO Files.ReadReal(R, x[i]) END
+BEGIN	FOR i := start TO count DO Files.ReadFloat32(R, x[i]) END
 END ReadReal;
 
 PROCEDURE ReadLReal* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF FLOAT64;  start, count: SIGNED32);
 	VAR i: SIGNED32;
-BEGIN	FOR i := start TO count DO Files.ReadLReal(R, x[i]) END
+BEGIN	FOR i := start TO count DO Files.ReadFloat64(R, x[i]) END
 END ReadLReal;
 
 PROCEDURE ReadString* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF ARRAY OF CHAR;  start, count: SIGNED32);
@@ -74,7 +74,7 @@ END ReadString;
 
 PROCEDURE ReadNum* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF SIGNED32;  start, count: SIGNED32);
 	VAR i: SIGNED32;
-BEGIN	FOR i := start TO count DO Files.ReadNum(R, x[i]) END
+BEGIN	FOR i := start TO count DO Files.ReadNum32(R, x[i]) END
 END ReadNum;
 
 (** Write **)
@@ -83,19 +83,19 @@ VAR (*OUT*)len: POINTER TO ARRAY OF SIGNED32);
 	(* type and version are free for user semantics *)
 	VAR i: SIGNED32;
 BEGIN
-	Files.WriteLInt(R, idtag);  (*! check version *)
-	Files.WriteLInt(R, type); 	Files.WriteLInt(R, version);  Files.WriteLInt(R, dims);
-	NEW(len, dims); FOR i := 0 TO dims - 1 DO Files.WriteLInt(R, len[i]) END
+	Files.WriteInt32(R, idtag);  (*! check version *)
+	Files.WriteInt32(R, type); 	Files.WriteInt32(R, version);  Files.WriteInt32(R, dims);
+	NEW(len, dims); FOR i := 0 TO dims - 1 DO Files.WriteInt32(R, len[i]) END
 END WriteArrayDesc;
 
 PROCEDURE WriteInt* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF SIGNED16;  start, count: SIGNED32);
 	VAR i: SIGNED32;
-BEGIN	FOR i := start TO count DO Files.WriteInt(R, x[i]) END
+BEGIN	FOR i := start TO count DO Files.WriteInt16(R, x[i]) END
 END WriteInt;
 
 PROCEDURE WriteLInt* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF SIGNED32;  start, count: SIGNED32);
 	VAR i: SIGNED32;
-BEGIN	FOR i := start TO count DO Files.WriteLInt(R, x[i]) END
+BEGIN	FOR i := start TO count DO Files.WriteInt32(R, x[i]) END
 END WriteLInt;
 
 PROCEDURE WriteSet* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF SET;  start, count: SIGNED32);
@@ -110,12 +110,12 @@ END WriteBool;
 
 PROCEDURE WriteReal* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF FLOAT32;  start, count: SIGNED32);
 	VAR i: SIGNED32;
-BEGIN	FOR i := start TO count DO Files.WriteReal(R, x[i]) END
+BEGIN	FOR i := start TO count DO Files.WriteFloat32(R, x[i]) END
 END WriteReal;
 
 PROCEDURE WriteLReal* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF FLOAT64;  start, count: SIGNED32);
 	VAR i: SIGNED32;
-BEGIN	FOR i := start TO count DO Files.WriteLReal(R, x[i]) END
+BEGIN	FOR i := start TO count DO Files.WriteFloat64(R, x[i]) END
 END WriteLReal;
 
 PROCEDURE WriteString* (VAR R: Files.Rider;  VAR (*OUT*)x: ARRAY OF ARRAY OF CHAR;  start, count: SIGNED32);

@@ -258,17 +258,17 @@ BEGIN
 				IF M.id = Objects.store THEN
 					WriteVersion(M.R);
 					Files.WriteString(M.R, F.cmd);
-					x := 0; WHILE x < 256 DO Files.WriteInt(M.R, F.colors[x]); INC(x) END;
+					x := 0; WHILE x < 256 DO Files.WriteInt16(M.R, F.colors[x]); INC(x) END;
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver = 1 THEN
 						Files.ReadString(M.R, F.cmd);
 						Gadgets.framehandle(F, M)
 					ELSIF ver = VersionNo THEN
 						Files.ReadString(M.R, F.cmd);
 						x := 0; WHILE x < 256 DO
-							Files.ReadInt(M.R, F.colors[x]);
+							Files.ReadInt16(M.R, F.colors[x]);
 							IF F.colors[x] < 0 THEN F.colors[x] := x END;
 							INC(x)
 						END;

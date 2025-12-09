@@ -59,10 +59,10 @@ BEGIN
 		Texts.Open(T, "")
 	ELSE
 		Files.Set(R, F, 0);
-		Files.ReadInt(R, tag);
+		Files.ReadInt16(R, tag);
 		IF (tag = Documents.Id) OR (tag = 0727H) THEN
 			Files.ReadString(R, s);
-			Files.ReadInt(R, x); Files.ReadInt(R, y); Files.ReadInt(R, w); Files.ReadInt(R, h);
+			Files.ReadInt16(R, x); Files.ReadInt16(R, y); Files.ReadInt16(R, w); Files.ReadInt16(R, h);
 			Files.Read(R, ch);
 
 			IF (ch = 0F7X) THEN (* attachments *)
@@ -144,8 +144,8 @@ BEGIN
 				new[i] := "."; new[i+1] := "B"; new[i+2] := "a"; new[i+3] := "k"; new[i+4] := 0X;
 				Files.Rename(D.name, new, i);
 
-				Files.Set(R, f, 0); Files.WriteInt(R, Documents.Id); Files.WriteString(R, "TextDocs.NewDoc");
-				Files.WriteInt(R, 0); Files.WriteInt(R, 0); Files.WriteInt(R, F.W); Files.WriteInt(R, F.H);
+				Files.Set(R, f, 0); Files.WriteInt16(R, Documents.Id); Files.WriteString(R, "TextDocs.NewDoc");
+				Files.WriteInt16(R, 0); Files.WriteInt16(R, 0); Files.WriteInt16(R, F.W); Files.WriteInt16(R, F.H);
 
 				StoreAttrs(D, F);
 				IF (D.attr # NIL) OR (D.link # NIL) THEN (* attachments *)
@@ -329,10 +329,10 @@ BEGIN
 	f := Files.Old(D.name);
 	IF f # NIL THEN
 		Files.Set(R, f, 0);
-		Files.ReadInt(R, id);
+		Files.ReadInt16(R, id);
 		IF (id = Documents.Id) OR (id = 0727H) THEN
 			Files.ReadString(R, name);
-			Files.ReadInt(R, x); Files.ReadInt(R, y); Files.ReadInt(R, w); Files.ReadInt(R, h);
+			Files.ReadInt16(R, x); Files.ReadInt16(R, y); Files.ReadInt16(R, w); Files.ReadInt16(R, h);
 			Files.Read(R, ch);
 			IF (ch = 0F7X) THEN (* attachments *)
 				Documents.LoadAttachments(R, D.attr, D.link);
@@ -365,8 +365,8 @@ BEGIN
 		F := Files.New(D.name);
 		IF F = NIL THEN HALT(99) END;
 		Files.Set(R, F, 0);
-		Files.WriteInt(R, Documents.Id); Files.WriteString(R, "TextDocs.NewLog");
-		Files.WriteInt(R, 0); Files.WriteInt(R, 0); Files.WriteInt(R, main.W); Files.WriteInt(R, main.H);
+		Files.WriteInt16(R, Documents.Id); Files.WriteString(R, "TextDocs.NewLog");
+		Files.WriteInt16(R, 0); Files.WriteInt16(R, 0); Files.WriteInt16(R, main.W); Files.WriteInt16(R, main.H);
 		StoreAttrs(D, main(TextGadgets.Frame));
 		IF (D.attr # NIL) OR (D.link # NIL) THEN (* attachments *)
 			Documents.StoreAttachments(R, D.attr, D.link)

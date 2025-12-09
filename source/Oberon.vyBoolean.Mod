@@ -85,11 +85,11 @@ PROCEDURE WriteFmt* (prefform: SIGNED32;  VAR R: Files.Rider;  count: SIZE;  VAR
 
 BEGIN
 	(*! add implementations for non plain. form ignored so far *)
-	Files.WriteLInt(R, fmtplain);
-	Files.WriteLInt(R, SIGNED32(start));
-	Files.WriteLInt(R, SIGNED32(count));
+	Files.WriteInt32(R, fmtplain);
+	Files.WriteInt32(R, SIGNED32(start));
+	Files.WriteInt32(R, SIGNED32(count));
 	Write(R, count, x, start);
-	Files.WriteLInt(R, fmtend)
+	Files.WriteInt32(R, fmtend)
 END WriteFmt;
 
 PROCEDURE ReadFmt* (VAR form: SIGNED32;  VAR R: Files.Rider;  count: SIZE;  VAR x: ARRAY OF BOOLEAN;  start: SIZE);
@@ -98,11 +98,11 @@ PROCEDURE ReadFmt* (VAR form: SIGNED32;  VAR R: Files.Rider;  count: SIZE;  VAR 
 
 BEGIN
 	(*! add implementations for non plain. form ignored so far *)
-	Files.ReadLInt(R, form);
-	Files.ReadLInt(R, t); start := t;
-	Files.ReadLInt(R, t); count := t;
+	Files.ReadInt32(R, form);
+	Files.ReadInt32(R, t); start := t;
+	Files.ReadInt32(R, t); count := t;
 	Read(R, count, x, start);
-	Files.ReadLInt(R, stop);
+	Files.ReadInt32(R, stop);
 	ASSERT(stop = fmtend, 100)
 END ReadFmt;
 

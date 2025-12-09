@@ -40,11 +40,11 @@ VAR
 	BEGIN
 		IF L = NIL THEN NEW(L); Objects.OpenLibrary(L) END;
 		style := TextGadgets.newStyle();
-		Files.ReadNum(R, x); Files.ReadNum(R, x); Files.ReadNum(R, x); style.leftM := SHORT(x DIV Display.Unit);	(*?, first, left*)
-		Files.ReadNum(R, x); style.width := SHORT(x DIV Display.Unit);	(*width*)
-		Files.ReadNum(R, x (* style.gap *));	(*lead*)
-		Files.ReadNum(R, x (*style.lsp*)); Files.ReadNum(R, x (*style.dsr*));	(*lsp, dsr*)
-		Files.ReadNum(R, x); opts := x;	(*opts 0=grid, 1=left, 2=right, 3=break*)
+		Files.ReadNum32(R, x); Files.ReadNum32(R, x); Files.ReadNum32(R, x); style.leftM := SHORT(x DIV Display.Unit);	(*?, first, left*)
+		Files.ReadNum32(R, x); style.width := SHORT(x DIV Display.Unit);	(*width*)
+		Files.ReadNum32(R, x (* style.gap *));	(*lead*)
+		Files.ReadNum32(R, x (*style.lsp*)); Files.ReadNum32(R, x (*style.dsr*));	(*lsp, dsr*)
+		Files.ReadNum32(R, x); opts := x;	(*opts 0=grid, 1=left, 2=right, 3=break*)
 		style.mode := {};
 		(* IF BIT.BIT(opts, 0) THEN INCL(style.opts, 2) END;	(*grid*) *)
 		IF BIT.BIT(opts, 1) THEN INCL(style.mode, TextGadgets.left) END;  (* left *)
@@ -52,13 +52,13 @@ VAR
 		IF style.mode = {TextGadgets.left, TextGadgets.right} THEN style.mode := {TextGadgets.left, TextGadgets.pad} END;
 		IF style.mode = {} THEN style.mode := {TextGadgets.middle} END;
 		(* IF BIT.BIT(opts, 3) THEN INCL(style.opts, 3) END; (* break *) *)
-		Files.ReadNum(R, tabs);	(*tabs*)
+		Files.ReadNum32(R, tabs);	(*tabs*)
 		style.noTabs := 0;
 		WHILE (style.noTabs < tabs) & (style.noTabs < 32) DO
-			Files.ReadNum(R, x); style.tab[style.noTabs] := SHORT(x DIV Display.Unit); INC(style.noTabs)
+			Files.ReadNum32(R, x); style.tab[style.noTabs] := SHORT(x DIV Display.Unit); INC(style.noTabs)
 		END;
 		i := 32;
-		WHILE i < tabs DO Files.ReadNum(R, x); INC(i) END;
+		WHILE i < tabs DO Files.ReadNum32(R, x); INC(i) END;
 		styles[nofStyles] := style;
 		(*
 		i := 0; WHILE ~Styles.Similar(styles[i], style) DO INC(i) END;
@@ -89,7 +89,7 @@ VAR
 	VAR w, h, pos: SIGNED32;
 		ch: CHAR;
 		proc, cmd: ARRAY 32 OF CHAR; res: SIGNED16;
-	BEGIN Files.ReadLInt(R, w); Files.ReadLInt(R, h); Files.Read(R, ch);
+	BEGIN Files.ReadInt32(R, w); Files.ReadInt32(R, h); Files.Read(R, ch);
 		IF ORD(ch) = E THEN
 			Files.ReadString(R, elem[E]); Files.ReadString(R, proc); Msg("   ", FALSE); Msg(elem[E], TRUE);
 			INC(E)
@@ -134,13 +134,13 @@ VAR
 		LName: ARRAY 32, 32 OF CHAR;
 		S: Files.Rider;
 	BEGIN	(*type read 01 F0*)
-		Files.ReadLInt(R, hlen);
+		Files.ReadInt32(R, hlen);
 		Files.Set(S, Files.Base(R), hlen);
 		N := 1; E := 1; L := NIL; nofStyles := 0;	(*reset globals*)
 		WHILE Files.Pos(R) < hlen - 5 DO
 			Files.Read(R, lib);
 			IF lib = N THEN Files.ReadString(R, LName[N]); INC(N) END;
-			Files.Read(R, col); Files.Read(R, voff); Files.ReadLInt(R, len);
+			Files.Read(R, col); Files.Read(R, voff); Files.ReadInt32(R, len);
 			IF len < 0 THEN Elem(R, S, -len)
 			ELSE WriteText(S, Objects.ThisLibrary(LName[lib]), col, voff, len)
 			END

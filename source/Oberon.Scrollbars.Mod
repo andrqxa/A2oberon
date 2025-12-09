@@ -563,20 +563,20 @@ MODULE Scrollbars IN Oberon;	(** portable *)		(** ps (based on sources of rv and
 	BEGIN
 		IF M.id = Objects.store THEN
 			Files.WriteNum(M.R, VersionNo);
-			Files.WriteLInt(M.R, F.min); Files.WriteLInt(M.R, F.max);
-			Files.WriteLInt(M.R, F.step); Files.WriteLInt(M.R, F.val);
-			Files.WriteInt(M.R, F.backC); Files.WriteBool(M.R, F.vertical);
+			Files.WriteInt32(M.R, F.min); Files.WriteInt32(M.R, F.max);
+			Files.WriteInt32(M.R, F.step); Files.WriteInt32(M.R, F.val);
+			Files.WriteInt16(M.R, F.backC); Files.WriteBool(M.R, F.vertical);
 			Files.WriteSet(M.R, F.state0);
 			Gadgets.WriteRef(M.R, F.lib, F.minO);
 			Gadgets.WriteRef(M.R, F.lib, F.maxO);
 			Gadgets.WriteRef(M.R, F.lib, F.stepO);
 			Gadgets.framehandle(F, M)
 		ELSIF M.id = Objects.load THEN
-			Files.ReadNum(M.R, ver);
+			Files.ReadNum32(M.R, ver);
 			IF ver >= 1 THEN
-				Files.ReadLInt(M.R, F.min); Files.ReadLInt(M.R, F.max);
-				Files.ReadLInt(M.R, F.step); Files.ReadLInt(M.R, F.val);
-				Files.ReadInt(M.R, F.backC); Files.ReadBool(M.R, F.vertical);
+				Files.ReadInt32(M.R, F.min); Files.ReadInt32(M.R, F.max);
+				Files.ReadInt32(M.R, F.step); Files.ReadInt32(M.R, F.val);
+				Files.ReadInt16(M.R, F.backC); Files.ReadBool(M.R, F.vertical);
 				Files.ReadSet(M.R, F.state0);
 				Gadgets.ReadRef(M.R, F.lib, F.minO);
 				Gadgets.ReadRef(M.R, F.lib, F.maxO);

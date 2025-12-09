@@ -165,27 +165,27 @@ VAR
 	VAR b: tBuf;  i: index;
 
 	BEGIN
-		Files.WriteLInt( R, SIGNED32(o.nrData) );  b := o.buf( tBuf );
+		Files.WriteInt32( R, SIGNED32(o.nrData) );  b := o.buf( tBuf );
 		WHILE b # NIL DO
 			IF b.usedentries > 0 THEN
-				Files.WriteLInt( R, SIGNED32(b.len) );  Files.WriteLInt( R, SIGNED32(b.usedentries) );  i := 0;
-				WHILE i < b.usedentries DO Files.WriteLInt( R, SIGNED32(b.data[i]) );  INC( i ) END
+				Files.WriteInt32( R, SIGNED32(b.len) );  Files.WriteInt32( R, SIGNED32(b.usedentries) );  i := 0;
+				WHILE i < b.usedentries DO Files.WriteInt32( R, SIGNED32(b.data[i]) );  INC( i ) END
 			END;   (*IF*)
 			IF b.next # NIL THEN b := b.next( tBuf ) ELSE b := NIL END
 		END;   (*WHILE*)
-		Files.WriteLInt( R, 0 )
+		Files.WriteInt32( R, 0 )
 	END Store0;
 
 	PROCEDURE Store0LONGINT( VAR R: Files.Rider;  o: tLONGINT );
 
 	BEGIN
-		Files.WriteLInt( R, SIGNED32(o.i) )
+		Files.WriteInt32( R, SIGNED32(o.i) )
 	END Store0LONGINT;
 
 	PROCEDURE Load0LONGINT( VAR R: Files.Rider;  o: tLONGINT );
 	VAR c: SIGNED32;
 	BEGIN
-		Files.ReadLInt( R, c ); o.i := c;
+		Files.ReadInt32( R, c ); o.i := c;
 	END Load0LONGINT;
 
 	PROCEDURE Load0( VAR R: Files.Rider;  o: tVector );
@@ -193,11 +193,11 @@ VAR
 	VAR b: tBuf;  i: index; c: SIGNED32;
 
 	BEGIN
-		Files.ReadLInt( R, c );  o.nrData := c;  Files.ReadLInt( R, c );
+		Files.ReadInt32( R, c );  o.nrData := c;  Files.ReadInt32( R, c );
 		WHILE c # 0 DO
-			b := NewBufs( c - 1 );  b.len := c;  Files.ReadLInt( R, c );  b.usedentries := c;  i := 0;
-			WHILE i < c DO Files.ReadLInt( R, c); b.data[i] := c;  INC( i ) END;
-			vyBase.ApndChunks( b, o );  Files.ReadLInt( R, c )
+			b := NewBufs( c - 1 );  b.len := c;  Files.ReadInt32( R, c );  b.usedentries := c;  i := 0;
+			WHILE i < c DO Files.ReadInt32( R, c); b.data[i] := c;  INC( i ) END;
+			vyBase.ApndChunks( b, o );  Files.ReadInt32( R, c )
 		END  (*WHILE*)
 	END Load0;
 

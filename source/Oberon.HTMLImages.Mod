@@ -281,7 +281,7 @@ HALT(99)
 			Files.WriteBool(R, FALSE);
 			Attributes.StoreAttributes(R, entry.attrs);
 			Gadgets.WriteRef(R, F.lib, entry.text);
-			Files.WriteLInt(R, entry.pos);
+			Files.WriteInt32(R, entry.pos);
 			IF (entry.text # NIL) & (entry.ol # NIL) THEN
 				Texts.OpenFinder(Fi, entry.text, 0);
 				Texts.FindObj(Fi, obj);
@@ -321,7 +321,7 @@ HALT(99)
 			ELSE
 				entry.text := NIL
 			END;
-			Files.ReadLInt(R, entry.pos);
+			Files.ReadInt32(R, entry.pos);
 			Gadgets.ReadRef(R, F.lib, form);
 			IF form # NIL THEN
 				elem := form(HTMLDocs.Form).elems;

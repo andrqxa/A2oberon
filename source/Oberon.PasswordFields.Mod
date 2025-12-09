@@ -92,10 +92,10 @@ MODULE PasswordFields IN Oberon;	(** portable *) (* ejz,  *)
 					IF M.id = Objects.store THEN
 						F.passWord[F.len] := 0X;
 						Files.WriteString(M.R, F.passWord);
-						Files.WriteLInt(M.R, F.len)
+						Files.WriteInt32(M.R, F.len)
 					ELSIF M.id = Objects.load THEN
 						Files.ReadString(M.R, F.passWord);
-						Files.ReadLInt(M.R, F.len)
+						Files.ReadInt32(M.R, F.len)
 					END
 				END
 			ELSIF M IS Objects.AttrMsg THEN

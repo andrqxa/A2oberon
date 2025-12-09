@@ -101,10 +101,10 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN (* store private data here *)
-					Files.WriteInt(M.R, F.col);
+					Files.WriteInt16(M.R, F.col);
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN (* load private data here *)
-					Files.ReadInt(M.R, F.col);
+					Files.ReadInt16(M.R, F.col);
 					Gadgets.framehandle(F, M)
 				END
 			END

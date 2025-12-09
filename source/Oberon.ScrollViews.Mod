@@ -977,32 +977,32 @@ BEGIN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
 					Files.WriteNum(M.R, VersionNo);
-					Files.WriteInt(M.R, F.vx); Files.WriteInt(M.R, F.vy);
-					Files.WriteInt(M.R, F.border);
+					Files.WriteInt16(M.R, F.vx); Files.WriteInt16(M.R, F.vy);
+					Files.WriteInt16(M.R, F.border);
 					Files.WriteBool(M.R, F.hasVBar);
 					IF F.hasVBar THEN
-						Files.WriteInt(M.R, F.vBar.backC); Files.WriteNum(M.R,F.vBar.min);
+						Files.WriteInt16(M.R, F.vBar.backC); Files.WriteNum(M.R,F.vBar.min);
 						Files.WriteNum(M.R, F.vBar.max); Files.WriteNum(M.R, F.vBar.val)
 					END;
 					Files.WriteBool(M.R, F.hasHBar);
 					IF F.hasHBar THEN
-						Files.WriteInt(M.R, F.hBar.backC); Files.WriteNum(M.R, F.hBar.min);
+						Files.WriteInt16(M.R, F.hBar.backC); Files.WriteNum(M.R, F.hBar.min);
 						Files.WriteNum(M.R, F.hBar.max); Files.WriteNum(M.R, F.hBar.val)
 					END;
 					Gadgets.framehandle(F, M);
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, vNo);
-					Files.ReadInt(M.R, F.vx); Files.ReadInt(M.R, F.vy);
-					Files.ReadInt(M.R, F.border);
+					Files.ReadNum32(M.R, vNo);
+					Files.ReadInt16(M.R, F.vx); Files.ReadInt16(M.R, F.vy);
+					Files.ReadInt16(M.R, F.border);
 					Files.ReadBool(M.R, F.hasVBar);
 					IF F.hasVBar THEN
-						Files.ReadInt(M.R, F.vBar.backC); Files.ReadNum(M.R, F.vBar.min);
-						Files.ReadNum(M.R, F.vBar.max); Files.ReadNum(M.R, F.vBar.val)
+						Files.ReadInt16(M.R, F.vBar.backC); Files.ReadNum32(M.R, F.vBar.min);
+						Files.ReadNum32(M.R, F.vBar.max); Files.ReadNum32(M.R, F.vBar.val)
 					END;
 					Files.ReadBool(M.R, F.hasHBar);
 					IF F.hasHBar THEN
-						Files.ReadInt(M.R, F.hBar.backC); Files.ReadNum(M.R, F.hBar.min);
-						Files.ReadNum(M.R, F.hBar.max); Files.ReadNum(M.R, F.hBar.val)
+						Files.ReadInt16(M.R, F.hBar.backC); Files.ReadNum32(M.R, F.hBar.min);
+						Files.ReadNum32(M.R, F.hBar.max); Files.ReadNum32(M.R, F.hBar.val)
 					END;
 					Gadgets.framehandle(F, M);
 					IF (F.obj # NIL) & ~(F.obj IS Display.Frame) THEN

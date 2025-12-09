@@ -91,14 +91,14 @@ VAR
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyPort.LayerHandler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  vyPort.LayerHandler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.refArray := objsub( antsArrayObjects.tINTEGERObject ) END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.pal := objsub( vyColorPalettes.Palette ) END;
 			IF version > 0 THEN Files.ReadBool( msg.R, obj.grid ) END;
 			IF version > 1 THEN Files.ReadBool( msg.R, obj.preview ) END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 2 );  vyPort.LayerHandler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.refArray );
+			Files.WriteInt16( msg.R, 2 );  vyPort.LayerHandler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.refArray );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.pal );  Files.WriteBool( msg.R, obj.grid );  Files.WriteBool( msg.R, obj.preview )
 		ELSE vyPort.LayerHandler( obj, msg )
 		END

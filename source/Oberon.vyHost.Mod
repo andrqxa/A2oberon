@@ -698,44 +698,44 @@ END  DisplayNewPattern;
 PROCEDURE LoadCoordinate2d* (VAR r: FilesReader; c: tCoordinate2d);
 (** vs 0.0d0	md  01.06.94 08:46:53 *)
 BEGIN
-Files.ReadInt (r, c.x); Files.ReadInt (r, c.y); Files.ReadInt (r, c.w); Files.ReadInt (r, c.h);
-Files.ReadLReal (r, c.x2d); Files.ReadLReal (r, c.y2d);
-Files.ReadLReal (r, c.w2d); Files.ReadLReal (r, c.h2d);
-Files.ReadLReal (r, c.xFact); Files.ReadLReal (r, c.yFact);
-Files.ReadInt (r, c.x0); Files.ReadInt (r, c.y0);
+Files.ReadInt16 (r, c.x); Files.ReadInt16 (r, c.y); Files.ReadInt16 (r, c.w); Files.ReadInt16 (r, c.h);
+Files.ReadFloat64 (r, c.x2d); Files.ReadFloat64 (r, c.y2d);
+Files.ReadFloat64 (r, c.w2d); Files.ReadFloat64 (r, c.h2d);
+Files.ReadFloat64 (r, c.xFact); Files.ReadFloat64 (r, c.yFact);
+Files.ReadInt16 (r, c.x0); Files.ReadInt16 (r, c.y0);
 c.zoomCache := NIL;
 END LoadCoordinate2d;
 
 PROCEDURE StoreCoordinate2d* (VAR r: FilesWriter; c: tCoordinate2d);
 (** vs 0.0d0	md  01.06.94 08:47:27 *)
 BEGIN
-Files.WriteInt (r, c.x); Files.WriteInt (r, c.y); Files.WriteInt (r, c.w); Files.WriteInt (r, c.h);
-Files.WriteLReal (r, c.x2d); Files.WriteLReal (r, c.y2d);
-Files.WriteLReal (r, c.w2d); Files.WriteLReal (r, c.h2d);
-Files.WriteLReal (r, c.xFact); Files.WriteLReal (r, c.yFact);
-Files.WriteInt (r, c.x0); Files.WriteInt (r, c.y0);
+Files.WriteInt16 (r, c.x); Files.WriteInt16 (r, c.y); Files.WriteInt16 (r, c.w); Files.WriteInt16 (r, c.h);
+Files.WriteFloat64 (r, c.x2d); Files.WriteFloat64 (r, c.y2d);
+Files.WriteFloat64 (r, c.w2d); Files.WriteFloat64 (r, c.h2d);
+Files.WriteFloat64 (r, c.xFact); Files.WriteFloat64 (r, c.yFact);
+Files.WriteInt16 (r, c.x0); Files.WriteInt16 (r, c.y0);
 END StoreCoordinate2d;
 *)
 (*
 PROCEDURE LoadCoordinate2d* (VAR r: FilesReader; c: tCoordinate2d);
 (** vs 0.0d0	md  01.06.94 08:46:53 *)
 BEGIN
-Files.ReadInt (r, c.x); Files.ReadInt (r, c.y); Files.ReadInt (r, c.w); Files.ReadInt (r, c.h);
-Files.ReadReal (r, c.x2d); Files.ReadReal (r, c.y2d);
-Files.ReadReal (r, c.w2d); Files.ReadReal (r, c.h2d);
-Files.ReadReal (r, c.xFact); Files.ReadReal (r, c.yFact);
-Files.ReadInt (r, c.x0); Files.ReadInt (r, c.y0);
+Files.ReadInt16 (r, c.x); Files.ReadInt16 (r, c.y); Files.ReadInt16 (r, c.w); Files.ReadInt16 (r, c.h);
+Files.ReadFloat32 (r, c.x2d); Files.ReadFloat32 (r, c.y2d);
+Files.ReadFloat32 (r, c.w2d); Files.ReadFloat32 (r, c.h2d);
+Files.ReadFloat32 (r, c.xFact); Files.ReadFloat32 (r, c.yFact);
+Files.ReadInt16 (r, c.x0); Files.ReadInt16 (r, c.y0);
 c.zoomCache := NIL
 END LoadCoordinate2d;
 
 PROCEDURE StoreCoordinate2d* (VAR r: FilesWriter; c: tCoordinate2d);
 (** vs 0.0d0	md  01.06.94 08:47:27 *)
 BEGIN
-Files.WriteInt (r, c.x); Files.WriteInt (r, c.y); Files.WriteInt (r, c.w); Files.WriteInt (r, c.h);
-Files.WriteReal (r, c.x2d); Files.WriteReal (r, c.y2d);
-Files.WriteReal (r, c.w2d); Files.WriteReal (r, c.h2d);
-Files.WriteReal (r, c.xFact); Files.WriteReal (r, c.yFact);
-Files.WriteInt (r, c.x0); Files.WriteInt (r, c.y0)
+Files.WriteInt16 (r, c.x); Files.WriteInt16 (r, c.y); Files.WriteInt16 (r, c.w); Files.WriteInt16 (r, c.h);
+Files.WriteFloat32 (r, c.x2d); Files.WriteFloat32 (r, c.y2d);
+Files.WriteFloat32 (r, c.w2d); Files.WriteFloat32 (r, c.h2d);
+Files.WriteFloat32 (r, c.xFact); Files.WriteFloat32 (r, c.yFact);
+Files.WriteInt16 (r, c.x0); Files.WriteInt16 (r, c.y0)
 END StoreCoordinate2d;
 *)
 (*PROCEDURE CopyCoordinate2d* (sc, dc: tCoordinate2d);

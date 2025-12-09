@@ -41,7 +41,7 @@ END ReadChunkId;
 PROCEDURE ReadChunkHeader(VAR R: Files.Rider; VAR hd: ChunkHeader);
 BEGIN
 	ReadChunkId(R,hd.id);
-	Files.ReadLInt(R,hd.len); hd.len:= BIT.LSWAP(hd.len);
+	Files.ReadInt32(R,hd.len); hd.len:= BIT.LSWAP(hd.len);
 END ReadChunkHeader;
 
 PROCEDURE ReadILBMHD(VAR R: Files.Rider; VAR ilbmhd: ILBMHD);
@@ -49,13 +49,13 @@ PROCEDURE ReadILBMHD(VAR R: Files.Rider; VAR ilbmhd: ILBMHD);
 VAR
 	filler: CHAR;
 BEGIN
-	Files.ReadInt(R,ilbmhd.w); Files.ReadInt(R,ilbmhd.h);
-	Files.ReadInt(R,ilbmhd.x); Files.ReadInt(R,ilbmhd.y);
+	Files.ReadInt16(R,ilbmhd.w); Files.ReadInt16(R,ilbmhd.h);
+	Files.ReadInt16(R,ilbmhd.x); Files.ReadInt16(R,ilbmhd.y);
 	Files.Read(R,ilbmhd.planes); Files.Read(R,ilbmhd.masking);
 	Files.Read(R,ilbmhd.compression); Files.Read(R,filler);
-	Files.ReadInt(R,ilbmhd.transparentCol);
+	Files.ReadInt16(R,ilbmhd.transparentCol);
 	Files.Read(R,ilbmhd.xAspect); Files.Read(R,ilbmhd.yAspect);
-	Files.ReadInt(R,ilbmhd.pageWidth); Files.ReadInt(R,ilbmhd.pageHeight);
+	Files.ReadInt16(R,ilbmhd.pageWidth); Files.ReadInt16(R,ilbmhd.pageHeight);
 END ReadILBMHD;
 
 PROCEDURE ScanCol (VAR R: Files.Rider; pict: Pictures.Picture; nrColor: SIGNED32; conversion: BOOLEAN);

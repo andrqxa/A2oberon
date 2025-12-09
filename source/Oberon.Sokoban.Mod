@@ -209,13 +209,13 @@ MODULE Sokoban IN Oberon; (** portable *)	(* ejz  *)
 		file := Files.Old(Levels);
 		IF file # NIL THEN
 			Files.Set(R, file, 0);
-			Files.ReadInt(R, levels);
+			Files.ReadInt16(R, levels);
 			IF (F.level > 0 ) & (F.level <= levels) THEN
 				Files.Set(R, file, Files.Length(file)-(1+levels-F.level)*4);
-				Files.ReadLInt(R, offs);
+				Files.ReadInt32(R, offs);
 				Files.Set(R, file, offs);
-				Files.ReadInt(R, F.n);
-				Files.ReadInt(R, F.m);
+				Files.ReadInt16(R, F.n);
+				Files.ReadInt16(R, F.m);
 				FOR  i := 1 TO F.n DO
 					FOR j := 1 TO F.m DO
 						Files.Read(R, F.world[i, j]);
@@ -265,10 +265,10 @@ MODULE Sokoban IN Oberon; (** portable *)	(* ejz  *)
 		Texts.WriteLn(W);
 		Texts.WriteLn(W);
 		Files.Set(R, file, 0);
-		Files.ReadInt(R, level);
+		Files.ReadInt16(R, level);
 		WHILE ~R.eof DO
-			Files.ReadInt(R, moves);
-			Files.ReadLInt(R, time);
+			Files.ReadInt16(R, moves);
+			Files.ReadInt32(R, time);
 			Files.ReadBytes(R, name, 32);
 			Texts.WriteInt(W, level, 8);
 			Texts.WriteInt(W, moves, 8);
@@ -276,7 +276,7 @@ MODULE Sokoban IN Oberon; (** portable *)	(* ejz  *)
 			Texts.WriteString(W, "    ");
 			Texts.WriteString(W, name);
 			Texts.WriteLn(W);
-			Files.ReadInt(R, level)
+			Files.ReadInt16(R, level)
 		END;
 		NEW(text);
 		Texts.Open(text, "");
@@ -315,10 +315,10 @@ MODULE Sokoban IN Oberon; (** portable *)	(* ejz  *)
 		pos := 0;
 		WHILE ~R.eof & (level # F.level) DO
 			pos := Files.Pos(R);
-			Files.ReadInt(R, level);
+			Files.ReadInt16(R, level);
 			IF ~R.eof THEN
-				Files.ReadInt(R, moves);
-				Files.ReadLInt(R, time);
+				Files.ReadInt16(R, moves);
+				Files.ReadInt32(R, time);
 				Files.ReadBytes(R, name, 32)
 			ELSE
 				level := MIN(SIGNED16)
@@ -329,9 +329,9 @@ MODULE Sokoban IN Oberon; (** portable *)	(* ejz  *)
 		END;
 		IF ((level = F.level) & ((moves > F.moves) OR ((moves = F.moves) & (time > F.time)))) OR (level # F.level) THEN
 			Files.Set(R, file, pos);
-			Files.WriteInt(R, F.level);
-			Files.WriteInt(R, F.moves);
-			Files.WriteLInt(R, F.time);
+			Files.WriteInt16(R, F.level);
+			Files.WriteInt16(R, F.moves);
+			Files.WriteInt32(R, F.time);
 			Files.WriteBytes(R, F.userName, 32);
 			Files.Close(file);
 			ShowHighScores()
@@ -763,47 +763,47 @@ MODULE Sokoban IN Oberon; (** portable *)	(* ejz  *)
 				WITH M: Objects.FileMsg DO
 					Gadgets.framehandle(F, M);
 					IF M.id = Objects.store THEN
-						Files.WriteInt(M.R, CurVer);
-						Files.WriteInt(M.R, F.level);
-						Files.WriteInt(M.R, F.moves);
-						Files.WriteInt(M.R, F.mani);
-						Files.WriteInt(M.R, F.manj);
-						Files.WriteInt(M.R, F.oldmani);
-						Files.WriteInt(M.R, F.oldmanj);
+						Files.WriteInt16(M.R, CurVer);
+						Files.WriteInt16(M.R, F.level);
+						Files.WriteInt16(M.R, F.moves);
+						Files.WriteInt16(M.R, F.mani);
+						Files.WriteInt16(M.R, F.manj);
+						Files.WriteInt16(M.R, F.oldmani);
+						Files.WriteInt16(M.R, F.oldmanj);
 						Files.WriteBool(M.R, F.movedCan);
-						Files.WriteInt(M.R, F.n);
-						Files.WriteInt(M.R, F.m);
+						Files.WriteInt16(M.R, F.n);
+						Files.WriteInt16(M.R, F.m);
 						Files.WriteBool(M.R, F.done);
 						FOR x := 1 TO F.n DO
 							FOR y := 1 TO F.m DO
 								Files.Write(M.R, F.world[x, y])
 							END
 						END;
-						Files.WriteLInt(M.R, F.time);
+						Files.WriteInt32(M.R, F.time);
 						Files.WriteString(M.R, F.backPictName);
 						Files.WriteString(M.R, F.wallPictName);
 						Files.WriteString(M.R, F.parkPictName);
 						Files.WriteString(M.R, F.userName)
 					ELSIF M.id = Objects.load THEN
-						Files.ReadInt(M.R, ver);
-						Files.ReadInt(M.R, F.level);
-						Files.ReadInt(M.R, F.moves);
-						Files.ReadInt(M.R, F.mani);
-						Files.ReadInt(M.R, F.manj);
+						Files.ReadInt16(M.R, ver);
+						Files.ReadInt16(M.R, F.level);
+						Files.ReadInt16(M.R, F.moves);
+						Files.ReadInt16(M.R, F.mani);
+						Files.ReadInt16(M.R, F.manj);
 						IF ver = CurVer THEN
-							Files.ReadInt(M.R, F.oldmani);
-							Files.ReadInt(M.R, F.oldmanj);
+							Files.ReadInt16(M.R, F.oldmani);
+							Files.ReadInt16(M.R, F.oldmanj);
 							Files.ReadBool(M.R, F.movedCan)
 						END;
-						Files.ReadInt(M.R, F.n);
-						Files.ReadInt(M.R, F.m);
+						Files.ReadInt16(M.R, F.n);
+						Files.ReadInt16(M.R, F.m);
 						Files.ReadBool(M.R, F.done);
 						FOR x := 1 TO F.n DO
 							FOR y := 1 TO F.m DO
 								Files.Read(M.R, F.world[x, y])
 							END
 						END;
-						Files.ReadLInt(M.R, F.time);
+						Files.ReadInt32(M.R, F.time);
 						Files.ReadString(M.R, F.backPictName);
 						Pictures.Open(F.backPict, F.backPictName, TRUE);
 						Files.ReadString(M.R, F.wallPictName);
@@ -913,14 +913,14 @@ MODULE Sokoban IN Oberon; (** portable *)	(* ejz  *)
 		F := Files.Old(D.name);
 		IF F # NIL THEN
 			Files.Set(R, F, 0);
-			Files.ReadInt(R, tag);
+			Files.ReadInt16(R, tag);
 			IF tag = Documents.Id THEN
 				Files.ReadString(R, gen);
-				Files.ReadInt(R, x);
-				Files.ReadInt(R, y);
-				Files.ReadInt(R, w);
-				Files.ReadInt(R, h);
-				Files.ReadInt(R, ref);
+				Files.ReadInt16(R, x);
+				Files.ReadInt16(R, y);
+				Files.ReadInt16(R, w);
+				Files.ReadInt16(R, h);
+				Files.ReadInt16(R, ref);
 				NEW(lib);
 				Objects.OpenLibrary(lib);
 				Objects.LoadLibrary(lib, F, Files.Pos(R)+1, len);
@@ -951,16 +951,16 @@ MODULE Sokoban IN Oberon; (** portable *)	(* ejz  *)
 		F := Files.New(D.name);
 		IF F # NIL THEN
 			Files.Set(R, F, 0);
-			Files.WriteInt(R, Documents.Id);
+			Files.WriteInt16(R, Documents.Id);
 			Files.WriteString(R, DocGen);
-			Files.WriteInt(R, D.X);
-			Files.WriteInt(R, D.Y);
-			Files.WriteInt(R, D.W);
-			Files.WriteInt(R, D.H);
+			Files.WriteInt16(R, D.X);
+			Files.WriteInt16(R, D.Y);
+			Files.WriteInt16(R, D.W);
+			Files.WriteInt16(R, D.H);
 			NEW(B.lib);
 			Objects.OpenLibrary(B.lib);
 			D.dsc.handle(D.dsc, B);
-			Files.WriteInt(R, D.dsc.ref);
+			Files.WriteInt16(R, D.dsc.ref);
 			Objects.StoreLibrary(B.lib, F, Files.Pos(R), len);
 			Files.Register(F);
 			Files.Close(F)

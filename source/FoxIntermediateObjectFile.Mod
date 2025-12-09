@@ -217,7 +217,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 			BEGIN
 				i := 0;
 				REPEAT
-					r.RawNum(num);
+					r.RawNum32(num);
 					sectionName[i] := poolMap.Get(num);
 					INC(i);
 				UNTIL (i = LEN(sectionName)) OR (num < 0);
@@ -251,20 +251,20 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 			BEGIN
 				Type(type);
 				IntermediateCode.SetType(operand, type);
-				r.RawNum(mode);
+				r.RawNum32(mode);
 				CASE mode OF
 				IntermediateCode.Undefined:
 					IntermediateCode.InitOperand(operand); (* no operand *)
 				|IntermediateCode.ModeMemory:
-						r.RawNum(subMode);
+						r.RawNum32(subMode);
 						IF subMode = 0 THEN
-							r.RawNum(register);
-							r.RawNum(offset);
+							r.RawNum32(register);
+							r.RawNum32(offset);
 							IntermediateCode.InitRegister(operand, addressType, IntermediateCode.GeneralPurposeRegister, register);
 						ELSIF subMode = 1 THEN
 							SectionName(name);
-							r.RawNum(symbolOffset);
-							r.RawNum(offset);
+							r.RawNum32(symbolOffset);
+							r.RawNum32(offset);
 							IntermediateCode.InitAddress(operand, addressType, name, 0, symbolOffset);
 						ELSE
 							offset := 0;
@@ -274,15 +274,15 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 						END;
 						IntermediateCode.InitMemory(operand, type, operand, offset);
 				|IntermediateCode.ModeRegister:
-					r.RawNum(register); RegisterClass(registerClass); r.RawNum(offset);
+					r.RawNum32(register); RegisterClass(registerClass); r.RawNum32(offset);
 					IntermediateCode.InitRegister(operand, type, registerClass, register);
 					IntermediateCode.AddOffset(operand, offset);
 				|IntermediateCode.ModeImmediate:
-					r.RawNum(subMode);
+					r.RawNum32(subMode);
 					IF subMode = 0 THEN (* ?? *)
 						SectionName(name);
-						r.RawNum(symbolOffset);
-						r.RawNum(offset);
+						r.RawNum32(symbolOffset);
+						r.RawNum32(offset);
 						IntermediateCode.InitAddress(operand, type, name, 0, symbolOffset);
 						IntermediateCode.AddOffset(operand, offset);
 					ELSE
@@ -296,7 +296,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 						END;
 					END;
 				|IntermediateCode.ModeString:
-					r.RawNum(len);
+					r.RawNum32(len);
 					NEW(string, len);
 					r.RawString(string^);
 					IntermediateCode.InitString(operand, string);
@@ -309,8 +309,8 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 			PROCEDURE ReadInstruction(section: IntermediateCode.Section);
 			VAR opcode, subtype: SIGNED32; instruction: IntermediateCode.Instruction; op1, op2, op3: IntermediateCode.Operand;
 			BEGIN
-				r.RawNum(opcode);
-				IF opcode = IntermediateCode.special THEN r.RawNum(subtype) END;
+				r.RawNum32(opcode);
+				IF opcode = IntermediateCode.special THEN r.RawNum32(subtype) END;
 
 				ReadOperand(op1);
 				ReadOperand(op2);
@@ -334,9 +334,9 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 				r.RawInt32(type);
 				SectionName(name);
 				r.RawBool(fixed);
-				r.RawNum(positionOrAlignment);
-				r.RawNum(fingerprint);
-				r.RawNum(bitsPerUnit);
+				r.RawNum32(positionOrAlignment);
+				r.RawNum32(fingerprint);
+				r.RawNum32(bitsPerUnit);
 
 				section := IntermediateCode.NewSection(sectionList, SIGNED8(type), name, NIL, FALSE); (* keeps section if already present *)
 				IF bitsPerUnit < 0 THEN (* unknown *)
@@ -351,7 +351,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 				section.SetFingerprint(fingerprint);
 				section.SetPositionOrAlignment(fixed, positionOrAlignment);
 
-				r.RawNum(pc);
+				r.RawNum32(pc);
 				FOR i := 0 TO pc-1 DO
 					ReadInstruction(section);
 				END;
@@ -360,7 +360,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 			PROCEDURE SectionList(list: Sections.SectionList);
 			VAR section: Sections.Section; length,i: SIGNED32;
 			BEGIN
-				r.RawNum(length);
+				r.RawNum32(length);
 				FOR i := 0 TO length - 1 DO
 					ReadSection(list);
 				END;
@@ -369,7 +369,7 @@ TYPE ObjectFileFormat* = OBJECT (Formats.ObjectFileFormat)
 			PROCEDURE Imports(imports: Sections.NameList);
 			VAR name: SyntaxTree.IdentifierString; length,i: SIGNED32;
 			BEGIN
-				r.RawNum(length);
+				r.RawNum32(length);
 				FOR i := 0 TO length-1 DO
 					r.RawString(name);
 					imports.AddName(name);

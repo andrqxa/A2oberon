@@ -452,15 +452,15 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 				Gadgets.objecthandle(tool, msg);
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 2);
-					Files.WriteReal(msg.R, tool.unit); Files.WriteReal(msg.R, tool.zx); Files.WriteReal(msg.R, tool.zy);
-					Files.WriteReal(msg.R, tool.pageW); Files.WriteReal(msg.R, tool.pageH);
-					Files.WriteInt(msg.R, tool.grid.ticks); Files.WriteBool(msg.R, tool.grid.visible); Files.WriteBool(msg.R, tool.grid.active);
+					Files.WriteFloat32(msg.R, tool.unit); Files.WriteFloat32(msg.R, tool.zx); Files.WriteFloat32(msg.R, tool.zy);
+					Files.WriteFloat32(msg.R, tool.pageW); Files.WriteFloat32(msg.R, tool.pageH);
+					Files.WriteInt16(msg.R, tool.grid.ticks); Files.WriteBool(msg.R, tool.grid.visible); Files.WriteBool(msg.R, tool.grid.active);
 					Files.WriteBool(msg.R, tool.buffered)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
-					Files.ReadReal(msg.R, tool.unit); Files.ReadReal(msg.R, tool.zx); Files.ReadReal(msg.R, tool.zy);
-					Files.ReadReal(msg.R, tool.pageW); Files.ReadReal(msg.R, tool.pageH);
-					Files.ReadInt(msg.R, tool.grid.ticks); Files.ReadBool(msg.R, tool.grid.visible); Files.ReadBool(msg.R, tool.grid.active);
+					Files.ReadNum32(msg.R, ver);
+					Files.ReadFloat32(msg.R, tool.unit); Files.ReadFloat32(msg.R, tool.zx); Files.ReadFloat32(msg.R, tool.zy);
+					Files.ReadFloat32(msg.R, tool.pageW); Files.ReadFloat32(msg.R, tool.pageH);
+					Files.ReadInt16(msg.R, tool.grid.ticks); Files.ReadBool(msg.R, tool.grid.visible); Files.ReadBool(msg.R, tool.grid.active);
 					IF ver >= 2 THEN Files.ReadBool(msg.R, tool.buffered) END
 				END
 			END
@@ -2138,19 +2138,19 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 				frame := obj(LeoFrames.Frame);
 				Gadgets.framehandle(frame, msg);
 
-				Files.ReadNum(msg.R, ver);
+				Files.ReadNum32(msg.R, ver);
 				ASSERT((1 <= ver) & (ver <= 3), 111);
 
 				(* first part of code is same as in FigureGadgets *)
 				IF ver = 1 THEN
-					Files.ReadSet(msg.R, set); Files.ReadReal(msg.R, real); Files.ReadInt(msg.R, int); frame.col := int
+					Files.ReadSet(msg.R, set); Files.ReadFloat32(msg.R, real); Files.ReadInt16(msg.R, int); frame.col := int
 				ELSE
 					Files.ReadBool(msg.R, bool);	(* buffered *)
 					IF ver = 2 THEN
-						Files.ReadLInt(msg.R, l);
+						Files.ReadInt32(msg.R, l);
 						frame.col := SIGNED16(ASH(l, -24) MOD 100H)
 					ELSIF ver >= 3 THEN
-						Files.ReadInt(msg.R, red); Files.ReadInt(msg.R, green); Files.ReadInt(msg.R, blue);
+						Files.ReadInt16(msg.R, red); Files.ReadInt16(msg.R, green); Files.ReadInt16(msg.R, blue);
 						int := 0;
 						LOOP
 							IF int = 256 THEN
@@ -2166,16 +2166,16 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 						END
 					END
 				END;
-				Files.ReadReal(msg.R, frame.scale);
-				Files.ReadReal(msg.R, real); frame.ox := SHORT(ENTIER(real));
-				Files.ReadReal(msg.R, real); frame.oy := SHORT(ENTIER(real));
+				Files.ReadFloat32(msg.R, frame.scale);
+				Files.ReadFloat32(msg.R, real); frame.ox := SHORT(ENTIER(real));
+				Files.ReadFloat32(msg.R, real); frame.oy := SHORT(ENTIER(real));
 
 				(* read old LeoFrames data *)
-				Files.ReadNum(msg.R, ver);
+				Files.ReadNum32(msg.R, ver);
 				ASSERT(ver = 1, 110);
 				tool := Current(frame);
-				Files.ReadReal(msg.R, tool.unit);
-				Files.ReadInt(msg.R, tool.grid.ticks);
+				Files.ReadFloat32(msg.R, tool.unit);
+				Files.ReadInt16(msg.R, tool.grid.ticks);
 				Files.ReadBool(msg.R, tool.grid.active);
 
 				frame.handle := ToolHandler

@@ -86,12 +86,12 @@ VAR
 			IF (objsub # NIL ) & (objsub IS vyBase.tVector) THEN obj.oldSelection := objsub( vyBase.tVector ) END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF (objsub # NIL ) & (objsub IS vyBase.tVector) THEN obj.selection := objsub( vyBase.tVector ) END;
-			Files.ReadLInt( msg.R, c); obj.nrData := c;
+			Files.ReadInt32( msg.R, c); obj.nrData := c;
 		ELSIF msg.id = Objects.store THEN
 			vyBase.objecthandle( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.sel );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.selChanges );   (*! remove unneccessary entries *)
 			Gadgets.WriteRef( msg.R, obj.lib, obj.oldSelection );  Gadgets.WriteRef( msg.R, obj.lib, obj.selection );
-			Files.WriteLInt( msg.R, SIGNED32(obj.nrData) )
+			Files.WriteInt32( msg.R, SIGNED32(obj.nrData) )
 		ELSE vyBase.objecthandle( obj, msg )
 		END
 	END HandleFileMsg;

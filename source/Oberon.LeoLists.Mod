@@ -655,7 +655,7 @@ MODULE LeoLists IN Oberon; (** portable **)	(* eos  *)
 					Gadgets.WriteRef(msg.R, list.lib, list.pos);
 					Gadgets.WriteRef(msg.R, list.lib, list.max)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Gadgets.ReadRef(msg.R, list.lib, list.pos);
 					Gadgets.ReadRef(msg.R, list.lib, list.max)
 				END

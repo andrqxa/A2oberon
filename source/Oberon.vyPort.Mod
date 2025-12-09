@@ -1573,24 +1573,24 @@ END PictureHandleDisplay;
 	VAR l: vyLinks.Link;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadReal( msg.R, obj.Pictx );  Files.ReadReal( msg.R, obj.Picty );  Files.ReadReal( msg.R, obj.Pictw );
-			Files.ReadReal( msg.R, obj.Picth );  Files.ReadBool( msg.R, obj.needsRedraw );  Files.ReadInt( msg.R, obj.hx );
-			Files.ReadInt( msg.R, obj.hy );  Files.ReadBool( msg.R, obj.header );
+			Files.ReadFloat32( msg.R, obj.Pictx );  Files.ReadFloat32( msg.R, obj.Picty );  Files.ReadFloat32( msg.R, obj.Pictw );
+			Files.ReadFloat32( msg.R, obj.Picth );  Files.ReadBool( msg.R, obj.needsRedraw );  Files.ReadInt16( msg.R, obj.hx );
+			Files.ReadInt16( msg.R, obj.hy );  Files.ReadBool( msg.R, obj.header );
 			Gadgets.ReadRef( msg.R, obj.lib, obj.gcontext );
 			vyBase.Subscribe( (*for messages from source*) obj.gcontext, obj );   (*? *)
-			Files.ReadLInt( msg.R, obj.backGround );  vyBase.framehandle( obj, msg );  l := obj.vylinks;
+			Files.ReadInt32( msg.R, obj.backGround );  vyBase.framehandle( obj, msg );  l := obj.vylinks;
 			WHILE (l # NIL ) DO
 				IF l.obj # NIL THEN l.obj.dlink := obj;  vyBase.Subscribe( (*for messages from source*) l.obj, obj ) END;
 				l := l.link
 			END
 
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteReal( msg.R, obj.Pictx );  Files.WriteReal( msg.R, obj.Picty );  Files.WriteReal( msg.R, obj.Pictw );
-			Files.WriteReal( msg.R, obj.Picth );
+			Files.WriteFloat32( msg.R, obj.Pictx );  Files.WriteFloat32( msg.R, obj.Picty );  Files.WriteFloat32( msg.R, obj.Pictw );
+			Files.WriteFloat32( msg.R, obj.Picth );
 
-			Files.WriteBool( msg.R, obj.needsRedraw );  Files.WriteInt( msg.R, obj.hx );  Files.WriteInt( msg.R, obj.hy );
+			Files.WriteBool( msg.R, obj.needsRedraw );  Files.WriteInt16( msg.R, obj.hx );  Files.WriteInt16( msg.R, obj.hy );
 			Files.WriteBool( msg.R, obj.header );  Gadgets.WriteRef( msg.R, obj.lib, obj.gcontext );
-			Files.WriteLInt( msg.R, obj.backGround );  vyBase.framehandle( obj, msg )
+			Files.WriteInt32( msg.R, obj.backGround );  vyBase.framehandle( obj, msg )
 		ELSE vyBase.framehandle( obj, msg )
 		END
 

@@ -168,11 +168,11 @@ VAR
 
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyPort.LayerHandler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  vyPort.LayerHandler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.n := objsub( antsMatrixPar.Matrix ) END
 
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyPort.LayerHandler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.n )
+			Files.WriteInt16( msg.R, 0 );  vyPort.LayerHandler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.n )
 		ELSE vyPort.LayerHandler( obj, msg )
 		END
 	END HandleFileMsg;

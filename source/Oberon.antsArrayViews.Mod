@@ -153,13 +153,13 @@ VAR
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  antsViews.Handler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  antsViews.Handler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF (objsub # NIL ) & (objsub IS antsArrayObjects.tObject) THEN obj.E := objsub( antsArrayObjects.tINTEGERObject ) END;
-			Files.ReadInt( msg.R, obj.type )
+			Files.ReadInt16( msg.R, obj.type )
 		ELSIF msg.id = Objects.store THEN
 			ASSERT ( obj.lib = obj.E.lib, 100 );
-			Files.WriteInt( msg.R, 0 );  antsViews.Handler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.E );
-			Files.WriteInt( msg.R, obj.type )
+			Files.WriteInt16( msg.R, 0 );  antsViews.Handler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.E );
+			Files.WriteInt16( msg.R, obj.type )
 		ELSE antsViews.Handler( obj, msg )
 		END
 	END HandleFileMsg;

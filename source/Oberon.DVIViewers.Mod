@@ -625,18 +625,18 @@ VAR
 
    PROCEDURE DoStore(F: Frame; M: Objects.FileMsg);
    BEGIN
-      Files.WriteLInt(M.R,F.pageNo);
-      Files.WriteLReal(M.R,F.hOffset);
-      Files.WriteLReal(M.R,F.vOffset);
-      Files.WriteReal(M.R,F.zoom)
+      Files.WriteInt32(M.R,F.pageNo);
+      Files.WriteFloat64(M.R,F.hOffset);
+      Files.WriteFloat64(M.R,F.vOffset);
+      Files.WriteFloat32(M.R,F.zoom)
    END DoStore;
 
    PROCEDURE DoLoad(F: Frame; M: Objects.FileMsg);
    BEGIN
-      Files.ReadLInt(M.R,F.pageNo);
-      Files.ReadLReal(M.R,F.hOffset);
-      Files.ReadLReal(M.R,F.vOffset);
-      Files.ReadReal(M.R,F.zoom)
+      Files.ReadInt32(M.R,F.pageNo);
+      Files.ReadFloat64(M.R,F.hOffset);
+      Files.ReadFloat64(M.R,F.vOffset);
+      Files.ReadFloat32(M.R,F.zoom)
    END DoLoad;
 
    (* Routines to Draw & Print the Gadget: *)

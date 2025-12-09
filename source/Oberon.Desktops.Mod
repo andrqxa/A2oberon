@@ -628,7 +628,7 @@ END CopyDocGadget;
 
 PROCEDURE StoreDocGadget(F: DocGadget; VAR M: Objects.FileMsg);
 BEGIN
-	Files.WriteInt(M.R, 1);
+	Files.WriteInt16(M.R, 1);
 	Files.WriteSet(M.R, {});
 	Gadgets.WriteRef(M.R, F.lib, Main(F));
 	Gadgets.framehandle(F, M)
@@ -638,7 +638,7 @@ PROCEDURE LoadDocGadget(F: DocGadget; VAR M: Objects.FileMsg);
 VAR x, i, j: SIGNED16; tmp: SET; obj: Objects.Object; main: Gadgets.Frame;  title: ARRAY 128 OF CHAR;
 		L: Objects.LinkMsg; A: Objects.AttrMsg;
 BEGIN
-	Files.ReadInt(M.R, x);
+	Files.ReadInt16(M.R, x);
 	IF x # 1 THEN HALT(99) END;
 	Files.ReadSet(M.R, tmp);
 	Gadgets.ReadRef(M.R, F.lib, obj);
@@ -1259,10 +1259,10 @@ VAR S: Attributes.Scanner; F: Gadgets.Frame; B: Objects.BindMsg; X, Y: SIGNED16;
 	BEGIN
 		s := ""; h := 0; w := 0;
 		Files.Set(R, f, 0);
-		Files.ReadInt(R, i);
+		Files.ReadInt16(R, i);
 		IF (i = Documents.Id) OR (i = 0727H) THEN
 			Files.ReadString(R, s);
-			Files.ReadInt(R, x); Files.ReadInt(R, y); Files.ReadInt(R, w); Files.ReadInt(R, h);
+			Files.ReadInt16(R, x); Files.ReadInt16(R, y); Files.ReadInt16(R, w); Files.ReadInt16(R, h);
 		END;
 		RETURN (s = "PanelDocs.NewDoc") & (w > Display.Width) & (h > Display.Height)
 	END IsDesktop;

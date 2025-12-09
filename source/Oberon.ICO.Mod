@@ -43,11 +43,11 @@ PROCEDURE ReadDir(VAR R: Files.Rider): SIGNED16;
 VAR
 	val: SIGNED16;
 BEGIN
-	Files.ReadInt(R,val);	(* Reserved, must be 0 *)
+	Files.ReadInt16(R,val);	(* Reserved, must be 0 *)
 	IF (val # 0) THEN RETURN(-1); END;
-	Files.ReadInt(R,val);	(* Resource type *)
+	Files.ReadInt16(R,val);	(* Resource type *)
 	IF (val # ICONRESID) THEN RETURN(-1); END;
-	Files.ReadInt(R,val);	(* Amount of Images, should be 1 *)
+	Files.ReadInt16(R,val);	(* Amount of Images, should be 1 *)
 	RETURN(val);
 END ReadDir;
 
@@ -59,25 +59,25 @@ BEGIN
 	Files.Read(R,entry.width); Files.Read(R,entry.height);
 	Files.Read(R,entry.colorCount);
 	Files.Read(R,c);	(* Reserved *)
-	Files.ReadInt(R,entry.planes); Files.ReadInt(R,entry.bitCount);
-	Files.ReadLInt(R,entry.bytesInRes);
-	Files.ReadLInt(R,entry.imageOffset);
+	Files.ReadInt16(R,entry.planes); Files.ReadInt16(R,entry.bitCount);
+	Files.ReadInt32(R,entry.bytesInRes);
+	Files.ReadInt32(R,entry.imageOffset);
 END ReadDirEntry;
 
 PROCEDURE ReadBitmapInfoHeader*(VAR R: Files.Rider; VAR bmih: BitmapInfoHeader): BOOLEAN;
 	(* scan the Bitmapinfoheader *)
 BEGIN
-	Files.ReadLInt(R,bmih.size);
+	Files.ReadInt32(R,bmih.size);
 	IF (bmih.size # BMIHSIZE) THEN
 		Files.Set(R,Files.Base(R),Files.Pos(R)-SIZEOF(SIGNED32)); RETURN(FALSE);
 	ELSE
-		Files.ReadLInt(R,bmih.width); Files.ReadLInt(R,bmih.height);
-		Files.ReadInt(R,bmih.planes); Files.ReadInt(R,bmih.bitCount);
-		Files.ReadLInt(R,bmih.compression);
-		Files.ReadLInt(R,bmih.sizeImage);
-		Files.ReadLInt(R,bmih.xPelsPerMeter);
-		Files.ReadLInt(R,bmih.yPelsPerMeter);
-		Files.ReadLInt(R,bmih.clrUsed); Files.ReadLInt(R,bmih.clrImportant);
+		Files.ReadInt32(R,bmih.width); Files.ReadInt32(R,bmih.height);
+		Files.ReadInt16(R,bmih.planes); Files.ReadInt16(R,bmih.bitCount);
+		Files.ReadInt32(R,bmih.compression);
+		Files.ReadInt32(R,bmih.sizeImage);
+		Files.ReadInt32(R,bmih.xPelsPerMeter);
+		Files.ReadInt32(R,bmih.yPelsPerMeter);
+		Files.ReadInt32(R,bmih.clrUsed); Files.ReadInt32(R,bmih.clrImportant);
 		RETURN(TRUE);
 	END;
 END ReadBitmapInfoHeader;

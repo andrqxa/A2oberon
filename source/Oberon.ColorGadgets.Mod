@@ -402,10 +402,10 @@ MODULE ColorGadgets IN Oberon; (** portable **)	(* eos  *)
 				Gadgets.framehandle(well, msg);
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1);
-					Files.WriteLInt(msg.R, well.dcol)
+					Files.WriteInt32(msg.R, well.dcol)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
-					Files.ReadLInt(msg.R, well.dcol)
+					Files.ReadNum32(msg.R, ver);
+					Files.ReadInt32(msg.R, well.dcol)
 				END
 			END
 		ELSE
@@ -707,12 +707,12 @@ MODULE ColorGadgets IN Oberon; (** portable **)	(* eos  *)
 				Gadgets.framehandle(disc, msg);
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1);
-					Files.WriteLInt(msg.R, disc.bg);
-					Files.WriteReal(msg.R, disc.hue); Files.WriteReal(msg.R, disc.sat)
+					Files.WriteInt32(msg.R, disc.bg);
+					Files.WriteFloat32(msg.R, disc.hue); Files.WriteFloat32(msg.R, disc.sat)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
-					Files.ReadLInt(msg.R, disc.bg);
-					Files.ReadReal(msg.R, disc.hue); Files.ReadReal(msg.R, disc.sat);
+					Files.ReadNum32(msg.R, ver);
+					Files.ReadInt32(msg.R, disc.bg);
+					Files.ReadFloat32(msg.R, disc.hue); Files.ReadFloat32(msg.R, disc.sat);
 					disc.img := NIL
 				END
 			END
@@ -1044,12 +1044,12 @@ MODULE ColorGadgets IN Oberon; (** portable **)	(* eos  *)
 				Gadgets.framehandle(wedge, msg);
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1);
-					Files.WriteLInt(msg.R, wedge.bg);
-					Files.WriteReal(msg.R, wedge.hue); Files.WriteReal(msg.R, wedge.sat); Files.WriteReal(msg.R, wedge.val)
+					Files.WriteInt32(msg.R, wedge.bg);
+					Files.WriteFloat32(msg.R, wedge.hue); Files.WriteFloat32(msg.R, wedge.sat); Files.WriteFloat32(msg.R, wedge.val)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
-					Files.ReadLInt(msg.R, wedge.bg);
-					Files.ReadReal(msg.R, wedge.hue); Files.ReadReal(msg.R, wedge.sat); Files.ReadReal(msg.R, wedge.val);
+					Files.ReadNum32(msg.R, ver);
+					Files.ReadInt32(msg.R, wedge.bg);
+					Files.ReadFloat32(msg.R, wedge.hue); Files.ReadFloat32(msg.R, wedge.sat); Files.ReadFloat32(msg.R, wedge.val);
 					wedge.img := NIL
 				END
 			END

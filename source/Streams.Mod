@@ -1085,7 +1085,7 @@ TYPE
 			x[i] := 0X
 		END RawString;
 
-	(** Read a number in a compressed format. *)
+	(** DEPRECATED use RawNum32 instead. Read a number in a compressed format. *)
 		PROCEDURE RawNum*( VAR x: SIGNED32 );
 		VAR ch: CHAR;  n, y: SIGNED32;
 		BEGIN
@@ -1094,7 +1094,16 @@ TYPE
 			x := ASH( LSH( SIGNED32( ORD( ch ) ), 25 ), n - 25 ) + y
 		END RawNum;
 
-	(** Read a huge number in a compressed format. *)
+	(** Read a number in a compressed format. *)
+		PROCEDURE RawNum32*( VAR x: SIGNED32 );
+		VAR ch: CHAR;  n, y: SIGNED32;
+		BEGIN
+			n := 0;  y := 0;  ch := Get();
+			WHILE ch >= 80X DO INC( y, LSH( SIGNED32( ORD( ch ) ) - 128, n ) );  INC( n, 7 );  ch := Get() END;
+			x := ASH( LSH( SIGNED32( ORD( ch ) ), 25 ), n - 25 ) + y
+		END RawNum32;
+
+	(** DEPRECATED use RawNum64 instead. Read a huge number in a compressed format. *)
 		PROCEDURE RawHNum*( VAR x: SIGNED64 );
 		VAR ch: CHAR;  n, y: SIGNED64;
 		BEGIN
@@ -1102,6 +1111,15 @@ TYPE
 			WHILE ch >= 80X DO INC( y, LSH( SIGNED64( ORD( ch ) ) - 128, n ) );  INC( n, 7 );  ch := Get() END;
 			x := ASH( LSH( SIGNED64( ORD( ch ) ), 57 ), n - 57 ) + y
 		END RawHNum;
+
+	(** Read a huge number in a compressed format. *)
+		PROCEDURE RawNum64*( VAR x: SIGNED64 );
+		VAR ch: CHAR;  n, y: SIGNED64;
+		BEGIN
+			n := 0;  y := 0;  ch := Get();
+			WHILE ch >= 80X DO INC( y, LSH( SIGNED64( ORD( ch ) ) - 128, n ) );  INC( n, 7 );  ch := Get() END;
+			x := ASH( LSH( SIGNED64( ORD( ch ) ), 57 ), n - 57 ) + y
+		END RawNum64;
 
 	(** Read a size in a compressed format. *)
 		PROCEDURE RawSize*( VAR x: SIZE );
@@ -1510,7 +1528,7 @@ TYPE
 				END;
 			END;
 
-			IF res = Ok THEN res := FormatError END; 
+			IF res = Ok THEN res := FormatError END;
 			RETURN FALSE; (* lone surrogate *)
 		END UTF16Char;
 
@@ -1536,8 +1554,8 @@ TYPE
 				SkipBytes( 4 );
 				RETURN TRUE;
 			END;
-			
-			IF res = Ok THEN res := FormatError END; 
+
+			IF res = Ok THEN res := FormatError END;
 			RETURN FALSE;
 		END UTF32Char;
 

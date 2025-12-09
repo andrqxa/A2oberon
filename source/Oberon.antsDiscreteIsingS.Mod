@@ -153,14 +153,14 @@ END CachedE;
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteLReal( R, s.h );  Files.WriteLReal( R, s.beta );  Files.WriteLInt( R, s.card );
+		Files.WriteInt16( R, 0 );  Files.WriteFloat64( R, s.h );  Files.WriteFloat64( R, s.beta );  Files.WriteInt32( R, s.card );
 		Files.WriteString( R, s.dist )
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR card: SIGNED32;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadLReal( R, s.h );  Files.ReadLReal( R, s.beta );  Files.ReadLInt( R, card );
+		Files.ReadInt16( R, version );  Files.ReadFloat64( R, s.h );  Files.ReadFloat64( R, s.beta );  Files.ReadInt32( R, card );
 		Files.ReadString( R, s.dist );  s.card := 0;  Open( s, s.beta, s.h );  NewDepth( s, s.card )
 	END LoadM;
 

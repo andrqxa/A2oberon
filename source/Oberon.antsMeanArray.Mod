@@ -97,8 +97,8 @@ TYPE
 	VAR version: SIGNED16;
 		(*! store Picts as GIF for color preserving or store colors *)
 	BEGIN
-		IF msg.id = Objects.load THEN Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg )
-		ELSIF msg.id = Objects.store THEN Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg )
+		IF msg.id = Objects.load THEN Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg )
+		ELSIF msg.id = Objects.store THEN Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg )
 		ELSE vyBase.objecthandle( obj, msg )
 		END
 	END HandleFileMsg;

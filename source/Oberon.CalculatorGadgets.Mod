@@ -452,25 +452,25 @@ VAR
 	i,len: SIGNED32;
 BEGIN
 	IF (M.id = Objects.store) THEN
-		Files.WriteLInt(M.R,CalcUndoOp);
+		Files.WriteInt32(M.R,CalcUndoOp);
 		FOR i:= 0 TO CalcUndoOp-1 DO
-			Files.WriteLReal(M.R,E.op[i].value);
-			Files.WriteInt(M.R,E.op[i].factor); Files.WriteInt(M.R,E.op[i].base);
+			Files.WriteFloat64(M.R,E.op[i].value);
+			Files.WriteInt16(M.R,E.op[i].factor); Files.WriteInt16(M.R,E.op[i].base);
 		END;
-		Files.WriteLInt(M.R,CalcMem);
-		FOR i:= 0 TO CalcMem-1 DO Files.WriteLReal(M.R,E.mem[i]); END;
-		Files.WriteLInt(M.R,CalcUndoKey);
-		FOR i:= 0 TO CalcUndoKey-1 DO Files.WriteLReal(M.R,E.undo[i]); END;
+		Files.WriteInt32(M.R,CalcMem);
+		FOR i:= 0 TO CalcMem-1 DO Files.WriteFloat64(M.R,E.mem[i]); END;
+		Files.WriteInt32(M.R,CalcUndoKey);
+		FOR i:= 0 TO CalcUndoKey-1 DO Files.WriteFloat64(M.R,E.undo[i]); END;
 	ELSIF (M.id = Objects.load) THEN
-		Files.ReadLInt(M.R,len); IF (len > CalcUndoOp) THEN len:= CalcUndoOp; END;
+		Files.ReadInt32(M.R,len); IF (len > CalcUndoOp) THEN len:= CalcUndoOp; END;
 		FOR i:= 0 TO len-1 DO
-			Files.ReadLReal(M.R,E.op[i].value);
-			Files.ReadInt(M.R,E.op[i].factor); Files.ReadInt(M.R,E.op[i].base);
+			Files.ReadFloat64(M.R,E.op[i].value);
+			Files.ReadInt16(M.R,E.op[i].factor); Files.ReadInt16(M.R,E.op[i].base);
 		END;
-		Files.ReadLInt(M.R,len); IF (len > CalcMem) THEN len:= CalcMem; END;
-		FOR i:= 0 TO len-1 DO Files.ReadLReal(M.R,E.mem[i]); END;
-		Files.ReadLInt(M.R,len); IF (len > CalcUndoKey) THEN len:= CalcUndoKey; END;
-		FOR i:= 0 TO len-1 DO Files.ReadLReal(M.R,E.undo[i]); END;
+		Files.ReadInt32(M.R,len); IF (len > CalcMem) THEN len:= CalcMem; END;
+		FOR i:= 0 TO len-1 DO Files.ReadFloat64(M.R,E.mem[i]); END;
+		Files.ReadInt32(M.R,len); IF (len > CalcUndoKey) THEN len:= CalcUndoKey; END;
+		FOR i:= 0 TO len-1 DO Files.ReadFloat64(M.R,E.undo[i]); END;
 	END;
 	Gadgets.objecthandle(E,M);
 END EngineFile;

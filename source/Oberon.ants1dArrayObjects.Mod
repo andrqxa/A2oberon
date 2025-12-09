@@ -209,8 +209,8 @@ VAR
 	BEGIN
 		IF A = NIL THEN Files.WriteBool( R, FALSE )
 		ELSE
-			Files.WriteBool( R, TRUE );  Files.WriteLInt( R, SIGNED32(LEN( A^ )) );
-			FOR i := 0 TO SIGNED32(LEN( A^ )) - 1 DO Files.WriteInt( R, A[i] ) END
+			Files.WriteBool( R, TRUE );  Files.WriteInt32( R, SIGNED32(LEN( A^ )) );
+			FOR i := 0 TO SIGNED32(LEN( A^ )) - 1 DO Files.WriteInt16( R, A[i] ) END
 		END
 	END StoreA;
 
@@ -219,8 +219,8 @@ VAR
 	BEGIN
 		Files.ReadBool( R, bool );
 		IF bool = FALSE THEN RETURN NIL END;
-		Files.ReadLInt( R, maxi );  NEW( A, maxi );
-		FOR i := 0 TO maxi - 1 DO Files.ReadInt( R, A[i] ) END;
+		Files.ReadInt32( R, maxi );  NEW( A, maxi );
+		FOR i := 0 TO maxi - 1 DO Files.ReadInt16( R, A[i] ) END;
 		RETURN A
 	END LoadA;
 
@@ -229,11 +229,11 @@ VAR
 		(*! store Picts as GIF for color preserving or store colors *)
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadLInt( msg.R, w );
-			Files.ReadLInt( msg.R, depth );  obj.A := LoadA( msg.R );  obj.w := w;  obj.depth := depth
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadInt32( msg.R, w );
+			Files.ReadInt32( msg.R, depth );  obj.A := LoadA( msg.R );  obj.w := w;  obj.depth := depth
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteLInt( msg.R, SIGNED32(obj.w) );
-			Files.WriteLInt( msg.R, obj.depth );  StoreA( msg.R, obj.A )
+			Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteInt32( msg.R, SIGNED32(obj.w) );
+			Files.WriteInt32( msg.R, obj.depth );  StoreA( msg.R, obj.A )
 		ELSE vyBase.objecthandle( obj, msg )
 		END
 	END HandleFileMsg;

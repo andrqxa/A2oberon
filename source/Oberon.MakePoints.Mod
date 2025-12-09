@@ -1211,19 +1211,19 @@ BEGIN
 	F := Files.New(Filename);
 	IF F # NIL THEN
 		Files.Set(R, F, 0);
-		Files.WriteInt(R, Tag); Files.WriteInt(R, Version);
-		Files.WriteInt(R, MaxPoint); Files.WriteInt(R, curfig);
-		Files.WriteReal(R, max); Files.WriteReal(R, min);
+		Files.WriteInt16(R, Tag); Files.WriteInt16(R, Version);
+		Files.WriteInt16(R, MaxPoint); Files.WriteInt16(R, curfig);
+		Files.WriteFloat32(R, max); Files.WriteFloat32(R, min);
 		FOR f := 0 TO curfig - 1 DO
 			Files.WriteSet(R, attributes[f]);
-			Files.WriteReal(R, timefactor[f]);
+			Files.WriteFloat32(R, timefactor[f]);
 			FOR p := 0 TO MaxPoint - 1 DO
-				Files.WriteInt(R, SHORT(ENTIER(minint + factor * (figure[f, p].x - min))));
-				Files.WriteInt(R, SHORT(ENTIER(minint + factor * (figure[f, p].y - min))));
-				Files.WriteInt(R, SHORT(ENTIER(minint + factor * (figure[f, p].z - min))));
+				Files.WriteInt16(R, SHORT(ENTIER(minint + factor * (figure[f, p].x - min))));
+				Files.WriteInt16(R, SHORT(ENTIER(minint + factor * (figure[f, p].y - min))));
+				Files.WriteInt16(R, SHORT(ENTIER(minint + factor * (figure[f, p].z - min))));
 			END;
 			FOR p := 0 TO MaxPoint - 1 DO
-				Files.WriteInt(R, move[f, p])
+				Files.WriteInt16(R, move[f, p])
 			END
 		END;
 		Files.Register(F);

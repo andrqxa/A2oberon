@@ -42,17 +42,17 @@ VAR
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  o: tModel );
 	BEGIN
-		Files.WriteInt( R, version );
+		Files.WriteInt16( R, version );
 		(*Store*)
-		Files.WriteLReal( R, o.alpha );  Files.WriteLReal( R, o.lambda )
+		Files.WriteFloat64( R, o.alpha );  Files.WriteFloat64( R, o.lambda )
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  o: tModel );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );
+		Files.ReadInt16( R, version );
 		(*Load*)
-		Files.ReadLReal( R, o.alpha );  Files.ReadLReal( R, o.lambda )
+		Files.ReadFloat64( R, o.alpha );  Files.ReadFloat64( R, o.lambda )
 	END LoadM;
 
 	PROCEDURE OneSweep( s: antsKernel.Kernel;  metropolis: BOOLEAN );

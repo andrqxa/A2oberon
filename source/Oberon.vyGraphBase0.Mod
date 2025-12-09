@@ -1434,11 +1434,11 @@ END StdSignPrinter;
 PROCEDURE StorePattern* (VAR R: Files.Rider;  sgn: tSign);
 BEGIN
 	IF sgn = NIL THEN
-		Files.WriteInt(R, - 1)
+		Files.WriteInt16(R, - 1)
 	ELSE
-		Files.WriteInt(R, sgn.w);
-		Files.WriteInt(R, sgn.h);
-		Files.WriteLInt(R, SIGNED32(sgn.pat));  (*! Is the store of sgn.pat allright*)
+		Files.WriteInt16(R, sgn.w);
+		Files.WriteInt16(R, sgn.h);
+		Files.WriteInt32(R, SIGNED32(sgn.pat));  (*! Is the store of sgn.pat allright*)
 		(*! How could sgn.print be stored?*)
 	END
 END StorePattern;
@@ -1449,12 +1449,12 @@ VAR
 	w: SIGNED16;
 	adr: SIGNED32;
 BEGIN
-	Files.ReadInt(R, w);
+	Files.ReadInt16(R, w);
 	IF w = - 1 THEN RETURN NIL END;
 	NEW(sgn);
 	sgn.w := w;
-	Files.ReadInt(R, sgn.h);
-	Files.ReadLInt(R, adr);
+	Files.ReadInt16(R, sgn.h);
+	Files.ReadInt32(R, adr);
 	sgn.pat := adr;
 	(*! Is the store of sgn.pat allright*)
 	sgn.wDIV2 := sgn.w DIV 2;  sgn.hDIV2 := sgn.h DIV 2;

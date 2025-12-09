@@ -875,7 +875,7 @@ VAR
 
 		PROCEDURE ReadValueIdentifier (VAR value: INTEGER; CONST identifiers: ARRAY OF ARRAY OF CHAR);
 		BEGIN
-			reader.RawNum(value);
+			reader.RawNum32(value);
 		END ReadValueIdentifier;
 
 		PROCEDURE ReadIdentifier(VAR identifier: Identifier);
@@ -890,7 +890,7 @@ VAR
 			WHILE i < LEN(identifier.name) DO
 				identifier.name[i] := -1; INC(i);
 			END;
-			reader.RawHNum (identifier.fingerprint);
+			reader.RawNum64 (identifier.fingerprint);
 		END ReadIdentifier;
 
 		PROCEDURE ReadFixupPattern (VAR pattern: FixupPattern);

@@ -270,7 +270,7 @@ MODULE LeoOutliners IN Oberon; (** portable **)	(* eos  *)
 					LeoPens.WriteWidePen(pen, msg.R);
 					Files.Write(msg.R, pen.mode)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Gadgets.ReadRef(msg.R, pen.lib, obj);
 					IF (obj = NIL) OR ~(obj IS LeoPens.Pen) THEN obj := Gadgets.CreateObject("LeoPens.NewStroker") END;
 					pen.base := obj(LeoPens.Pen);
@@ -454,11 +454,11 @@ MODULE LeoOutliners IN Oberon; (** portable **)	(* eos  *)
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1);
 					Files.Write(msg.R, pen.dir);
-					Files.WriteReal(msg.R, pen.len); Files.WriteReal(msg.R, pen.coff); Files.WriteReal(msg.R, pen.cdist)
+					Files.WriteFloat32(msg.R, pen.len); Files.WriteFloat32(msg.R, pen.coff); Files.WriteFloat32(msg.R, pen.cdist)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Files.Read(msg.R, pen.dir);
-					Files.ReadReal(msg.R, pen.len); Files.ReadReal(msg.R, pen.coff); Files.ReadReal(msg.R, pen.cdist)
+					Files.ReadFloat32(msg.R, pen.len); Files.ReadFloat32(msg.R, pen.coff); Files.ReadFloat32(msg.R, pen.cdist)
 				END
 			END
 		ELSE

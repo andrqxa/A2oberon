@@ -314,16 +314,16 @@ MODULE Watson IN Oberon;	(** portable *)	(** PS/tk  *)
 			Compress.ExtractFile(A.s, mod, R, res);
 			IF res # Compress.Done THEN Texts.Open(T, ""); RETURN END;
 			Files.Set(R, Files.Base(R), 0);
-			Files.ReadInt(R, tag);
+			Files.ReadInt16(R, tag);
 			IF (tag = Documents.Id) OR (tag = 0727H) THEN
 				(* there is a document header -> skip it *)
 				Files.ReadString(R, s);
-				Files.ReadInt(R, x); Files.ReadInt(R, y); Files.ReadInt(R, w); Files.ReadInt(R, h);
+				Files.ReadInt16(R, x); Files.ReadInt16(R, y); Files.ReadInt16(R, w); Files.ReadInt16(R, h);
 				Files.Read(R, ch);
 				IF ch = 0F7X THEN  (* attachment -> skip it *)
 					Files.Read(R, ch);
 					IF ch # 08X THEN Texts.Open(T, ""); RETURN END;
-					Files.ReadLInt( R, len );
+					Files.ReadInt32( R, len );
 					Files.Set(R, Files.Base(R), Files.Pos(R) + len);
 					Files.Read(R, ch);
 				END

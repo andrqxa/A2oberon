@@ -109,13 +109,13 @@ END DoControl; *)
 
 	PROCEDURE Store0( o: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteInt( M.R, 0 );  Files.WriteInt( M.R, o.pos );  Files.WriteInt( M.R, o.digits )
+		Files.WriteInt16( M.R, 0 );  Files.WriteInt16( M.R, o.pos );  Files.WriteInt16( M.R, o.digits )
 	END Store0;
 
 	PROCEDURE Load0( o: tLayer;  VAR M: Objects.FileMsg );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( M.R, version );  Files.ReadInt( M.R, o.pos );  Files.ReadInt( M.R, o.digits )
+		Files.ReadInt16( M.R, version );  Files.ReadInt16( M.R, o.pos );  Files.ReadInt16( M.R, o.digits )
 	END Load0;
 
 	PROCEDURE Copy*( VAR M: Objects.CopyMsg;  src, dest: tLayer );

@@ -1060,11 +1060,11 @@ D the fixed exponent (printed only when D # 0). *)
 	BEGIN
 		Files.Read( R, ch );
 		ASSERT ( ch = 07X );
-		Files.ReadString( R, name );  Files.ReadInt( R, x );  Files.ReadInt( R, y );  Files.ReadInt( R, w );  Files.ReadInt( R, h );
+		Files.ReadString( R, name );  Files.ReadInt16( R, x );  Files.ReadInt16( R, y );  Files.ReadInt16( R, w );  Files.ReadInt16( R, h );
 		Files.Read( R, ch );
 		IF ch = 0F7X THEN  (* skip meta info *)
 			Files.Read( R, ch );
-			IF ch = 08X THEN Files.ReadLInt( R, len );  Files.Set( R, Files.Base( R ), Files.Pos( R ) + len );  Files.Read( R, ch ) END
+			IF ch = 08X THEN Files.ReadInt32( R, len );  Files.Set( R, Files.Base( R ), Files.Pos( R ) + len );  Files.Read( R, ch ) END
 		END
 	END ReadDocHeader;
 

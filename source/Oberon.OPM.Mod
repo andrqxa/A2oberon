@@ -325,11 +325,11 @@ MODULE OPM IN Oberon;	(** non-portable *)
 	END SymWTag;
 
 	PROCEDURE SymWInt*(k: SIGNED32);
-	BEGIN Files.WriteInt(newSymF, SHORT(k))
+	BEGIN Files.WriteInt16(newSymF, SHORT(k))
 	END SymWInt;
 
 	PROCEDURE SymWLInt*(k: SIGNED32);
-	BEGIN Files.WriteLInt(newSymF, k)
+	BEGIN Files.WriteInt32(newSymF, k)
 	END SymWLInt;
 
 	PROCEDURE SymWNum*(i: SIGNED32);
@@ -349,11 +349,11 @@ MODULE OPM IN Oberon;	(** non-portable *)
 	END SymWSet;
 
 	PROCEDURE SymWReal*(r: FLOAT32);
-	BEGIN Files.WriteReal(newSymF, r)
+	BEGIN Files.WriteFloat32(newSymF, r)
 	END SymWReal;
 
 	PROCEDURE SymWLReal*(lr: FLOAT64);
-	BEGIN Files.WriteLReal(newSymF, lr)
+	BEGIN Files.WriteFloat64(newSymF, lr)
 	END SymWLReal;
 
 	PROCEDURE SymWString*(VAR s: ARRAY OF CHAR);
@@ -376,11 +376,11 @@ MODULE OPM IN Oberon;	(** non-portable *)
 	END ObjW;
 
 	PROCEDURE ObjWInt*(i: SIGNED16);
-	BEGIN Files.WriteInt(ObjF, i)
+	BEGIN Files.WriteInt16(ObjF, i)
 	END ObjWInt;
 
 	PROCEDURE ObjWLInt*(i: SIGNED32);
-	BEGIN Files.WriteLInt(ObjF, i)
+	BEGIN Files.WriteInt32(ObjF, i)
 	END ObjWLInt;
 
 	PROCEDURE ObjWBytes*(VAR bytes: ARRAY OF SYSTEM.BYTE; n: SIGNED32);
@@ -397,7 +397,7 @@ MODULE OPM IN Oberon;	(** non-portable *)
 
 	PROCEDURE ObjAllocInt*(): SIGNED32;
 		VAR pos: SIGNED32;
-	BEGIN	pos:=Files.Pos(ObjF); Files.WriteInt(ObjF, SIGNED16(0));
+	BEGIN	pos:=Files.Pos(ObjF); Files.WriteInt16(ObjF, SIGNED16(0));
 		RETURN pos;
 	END ObjAllocInt;
 
@@ -426,7 +426,7 @@ MODULE OPM IN Oberon;	(** non-portable *)
 					zeroCompress := FALSE;
 					Files.Read(R, ch1);
 				END;
-				Files.ReadNum(R, symSize);
+				Files.ReadNum32(R, symSize);
 				IF ch1 = OFnew THEN
 					Files.ReadSet(R, flags);
 					IF exportDefinitions IN flags THEN err(151); done := FALSE END

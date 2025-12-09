@@ -260,10 +260,10 @@ BEGIN
 	Files.WriteNum(M.R, 7);
 	Files.WriteSet(M.R, F.state0); Files.WriteNum(M.R, F.borderW); Files.WriteNum(M.R, F.grid);
 	t := F.dsc; u := 0; WHILE t # NIL DO INC(u); t := t.next END; (* count the entries *)
-	Files.WriteInt(M.R, u); (* write the count *)
+	Files.WriteInt16(M.R, u); (* write the count *)
 	t := F.dsc; WHILE t # NIL DO Gadgets.WriteRef(M.R, F.lib, t); t := t.next END;
 	Gadgets.WriteRef(M.R, F.lib, F.pict);
-	Files.WriteInt(M.R, F.col);
+	Files.WriteInt16(M.R, F.col);
 	Gadgets.framehandle(F, M);
 END StorePanel;
 
@@ -278,11 +278,11 @@ END Explain;
 PROCEDURE LoadPanel*(F: Panel; VAR M: Objects.FileMsg);
 VAR ver, x: SIGNED32; u: SIGNED16; t: Display.Frame; obj: Objects.Object;
 BEGIN
-	Files.ReadNum(M.R, ver);
+	Files.ReadNum32(M.R, ver);
 	IF (ver = 5) OR (ver = 6) OR (ver = 7) THEN
 		Files.ReadSet(M.R, F.state0);
-		Files.ReadNum(M.R, x); F.borderW := SHORT(x); Files.ReadNum(M.R, x); F.grid := SHORT(x);
-		Files.ReadInt(M.R, u); F.dsc := NIL; t := NIL;
+		Files.ReadNum32(M.R, x); F.borderW := SHORT(x); Files.ReadNum32(M.R, x); F.grid := SHORT(x);
+		Files.ReadInt16(M.R, u); F.dsc := NIL; t := NIL;
 		WHILE u > 0 DO
 			Gadgets.ReadRef(M.R, F.lib, obj);
 			IF obj # NIL THEN
@@ -310,15 +310,15 @@ BEGIN
 					Texts.WriteLn(W); Texts.Append(Oberon.Log, W.buf)
 				END
 			END;
-			IF ver = 7 THEN Files.ReadInt(M.R, F.col) END
+			IF ver = 7 THEN Files.ReadInt16(M.R, F.col) END
 		END;
 		Gadgets.framehandle(F, M);
 	ELSIF (ver = 3) OR (ver = 4) THEN
 		Files.ReadSet(M.R, F.state0);
 		IF ver > 3 THEN
-			Files.ReadNum(M.R, x); F.borderW := SHORT(x); F.grid := defaultgrid
+			Files.ReadNum32(M.R, x); F.borderW := SHORT(x); F.grid := defaultgrid
 		END;
-		Files.ReadInt(M.R, u); F.dsc := NIL; t := NIL;
+		Files.ReadInt16(M.R, u); F.dsc := NIL; t := NIL;
 		WHILE u > 0 DO
 			Gadgets.ReadRef(M.R, F.lib, obj);
 			IF obj # NIL THEN

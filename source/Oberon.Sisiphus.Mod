@@ -287,11 +287,11 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN (* store private data here *)
-					Files.WriteInt(M.R, 2); Files.WriteInt(M.R, F.col);
-					Files.WriteInt(M.R, SHORT(F.age MOD N)); Gadgets.framehandle(F, M)
+					Files.WriteInt16(M.R, 2); Files.WriteInt16(M.R, F.col);
+					Files.WriteInt16(M.R, SHORT(F.age MOD N)); Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN (* load private data here *)
-					Files.ReadInt(M.R, x); Files.ReadInt(M.R, F.col);
-					IF x > 1 THEN Files.ReadInt(M.R, y); F.age := y ELSE F.age := 0 END;
+					Files.ReadInt16(M.R, x); Files.ReadInt16(M.R, F.col);
+					IF x > 1 THEN Files.ReadInt16(M.R, y); F.age := y ELSE F.age := 0 END;
 					Gadgets.framehandle(F, M)
 				END
 			END

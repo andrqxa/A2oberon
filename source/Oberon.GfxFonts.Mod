@@ -221,7 +221,7 @@ MODULE GfxFonts IN Oberon; (** non-portable *)	(* eos  *)
 	BEGIN
 		minY := MAX(SIGNED32); maxY := MIN(SIGNED32); base := minY;
 		FOR i := 1 TO 5 DO
-			Files.ReadNum(r, y);
+			Files.ReadNum32(r, y);
 			IF y > maxY THEN maxY := y END;
 			IF y < minY THEN base := minY; minY := y
 			ELSIF y < base THEN base := y
@@ -235,11 +235,11 @@ MODULE GfxFonts IN Oberon; (** non-portable *)	(* eos  *)
 		outline.xmax := MIN(FLOAT32); outline.ymax := MIN(FLOAT32);
 		NEW(px); NEW(py);
 		ntypes := 1;
-		Files.ReadNum(r, nchars);
+		Files.ReadNum32(r, nchars);
 		WHILE nchars > 0 DO
 			DEC(nchars);
-			Files.Read(r, ch); Files.ReadNum(r, x); left := x;
-			Files.ReadNum(r, x);
+			Files.Read(r, ch); Files.ReadNum32(r, x); left := x;
+			Files.ReadNum32(r, x);
 			IF x >= left THEN
 				outline.width[ORD(ch)] := scale * SHORT(x - left)
 			ELSE
@@ -248,10 +248,10 @@ MODULE GfxFonts IN Oberon; (** non-portable *)	(* eos  *)
 			END;
 
 			(* read contour curves *)
-			Files.ReadNum(r, ncontours);
+			Files.ReadNum32(r, ncontours);
 			n := 0;
 			WHILE n < ncontours DO
-				Files.ReadNum(r, type[n]);
+				Files.ReadNum32(r, type[n]);
 				IF type[n] = ntypes THEN
 					Files.ReadString(r, str);
 					ASSERT(str = "Graphic");
@@ -268,10 +268,10 @@ MODULE GfxFonts IN Oberon; (** non-portable *)	(* eos  *)
 				IF closed THEN pred[n] := n; succ[n] := n
 				ELSE pred[n] := -1; succ[n] := -1
 				END;
-				Files.ReadNum(r, m);
+				Files.ReadNum32(r, m);
 				DEC(m);
 				FOR i := 0 TO m DO
-					Files.ReadNum(r, x); Files.ReadNum(r, y);
+					Files.ReadNum32(r, x); Files.ReadNum32(r, y);
 					px[n, i] := x - left; py[n, i] := y - base
 				END;
 				IF m < 1 THEN
@@ -473,7 +473,7 @@ MODULE GfxFonts IN Oberon; (** non-portable *)	(* eos  *)
 		file := Files.Old(fname);
 		IF file # NIL THEN
 			Files.Set(r, file, 0);
-			Files.ReadInt(r, tag);
+			Files.ReadInt16(r, tag);
 			IF (tag = OldMetaFontTag) OR (tag = MetaFontTag) THEN
 				NEW(outline); LoadOutline(outline, r);
 				RETURN outline
@@ -493,22 +493,22 @@ MODULE GfxFonts IN Oberon; (** non-portable *)	(* eos  *)
 		Files.Read(r, id); Files.Read(r, type);
 		IF (id = Fonts.FontId) & (type = Fonts.font) THEN
 			NEW(rfile);
-			Files.Read(r, ch); Files.Read(r, ch); Files.ReadInt(r, height);
-			Files.ReadInt(r, rfile.xmin); Files.ReadInt(r, rfile.xmax);
-			Files.ReadInt(r, rfile.ymin); Files.ReadInt(r, rfile.ymax);
-			Files.ReadInt(r, runs);
+			Files.Read(r, ch); Files.Read(r, ch); Files.ReadInt16(r, height);
+			Files.ReadInt16(r, rfile.xmin); Files.ReadInt16(r, rfile.xmax);
+			Files.ReadInt16(r, rfile.ymin); Files.ReadInt16(r, rfile.ymax);
+			Files.ReadInt16(r, runs);
 			i := 0;
 			WHILE i < runs DO
-				Files.ReadInt(r, beg[i]); Files.ReadInt(r, end[i]); INC(i)
+				Files.ReadInt16(r, beg[i]); Files.ReadInt16(r, end[i]); INC(i)
 			END;
 			i := 0; size := 0;
 			WHILE i < runs DO
 				j := beg[i];
 				WHILE j < end[i] DO
 					NEW(rfile.char[j]);
-					Files.ReadInt(r, rfile.char[j].dx);
-					Files.ReadInt(r, rfile.char[j].x); Files.ReadInt(r, rfile.char[j].y);
-					Files.ReadInt(r, rfile.char[j].w); Files.ReadInt(r, rfile.char[j].h);
+					Files.ReadInt16(r, rfile.char[j].dx);
+					Files.ReadInt16(r, rfile.char[j].x); Files.ReadInt16(r, rfile.char[j].y);
+					Files.ReadInt16(r, rfile.char[j].w); Files.ReadInt16(r, rfile.char[j].h);
 					size := size + (rfile.char[j].w + 7) DIV 8 * rfile.char[j].h;
 					INC(j)
 				END;

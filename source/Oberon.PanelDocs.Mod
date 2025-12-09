@@ -40,10 +40,10 @@ BEGIN
 	fp := Files.Old(name);
 	IF fp # NIL THEN
 		Files.Set(R, fp, 0);
-		Files.ReadInt(R, i);
+		Files.ReadInt16(R, i);
 		IF (i = Documents.Id) OR (i = 0727H) THEN
 			Files.ReadString(R, s); (* skip over tag *)
-			Files.ReadInt(R, x); Files.ReadInt(R, y); Files.ReadInt(R, VW); Files.ReadInt(R, VH);
+			Files.ReadInt16(R, x); Files.ReadInt16(R, y); Files.ReadInt16(R, VW); Files.ReadInt16(R, VH);
 			Files.Read(R, ch);
 			IF (ch = 0F7X) THEN (* attachments *)
 				Documents.LoadAttachments(R, D.attr, D.link);
@@ -122,8 +122,8 @@ BEGIN
 				Files.Rename(D.name, new, i); (* rename file *)
 
 				Attributes.GetString(D, "Gen", gen);
-				Files.Set(R, f, 0); Files.WriteInt(R, Documents.Id); Files.WriteString(R, gen);
-				Files.WriteInt(R, 0); Files.WriteInt(R, 0); Files.WriteInt(R, P.W); Files.WriteInt(R, P.H);
+				Files.Set(R, f, 0); Files.WriteInt16(R, Documents.Id); Files.WriteString(R, gen);
+				Files.WriteInt16(R, 0); Files.WriteInt16(R, 0); Files.WriteInt16(R, P.W); Files.WriteInt16(R, P.H);
 				IF (D.attr # NIL) OR (D.link # NIL) THEN (* attachments *)
 					Documents.StoreAttachments(R, D.attr, D.link)
 				END;

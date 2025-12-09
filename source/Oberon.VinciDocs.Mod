@@ -45,10 +45,10 @@ MODULE VinciDocs IN Oberon; (** portable *)	(* eos  *)
 			Texts.Open(text, "")
 		ELSE
 			Files.Set(r, file, 0);
-			Files.ReadInt(r, tag);
+			Files.ReadInt16(r, tag);
 			IF tag = Documents.Id THEN
 				Files.ReadString(r, gen);
-				Files.ReadInt(r, x); Files.ReadInt(r, y); Files.ReadInt(r, w); Files.ReadInt(r, h);
+				Files.ReadInt16(r, x); Files.ReadInt16(r, y); Files.ReadInt16(r, w); Files.ReadInt16(r, h);
 				IF gen = "VinciDocs.New" THEN
 					doc.X := x; doc.Y := y; doc.W := w; doc.H := h
 				END;
@@ -75,8 +75,8 @@ MODULE VinciDocs IN Oberon; (** portable *)	(* eos  *)
 			NEW(gframe); VinciGadgets.Init(gframe, text); gframe.body := body;
 			IF pos + len < Files.Length(file) THEN
 				Files.Set(r, file, pos + len);
-				Files.ReadInt(r, gframe.ox); Files.ReadInt(r, gframe.oy); DEC(gframe.oy, gframe.H);
-				Files.ReadReal(r, gframe.scale)
+				Files.ReadInt16(r, gframe.ox); Files.ReadInt16(r, gframe.oy); DEC(gframe.oy, gframe.H);
+				Files.ReadFloat32(r, gframe.scale)
 			END;
 			Documents.Init(doc, gframe)
 		END
@@ -96,9 +96,9 @@ MODULE VinciDocs IN Oberon; (** portable *)	(* eos  *)
 			COPY(doc.name, bak);
 			Strings.Append(bak, ".Bak");
 			Files.Rename(doc.name, bak, res);
-			Files.Set(r, file, 0); Files.WriteInt(r, Documents.Id); Files.WriteString(r, "VinciDocs.New");
-			Files.WriteInt(r, doc.X); Files.WriteInt(r, doc.Y);
-			Files.WriteInt(r, doc.W); Files.WriteInt(r, doc.H);
+			Files.Set(r, file, 0); Files.WriteInt16(r, Documents.Id); Files.WriteString(r, "VinciDocs.New");
+			Files.WriteInt16(r, doc.X); Files.WriteInt16(r, doc.Y);
+			Files.WriteInt16(r, doc.W); Files.WriteInt16(r, doc.H);
 			IF (doc.attr # NIL) OR (doc.link # NIL) THEN
 				Documents.StoreAttachments(r, doc.attr, doc.link)
 			END;
@@ -109,8 +109,8 @@ MODULE VinciDocs IN Oberon; (** portable *)	(* eos  *)
 			IF doc.dsc IS VinciGadgets.Frame THEN
 				frame := doc.dsc(VinciGadgets.Frame);
 				Files.Set(r, file, pos + len);
-				Files.WriteInt(r, frame.ox); Files.WriteInt(r, frame.oy + frame.H);
-				Files.WriteReal(r, frame.scale)
+				Files.WriteInt16(r, frame.ox); Files.WriteInt16(r, frame.oy + frame.H);
+				Files.WriteFloat32(r, frame.scale)
 			END;
 			Files.Register(file)
 		ELSE Texts.WriteString(W, " -- illegal filename")

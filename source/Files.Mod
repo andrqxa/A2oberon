@@ -536,11 +536,11 @@ TYPE
 		PROCEDURE GetEntry*(VAR name: ARRAY OF CHAR; VAR flags: SET; VAR time, date: SIGNED32; VAR size: Size): BOOLEAN;
 		VAR len: SIGNED32;
 		BEGIN
-			ReadNum(r, len);
+			ReadNum32(r, len);
 			IF ~r.eof THEN
 				name[len] := 0X;	(* index check *)
 				r.file.ReadBytes(r, name, 0, len);
-				ReadSet(r, flags); ReadNum(r, time); ReadNum(r, date); ReadSize(r, size);
+				ReadSet(r, flags); ReadNum32(r, time); ReadNum32(r, date); ReadSize(r, size);
 				ASSERT(~r.eof)
 			END;
 			RETURN ~r.eof
@@ -1335,20 +1335,40 @@ BEGIN
 	r.file.Read(r, SYSTEM.VAL(CHAR, x))
 END ReadSInt;
 
+PROCEDURE ReadInt8*(VAR r: Rider; VAR x: SIGNED8);
+BEGIN
+	r.file.Read(r, SYSTEM.VAL(CHAR, x))
+END ReadInt8;
+
 PROCEDURE ReadInt*(VAR r: Rider; VAR x: SIGNED16);
 BEGIN
 	r.file.ReadBytes(r, SYSTEM.VAL(Bytes2, x), 0, 2)
 END ReadInt;
+
+PROCEDURE ReadInt16*(VAR r: Rider; VAR x: SIGNED16);
+BEGIN
+	r.file.ReadBytes(r, SYSTEM.VAL(Bytes2, x), 0, 2)
+END ReadInt16;
 
 PROCEDURE ReadLInt*(VAR r: Rider; VAR x: SIGNED32);
 BEGIN
 	r.file.ReadBytes(r, SYSTEM.VAL(Bytes4, x), 0, 4)
 END ReadLInt;
 
+PROCEDURE ReadInt32*(VAR r: Rider; VAR x: SIGNED32);
+BEGIN
+	r.file.ReadBytes(r, SYSTEM.VAL(Bytes4, x), 0, 4)
+END ReadInt32;
+
 PROCEDURE ReadHInt*(VAR r: Rider; VAR x: SIGNED64);
 BEGIN
 	r.file.ReadBytes(r, SYSTEM.VAL(Bytes8, x), 0, 8)
 END ReadHInt;
+
+PROCEDURE ReadInt64*(VAR r: Rider; VAR x: SIGNED64);
+BEGIN
+	r.file.ReadBytes(r, SYSTEM.VAL(Bytes8, x), 0, 8)
+END ReadInt64;
 
 PROCEDURE ReadSet*(VAR r: Rider; VAR x: SET);
 CONST Size = SIZEOF (SET);
@@ -1373,10 +1393,20 @@ BEGIN
 	r.file.ReadBytes(r, SYSTEM.VAL(Bytes4, x), 0, 4)
 END ReadReal;
 
+PROCEDURE ReadFloat32*(VAR r: Rider; VAR x: FLOAT32);
+BEGIN
+	r.file.ReadBytes(r, SYSTEM.VAL(Bytes4, x), 0, 4)
+END ReadFloat32;
+
 PROCEDURE ReadLReal*(VAR r: Rider; VAR x: FLOAT64);
 BEGIN
 	r.file.ReadBytes(r, SYSTEM.VAL(Bytes8, x), 0, 8)
 END ReadLReal;
+
+PROCEDURE ReadFloat64*(VAR r: Rider; VAR x: FLOAT64);
+BEGIN
+	r.file.ReadBytes(r, SYSTEM.VAL(Bytes8, x), 0, 8)
+END ReadFloat64;
 
 PROCEDURE ReadString*(VAR r: Rider; VAR x: ARRAY OF CHAR);
 VAR i: SIZE; ch: CHAR; f: File;
@@ -1406,6 +1436,30 @@ BEGIN
 	END;
 	x := ASH(LSH(LONG(ORD(ch)), 25), n-25) + y
 END ReadNum;
+
+PROCEDURE ReadNum32*(VAR r: Rider; VAR x: SIGNED32);
+VAR ch: CHAR; n, y: SIGNED32; f: File;
+BEGIN
+	n := 0; y := 0; f := r.file;
+	f.Read(r, ch);
+	WHILE ch >= 80X DO
+		INC(y, LSH(SIGNED32(ORD(ch)) - 128, n)); INC(n, 7);
+		f.Read(r, ch)
+	END;
+	x := ASH(LSH(LONG(ORD(ch)), 25), n-25) + y
+END ReadNum32;
+
+PROCEDURE ReadNum64*(VAR r: Rider; VAR x: SIGNED64);
+VAR ch: CHAR; n, y: SIGNED64; f: File;
+BEGIN
+	n := 0; y := 0; f := r.file;
+	f.Read(r, ch);
+	WHILE ch >= 80X DO
+		INC(y, LSH(SIGNED64(ORD(ch)) - 128, n)); INC(n, 7);
+		f.Read(r, ch)
+	END;
+	x := ASH(LSH(SIGNED64(ORD(ch)), 25), n-25) + y
+END ReadNum64;
 
 PROCEDURE ReadSize*(VAR r: Rider; VAR x: Size);
 VAR ch: CHAR; n, y: Size; f: File;
@@ -1458,20 +1512,40 @@ BEGIN
 	r.file.Write(r, SYSTEM.VAL(CHAR, x))
 END WriteSInt;
 
+PROCEDURE WriteInt8*(VAR r: Rider; x: SIGNED8);
+BEGIN
+	r.file.Write(r, SYSTEM.VAL(CHAR, x))
+END WriteInt8;
+
 PROCEDURE WriteInt*(VAR r: Rider; x: SIGNED16);
 BEGIN
 	r.file.WriteBytes(r, SYSTEM.VAL(Bytes2, x), 0, 2)
 END WriteInt;
+
+PROCEDURE WriteInt16*(VAR r: Rider; x: SIGNED16);
+BEGIN
+	r.file.WriteBytes(r, SYSTEM.VAL(Bytes2, x), 0, 2)
+END WriteInt16;
 
 PROCEDURE WriteLInt*(VAR r: Rider; x: SIGNED32);
 BEGIN
 	r.file.WriteBytes(r, SYSTEM.VAL(Bytes4, x), 0, 4)
 END WriteLInt;
 
+PROCEDURE WriteInt32*(VAR r: Rider; x: SIGNED32);
+BEGIN
+	r.file.WriteBytes(r, SYSTEM.VAL(Bytes4, x), 0, 4)
+END WriteInt32;
+
 PROCEDURE WriteHInt*(VAR r: Rider; x: SIGNED64);
 BEGIN
 	r.file.WriteBytes(r, SYSTEM.VAL(Bytes8, x), 0, 8)
 END WriteHInt;
+
+PROCEDURE WriteInt64*(VAR r: Rider; x: SIGNED64);
+BEGIN
+	r.file.WriteBytes(r, SYSTEM.VAL(Bytes8, x), 0, 8)
+END WriteInt64;
 
 PROCEDURE WriteSet*(VAR r: Rider; x: SET);
 CONST Size = SIZEOF (SET);
@@ -1495,10 +1569,20 @@ BEGIN
 	r.file.WriteBytes(r, SYSTEM.VAL(Bytes4, x), 0, 4)
 END WriteReal;
 
+PROCEDURE WriteFloat32*(VAR r: Rider; x: FLOAT32);
+BEGIN
+	r.file.WriteBytes(r, SYSTEM.VAL(Bytes4, x), 0, 4)
+END WriteFloat32;
+
 PROCEDURE WriteLReal*(VAR r: Rider; x: FLOAT64);
 BEGIN
 	r.file.WriteBytes(r, SYSTEM.VAL(Bytes8, x), 0, 8)
 END WriteLReal;
+
+PROCEDURE WriteFloat64*(VAR r: Rider; x: FLOAT64);
+BEGIN
+	r.file.WriteBytes(r, SYSTEM.VAL(Bytes8, x), 0, 8)
+END WriteFloat64;
 
 PROCEDURE WriteString*(VAR r: Rider; CONST x: ARRAY OF CHAR);
 VAR i: SIZE;
@@ -1689,13 +1773,13 @@ Files.Set
 Files.OpenReader
 Files.OpenWriter
 
-Files.ReadNum
+Files.ReadNum32
 Streams.ReadRawNum
 
-Files.ReadInt
+Files.ReadInt16
 Streams.ReadRawInt
 
-Files.ReadLInt
+Files.ReadInt32
 Streams.ReadRawLInt
 
 Files.ReadString
@@ -1710,7 +1794,7 @@ Streams.Read(
 Files.ReadBool
 Streams.ReadRawBool
 
-Files.WriteInt
+Files.WriteInt16
 Streams.WriteRawInt
 
 Files.Write(

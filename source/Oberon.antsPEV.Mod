@@ -223,7 +223,7 @@ TYPE
 
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.A := objsub( antsArrayObjects.tINTEGERObject ) END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.Ev := objsub( antsArrayObjects.tINTEGERObject ) END;
@@ -233,12 +233,12 @@ TYPE
 			IF objsub # NIL THEN obj.V := objsub( antsArrayObjects.tINTEGERObject ) END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.Aorig := objsub( antsArrayObjects.tINTEGERObject ) END;
-			Files.ReadLInt( msg.R, c); obj.w := c;  Files.ReadLInt( msg.R, c); obj.h := c;
+			Files.ReadInt32( msg.R, c); obj.w := c;  Files.ReadInt32( msg.R, c); obj.h := c;
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.A );
+			Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.A );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.Ev );  Gadgets.WriteRef( msg.R, obj.lib, obj.Eh );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.V );  Gadgets.WriteRef( msg.R, obj.lib, obj.Aorig );
-			Files.WriteLInt( msg.R, SIGNED32(obj.w) );  Files.WriteLInt( msg.R, SIGNED32(obj.h) )
+			Files.WriteInt32( msg.R, SIGNED32(obj.w) );  Files.WriteInt32( msg.R, SIGNED32(obj.h) )
 		ELSE vyBase.objecthandle( obj, msg )
 		END
 	END HandleFileMsg;

@@ -157,9 +157,9 @@ END CloneCard;
 
 PROCEDURE WriteCard*(VAR R: Files.Rider; card: Card);
 BEGIN
-	IF card = NIL THEN Files.WriteInt(R, -1)
+	IF card = NIL THEN Files.WriteInt16(R, -1)
 	ELSE
-		Files.WriteInt(R, card.suit); Files.WriteInt(R, card.nr);
+		Files.WriteInt16(R, card.suit); Files.WriteInt16(R, card.nr);
 		Files.WriteBool(R, card.visible)
 	END
 END WriteCard;
@@ -167,10 +167,10 @@ END WriteCard;
 PROCEDURE ReadCard*(VAR R: Files.Rider; VAR card: Card);
 VAR suit, nr: SIGNED16; vis: BOOLEAN;
 BEGIN
-	Files.ReadInt(R, suit);
+	Files.ReadInt16(R, suit);
 	IF suit = -1 THEN card:= NIL
 	ELSE
-		Files.ReadInt(R, nr); Files.ReadBool(R, vis);
+		Files.ReadInt16(R, nr); Files.ReadBool(R, vis);
 		card:= NewCard(suit,nr, vis)
 	END
 END ReadCard;
@@ -346,11 +346,11 @@ BEGIN
 					c:= S.tail.prev;
 					WHILE c # S.tail DO WriteCard(M.R, c); c:= c.prev END;
 					WriteCard(M.R, NIL);	(* sentinell *)
-					Files.WriteInt(M.R, S.bgNr);
+					Files.WriteInt16(M.R, S.bgNr);
 					Gadgets.framehandle(S, M)
 				ELSIF M.id = Objects.load THEN
 					REPEAT ReadCard(M.R, c); AppendCard(S.tail, c) UNTIL c = NIL;
-					Files.ReadInt(M.R, S.bgNr);
+					Files.ReadInt16(M.R, S.bgNr);
 					Gadgets.framehandle(S, M)
 				END
 			END

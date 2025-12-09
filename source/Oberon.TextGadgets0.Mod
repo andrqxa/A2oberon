@@ -2045,28 +2045,28 @@ END CopyFrame;
 PROCEDURE StoreFrame(F: Frame; VAR M: Objects.FileMsg);
 BEGIN
 	Files.WriteNum(M.R, Version);
-	Files.WriteSet(M.R, F.state0); Files.WriteLInt(M.R, F.org);
-	Files.WriteInt(M.R, F.left); Files.WriteInt(M.R, F.right); Files.WriteInt(M.R, F.bottom); Files.WriteInt(M.R, F.top);
+	Files.WriteSet(M.R, F.state0); Files.WriteInt32(M.R, F.org);
+	Files.WriteInt16(M.R, F.left); Files.WriteInt16(M.R, F.right); Files.WriteInt16(M.R, F.bottom); Files.WriteInt16(M.R, F.top);
 	Gadgets.WriteRef(M.R, F.lib, F.text);
-	Files.WriteInt(M.R, F.col);
-	Files.WriteInt(M.R,F.linespacing); Files.WriteInt(M.R,F.asr); Files.WriteInt(M.R,F.dsr); Files.WriteInt(M.R,F.h); Files.WriteInt(M.R,F.boxdsr);
+	Files.WriteInt16(M.R, F.col);
+	Files.WriteInt16(M.R,F.linespacing); Files.WriteInt16(M.R,F.asr); Files.WriteInt16(M.R,F.dsr); Files.WriteInt16(M.R,F.h); Files.WriteInt16(M.R,F.boxdsr);
 	Gadgets.framehandle(F, M)
 END StoreFrame;
 
 PROCEDURE LoadFrame(F: Frame; VAR M: Objects.FileMsg);
 VAR ver: SIGNED32; obj: Objects.Object;
 BEGIN
-	Files.ReadNum(M.R, ver);
+	Files.ReadNum32(M.R, ver);
 	IF (ver # 3) & (ver # 4) & (ver # 5) THEN HALT(99) END;
-	Files.ReadSet(M.R, F.state0); Files.ReadLInt(M.R, F.org);
-	Files.ReadInt(M.R, F.left); Files.ReadInt(M.R, F.right); Files.ReadInt(M.R, F.bottom); Files.ReadInt(M.R, F.top);
+	Files.ReadSet(M.R, F.state0); Files.ReadInt32(M.R, F.org);
+	Files.ReadInt16(M.R, F.left); Files.ReadInt16(M.R, F.right); Files.ReadInt16(M.R, F.bottom); Files.ReadInt16(M.R, F.top);
 	Gadgets.ReadRef(M.R, F.lib, obj);
 	IF (obj # NIL) & (obj IS Texts.Text) THEN
 		F.text := obj(Texts.Text);
 		IF F.org > F.text.len THEN F.org := 0 END
 	END;
-	IF ver IN {4,5} THEN Files.ReadInt(M.R, F.col) END;
-	IF ver = 5 THEN Files.ReadInt(M.R,F.linespacing); Files.ReadInt(M.R,F.asr); Files.ReadInt(M.R,F.dsr); Files.ReadInt(M.R,F.h);  Files.ReadInt(M.R,F.boxdsr);
+	IF ver IN {4,5} THEN Files.ReadInt16(M.R, F.col) END;
+	IF ver = 5 THEN Files.ReadInt16(M.R,F.linespacing); Files.ReadInt16(M.R,F.asr); Files.ReadInt16(M.R,F.dsr); Files.ReadInt16(M.R,F.h);  Files.ReadInt16(M.R,F.boxdsr);
 	ELSE F.linespacing:=120; F.asr:=10; F.dsr:=3; F.h:=13; F.boxdsr:=3;  (*old default values*)
 	END;
 	IF F.col < 0 THEN F.col := Display3.textbackC END;

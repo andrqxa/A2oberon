@@ -67,7 +67,7 @@ END StorePanel;
 PROCEDURE LoadPanel*(F: Panel; VAR M: Objects.FileMsg);
 VAR ver: SIGNED32; e: LP0.Element;
 BEGIN
-	Files.ReadNum(M.R, ver);
+	Files.ReadNum32(M.R, ver);
 	IF (ver = 1) THEN LoadText(F.layout, M.R)
 	ELSE HALT(99)
 	END;

@@ -113,7 +113,7 @@ TYPE
 		PROCEDURE DateTime*( VAR x: Dates.DateTime );
 		VAR d, t: SIGNED32;
 		BEGIN
-			IF ReaderAvailable() THEN RawNum( d );  RawNum( t );  x := Dates.OberonToDateTime( d, t ) ELSE HALT( 1000 ) END
+			IF ReaderAvailable() THEN RawNum32( d );  RawNum32( t );  x := Dates.OberonToDateTime( d, t ) ELSE HALT( 1000 ) END
 		END DateTime;
 
 	(** Reads an integer number. *)

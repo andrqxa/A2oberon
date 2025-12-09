@@ -42,10 +42,10 @@ BEGIN
 		F := Files.Old(D.name);
 		IF F # NIL THEN
 			Files.Set(R, F, 0);
-			Files.ReadInt(R, tag);
+			Files.ReadInt16(R, tag);
 			IF tag = Documents.Id THEN
 				Files.ReadString(R, name);
-				Files.ReadInt(R, x); Files.ReadInt(R, y); Files.ReadInt(R, w); Files.ReadInt(R, h);
+				Files.ReadInt16(R, x); Files.ReadInt16(R, y); Files.ReadInt16(R, w); Files.ReadInt16(R, h);
 
 				Files.Read(R, ch);
 				IF ch = 0F7X THEN (* attachments *)
@@ -57,7 +57,7 @@ BEGIN
 				ELSE
 					Files.Set(R, F, Files.Pos(R)-1)
 				END;
-				Files.ReadInt(R, col)
+				Files.ReadInt16(R, col)
 			END
 		ELSE (* COPY("DefaultName", D.name) *)
 		END;
@@ -77,15 +77,15 @@ BEGIN
 		IF F = NIL THEN HALT(99) END;
 
 		Files.Set(R, F, 0);
-		Files.WriteInt(R, Documents.Id); Files.WriteString(R, "DocumentSkeleton.NewDoc");
-		Files.WriteInt(R, D.X); Files.WriteInt(R, D.Y);
-		Files.WriteInt(R, D.W); Files.WriteInt(R, D.H);
+		Files.WriteInt16(R, Documents.Id); Files.WriteString(R, "DocumentSkeleton.NewDoc");
+		Files.WriteInt16(R, D.X); Files.WriteInt16(R, D.Y);
+		Files.WriteInt16(R, D.W); Files.WriteInt16(R, D.H);
 
 		IF (D.attr # NIL) OR (D.link # NIL) THEN (* attachments *)
 			Documents.StoreAttachments(R, D.attr, D.link)
 		END;
 		Attributes.GetInt(obj, "Color", col);
-		Files.WriteInt(R, SHORT(col));
+		Files.WriteInt16(R, SHORT(col));
 		Files.Register(F);
 		Texts.Write(W, 22X); Texts.WriteString(W, D.name); Texts.Write(W, 22X)
 	ELSE Texts.WriteString(W, "[Untitled document]")

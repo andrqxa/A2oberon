@@ -99,9 +99,9 @@ BEGIN
 	Info.bitsPointer := 0;
 
 	Files.Read(R, ch); Files.Read(R, ch); Files.Read(R, ch); (* abstraction, family, variant *)
-	Files.ReadInt(R, height); (* line spacing *)
-	Files.ReadInt(R, minX); Files.ReadInt(R, maxX);
-	Files.ReadInt(R, minY); Files.ReadInt(R, maxY);
+	Files.ReadInt16(R, height); (* line spacing *)
+	Files.ReadInt16(R, minX); Files.ReadInt16(R, maxX);
+	Files.ReadInt16(R, minY); Files.ReadInt16(R, maxY);
 	bitmapH := maxY - minY;
 
 	Info.points := size;
@@ -122,10 +122,10 @@ BEGIN
 	Info.pitchAndFamily := CHR(1 (* variable pitch *) + 0 (* FF_DONTCARE *));
 	k := 0;
 	WHILE k < 257 DO CharTab[k].width := 0; CharTab[k].offs := 0; INC(k) END;
-	Files.ReadInt(R, NofRuns);
+	Files.ReadInt16(R, NofRuns);
 	NofBoxes := 0; r := 0;
 	WHILE r # NofRuns DO
-		Files.ReadInt(R, run[r].beg); Files.ReadInt(R, run[r].end);
+		Files.ReadInt16(R, run[r].beg); Files.ReadInt16(R, run[r].end);
 		NofBoxes := NofBoxes + run[r].end - run[r].beg;
 		INC(r)
 	END;
@@ -137,11 +137,11 @@ BEGIN
 	l := 0;
 	maxDX := MIN(SIGNED16); bitmapW := 0;
 	WHILE l # NofBoxes DO
-		Files.ReadInt(R, dx); box[l].dx := dx;
+		Files.ReadInt16(R, dx); box[l].dx := dx;
 		IF maxDX < dx THEN maxDX := dx END;
 		bitmapW := bitmapW + (dx + 7) DIV 8;
-		Files.ReadInt(R, box[l].x); Files.ReadInt(R, box[l].y);
-		Files.ReadInt(R, box[l].w); Files.ReadInt(R, box[l].h);
+		Files.ReadInt16(R, box[l].x); Files.ReadInt16(R, box[l].y);
+		Files.ReadInt16(R, box[l].w); Files.ReadInt16(R, box[l].h);
 		INC(l)
 	END;
 	bitmapW := bitmapW +1 (*dummy character CharTab[256]*) + (-bitmapW) MOD 2;	(* bitmap width must be even *)
@@ -202,30 +202,30 @@ BEGIN
 
 	(* Write FON file *)
 	(* DOS Stub and New Executable header *)
-	FOR i := 0 TO 47 DO Files.WriteLInt(out, C[i]) END;
+	FOR i := 0 TO 47 DO Files.WriteInt32(out, C[i]) END;
 
 	(* Resource Table *)
-	Files.WriteInt(out, 0004H); (* alignment *)
-	Files.WriteInt(out, -32761 (*8007H*)); (* RT_FONTDIR *)
-	Files.WriteInt(out, 0001H); (* 1 FONTDIR resource *)
-	Files.WriteLInt(out, 0); (* 4 bytes reserved *)
-	FontDirStartFix := Files.Pos(out); Files.WriteInt(out, 0000H); (* FONTDIR start, fixup later *)
-	Files.WriteInt(out, 0000H); (* FONTDIR length, fixup later *)
-	Files.WriteInt(out, 0C50H); (* flags *)
-	Files.WriteInt(out, 002CH); (* offset to resource identifier *)
-	Files.WriteLInt(out, 0); (* 4 bytes reserved *)
-	Files.WriteInt(out, -32760 (*8008H*)); (* RT_FONT *)
-	Files.WriteInt(out, 0001H); (* 1 FONT resource *)
-	Files.WriteLInt(out, 0); (* 4 bytes reserved *)
-	FontStartFixup := Files.Pos(out); Files.WriteInt(out, 0000H); (* FONT resource start, fixup later *)
-	Files.WriteInt(out, 0000H); (* FONT length, fixup later *)
-	Files.WriteInt(out, 1C30H); Files.WriteInt(out, -32767 (*8001H*)); (* flags, resource id *)
-	Files.WriteLInt(out, 0); (* 4 bytes reserved *)
-	Files.WriteInt(out, 000H); (* end of resource table *)
+	Files.WriteInt16(out, 0004H); (* alignment *)
+	Files.WriteInt16(out, -32761 (*8007H*)); (* RT_FONTDIR *)
+	Files.WriteInt16(out, 0001H); (* 1 FONTDIR resource *)
+	Files.WriteInt32(out, 0); (* 4 bytes reserved *)
+	FontDirStartFix := Files.Pos(out); Files.WriteInt16(out, 0000H); (* FONTDIR start, fixup later *)
+	Files.WriteInt16(out, 0000H); (* FONTDIR length, fixup later *)
+	Files.WriteInt16(out, 0C50H); (* flags *)
+	Files.WriteInt16(out, 002CH); (* offset to resource identifier *)
+	Files.WriteInt32(out, 0); (* 4 bytes reserved *)
+	Files.WriteInt16(out, -32760 (*8008H*)); (* RT_FONT *)
+	Files.WriteInt16(out, 0001H); (* 1 FONT resource *)
+	Files.WriteInt32(out, 0); (* 4 bytes reserved *)
+	FontStartFixup := Files.Pos(out); Files.WriteInt16(out, 0000H); (* FONT resource start, fixup later *)
+	Files.WriteInt16(out, 0000H); (* FONT length, fixup later *)
+	Files.WriteInt16(out, 1C30H); Files.WriteInt16(out, -32767 (*8001H*)); (* flags, resource id *)
+	Files.WriteInt32(out, 0); (* 4 bytes reserved *)
+	Files.WriteInt16(out, 000H); (* end of resource table *)
 
 	Files.Write(out, 7); s := "FONTDIR"; Files.WriteBytes(out, s, 7);
 	Files.Write(out, 7); s := "FONTRES"; Files.WriteBytes(out, s, 7);
-	Files.WriteLInt(out, 0); (* 4 bytes reserved *)
+	Files.WriteInt32(out, 0); (* 4 bytes reserved *)
 
 	s := "'FONTRES 100,96,96 : ";
 	Append(s, oname);
@@ -234,37 +234,37 @@ BEGIN
 	ASSERT (Files.Pos(out) MOD 16 = 0);
 	(* FONTDIR resource *)
 	FontDirStart := Files.Pos(out);
-	Files.WriteInt(out, 0001); (* 1 resource *)
-	Files.WriteInt(out, 0001); (* font no 1 follows *)
-	Files.WriteInt(out, Info.version);
+	Files.WriteInt16(out, 0001); (* 1 resource *)
+	Files.WriteInt16(out, 0001); (* font no 1 follows *)
+	Files.WriteInt16(out, Info.version);
 	FONTSizeFixup1 := Files.Pos(out);
-	Files.WriteLInt(out, Info.size);
+	Files.WriteInt32(out, Info.size);
 	WriteStringFix(out, Info.copyright, 60);
-	Files.WriteInt(out, Info.type);
-	Files.WriteInt(out, Info.points);
-	Files.WriteInt(out, Info.vertRes);
-	Files.WriteInt(out, Info.horizRes);
-	Files.WriteInt(out, Info.ascent);
-	Files.WriteInt(out, Info.internalLeading);
-	Files.WriteInt(out, Info.externalLeading);
+	Files.WriteInt16(out, Info.type);
+	Files.WriteInt16(out, Info.points);
+	Files.WriteInt16(out, Info.vertRes);
+	Files.WriteInt16(out, Info.horizRes);
+	Files.WriteInt16(out, Info.ascent);
+	Files.WriteInt16(out, Info.internalLeading);
+	Files.WriteInt16(out, Info.externalLeading);
 	Files.Write(out, Info.italic);
 	Files.Write(out, Info.underline);
 	Files.Write(out, Info.strikeOut);
-	Files.WriteInt(out, Info.weight);
+	Files.WriteInt16(out, Info.weight);
 	Files.Write(out, Info.charSet);
-	Files.WriteInt(out, Info.pixWidth);
-	Files.WriteInt(out, Info.pixHeight);
+	Files.WriteInt16(out, Info.pixWidth);
+	Files.WriteInt16(out, Info.pixHeight);
 	Files.Write(out, Info.pitchAndFamily);
-	Files.WriteInt(out, Info.avgWidth);
-	Files.WriteInt(out, Info.maxWidth);
+	Files.WriteInt16(out, Info.avgWidth);
+	Files.WriteInt16(out, Info.maxWidth);
 	Files.Write(out, Info.firstChar);
 	Files.Write(out, Info.lastChar);
 	Files.Write(out, Info.defaultChar);
 	Files.Write(out, Info.breakChar);
-	Files.WriteInt(out, Info.widthBytes);
-	Files.WriteLInt(out, Info.device);
-	FaceFixup1 := Files.Pos(out); Files.WriteLInt(out, Info.face);
-	Files.WriteLInt(out, 0); (* reserved *)
+	Files.WriteInt16(out, Info.widthBytes);
+	Files.WriteInt32(out, Info.device);
+	FaceFixup1 := Files.Pos(out); Files.WriteInt32(out, Info.face);
+	Files.WriteInt32(out, 0); (* reserved *)
 	Files.WriteString(out, "DISPLAY");
 	i := 0; REPEAT Files.Write(out, face[i]); INC(i) UNTIL face[i] = 0X;
 	WHILE Files.Pos(out) MOD 16 # 0 DO Files.Write(out, 0X) END; (* filler bytes *)
@@ -273,64 +273,64 @@ BEGIN
 
 	(* FONT resource *)
 	FontStart := Files.Pos(out);
-	Files.WriteInt(out, Info.version);
+	Files.WriteInt16(out, Info.version);
 	FONTSizeFixup2 := Files.Pos(out);
-	Files.WriteLInt(out, Info.size);
+	Files.WriteInt32(out, Info.size);
 	WriteStringFix(out, Info.copyright, 60);
-	Files.WriteInt(out, Info.type);
-	Files.WriteInt(out, Info.points);
-	Files.WriteInt(out, Info.vertRes);
-	Files.WriteInt(out, Info.horizRes);
-	Files.WriteInt(out, Info.ascent);
-	Files.WriteInt(out, Info.internalLeading);
-	Files.WriteInt(out, Info.externalLeading);
+	Files.WriteInt16(out, Info.type);
+	Files.WriteInt16(out, Info.points);
+	Files.WriteInt16(out, Info.vertRes);
+	Files.WriteInt16(out, Info.horizRes);
+	Files.WriteInt16(out, Info.ascent);
+	Files.WriteInt16(out, Info.internalLeading);
+	Files.WriteInt16(out, Info.externalLeading);
 	Files.Write(out, Info.italic);
 	Files.Write(out, Info.underline);
 	Files.Write(out, Info.strikeOut);
-	Files.WriteInt(out, Info.weight);
+	Files.WriteInt16(out, Info.weight);
 	Files.Write(out, Info.charSet);
-	Files.WriteInt(out, Info.pixWidth);
-	Files.WriteInt(out, Info.pixHeight);
+	Files.WriteInt16(out, Info.pixWidth);
+	Files.WriteInt16(out, Info.pixHeight);
 	Files.Write(out, Info.pitchAndFamily);
-	Files.WriteInt(out, Info.avgWidth);
-	Files.WriteInt(out, Info.maxWidth);
+	Files.WriteInt16(out, Info.avgWidth);
+	Files.WriteInt16(out, Info.maxWidth);
 	Files.Write(out, Info.firstChar);
 	Files.Write(out, Info.lastChar);
 	Files.Write(out, Info.defaultChar);
 	Files.Write(out, Info.breakChar);
-	Files.WriteInt(out, Info.widthBytes);
-	Files.WriteLInt(out, Info.device);
-	FaceFixup2 := Files.Pos(out); Files.WriteLInt(out, Info.face);
-	Files.WriteLInt(out, Info.bitsPointer);
+	Files.WriteInt16(out, Info.widthBytes);
+	Files.WriteInt32(out, Info.device);
+	FaceFixup2 := Files.Pos(out); Files.WriteInt32(out, Info.face);
+	Files.WriteInt32(out, Info.bitsPointer);
 	BitsFixup := Files.Pos(out);
-	Files.WriteLInt(out, Info.bitsOffset);
+	Files.WriteInt32(out, Info.bitsOffset);
 	Files.Write(out, Info.res);
 	mapPos := Files.Pos(out) - FontStart + 257*SIZEOF(CharEntry);
 	FOR i := 0 TO 256 DO
-		Files.WriteInt(out, CharTab[i].width);
-		Files.WriteInt(out, SHORT(CharTab[i].offs + mapPos));
+		Files.WriteInt16(out, CharTab[i].width);
+		Files.WriteInt16(out, SHORT(CharTab[i].offs + mapPos));
 	END;
 	(* character bitmaps *)
-	Files.Set(fix, Files.Base(out), BitsFixup); Files.WriteLInt(fix, Files.Pos(out) - FontStart);
+	Files.Set(fix, Files.Base(out), BitsFixup); Files.WriteInt32(fix, Files.Pos(out) - FontStart);
 	FOR i := 0 TO Info.widthBytes - 1 DO
 		FOR j := 0 TO Info.pixHeight - 1 DO
 			Files.Write(out, map[j, i])
 		END;
 	END;
-	Files.Set(fix, Files.Base(out), FaceFixup1); Files.WriteLInt(fix, Files.Pos(out)-FontStart);
-	Files.Set(fix, Files.Base(out), FaceFixup2); Files.WriteLInt(fix, Files.Pos(out)-FontStart);
+	Files.Set(fix, Files.Base(out), FaceFixup1); Files.WriteInt32(fix, Files.Pos(out)-FontStart);
+	Files.Set(fix, Files.Base(out), FaceFixup2); Files.WriteInt32(fix, Files.Pos(out)-FontStart);
 	i := 0; REPEAT Files.Write(out, face[i]); INC(i) UNTIL face[i] = 0X;
 	Files.Write(out, 0X);
-	Files.Set(fix, Files.Base(out), FONTSizeFixup1); Files.WriteLInt(fix, Files.Pos(out)-FontStart);
-	Files.Set(fix, Files.Base(out), FONTSizeFixup2); Files.WriteLInt(fix, Files.Pos(out)-FontStart);
+	Files.Set(fix, Files.Base(out), FONTSizeFixup1); Files.WriteInt32(fix, Files.Pos(out)-FontStart);
+	Files.Set(fix, Files.Base(out), FONTSizeFixup2); Files.WriteInt32(fix, Files.Pos(out)-FontStart);
 	WHILE Files.Pos(out) MOD 16 # 0 DO Files.Write(out, 0X) END; (* filler bytes *)
 	FontEnd := Files.Pos(out);
 
 	(* fixups in resource table *)
 	Files.Set(fix, Files.Base(out), FontDirStartFix);
-	Files.WriteInt(fix, SHORT(FontDirStart DIV 16)); Files.WriteInt(fix, SHORT((FontDirEnd - FontDirStart) DIV 16));
+	Files.WriteInt16(fix, SHORT(FontDirStart DIV 16)); Files.WriteInt16(fix, SHORT((FontDirEnd - FontDirStart) DIV 16));
 	Files.Set(fix, Files.Base(out), FontStartFixup);
-	Files.WriteInt(fix, SHORT(FontStart DIV 16)); Files.WriteInt(fix, SHORT((FontEnd - FontStart) DIV 16));
+	Files.WriteInt16(fix, SHORT(FontStart DIV 16)); Files.WriteInt16(fix, SHORT((FontEnd - FontStart) DIV 16));
 END Do;
 
 

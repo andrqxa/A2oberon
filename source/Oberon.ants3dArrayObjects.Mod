@@ -267,10 +267,10 @@ VAR
 	BEGIN
 		IF A = NIL THEN Files.WriteBool( R, FALSE )
 		ELSE
-			Files.WriteBool( R, TRUE );  Files.WriteLInt( R, SIGNED32(LEN( A^ )) );  Files.WriteLInt( R, SIGNED32(LEN( A[0] )) );  Files.WriteLInt( R, SIGNED32(LEN( A[0][0] )) );
+			Files.WriteBool( R, TRUE );  Files.WriteInt32( R, SIGNED32(LEN( A^ )) );  Files.WriteInt32( R, SIGNED32(LEN( A[0] )) );  Files.WriteInt32( R, SIGNED32(LEN( A[0][0] )) );
 			FOR l := 0 TO LEN( A^ ) - 1 DO
 				FOR i := 0 TO LEN( A[0] ) - 1 DO
-					FOR j := 0 TO LEN( A[0, 0] ) - 1 DO Files.WriteInt( R, A[l][i][j] ) END
+					FOR j := 0 TO LEN( A[0, 0] ) - 1 DO Files.WriteInt16( R, A[l][i][j] ) END
 				END
 			END;
 		END
@@ -281,11 +281,11 @@ VAR
 	BEGIN
 		Files.ReadBool( R, bool );
 		IF bool = FALSE THEN RETURN NIL END;
-		Files.ReadLInt( R, maxl );  Files.ReadLInt( R, maxi );  Files.ReadLInt( R, maxj );  A := NewArray( maxj, maxi, maxl );
+		Files.ReadInt32( R, maxl );  Files.ReadInt32( R, maxi );  Files.ReadInt32( R, maxj );  A := NewArray( maxj, maxi, maxl );
 		FOR l := 0 TO maxl - 1 DO
 			FOR i := 0 TO maxi - 1 DO
 			(*NEW(A[i], maxj);*)
-				FOR j := 0 TO maxj - 1 DO Files.ReadInt( R, A[l][i][j] ) END
+				FOR j := 0 TO maxj - 1 DO Files.ReadInt16( R, A[l][i][j] ) END
 			END;
 		END;
 		RETURN A
@@ -296,18 +296,18 @@ VAR
 		(*! store Picts as GIF for color preserving or store colors *)
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadLInt( msg.R, w );
-			Files.ReadLInt( msg.R, h );  Files.ReadLInt( msg.R, d );  Files.ReadLInt( msg.R, depth );  obj.A := LoadA( msg.R );
-			obj.w := w;  obj.h := h;  obj.depth := depth;  obj.d := d;  Files.ReadLInt( msg.R, obj.Fd );
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadInt32( msg.R, w );
+			Files.ReadInt32( msg.R, h );  Files.ReadInt32( msg.R, d );  Files.ReadInt32( msg.R, depth );  obj.A := LoadA( msg.R );
+			obj.w := w;  obj.h := h;  obj.depth := depth;  obj.d := d;  Files.ReadInt32( msg.R, obj.Fd );
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN
 				obj.F := objsub( antsArrayObjects.tINTEGERObject );
 				antsArrayObjects.EmbedINTEGERArray( obj.A[obj.Fd], obj.F );
 			END;
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteLInt( msg.R, SIGNED32(obj.w) );
-			Files.WriteLInt( msg.R, SIGNED32(obj.h) );  Files.WriteLInt( msg.R, SIGNED32(obj.d) );  Files.WriteLInt( msg.R, obj.depth );
-			StoreA( msg.R, obj.A );  Files.WriteLInt( msg.R, obj.Fd );  Gadgets.WriteRef( msg.R, obj.lib, obj.F );
+			Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteInt32( msg.R, SIGNED32(obj.w) );
+			Files.WriteInt32( msg.R, SIGNED32(obj.h) );  Files.WriteInt32( msg.R, SIGNED32(obj.d) );  Files.WriteInt32( msg.R, obj.depth );
+			StoreA( msg.R, obj.A );  Files.WriteInt32( msg.R, obj.Fd );  Gadgets.WriteRef( msg.R, obj.lib, obj.F );
 		ELSE vyBase.objecthandle( obj, msg )
 		END
 	END HandleFileMsg;

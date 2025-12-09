@@ -397,9 +397,9 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteInt(M.R, C.nrCards); Cards.StackHandler(C, M)
+					Files.WriteInt16(M.R, C.nrCards); Cards.StackHandler(C, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadInt(M.R, C.nrCards); Cards.StackHandler(C, M)
+					Files.ReadInt16(M.R, C.nrCards); Cards.StackHandler(C, M)
 				END
 			END
 		ELSIF M IS Objects.CopyMsg THEN
@@ -488,10 +488,10 @@ BEGIN
 
 	F:= Files.Old(D.name);
 	IF F # NIL THEN
-		Files.Set(R, F, 0); Files.ReadInt(R, tag);
+		Files.Set(R, F, 0); Files.ReadInt16(R, tag);
 		IF tag = Documents.Id THEN
 			Files.ReadString(R, name);	(* skip over generator name *)
-			Files.ReadInt(R, D.X); Files.ReadInt(R, D.Y); Files.ReadInt(R, D.W); Files.ReadInt(R, D.H);
+			Files.ReadInt16(R, D.X); Files.ReadInt16(R, D.Y); Files.ReadInt16(R, D.W); Files.ReadInt16(R, D.H);
 			Files.Read(R, ch);
 			IF ch = Objects.LibBlockId THEN
 				NEW(lib); Objects.OpenLibrary(lib); Objects.LoadLibrary(lib, F, Files.Pos(R), len);
@@ -560,8 +560,8 @@ BEGIN
 			NEW(B.lib); Objects.OpenLibrary(B.lib); obj.handle(obj, B);
 
 			F:= Files.New(D.name); Files.Set(R, F, 0);
-			Files.WriteInt(R, Documents.Id); Files.WriteString(R, "Freecell.NewDoc");
-			Files.WriteInt(R, D.X); Files.WriteInt(R, D.Y); Files.WriteInt(R, D.W); Files.WriteInt(R, D.H);
+			Files.WriteInt16(R, Documents.Id); Files.WriteString(R, "Freecell.NewDoc");
+			Files.WriteInt16(R, D.X); Files.WriteInt16(R, D.Y); Files.WriteInt16(R, D.W); Files.WriteInt16(R, D.H);
 			Objects.StoreLibrary(B.lib, F, Files.Pos(R), len);
 
 			Files.Register(F)

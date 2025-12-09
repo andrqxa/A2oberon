@@ -609,7 +609,7 @@ BEGIN
 		ELSIF M IS  Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver # VersionNo THEN Texts.WriteString(W, "  cannot read nameplate"); Texts.WriteLn(W); HALT(99)
 					END;
 					Files.ReadString(M.R, F.val);

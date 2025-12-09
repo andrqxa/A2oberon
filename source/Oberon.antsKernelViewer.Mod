@@ -67,13 +67,13 @@ TYPE
 
 	PROCEDURE StoreL( VAR R: Files.Rider;  L: tLayer );
 	BEGIN
-		Files.WriteInt( R, 0 );  Gadgets.WriteRef( R, L.lib, L.kernel )
+		Files.WriteInt16( R, 0 );  Gadgets.WriteRef( R, L.lib, L.kernel )
 	END StoreL;
 
 	PROCEDURE LoadL( VAR R: Files.Rider;  n: tLayer );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Gadgets.ReadRef( R, n.lib, objsub );
+		Files.ReadInt16( R, version );  Gadgets.ReadRef( R, n.lib, objsub );
 		IF objsub # NIL THEN n.kernel := objsub( antsKernel.Kernel ) END
 	END LoadL;
 

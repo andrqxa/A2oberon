@@ -353,26 +353,26 @@ VAR
 	PROCEDURE WriteArray( VAR R: Files.Rider;  VAR A: ARRAY OF FLOAT64 );
 	VAR i: SIZE;
 	BEGIN
-		Files.WriteLInt( R, SIGNED32(LEN( A )) );  aM.launch;
-		FOR i := 0 TO LEN( A ) - 1 DO Files.WriteLReal( R, A[i] ) END
+		Files.WriteInt32( R, SIGNED32(LEN( A )) );  aM.launch;
+		FOR i := 0 TO LEN( A ) - 1 DO Files.WriteFloat64( R, A[i] ) END
 	END WriteArray;
 
 	PROCEDURE ReadArray( VAR R: Files.Rider;  VAR A: ARRAY OF FLOAT64 );
 	VAR i, len: SIGNED32;
 	BEGIN
-		Files.ReadLInt( R, len );
-		FOR i := 0 TO len - 1 DO Files.ReadLReal( R, A[i] ) END
+		Files.ReadInt32( R, len );
+		FOR i := 0 TO len - 1 DO Files.ReadFloat64( R, A[i] ) END
 	END ReadArray;
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	BEGIN
-		Files.WriteInt( R, 0 );  WriteArray( R, s.a )
+		Files.WriteInt16( R, 0 );  WriteArray( R, s.a )
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  ReadArray( R, s.a )
+		Files.ReadInt16( R, version );  ReadArray( R, s.a )
 	END LoadM;
 
 	PROCEDURE ArrayHandleAttribute( VAR M: Objects.AttrMsg;  prefix: ARRAY OF CHAR;  VAR array: ARRAY OF FLOAT64 ): BOOLEAN;

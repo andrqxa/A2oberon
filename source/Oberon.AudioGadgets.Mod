@@ -237,21 +237,21 @@ MODULE AudioGadgets IN Oberon;	(** portable *) (* EJZ,  *)
 				WITH M: Objects.FileMsg DO
 					Gadgets.framehandle(F, M);
 					IF M.id = Objects.store THEN
-						Files.WriteLInt(M.R, F.val);
-						Files.WriteInt(M.R, F.digits);
-						Files.WriteInt(M.R, F.backCol);
-						Files.WriteInt(M.R, F.digiCol);
-						Files.WriteInt(M.R, F.shadowCol);
-						Files.WriteInt(M.R, F.width);
-						Files.WriteInt(M.R, F.border)
+						Files.WriteInt32(M.R, F.val);
+						Files.WriteInt16(M.R, F.digits);
+						Files.WriteInt16(M.R, F.backCol);
+						Files.WriteInt16(M.R, F.digiCol);
+						Files.WriteInt16(M.R, F.shadowCol);
+						Files.WriteInt16(M.R, F.width);
+						Files.WriteInt16(M.R, F.border)
 					ELSIF M.id = Objects.load THEN
-						Files.ReadLInt(M.R, F.val);
-						Files.ReadInt(M.R, F.digits);
-						Files.ReadInt(M.R, F.backCol);
-						Files.ReadInt(M.R, F.digiCol);
-						Files.ReadInt(M.R, F.shadowCol);
-						Files.ReadInt(M.R, F.width);
-						Files.ReadInt(M.R, F.border)
+						Files.ReadInt32(M.R, F.val);
+						Files.ReadInt16(M.R, F.digits);
+						Files.ReadInt16(M.R, F.backCol);
+						Files.ReadInt16(M.R, F.digiCol);
+						Files.ReadInt16(M.R, F.shadowCol);
+						Files.ReadInt16(M.R, F.width);
+						Files.ReadInt16(M.R, F.border)
 					END
 				END
 			ELSE
@@ -623,21 +623,21 @@ MODULE AudioGadgets IN Oberon;	(** portable *) (* EJZ,  *)
 				WITH M:Objects.FileMsg DO
 					Gadgets.framehandle(F, M);
 					IF M.id = Objects.store THEN
-						Files.WriteInt(M.R, CurVer);
-						Files.WriteInt(M.R, F.tracks);
-						Files.WriteInt(M.R, F.first);
-						Files.WriteInt(M.R, F.val);
-						Files.WriteInt(M.R, F.point);
+						Files.WriteInt16(M.R, CurVer);
+						Files.WriteInt16(M.R, F.tracks);
+						Files.WriteInt16(M.R, F.first);
+						Files.WriteInt16(M.R, F.val);
+						Files.WriteInt16(M.R, F.point);
 						Gadgets.WriteRef(M.R, F.lib, F.tobj)
 					ELSIF M.id = Objects.load THEN
-						Files.ReadInt(M.R, x);
+						Files.ReadInt16(M.R, x);
 						IF x # CurVer THEN
 							HALT(99)
 						END;
-						Files.ReadInt(M.R, F.tracks);
-						Files.ReadInt(M.R, F.first);
-						Files.ReadInt(M.R, F.val);
-						Files.ReadInt(M.R, F.point);
+						Files.ReadInt16(M.R, F.tracks);
+						Files.ReadInt16(M.R, F.first);
+						Files.ReadInt16(M.R, F.val);
+						Files.ReadInt16(M.R, F.point);
 						Gadgets.ReadRef(M.R, F.lib, F.tobj)
 					END
 				END

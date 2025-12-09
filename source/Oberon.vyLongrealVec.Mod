@@ -194,25 +194,25 @@ VAR
 	VAR b: tBuf;  i: index;
 
 	BEGIN
-		Files.WriteLInt( R, SIGNED32(o.nrData) );
+		Files.WriteInt32( R, SIGNED32(o.nrData) );
 		IF o.buf # NIL THEN  (* fof 020625 *)
 			b := o.buf( tBuf )
 		ELSE b := NIL
 		END;
 		WHILE b # NIL DO
 			IF b.usedentries > 0 THEN
-				Files.WriteLInt( R, SIGNED32(b.len) );  Files.WriteLInt( R, SIGNED32(b.usedentries) );  i := 0;
-				WHILE i < b.usedentries DO Files.WriteLReal( R, b.data[i] );  INC( i ) END
+				Files.WriteInt32( R, SIGNED32(b.len) );  Files.WriteInt32( R, SIGNED32(b.usedentries) );  i := 0;
+				WHILE i < b.usedentries DO Files.WriteFloat64( R, b.data[i] );  INC( i ) END
 			END;   (*IF*)
 			IF b.next # NIL THEN b := b.next( tBuf ) ELSE b := NIL END
 		END;   (*WHILE*)
-		Files.WriteLInt( R, 0 )
+		Files.WriteInt32( R, 0 )
 	END Store0;
 
 	PROCEDURE Store0LONGREAL( VAR R: Files.Rider;  o: tLONGREAL );
 
 	BEGIN
-		Files.WriteLReal( R, o.x )
+		Files.WriteFloat64( R, o.x )
 	END Store0LONGREAL;
 
 	PROCEDURE Load0( VAR R: Files.Rider;  o: tVector );
@@ -220,19 +220,19 @@ VAR
 	VAR b: tBuf;  i: index; c: SIGNED32;
 
 	BEGIN
-		Files.ReadLInt( R, c );  o.nrData := c;  Files.ReadLInt( R, c );
+		Files.ReadInt32( R, c );  o.nrData := c;  Files.ReadInt32( R, c );
 		WHILE c # 0 DO
 			b := NewBufs( c );   (* removed -1 fof 020213 *)
-			b.len := c;  Files.ReadLInt( R, c );  b.usedentries := c;  i := 0;
-			WHILE i < c DO Files.ReadLReal( R, b.data[i] );  INC( i ) END;
-			vyBase.ApndChunks( b, o );  Files.ReadLInt( R, c )
+			b.len := c;  Files.ReadInt32( R, c );  b.usedentries := c;  i := 0;
+			WHILE i < c DO Files.ReadFloat64( R, b.data[i] );  INC( i ) END;
+			vyBase.ApndChunks( b, o );  Files.ReadInt32( R, c )
 		END  (*WHILE*)
 	END Load0;
 
 	PROCEDURE Load0LONGREAL( VAR R: Files.Rider;  o: tLONGREAL );
 
 	BEGIN
-		Files.ReadLReal( R, o.x )
+		Files.ReadFloat64( R, o.x )
 	END Load0LONGREAL;
 
 (** Vector allocation *)

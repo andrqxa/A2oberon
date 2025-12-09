@@ -552,12 +552,12 @@ END LoadShapeRef;
 PROCEDURE FileSpaceObj(VAR R: Files.Rider; id: SIGNED16; obj,root: SpaceObj);
 BEGIN
 	IF (id = Objects.store) THEN
-		Files.WriteReal(R,obj.x); Files.WriteReal(R,obj.y);
-		Files.WriteReal(R,obj.x0); Files.WriteReal(R,obj.y0);
+		Files.WriteFloat32(R,obj.x); Files.WriteFloat32(R,obj.y);
+		Files.WriteFloat32(R,obj.x0); Files.WriteFloat32(R,obj.y0);
 		Files.WriteBool(R,obj.alive);
 	ELSIF (id = Objects.load) THEN
-		Files.ReadReal(R,obj.x); Files.ReadReal(R,obj.y);
-		Files.ReadReal(R,obj.x0); Files.ReadReal(R,obj.y0);
+		Files.ReadFloat32(R,obj.x); Files.ReadFloat32(R,obj.y);
+		Files.ReadFloat32(R,obj.x0); Files.ReadFloat32(R,obj.y0);
 		Files.ReadBool(R,obj.alive);
 	END;
 END FileSpaceObj;
@@ -566,9 +566,9 @@ PROCEDURE FileDetonation(VAR R: Files.Rider; id: SIGNED16; obj: Detonation; root
 BEGIN
 	FileSpaceObj(R,id,obj,root);
 	IF (id = Objects.store) THEN
-		Files.WriteInt(R,obj.r0); Files.WriteInt(R,obj.r);
+		Files.WriteInt16(R,obj.r0); Files.WriteInt16(R,obj.r);
 	ELSIF (id = Objects.load) THEN
-		Files.ReadInt(R,obj.r0); Files.ReadInt(R,obj.r);
+		Files.ReadInt16(R,obj.r0); Files.ReadInt16(R,obj.r);
 	END;
 END FileDetonation;
 
@@ -578,30 +578,30 @@ VAR
 BEGIN
 	FileSpaceObj(R,id,obj,root);
 	IF (id = Objects.store) THEN
-		Files.WriteLReal(R,obj.mass); Files.WriteReal(R,obj.rot);
-		Files.WriteReal(R,obj.xvel); Files.WriteReal(R,obj.yvel);
+		Files.WriteFloat64(R,obj.mass); Files.WriteFloat32(R,obj.rot);
+		Files.WriteFloat32(R,obj.xvel); Files.WriteFloat32(R,obj.yvel);
 		StoreShapeRef(R,obj.shape);
-		Files.WriteReal(R,obj.rotvel); Files.WriteInt(R,obj.n0);
-		Files.WriteInt(R,obj.u); Files.WriteInt(R,obj.v);
-		Files.WriteInt(R,obj.w); Files.WriteInt(R,obj.h);
-		j:= LEN(obj.px0^)(SIGNED32); Files.WriteLInt(R,j);
+		Files.WriteFloat32(R,obj.rotvel); Files.WriteInt16(R,obj.n0);
+		Files.WriteInt16(R,obj.u); Files.WriteInt16(R,obj.v);
+		Files.WriteInt16(R,obj.w); Files.WriteInt16(R,obj.h);
+		j:= LEN(obj.px0^)(SIGNED32); Files.WriteInt32(R,j);
 		FOR i:= 0 TO j-1 DO
-			Files.WriteInt(R,obj.px0[i]); Files.WriteInt(R,obj.py0[i]);
-			Files.WriteInt(R,obj.px1[i]); Files.WriteInt(R,obj.py1[i]);
+			Files.WriteInt16(R,obj.px0[i]); Files.WriteInt16(R,obj.py0[i]);
+			Files.WriteInt16(R,obj.px1[i]); Files.WriteInt16(R,obj.py1[i]);
 		END;
 	ELSIF (id = Objects.load) THEN
-		Files.ReadLReal(R,obj.mass); Files.ReadReal(R,obj.rot);
-		Files.ReadReal(R,obj.xvel); Files.ReadReal(R,obj.yvel);
+		Files.ReadFloat64(R,obj.mass); Files.ReadFloat32(R,obj.rot);
+		Files.ReadFloat32(R,obj.xvel); Files.ReadFloat32(R,obj.yvel);
 		LoadShapeRef(R,obj.shape);
-		Files.ReadReal(R,obj.rotvel); Files.ReadInt(R,obj.n0);
-		Files.ReadInt(R,obj.u); Files.ReadInt(R,obj.v);
-		Files.ReadInt(R,obj.w); Files.ReadInt(R,obj.h);
-		Files.ReadLInt(R,j);
+		Files.ReadFloat32(R,obj.rotvel); Files.ReadInt16(R,obj.n0);
+		Files.ReadInt16(R,obj.u); Files.ReadInt16(R,obj.v);
+		Files.ReadInt16(R,obj.w); Files.ReadInt16(R,obj.h);
+		Files.ReadInt32(R,j);
 		NEW(obj.px0,j); NEW(obj.py0,j);
 		NEW(obj.px1,j); NEW(obj.py1,j);
 		FOR i:= 0 TO j-1 DO
-			Files.ReadInt(R,obj.px0[i]); Files.ReadInt(R,obj.py0[i]);
-			Files.ReadInt(R,obj.px1[i]); Files.ReadInt(R,obj.py1[i]);
+			Files.ReadInt16(R,obj.px0[i]); Files.ReadInt16(R,obj.py0[i]);
+			Files.ReadInt16(R,obj.px1[i]); Files.ReadInt16(R,obj.py1[i]);
 		END;
 	END;
 END FileMass;
@@ -610,9 +610,9 @@ PROCEDURE FileFlyingObj(VAR R: Files.Rider; id: SIGNED16; obj: FlyingObj; root: 
 BEGIN
 	FileMass(R,id,obj,root);
 	IF (id = Objects.store) THEN
-		Files.WriteInt(R,obj.bullets);
+		Files.WriteInt16(R,obj.bullets);
 	ELSIF (id = Objects.load) THEN
-		Files.ReadInt(R,obj.bullets);
+		Files.ReadInt16(R,obj.bullets);
 	END;
 END FileFlyingObj;
 
@@ -623,9 +623,9 @@ BEGIN
 	FileMass(R,id,obj,root);
 	IF (id = Objects.store) THEN
 		rpos:= 0; WHILE (root # obj.ship) DO INC(rpos); root:= root.next; END;
-		Files.WriteInt(R,obj.time); Files.WriteInt(R,rpos);
+		Files.WriteInt16(R,obj.time); Files.WriteInt16(R,rpos);
 	ELSIF (id = Objects.load) THEN
-		Files.ReadInt(R,obj.time); Files.ReadInt(R,obj.rpos);
+		Files.ReadInt16(R,obj.time); Files.ReadInt16(R,obj.rpos);
 	END;
 END FileBullet;
 
@@ -637,19 +637,19 @@ BEGIN
 	IF (id = Objects.store) THEN
 		Files.WriteBool(R,obj.thrust0); Files.WriteBool(R,obj.thrust);
 		Files.Write(R,obj.shield0); Files.Write(R,obj.shield);
-		Files.WriteInt(R,obj.shieldval); Files.WriteInt(R,obj.warpval);
+		Files.WriteInt16(R,obj.shieldval); Files.WriteInt16(R,obj.warpval);
 		StoreShapeRef(R,obj.shape0);
 		FOR i:= 0 TO obj.shape0.n-1 DO
-			Files.WriteInt(R,obj.px2[i]); Files.WriteInt(R,obj.py2[i]);
+			Files.WriteInt16(R,obj.px2[i]); Files.WriteInt16(R,obj.py2[i]);
 		END;
 	ELSIF (id = Objects.load) THEN
 		Files.ReadBool(R,obj.thrust0); Files.ReadBool(R,obj.thrust);
 		Files.Read(R,obj.shield0); Files.Read(R,obj.shield);
-		Files.ReadInt(R,obj.shieldval); Files.ReadInt(R,obj.warpval);
+		Files.ReadInt16(R,obj.shieldval); Files.ReadInt16(R,obj.warpval);
 		LoadShapeRef(R,obj.shape0);
 		NEW(obj.px2,shThrShip.n); NEW(obj.py2,shThrShip.n);
 		FOR i:= 0 TO shThrShip.n-1 DO
-			Files.ReadInt(R,obj.px2[i]); Files.ReadInt(R,obj.py2[i]);
+			Files.ReadInt16(R,obj.px2[i]); Files.ReadInt16(R,obj.py2[i]);
 		END;
 	END;
 END FileShip;
@@ -1236,11 +1236,11 @@ BEGIN
 	IF (M.id = Objects.store) THEN
 		obj:= F.objects; rpos:= 0;
 		WHILE (obj # NIL) & (obj # F.ship) DO INC(rpos); obj:= obj.next; END;
-		Files.WriteInt(M.R,rpos);
+		Files.WriteInt16(M.R,rpos);
 		Files.WriteBool(M.R,F.started); Files.WriteBool(M.R,F.paused);
-		Files.WriteInt(M.R,F.ships); Files.WriteInt(M.R,F.ufos);
-		Files.WriteInt(M.R,F.frames); Files.WriteLInt(M.R,F.score);
-		Files.WriteLInt(M.R,F.high0); Files.WriteLInt(M.R,F.high);
+		Files.WriteInt16(M.R,F.ships); Files.WriteInt16(M.R,F.ufos);
+		Files.WriteInt16(M.R,F.frames); Files.WriteInt32(M.R,F.score);
+		Files.WriteInt32(M.R,F.high0); Files.WriteInt32(M.R,F.high);
 		Files.WriteString(M.R,F.line0); Files.WriteString(M.R,F.line);
 		obj:= F.objects;
 		WHILE (obj # NIL) DO
@@ -1262,11 +1262,11 @@ BEGIN
 		END;
 		Files.WriteString(M.R,"$");
 	ELSIF (M.id = Objects.load) THEN
-		Files.ReadInt(M.R,rpos);
+		Files.ReadInt16(M.R,rpos);
 		Files.ReadBool(M.R,F.started); Files.ReadBool(M.R,F.paused);
-		Files.ReadInt(M.R,F.ships); Files.ReadInt(M.R,F.ufos);
-		Files.ReadInt(M.R,F.frames); Files.ReadLInt(M.R,F.score);
-		Files.ReadLInt(M.R,F.high0); Files.ReadLInt(M.R,F.high);
+		Files.ReadInt16(M.R,F.ships); Files.ReadInt16(M.R,F.ufos);
+		Files.ReadInt16(M.R,F.frames); Files.ReadInt32(M.R,F.score);
+		Files.ReadInt32(M.R,F.high0); Files.ReadInt32(M.R,F.high);
 		Files.ReadString(M.R,F.line0); Files.ReadString(M.R,F.line);
 		F.objects:= NIL; obj:= NIL;
 		REPEAT
@@ -1371,9 +1371,9 @@ END StarfieldDisplay;
 PROCEDURE StarfieldFile(F: Starfield; VAR M: FileMsg);
 BEGIN
 	IF (M.id = Objects.store) THEN
-		Files.WriteReal(M.R,F.scaleX); Files.WriteReal(M.R,F.scaleY);
+		Files.WriteFloat32(M.R,F.scaleX); Files.WriteFloat32(M.R,F.scaleY);
 	ELSIF (M.id = Objects.load) THEN
-		Files.ReadReal(M.R,F.scaleX); Files.ReadReal(M.R,F.scaleY);
+		Files.ReadFloat32(M.R,F.scaleX); Files.ReadFloat32(M.R,F.scaleY);
 	END;
 	Panels.PanelHandler(F,M);
 END StarfieldFile;
@@ -1563,12 +1563,12 @@ VAR
 	lib: Objects.Library;
 	R: Files.Rider;
 BEGIN
-	Files.Set(R,F,0); Files.ReadInt(R,tag);
+	Files.Set(R,F,0); Files.ReadInt16(R,tag);
 	IF (tag = Documents.Id) THEN
 		Files.ReadString(R,str);								(* Skip over Generator *)
 		Files.ReadString(R,str);								(* Document Version *)
-		Files.ReadInt(R,D.X); Files.ReadInt(R,D.Y);
-		Files.ReadInt(R,D.W); Files.ReadInt(R,D.H);
+		Files.ReadInt16(R,D.X); Files.ReadInt16(R,D.Y);
+		Files.ReadInt16(R,D.W); Files.ReadInt16(R,D.H);
 		Files.Read(R,id);
 		IF (str # Version) & (str # CompVers) THEN   (* Check Program Version *)
 			Out.String("Unmatching "); Out.String(str); Out.Ln();
@@ -1636,10 +1636,10 @@ BEGIN
 		NEW(B.lib); Objects.OpenLibrary(B.lib); D.dsc.handle(D.dsc,B);
 		Attributes.GetString(D,"Gen",str);
 		F:= Files.New(D.name); Files.Set(R,F,0);
-		Files.WriteInt(R,Documents.Id);
+		Files.WriteInt16(R,Documents.Id);
 		Files.WriteString(R,str); Files.WriteString(R,Version);
-		Files.WriteInt(R,D.X); Files.WriteInt(R,D.Y);
-		Files.WriteInt(R,D.W); Files.WriteInt(R,D.H);
+		Files.WriteInt16(R,D.X); Files.WriteInt16(R,D.Y);
+		Files.WriteInt16(R,D.W); Files.WriteInt16(R,D.H);
 		Objects.StoreLibrary(B.lib,F,Files.Pos(R),len);
 		Files.Register(F); Files.Close(F);
 		Out.Char(22X); Out.String(D.name); Out.Char(22X); Out.Ln();

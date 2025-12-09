@@ -270,13 +270,13 @@ MODULE PSPrinter IN Oberon; (** portable *)	(*UNIX version: JT 11.5.90, RC 2.7.9
 			Files.Read(R, ch); Str(fontR, "% abstraction: "); Int(fontR, ORD(ch));
 			Files.Read(R, ch); Str(fontR, ", family: "); Ch(fontR, ch);
 			Files.Read(R, ch); Str(fontR, ", variant: "); Int(fontR, ORD(ch)); Ln(fontR);
-			Files.ReadInt(R, height); Str(fontR, "% height: "); Int(fontR, height); Ln(fontR); Ln(fontR);
-			Files.ReadInt(R, minX); Files.ReadInt(R, maxX);
-			Files.ReadInt(R, minY); Files.ReadInt(R, maxY);
-			Files.ReadInt(R, nOfRuns);
+			Files.ReadInt16(R, height); Str(fontR, "% height: "); Int(fontR, height); Ln(fontR); Ln(fontR);
+			Files.ReadInt16(R, minX); Files.ReadInt16(R, maxX);
+			Files.ReadInt16(R, minY); Files.ReadInt16(R, maxY);
+			Files.ReadInt16(R, nOfRuns);
 			nOfBoxes := 0; k := 0;
 			WHILE k # nOfRuns DO
-				Files.ReadInt(R, run[k].beg); Files.ReadInt(R, run[k].end);
+				Files.ReadInt16(R, run[k].beg); Files.ReadInt16(R, run[k].end);
 				INC(nOfBoxes, run[k].end - run[k].beg);
 				INC(k)
 			END;
@@ -302,9 +302,9 @@ MODULE PSPrinter IN Oberon; (** portable *)	(*UNIX version: JT 11.5.90, RC 2.7.9
 			WHILE k < nOfRuns DO
 				m := run[k].beg;
 				WHILE m < run[k].end DO
-					Files.ReadInt(R, metrics[m].dx);
-					Files.ReadInt(R, metrics[m].x); Files.ReadInt(R, metrics[m].y);
-					Files.ReadInt(R, metrics[m].w); Files.ReadInt(R, metrics[m].h);
+					Files.ReadInt16(R, metrics[m].dx);
+					Files.ReadInt16(R, metrics[m].x); Files.ReadInt16(R, metrics[m].y);
+					Files.ReadInt16(R, metrics[m].w); Files.ReadInt16(R, metrics[m].h);
 					INC(m);
 				END;
 				INC(k)

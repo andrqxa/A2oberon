@@ -47,14 +47,14 @@ TYPE
 	PROCEDURE StoreParameters( VAR R: Files.Rider;  p: Parameters;  pn: ParameterNames );
 	VAR i: SIZE;
 	BEGIN
-		IF p = NIL THEN Files.WriteLInt( R, 0 )
+		IF p = NIL THEN Files.WriteInt32( R, 0 )
 		ELSE
-			Files.WriteLInt( R, SIGNED32(LEN( p )) );
-			FOR i := 0 TO LEN( p ) - 1 DO Files.WriteLReal( R, p[i] ) END
+			Files.WriteInt32( R, SIGNED32(LEN( p )) );
+			FOR i := 0 TO LEN( p ) - 1 DO Files.WriteFloat64( R, p[i] ) END
 		END;
-		IF pn = NIL THEN Files.WriteLInt( R, 0 )
+		IF pn = NIL THEN Files.WriteInt32( R, 0 )
 		ELSE
-			Files.WriteLInt( R, SIGNED32(LEN( pn )) );
+			Files.WriteInt32( R, SIGNED32(LEN( pn )) );
 			FOR i := 0 TO LEN( pn ) - 1 DO Files.WriteString( R, pn[i] ) END
 		END
 	END StoreParameters;
@@ -62,13 +62,13 @@ TYPE
 	PROCEDURE ReadParameters( VAR R: Files.Rider;  VAR p: Parameters;  VAR pn: ParameterNames );
 	VAR len, i: SIGNED32;
 	BEGIN
-		Files.ReadLInt( R, len );
+		Files.ReadInt32( R, len );
 		IF len = 0 THEN p := NIL
 		ELSE
 			NEW( p, len );
-			FOR i := 0 TO len - 1 DO Files.ReadLReal( R, p[i] ) END
+			FOR i := 0 TO len - 1 DO Files.ReadFloat64( R, p[i] ) END
 		END;
-		Files.ReadLInt( R, len );
+		Files.ReadInt32( R, len );
 		IF len = 0 THEN pn := NIL
 		ELSE
 			NEW( pn, len );
@@ -78,16 +78,16 @@ TYPE
 
 	PROCEDURE Store( VAR R: Files.Rider;  s: tModel );
 	BEGIN
-		Files.WriteInt( R, 2 );   (* version control *)
-		Files.WriteLReal( R, s.coolingTemp );  Files.WriteBool( R, s.synced );  StoreParameters( R, s.par, s.parNames );
+		Files.WriteInt16( R, 2 );   (* version control *)
+		Files.WriteFloat64( R, s.coolingTemp );  Files.WriteBool( R, s.synced );  StoreParameters( R, s.par, s.parNames );
 		Files.WriteBool( R, s.hotupdate )
 	END Store;
 
 	PROCEDURE Load( VAR R: Files.Rider;  s: tModel );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );   (* version control *)
-		Files.ReadLReal( R, s.coolingTemp );  Files.ReadBool( R, s.synced );
+		Files.ReadInt16( R, version );   (* version control *)
+		Files.ReadFloat64( R, s.coolingTemp );  Files.ReadBool( R, s.synced );
 		IF version > 0 THEN ReadParameters( R, s.par, s.parNames ) END;
 		IF version > 1 THEN Files.ReadBool( R, s.hotupdate ) END
 	END Load;

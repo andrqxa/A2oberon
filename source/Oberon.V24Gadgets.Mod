@@ -309,22 +309,22 @@ END Cleanup;
 		END Flush;
 
 	BEGIN
-		Files.ReadLInt(br, adr);  Files.ReadLInt(br, size);
+		Files.ReadInt32(br, adr);  Files.ReadInt32(br, size);
 		Texts.WriteString(W, "HeapAdr ");  Texts.WriteHex(W, adr);
 		Texts.WriteString(W, " HeapSize ");  Texts.WriteInt(W, size, 1);
 		Texts.WriteLn(W);  Texts.Append(Oberon.Log, W.buf);
-		Files.ReadLInt(br, adr);  Files.ReadLInt(br, size);
+		Files.ReadInt32(br, adr);  Files.ReadInt32(br, size);
 		WHILE ~br.eof & (size # 0) DO
 			Texts.WriteString(W, "Adr ");  Texts.WriteHex(W, adr);
 			Texts.WriteString(W, " Size ");  Texts.WriteInt(W, size, 1);
 			i := 0;
 			WHILE ~br.eof & (size # 0) DO
-				Files.ReadLInt(br, x);  buf[i] := x;  INC(i);  DEC(size, 4);
+				Files.ReadInt32(br, x);  buf[i] := x;  INC(i);  DEC(size, 4);
 				IF size MOD 1000 = 0 THEN Texts.Write(W, "."); Texts.Append(Oberon.Log, W.buf) END;
 				IF i = 8 THEN Flush("3") END
 			END;
 			IF i # 0 THEN Flush("3") END;
-			Files.ReadLInt(br, adr);  Files.ReadLInt(br, size);
+			Files.ReadInt32(br, adr);  Files.ReadInt32(br, size);
 			Texts.WriteLn(W);  Texts.Append(Oberon.Log, W.buf)
 		END;
 		Texts.WriteString(W, "Entry ");  Texts.WriteHex(W, adr);

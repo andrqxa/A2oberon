@@ -349,13 +349,13 @@ BEGIN
 		dr.file.Read(dr, tag);
 		CASE tag OF
 			DeltaAddTag: (* add some stuff from delta data *)
-				Files.ReadNum(dr, len);
+				Files.ReadNum32(dr, len);
 				FOR i := 0 TO len-1 DO
 					dr.file.Read(dr, old[oldPos]); INC(oldPos);
 			   END;
 			| DeltaCopyTag: (* copy some stuff from new version *)
-					Files.ReadNum(dr, len);
-				Files.ReadNum(dr, newPos);
+					Files.ReadNum32(dr, len);
+				Files.ReadNum32(dr, newPos);
 				FOR i := 0 TO len - 1 DO
 					old[oldPos] := new[newPos + i]; INC(oldPos);
 				END;
@@ -403,7 +403,7 @@ VAR
 	len: SIGNED32;
 BEGIN
 	f.Set(fr, FormatLen+4+1); (* skip format + flags(SET) + TextTag *)
-	Files.ReadNum(fr, len);
+	Files.ReadNum32(fr, len);
 	RETURN len
 END GetTextLen;
 
@@ -418,12 +418,12 @@ VAR
 	dfn: TFileName;
 BEGIN
 	f.Set(fr, FormatLen+4+1); (* skip format + flags(SET) + TextTag *)
-	Files.ReadNum(fr, len); (* text len *)
+	Files.ReadNum32(fr, len); (* text len *)
 	f.Set(fr, fr.file.Pos(fr)+len+1); (* skip text + DiffTag *)
-	Files.ReadNum(fr, len); (* diff len *)
-	Files.ReadNum(fr, len); (* old text len *)
+	Files.ReadNum32(fr, len); (* diff len *)
+	Files.ReadNum32(fr, len); (* old text len *)
 	fr.file.Read(fr, tag); (* VersionTag *)
-	Files.ReadNum(fr, newestVersion);
+	Files.ReadNum32(fr, newestVersion);
 	RETURN newestVersion
 END GetNewestVersion;
 
@@ -438,16 +438,16 @@ VAR
 	dfn: TFileName;
 BEGIN
 	f.Set(fr, FormatLen+4+1); (* skip format + flags(SET) + TextTag *)
-	Files.ReadNum(fr, len); (* text len *)
+	Files.ReadNum32(fr, len); (* text len *)
 (*	Out.String("GetDiffPos"); Out.Int(n,5); Out.Ln; *)
 	diffPos := fr.file.Pos(fr)+len;
 	LOOP
 		f.Set(fr, diffPos+1); (* skip DiffTag *)
-		Files.ReadNum(fr, diffLen); (* diff len *)
+		Files.ReadNum32(fr, diffLen); (* diff len *)
 		nextDiffPos := fr.file.Pos(fr) + diffLen;
-		Files.ReadNum(fr, len); (* old text len *)
+		Files.ReadNum32(fr, len); (* old text len *)
 		fr.file.Read(fr, tag); (* VersionTag *)
-		Files.ReadNum(fr, version);
+		Files.ReadNum32(fr, version);
 (*	Out.Int(diffPos,10); Out.Int(version, 10); Out.Ln;*)
 		IF version <= n THEN
 			EXIT; (* got it *)
@@ -518,14 +518,14 @@ BEGIN
 		IF tag # DiffTag THEN
 			Out.String("DiffTag expected"); Out.Ln;
 		END;
-		Files.ReadNum(dr, diffLen);
+		Files.ReadNum32(dr, diffLen);
 		diffStart := dr.file.Pos(dr);
-		Files.ReadNum(dr, log.lenOfOld); (* old text len *)
+		Files.ReadNum32(dr, log.lenOfOld); (* old text len *)
 		dr.file.Read(dr, tag); (* VersionTag *)
 		IF tag # VersionTag THEN
 			Out.String("VersionTag expected"); Out.Ln;
 		END;
-		Files.ReadNum(dr, log.versionID);
+		Files.ReadNum32(dr, log.versionID);
 (*		Out.String("GetLog:"); Out.Int(log.versionID, 5);
 		Out.Int(n, 5); Out.Ln;
 *)
@@ -543,18 +543,18 @@ BEGIN
 					DiffTag: (* end of diff reached *)
 						RETURN;
 					| DateTag:
-						Files.ReadNum(dr, num);
+						Files.ReadNum32(dr, num);
 						dr.file.ReadBytes(dr, log.date, 0, num);
 					| AuthorTag:
-						Files.ReadNum(dr, num);
+						Files.ReadNum32(dr, num);
 						dr.file.ReadBytes(dr, log.author, 0, num);
 					| LogTextTag:
-						Files.ReadNum(dr, num);
+						Files.ReadNum32(dr, num);
 						dr.file.ReadBytes(dr, log.logText, 0, num);
 						RETURN;
 					ELSE
 						(* discard and go on *)
-						Files.ReadNum(dr, num);
+						Files.ReadNum32(dr, num);
 						df.Set(dr, dr.file.Pos(dr)+num);
 				END;
 			END;
@@ -579,21 +579,21 @@ BEGIN
 	END;
 	df.Set(dr, FormatLen+4); (* skip format + flags *)
 	dr.file.Read(dr, tag); (* TextTag *)
-	Files.ReadNum(dr, num);
+	Files.ReadNum32(dr, num);
 	df.Set(dr, dr.file.Pos(dr)+num); (* skip text *)
 	LOOP
 		dr.file.Read(dr, tag); (* DiffTag *)
 		IF tag # DiffTag THEN
 			Out.String("DiffTag expected"); Out.Ln;
 		END;
-		Files.ReadNum(dr, diffLen);
+		Files.ReadNum32(dr, diffLen);
 		diffStart := dr.file.Pos(dr);
-		Files.ReadNum(dr, num); (* old text len *)
+		Files.ReadNum32(dr, num); (* old text len *)
 		dr.file.Read(dr, tag); (* VersionTag *)
 		IF tag # VersionTag THEN
 			Out.String("VersionTag expected"); Out.Ln;
 		END;
-		Files.ReadNum(dr, version);
+		Files.ReadNum32(dr, version);
 		IF version > n THEN
 			(* go to next difference *)
 			df.Set(dr, diffStart+diffLen);
@@ -611,7 +611,7 @@ BEGIN
 						dr.eof := TRUE; RETURN;
 					ELSE
 						(* other tag, get next one *)
-						Files.ReadNum(dr, num);
+						Files.ReadNum32(dr, num);
 						df.Set(dr, dr.file.Pos(dr)+num);
 				END;
 			END;
@@ -636,9 +636,9 @@ BEGIN
 	df := Files.Old(dFileName);
 	IF df=NIL THEN RETURN; END;
 	df.Set(dr, 0);
-	Files.ReadInt(dr, nrOfDeltas);
+	Files.ReadInt16(dr, nrOfDeltas);
 	IF n > nrOfDeltas THEN RETURN; END;
-	Files.ReadLInt(dr, fPos);
+	Files.ReadInt32(dr, fPos);
 	REPEAT
 		NEW(bytes, SIZEOF(TLog));
 		dr.file.ReadBytes(dr, bytes^, 0, SIZEOF(TLog));

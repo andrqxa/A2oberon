@@ -61,21 +61,21 @@ BEGIN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
 					len := obj.len;
-					Files.WriteLInt(M.R, obj.len);
+					Files.WriteInt32(M.R, obj.len);
 					Files.Set(R, obj.F, obj.beg);
 					Files.Read(R, ch);
 					WHILE len > 0 DO
 						Files.Write(M.R, ch);
 						Files.Read(R, ch); DEC(len)
 					END;
-					Files.WriteLInt(M.R, 42);
+					Files.WriteInt32(M.R, 42);
 					Gadgets.objecthandle(obj, M)
 				ELSIF M.id = Objects.load THEN
 					obj.F := Files.Base(M.R);
-					Files.ReadLInt(M.R, obj.len);
+					Files.ReadInt32(M.R, obj.len);
 					obj.beg := Files.Pos(M.R);
 					Files.Set(M.R, Files.Base(M.R), obj.beg + obj.len);
-					Files.ReadLInt(M.R, len); ASSERT(len = 42);
+					Files.ReadInt32(M.R, len); ASSERT(len = 42);
 					Gadgets.objecthandle(obj, M)
 				END
 			END
@@ -246,11 +246,11 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN (* store private data here *)
-					Files.WriteInt(M.R, F.col);
+					Files.WriteInt16(M.R, F.col);
 					Files.WriteString(M.R, F.label);
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN (* load private data here *)
-					Files.ReadInt(M.R, F.col);
+					Files.ReadInt16(M.R, F.col);
 					Files.ReadString(M.R, F.label);
 					Gadgets.framehandle(F, M)
 				END

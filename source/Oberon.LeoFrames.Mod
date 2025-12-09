@@ -366,12 +366,12 @@ MODULE LeoFrames IN Oberon; (** portable **)	(* eos  *)
 				Gadgets.framehandle(frame, msg);
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1);
-					Files.WriteInt(msg.R, frame.ox); Files.WriteInt(msg.R, frame.oy); Files.WriteReal(msg.R, frame.scale);
+					Files.WriteInt16(msg.R, frame.ox); Files.WriteInt16(msg.R, frame.oy); Files.WriteFloat32(msg.R, frame.scale);
 					Files.WriteNum(msg.R, frame.col); Files.WriteBool(msg.R, frame.framed)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
-					Files.ReadInt(msg.R, frame.ox); Files.ReadInt(msg.R, frame.oy); Files.ReadReal(msg.R, frame.scale);
-					Files.ReadNum(msg.R, frame.col); Files.ReadBool(msg.R, frame.framed)
+					Files.ReadNum32(msg.R, ver);
+					Files.ReadInt16(msg.R, frame.ox); Files.ReadInt16(msg.R, frame.oy); Files.ReadFloat32(msg.R, frame.scale);
+					Files.ReadNum32(msg.R, frame.col); Files.ReadBool(msg.R, frame.framed)
 				END
 			END
 		ELSE
@@ -409,15 +409,15 @@ MODULE LeoFrames IN Oberon; (** portable **)	(* eos  *)
 		VAR ver: SIGNED32; i: SIGNED16; real: FLOAT32; obj: Objects.Object; cm: Objects.CopyMsg; s: Leonardo.Shape; bool: BOOLEAN;
 	BEGIN
 		(* shape part *)
-		Files.ReadNum(r, ver);
+		Files.ReadNum32(r, ver);
 		ASSERT(ver IN {1, 2}, 110);
 		IF ver = 1 THEN
-			Files.ReadInt(r, i); Files.ReadInt(r, i); Files.ReadInt(r, i); Files.ReadInt(r, i);
-			Files.ReadReal(r, real)
+			Files.ReadInt16(r, i); Files.ReadInt16(r, i); Files.ReadInt16(r, i); Files.ReadInt16(r, i);
+			Files.ReadFloat32(r, real)
 		END;
 
 		(* container part *)
-		Files.ReadNum(r, ver);
+		Files.ReadNum32(r, ver);
 		ASSERT(ver IN {1, 2}, 111);
 		REPEAT
 			Gadgets.ReadRef(r, cont.lib, obj)

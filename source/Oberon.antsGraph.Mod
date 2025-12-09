@@ -112,9 +112,9 @@ END BindIt;
 
 	PROCEDURE StoreNode( VAR R: Files.Rider;  n: tNode );
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteLReal( R, n.x );  Files.WriteLReal( R, n.y );  Files.WriteString( R, n.name );
-		Files.WriteInt( R, n.mode );  Files.WriteBool( R, n.mark );  Files.WriteBool( R, n.selected );  Files.WriteInt( R, n.shape );
-		Files.WriteInt( R, n.col );  Files.WriteInt( R, n.bkCol );  Files.WriteInt( R, n.inDegree );  Files.WriteInt( R, n.outDegree );
+		Files.WriteInt16( R, 0 );  Files.WriteFloat64( R, n.x );  Files.WriteFloat64( R, n.y );  Files.WriteString( R, n.name );
+		Files.WriteInt16( R, n.mode );  Files.WriteBool( R, n.mark );  Files.WriteBool( R, n.selected );  Files.WriteInt16( R, n.shape );
+		Files.WriteInt16( R, n.col );  Files.WriteInt16( R, n.bkCol );  Files.WriteInt16( R, n.inDegree );  Files.WriteInt16( R, n.outDegree );
 		Files.WriteBool( R, n.vis );  Gadgets.WriteRef( R, n.lib, n.next );  Gadgets.WriteRef( R, n.lib, n.nextSelected );
 		Gadgets.WriteRef( R, n.lib, n.firstOutEdge );  Gadgets.WriteRef( R, n.lib, n.firstInEdge )
 	END StoreNode;
@@ -122,9 +122,9 @@ END BindIt;
 	PROCEDURE LoadNode( VAR R: Files.Rider;  n: tNode );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadLReal( R, n.x );  Files.ReadLReal( R, n.y );  Files.ReadString( R, n.name );
-		Files.ReadInt( R, n.mode );  Files.ReadBool( R, n.mark );  Files.ReadBool( R, n.selected );  Files.ReadInt( R, n.shape );
-		Files.ReadInt( R, n.col );  Files.ReadInt( R, n.bkCol );  Files.ReadInt( R, n.inDegree );  Files.ReadInt( R, n.outDegree );
+		Files.ReadInt16( R, version );  Files.ReadFloat64( R, n.x );  Files.ReadFloat64( R, n.y );  Files.ReadString( R, n.name );
+		Files.ReadInt16( R, n.mode );  Files.ReadBool( R, n.mark );  Files.ReadBool( R, n.selected );  Files.ReadInt16( R, n.shape );
+		Files.ReadInt16( R, n.col );  Files.ReadInt16( R, n.bkCol );  Files.ReadInt16( R, n.inDegree );  Files.ReadInt16( R, n.outDegree );
 		Files.ReadBool( R, n.vis );  Gadgets.ReadRef( R, n.lib, objsub );
 		IF (objsub # NIL ) & (objsub IS tNode) THEN n.next := objsub( tNode ) END;
 		Gadgets.ReadRef( R, n.lib, objsub );
@@ -137,14 +137,14 @@ END BindIt;
 
 	PROCEDURE StoreEdge( VAR R: Files.Rider;  n: tEdge );
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteBool( R, n.vis );  Gadgets.WriteRef( R, n.lib, n.from );
+		Files.WriteInt16( R, 0 );  Files.WriteBool( R, n.vis );  Gadgets.WriteRef( R, n.lib, n.from );
 		Gadgets.WriteRef( R, n.lib, n.to );  Gadgets.WriteRef( R, n.lib, n.next )
 	END StoreEdge;
 
 	PROCEDURE LoadEdge( VAR R: Files.Rider;  n: tEdge );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadBool( R, n.vis );  Gadgets.ReadRef( R, n.lib, objsub );
+		Files.ReadInt16( R, version );  Files.ReadBool( R, n.vis );  Gadgets.ReadRef( R, n.lib, objsub );
 		IF (objsub # NIL ) & (objsub IS tNode) THEN n.from := objsub( tNode ) END;
 		Gadgets.ReadRef( R, n.lib, objsub );
 		IF (objsub # NIL ) & (objsub IS tNode) THEN n.to := objsub( tNode ) END;
@@ -154,14 +154,14 @@ END BindIt;
 
 	PROCEDURE StoreGraph( VAR R: Files.Rider;  n: tGraph );
 	BEGIN
-		Files.WriteInt( R, 1 );  Files.WriteString( R, n.fnt );  Gadgets.WriteRef( R, n.lib, n.firstNode );
+		Files.WriteInt16( R, 1 );  Files.WriteString( R, n.fnt );  Gadgets.WriteRef( R, n.lib, n.firstNode );
 		Gadgets.WriteRef( R, n.lib, n.firstEdge );  Files.WriteBool( R, n.shortnames );
 	END StoreGraph;
 
 	PROCEDURE LoadGraph( VAR R: Files.Rider;  n: tGraph );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadString( R, n.fnt );  Gadgets.ReadRef( R, n.lib, objsub );
+		Files.ReadInt16( R, version );  Files.ReadString( R, n.fnt );  Gadgets.ReadRef( R, n.lib, objsub );
 		IF (objsub # NIL ) THEN n.firstNode := objsub( tNode ) END;
 		Gadgets.ReadRef( R, n.lib, objsub );
 		IF (objsub # NIL ) THEN n.firstEdge := objsub( tEdge ) END;

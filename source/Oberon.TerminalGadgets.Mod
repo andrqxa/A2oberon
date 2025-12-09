@@ -950,12 +950,12 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN (* store private data here *)
-					Files.WriteInt(M.R, F.col); Files.WriteInt(M.R, F.textcol);
-					Files.WriteInt(M.R, F.profile); Files.WriteString(M.R, F.fnt.name);
+					Files.WriteInt16(M.R, F.col); Files.WriteInt16(M.R, F.textcol);
+					Files.WriteInt16(M.R, F.profile); Files.WriteString(M.R, F.fnt.name);
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN (* load private data here *)
-					Files.ReadInt(M.R, col); Files.ReadInt(M.R, textcol);
-					Files.ReadInt(M.R, profile); Files.ReadString(M.R, name);
+					Files.ReadInt16(M.R, col); Files.ReadInt16(M.R, textcol);
+					Files.ReadInt16(M.R, profile); Files.ReadString(M.R, name);
 					Open(F, F.handler, F.text, Fonts.This(name));
 					F.col := col; F.textcol := textcol; F.profile := profile;
 					Gadgets.framehandle(F, M)

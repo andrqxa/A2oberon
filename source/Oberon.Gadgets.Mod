@@ -459,24 +459,24 @@ END Atom;
 PROCEDURE WriteRef*(VAR r: Files.Rider; lib: Objects.Library; obj: Objects.Object);
 BEGIN
 	IF obj = NIL THEN
-		Files.WriteInt(r, -1);
+		Files.WriteInt16(r, -1);
 	ELSE
 		IF obj.lib # NIL THEN
 			IF obj.lib # lib THEN
 				IF obj.lib.name = "" THEN (* private library *)
-					Files.WriteInt(r, -1);
+					Files.WriteInt16(r, -1);
 					Texts.WriteString(W, "Warning: Object belonging to private library referenced in ");
 					IF lib.name = "" THEN Texts.WriteString(W, "(private)")
 					ELSE Texts.WriteString(W, lib.name)
 					END;
 					Texts.WriteLn(W); Log;
 				ELSE
-					Files.WriteInt(r, obj.ref);
-					Files.WriteInt(r, Atom(lib, obj.lib.name));
+					Files.WriteInt16(r, obj.ref);
+					Files.WriteInt16(r, Atom(lib, obj.lib.name));
 				END;
 			ELSE
-				Files.WriteInt(r, obj.ref);
-				Files.WriteInt(r, Atom(lib, "")); (* belongs to this library *)
+				Files.WriteInt16(r, obj.ref);
+				Files.WriteInt16(r, Atom(lib, "")); (* belongs to this library *)
 			END;
 			IF obj.lib.name # lib.name THEN
 				IF verbose THEN
@@ -489,7 +489,7 @@ BEGIN
 				END
 			END
 		ELSE
-			Files.WriteInt(r, -1);
+			Files.WriteInt16(r, -1);
 			IF verbose THEN
 				Texts.WriteString(W, "Warning: Object without library referenced in ");
 				IF lib.name = "" THEN Texts.WriteString(W, "(private)")
@@ -505,11 +505,11 @@ END WriteRef;
 PROCEDURE ReadRef*(VAR r: Files.Rider; lib: Objects.Library; VAR obj: Objects.Object);
 VAR i, l: SIGNED16; F: Objects.Library; name: ARRAY 32 OF CHAR;
 BEGIN
-	Files.ReadInt(r, i);
+	Files.ReadInt16(r, i);
 	IF i = -1 THEN
 		obj := NIL;
 	ELSE
-		Files.ReadInt(r, l);
+		Files.ReadInt16(r, l);
 		Objects.GetName(lib.dict, l, name);
 		IF name[0] = 0X THEN F := lib; COPY(lib.name, name); ELSE F := Objects.ThisLibrary(name); END;
 		IF F # NIL THEN
@@ -1229,11 +1229,11 @@ BEGIN
 		IF M IS  Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.load THEN
-					Files.ReadInt(M.R, F.X); Files.ReadInt(M.R, F.Y);
-					Files.ReadInt(M.R, F.W); Files.ReadInt(M.R, F.H);
+					Files.ReadInt16(M.R, F.X); Files.ReadInt16(M.R, F.Y);
+					Files.ReadInt16(M.R, F.W); Files.ReadInt16(M.R, F.H);
 					ReadRef(M.R, F.lib, obj); (* dummy next pointer *)
 					Files.ReadSet(M.R, F.state);
-					Files.ReadInt(M.R, x); (* dummy *)
+					Files.ReadInt16(M.R, x); (* dummy *)
 					IF x # 8367 THEN (* old version *)
 					ELSE  (* x = 2 version with links *)
 						Links.LoadLinks(M.R, F.lib, F.link)
@@ -1244,13 +1244,13 @@ BEGIN
 					Objects.GetName(F.lib.dict, F.ref, name);
 					IF name[0] # 0X THEN NameObj(F, name) END
 				ELSIF M.id = Objects.store THEN
-					Files.WriteInt(M.R, F.X); Files.WriteInt(M.R, F.Y);
-					Files.WriteInt(M.R, F.W); Files.WriteInt(M.R, F.H);
+					Files.WriteInt16(M.R, F.X); Files.WriteInt16(M.R, F.Y);
+					Files.WriteInt16(M.R, F.W); Files.WriteInt16(M.R, F.H);
 					WriteRef(M.R, F.lib, NIL); (* not really needed *)
 					Files.WriteSet(M.R, F.state);
-					IF F.link = NIL THEN Files.WriteInt(M.R, 1); (* write old version *)
+					IF F.link = NIL THEN Files.WriteInt16(M.R, 1); (* write old version *)
 					ELSE
-						Files.WriteInt(M.R, 8367);
+						Files.WriteInt16(M.R, 8367);
 						Links.StoreLinks(M.R, F.lib, F.link)
 					END;
 					WriteRef(M.R, F.lib, F.obj);

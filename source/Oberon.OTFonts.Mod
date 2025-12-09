@@ -101,8 +101,8 @@ MODULE OTFonts IN Oberon;	(** eos  **)
 		Files.Write(r, Fonts.FontId); Files.Write(r, Fonts.font);
 		Files.Write(r, 0X); Files.Write(r, 0X);
 		i := inst.font.hhea.ascender + inst.font.hhea.descender + inst.font.hhea.lineGap;
-		Files.WriteInt(r, SHORT(OTInt.MulDiv(i, inst.yppm, 40H*LONG(inst.font.head.unitsPerEm))));
-		Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0);	(* fix later *)
+		Files.WriteInt16(r, SHORT(OTInt.MulDiv(i, inst.yppm, 40H*LONG(inst.font.head.unitsPerEm))));
+		Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0);	(* fix later *)
 
 		font := inst.font;
 		i := 0; chars := 0; ranges := 0;
@@ -117,17 +117,17 @@ MODULE OTFonts IN Oberon;	(** eos  **)
 				end[ranges] := i; INC(ranges)
 			END
 		UNTIL i = 256;
-		Files.WriteInt(r, ranges);
+		Files.WriteInt16(r, ranges);
 		i := 0;
 		WHILE i < ranges DO
-			Files.WriteInt(r, beg[i]); Files.WriteInt(r, end[i]);
+			Files.WriteInt16(r, beg[i]); Files.WriteInt16(r, end[i]);
 			INC(i)
 		END;
 
 		Files.Set(m, file, Files.Pos(r));	(* open rider for later writing metrics *)
 		i := 0;
 		WHILE i < chars DO
-			Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0);
+			Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0);
 			INC(i)
 		END;
 
@@ -145,9 +145,9 @@ MODULE OTFonts IN Oberon;	(** eos  **)
 				ELSE
 					OType.LoadGlyph(inst, Glyph, no, mode)
 				END;
-				Files.WriteInt(m, Glyph.awx);
-				Files.WriteInt(m, Glyph.hbx); Files.WriteInt(m, Glyph.hby);
-				Files.WriteInt(m, Glyph.rw); Files.WriteInt(m, Glyph.rh);
+				Files.WriteInt16(m, Glyph.awx);
+				Files.WriteInt16(m, Glyph.hbx); Files.WriteInt16(m, Glyph.hby);
+				Files.WriteInt16(m, Glyph.rw); Files.WriteInt16(m, Glyph.rh);
 				IF Glyph.rw * Glyph.rh # 0 THEN
 					IF Glyph.hbx < xmin THEN xmin := Glyph.hbx END;
 					IF Glyph.hby < ymin THEN ymin := Glyph.hby END;
@@ -166,8 +166,8 @@ MODULE OTFonts IN Oberon;	(** eos  **)
 		END;
 
 		Files.Set(r, file, 6);
-		Files.WriteInt(r, xmin); Files.WriteInt(r, xmax);
-		Files.WriteInt(r, ymin); Files.WriteInt(r, ymax);
+		Files.WriteInt16(r, xmin); Files.WriteInt16(r, xmax);
+		Files.WriteInt16(r, ymin); Files.WriteInt16(r, ymax);
 		Files.Register(file)
 	END MakeFont;
 

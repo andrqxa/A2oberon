@@ -382,11 +382,11 @@ MODULE BookDocs IN Oberon;	(** portable *)
 	(* write a tutorial-document-file-header *)
 	PROCEDURE WriteHeader*(VAR R: Files.Rider; x, y, w, h: SIGNED16; ind, pos: SIGNED32; options: SET; iconStr: ARRAY OF CHAR);
 	BEGIN
-		Files.WriteInt(R, Documents.Id);
+		Files.WriteInt16(R, Documents.Id);
 		Files.WriteString(R, "BookDocs.NewDoc");
-		Files.WriteInt(R, x); Files.WriteInt(R, y);
-		Files.WriteInt(R, w); Files.WriteInt(R, h);
-		Files.WriteLInt(R, ind); Files.WriteLInt(R, pos);
+		Files.WriteInt16(R, x); Files.WriteInt16(R, y);
+		Files.WriteInt16(R, w); Files.WriteInt16(R, h);
+		Files.WriteInt32(R, ind); Files.WriteInt32(R, pos);
 		Files.WriteSet(R, options);
 		IF Books.icon IN options THEN
 			Files.WriteString(R, iconStr)
@@ -413,7 +413,7 @@ MODULE BookDocs IN Oberon;	(** portable *)
 			name: ARRAY 2*Books0.nameLen OF CHAR;
 			s: SET;
 	BEGIN
-		Files.ReadInt(R, i);
+		Files.ReadInt16(R, i);
 		IF i # Documents.Id THEN
 			RETURN FALSE
 		END;
@@ -421,9 +421,9 @@ MODULE BookDocs IN Oberon;	(** portable *)
 		IF name # "BookDocs.NewDoc" THEN
 			RETURN FALSE
 		END;
-		Files.ReadInt(R, i); Files.ReadInt(R, i);
-		Files.ReadInt(R, i); Files.ReadInt(R, i);
-		Files.ReadLInt(R, li); Files.ReadLInt(R, li);
+		Files.ReadInt16(R, i); Files.ReadInt16(R, i);
+		Files.ReadInt16(R, i); Files.ReadInt16(R, i);
+		Files.ReadInt32(R, li); Files.ReadInt32(R, li);
 		Files.ReadSet(R, s);
 		Files.ReadString(R, name);
 		RETURN TRUE
@@ -459,9 +459,9 @@ MODULE BookDocs IN Oberon;	(** portable *)
 		IF ~SkipHeader(R) THEN
 			RETURN FALSE
 		END;
-		Files.ReadLInt(R, fix1);
-		Files.ReadLInt(R, fix2);
-		Files.ReadLInt(R, len);
+		Files.ReadInt32(R, fix1);
+		Files.ReadInt32(R, fix2);
+		Files.ReadInt32(R, len);
 		Files.Set(R, F, fix1);
 		Files.Read(R, mode);
 		WHILE mode > Books0.none DO
@@ -469,8 +469,8 @@ MODULE BookDocs IN Oberon;	(** portable *)
 			el.frame := NIL;
 			el.mode := mode;
 			el.book := il;
-			Files.ReadLInt(R, el.pos1);
-			Files.ReadLInt(R, el.pos2);
+			Files.ReadInt32(R, el.pos1);
+			Files.ReadInt32(R, el.pos2);
 			Files.ReadString(R, el.name);
 			el.next := il.extLabels;
 			il.extLabels := el;
@@ -478,7 +478,7 @@ MODULE BookDocs IN Oberon;	(** portable *)
 		END;
 		NEW(il.notes); Texts.Open(il.notes, "");
 		Files.Set(R, F, fix2);
-		Files.ReadLInt(R, len);
+		Files.ReadInt32(R, len);
 		IF len > 0 THEN
 			pos := Files.Pos(R)+1;
 			Texts.Load(il.notes, F, pos, len)
@@ -548,27 +548,27 @@ MODULE BookDocs IN Oberon;	(** portable *)
 		F := Files.Old(D.name);
 		IF F = NIL THEN RETURN FALSE END;
 		Files.Set(R, F, 0);
-		Files.ReadInt(R, tag);
+		Files.ReadInt16(R, tag);
 		IF tag = Documents.Id THEN
 			Files.ReadString(R, name);
-			Files.ReadInt(R, x); Files.ReadInt(R, y);
-			Files.ReadInt(R, w); Files.ReadInt(R, h)
+			Files.ReadInt16(R, x); Files.ReadInt16(R, y);
+			Files.ReadInt16(R, w); Files.ReadInt16(R, h)
 		ELSE
 			RETURN FALSE
 		END;
 		IF (Books.newInd < 0) OR (Books.newPos < 0) THEN
-			Files.ReadLInt(R, Books.newInd); Files.ReadLInt(R, Books.newPos)
+			Files.ReadInt32(R, Books.newInd); Files.ReadInt32(R, Books.newPos)
 		ELSE
-			Files.ReadLInt(R, len); Files.ReadLInt(R, len)
+			Files.ReadInt32(R, len); Files.ReadInt32(R, len)
 		END;
 		Files.ReadSet(R, P.options);
 		Files.ReadString(R, P.iconStr);
 		IF Gadgets.FindPublicObj(P.iconStr) = NIL THEN
 			COPY(defaultIcon, P.iconStr)
 		END;
-		Files.ReadLInt(R, len);
-		Files.ReadLInt(R, len);
-		Files.ReadLInt(R, len);
+		Files.ReadInt32(R, len);
+		Files.ReadInt32(R, len);
+		Files.ReadInt32(R, len);
 		P.X := x; P.Y := y; P.W := w; P.H := h;
 		ind := 0;
 		Files.ReadString(R, name);
@@ -600,7 +600,7 @@ MODULE BookDocs IN Oberon;	(** portable *)
 			HALT(99)
 		END;
 		Books0.loading := P.imps;
-		Files.ReadLInt(R, len);
+		Files.ReadInt32(R, len);
 		WHILE len >= 0 DO
 			NEW(t); NEW(t.text);
 			Texts.Open(t.text, "");
@@ -622,7 +622,7 @@ MODULE BookDocs IN Oberon;	(** portable *)
 				END;
 				Files.Set(R, F, pos+len)
 			END;
-			Files.ReadLInt(R, len)
+			Files.ReadInt32(R, len)
 		END;
 		P.notes := t.text;
 		P.cmds := t.prev.text;

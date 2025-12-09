@@ -192,7 +192,7 @@ TYPE
 	PROCEDURE Load*( R: Streams.Reader;  VAR x: String );
 	VAR len: SIGNED32;
 	BEGIN
-		R.RawNum( len );
+		R.RawNum32( len );
 		IF len < 0 THEN x := NIL
 		ELSIF len = 0 THEN NEW( x, 1 );  x[0] := 0X
 		ELSE NEW( x, len + 1 );  R.RawString( x^ )

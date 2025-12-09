@@ -104,10 +104,10 @@ VAR
 PROCEDURE StoreTick (VAR R: Files.Rider;  t:  Tick);
 BEGIN
 	IF t = NIL THEN
-		Files.WriteInt(R, - 1)
+		Files.WriteInt16(R, - 1)
 	ELSE
-		Files.WriteInt(R, 0);
-		Files.WriteInt(R, t.x);  Files.WriteInt(R, t.y);  Files.WriteInt(R, t.pos);  Files.WriteLReal(R, t.r)
+		Files.WriteInt16(R, 0);
+		Files.WriteInt16(R, t.x);  Files.WriteInt16(R, t.y);  Files.WriteInt16(R, t.pos);  Files.WriteFloat64(R, t.r)
 	END
 END StoreTick;
 
@@ -123,11 +123,11 @@ END StoreTicksQueue;
 PROCEDURE LoadTick (VAR R: Files.Rider;  VAR t: Tick);
 	VAR i: SIGNED16;
 BEGIN
-	Files.ReadInt(R, i);
+	Files.ReadInt16(R, i);
 	IF i = - 1 THEN t := NIL
 	ELSE
 		NEW(t);
-		Files.ReadInt(R, t.x);  Files.ReadInt(R, t.y);  Files.ReadInt(R, t.pos);  Files.ReadLReal(R, t.r)
+		Files.ReadInt16(R, t.x);  Files.ReadInt16(R, t.y);  Files.ReadInt16(R, t.pos);  Files.ReadFloat64(R, t.r)
 	END
 END LoadTick;
 PROCEDURE LoadTicksQueue (VAR R: Files.Rider;  VAR t: Tick);
@@ -144,13 +144,13 @@ END LoadTicksQueue;
 PROCEDURE StoreLabel (VAR R: Files.Rider;  t: Label);
 BEGIN
 	IF t = NIL THEN
-		Files.WriteInt(R, - 1)
+		Files.WriteInt16(R, - 1)
 	ELSE
-		Files.WriteInt(R, 0);
-		Files.WriteInt(R, t.x);  Files.WriteInt(R, t.y);
-		Files.WriteInt(R, t.w);  Files.WriteInt(R, t.h);
-		Files.WriteInt(R, t.dsr);  Files.WriteInt(R, t.pos);
-		Files.WriteLReal(R, t.r);
+		Files.WriteInt16(R, 0);
+		Files.WriteInt16(R, t.x);  Files.WriteInt16(R, t.y);
+		Files.WriteInt16(R, t.w);  Files.WriteInt16(R, t.h);
+		Files.WriteInt16(R, t.dsr);  Files.WriteInt16(R, t.pos);
+		Files.WriteFloat64(R, t.r);
 		Files.WriteString(R, t.s)
 	END
 
@@ -168,14 +168,14 @@ END StoreLabelsQueue;
 PROCEDURE LoadLabel (VAR R: Files.Rider;  VAR t: Label);
 	VAR i: SIGNED16;
 BEGIN
-	Files.ReadInt(R, i);
+	Files.ReadInt16(R, i);
 	IF i = - 1 THEN t := NIL
 	ELSE
 		NEW(t);
-		Files.ReadInt(R, t.x);  Files.ReadInt(R, t.y);
-		Files.ReadInt(R, t.w);  Files.ReadInt(R, t.h);
-		Files.ReadInt(R, t.dsr);  Files.ReadInt(R, t.pos);
-		Files.ReadLReal(R, t.r);
+		Files.ReadInt16(R, t.x);  Files.ReadInt16(R, t.y);
+		Files.ReadInt16(R, t.w);  Files.ReadInt16(R, t.h);
+		Files.ReadInt16(R, t.dsr);  Files.ReadInt16(R, t.pos);
+		Files.ReadFloat64(R, t.r);
 		Files.ReadString(R, t.s)
 	END
 END LoadLabel;
@@ -193,20 +193,20 @@ END LoadLabelsQueue;
 PROCEDURE StoreAxe* (VAR R: Files.Rider;  a: tAxe);
 BEGIN
 	IF a = NIL THEN
-		Files.WriteInt(R, - 1)
+		Files.WriteInt16(R, - 1)
 	ELSE
-		Files.WriteInt(R, 0);
-		Files.WriteInt(R, a.x1);  Files.WriteInt(R, a.y1);  Files.WriteInt(R, a.x2);  Files.WriteInt(R, a.y2);
-		Files.WriteLReal(R, a.r1);  Files.WriteLReal(R, a.r2);  Files.WriteLReal(R, a.r);  Files.WriteLReal(R, a.dr);
-		Files.WriteLReal(R, a.r1x);  Files.WriteLReal(R, a.r1y);  Files.WriteLReal(R, a.r2x);  Files.WriteLReal(R, a.r2y);
-		Files.WriteInt(R, a.X);  Files.WriteInt(R, a.Y);  Files.WriteInt(R, a.W);  Files.WriteInt(R, a.H);
+		Files.WriteInt16(R, 0);
+		Files.WriteInt16(R, a.x1);  Files.WriteInt16(R, a.y1);  Files.WriteInt16(R, a.x2);  Files.WriteInt16(R, a.y2);
+		Files.WriteFloat64(R, a.r1);  Files.WriteFloat64(R, a.r2);  Files.WriteFloat64(R, a.r);  Files.WriteFloat64(R, a.dr);
+		Files.WriteFloat64(R, a.r1x);  Files.WriteFloat64(R, a.r1y);  Files.WriteFloat64(R, a.r2x);  Files.WriteFloat64(R, a.r2y);
+		Files.WriteInt16(R, a.X);  Files.WriteInt16(R, a.Y);  Files.WriteInt16(R, a.W);  Files.WriteInt16(R, a.H);
 		StoreTicksQueue(R, a.TickRoot);
 		StoreLabelsQueue(R, a.LabelRoot);
-		Files.WriteInt(R, a.tdx);  Files.WriteInt(R, a.tdy);
-		Files.WriteInt(R, a.DigitsAfterPoint);
+		Files.WriteInt16(R, a.tdx);  Files.WriteInt16(R, a.tdy);
+		Files.WriteInt16(R, a.DigitsAfterPoint);
 		Files.WriteBool(R, a.Format);
-		Files.WriteInt(R, a.MinorTicks);
-		Files.WriteInt(R, a.Orientation);
+		Files.WriteInt16(R, a.MinorTicks);
+		Files.WriteInt16(R, a.Orientation);
 		Files.WriteBool(R, a.UsePaint2d)
 	END
 END StoreAxe;
@@ -214,21 +214,21 @@ END StoreAxe;
 PROCEDURE LoadAxe* (VAR R: Files.Rider;  VAR a: tAxe);
 	VAR i: SIGNED16;
 BEGIN
-	Files.ReadInt(R, i);
+	Files.ReadInt16(R, i);
 	IF i = - 1 THEN a := NIL
 	ELSE
 		NEW(a);
-		Files.ReadInt(R, a.x1);  Files.ReadInt(R, a.y1);  Files.ReadInt(R, a.x2);  Files.ReadInt(R, a.y2);
-		Files.ReadLReal(R, a.r1);  Files.ReadLReal(R, a.r2);  Files.ReadLReal(R, a.r);  Files.ReadLReal(R, a.dr);
-		Files.ReadLReal(R, a.r1x);  Files.ReadLReal(R, a.r1y);  Files.ReadLReal(R, a.r2x);  Files.ReadLReal(R, a.r2y);
-		Files.ReadInt(R, a.X);  Files.ReadInt(R, a.Y);  Files.ReadInt(R, a.W);  Files.ReadInt(R, a.H);
+		Files.ReadInt16(R, a.x1);  Files.ReadInt16(R, a.y1);  Files.ReadInt16(R, a.x2);  Files.ReadInt16(R, a.y2);
+		Files.ReadFloat64(R, a.r1);  Files.ReadFloat64(R, a.r2);  Files.ReadFloat64(R, a.r);  Files.ReadFloat64(R, a.dr);
+		Files.ReadFloat64(R, a.r1x);  Files.ReadFloat64(R, a.r1y);  Files.ReadFloat64(R, a.r2x);  Files.ReadFloat64(R, a.r2y);
+		Files.ReadInt16(R, a.X);  Files.ReadInt16(R, a.Y);  Files.ReadInt16(R, a.W);  Files.ReadInt16(R, a.H);
 		LoadTicksQueue(R, a.TickRoot);
 		LoadLabelsQueue(R, a.LabelRoot);
-		Files.ReadInt(R, a.tdx);  Files.ReadInt(R, a.tdy);
-		Files.ReadInt(R, a.DigitsAfterPoint);
+		Files.ReadInt16(R, a.tdx);  Files.ReadInt16(R, a.tdy);
+		Files.ReadInt16(R, a.DigitsAfterPoint);
 		Files.ReadBool(R, a.Format);
-		Files.ReadInt(R, a.MinorTicks);
-		Files.ReadInt(R, a.Orientation);
+		Files.ReadInt16(R, a.MinorTicks);
+		Files.ReadInt16(R, a.Orientation);
 		Files.ReadBool(R, a.UsePaint2d);
 		IF a.UsePaint2d THEN
 			a.RtoXY := GetXYbyR2

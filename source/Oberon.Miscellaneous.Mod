@@ -101,11 +101,11 @@ MODULE Miscellaneous IN Oberon;	(** portable, except where noted *) (*JG 20.5.94
 			Files.Set(R, f, 0);
 			Files.Read(R, ch1);  Files.Read(R, ch2);
 			IF  (ch1 = 0BBX) & ((ch2 = 0AFX) OR (ch2= 0B0X)) THEN
-				Files.ReadNum(R, size);
+				Files.ReadNum32(R, size);
 				Files.Set(R, f, Files.Pos(R)+size + 18);	(* skip symbol file & first header fields *)
-				Files.ReadLInt(R, varSize);
-				Files.ReadInt(R, x);  constSize := LONG(x) MOD 10000H;
-				Files.ReadInt(R, x);  codeSize := LONG(x) MOD 10000H;
+				Files.ReadInt32(R, varSize);
+				Files.ReadInt16(R, x);  constSize := LONG(x) MOD 10000H;
+				Files.ReadInt16(R, x);  codeSize := LONG(x) MOD 10000H;
 				Texts.WriteString(W, " var "); Texts.WriteInt(W, varSize, 1);
 				Texts.WriteString(W, " const "); Texts.WriteInt(W, constSize, 1);
 				Texts.WriteString(W, " code "); Texts.WriteInt(W, codeSize, 1)

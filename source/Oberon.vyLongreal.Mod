@@ -403,7 +403,7 @@ BEGIN
 				ASSERT(start <= LEN(x) - count, 102);
 				count := start + count;
 
-				WHILE start < count DO Files.WriteLReal(R, x[start]);  INC(start) END
+				WHILE start < count DO Files.WriteFloat64(R, x[start]);  INC(start) END
 
 			END Write;
 
@@ -413,7 +413,7 @@ BEGIN
 			ASSERT(start <= LEN(x) - count, 102);
 			count := start + count;
 
-			WHILE start < count DO Files.ReadLReal(R, x[start]);  INC(start) END
+			WHILE start < count DO Files.ReadFloat64(R, x[start]);  INC(start) END
 
 		END Read;
 
@@ -439,22 +439,22 @@ BEGIN
 		(*= prefform is the preferred storage format, but the internal algorithm may choose a different one *)
 	BEGIN
 		(*! add implementations for non plain. form ignored so far *)
-		Files.WriteLInt(R, fmtplain);
-		Files.WriteLInt(R, SIGNED32(start));
-		Files.WriteLInt(R, SIGNED32(count));
+		Files.WriteInt32(R, fmtplain);
+		Files.WriteInt32(R, SIGNED32(start));
+		Files.WriteInt32(R, SIGNED32(count));
 		Write(R, count, x, start);
-		Files.WriteLInt(R, fmtend)
+		Files.WriteInt32(R, fmtend)
 	END WriteFmt;
 
 PROCEDURE ReadFmt* (VAR form: SIGNED32; VAR R: Files.Rider;  count: index;  VAR x: ARRAY OF real;  start: index);
 	VAR stop,t: SIGNED32;
 BEGIN
 	(*! add implementations for non plain. form ignored so far *)
-	Files.ReadLInt(R, form);
-	Files.ReadLInt(R, t); start := t;
-	Files.ReadLInt(R, t); count := t;
+	Files.ReadInt32(R, form);
+	Files.ReadInt32(R, t); start := t;
+	Files.ReadInt32(R, t); count := t;
 	Read(R, count, x, start);
-	Files.ReadLInt(R, stop);  ASSERT(stop = fmtend, 100)
+	Files.ReadInt32(R, stop);  ASSERT(stop = fmtend, 100)
 END ReadFmt;
 
 (** Basic **)

@@ -168,21 +168,21 @@ All that complicated stuff is done since antsCommandList can handle objects as r
 	VAR list: ObjList;
 	BEGIN
 		list := F.tobjlist;
-		WHILE (list # NIL ) DO Files.WriteLInt( M.R, list.pos );  Gadgets.WriteRef( M.R, F.lib, list.obj );  list := list.next END;
-		Files.WriteLInt( M.R, -1 )
+		WHILE (list # NIL ) DO Files.WriteInt32( M.R, list.pos );  Gadgets.WriteRef( M.R, F.lib, list.obj );  list := list.next END;
+		Files.WriteInt32( M.R, -1 )
 	END WriteTextList;
 
 	PROCEDURE LoadTextList( VAR F: Object;  VAR M: Objects.FileMsg );
 	VAR pos: SIGNED32;  list, temp: ObjList;
 	BEGIN
-		aM.dS( "Loading Text List" );  Files.ReadLInt( M.R, pos );
+		aM.dS( "Loading Text List" );  Files.ReadInt32( M.R, pos );
 		WHILE (pos >= 0) DO
 
 			IF temp = NIL THEN NEW( temp );  list := temp
 			ELSE NEW( list.next );  list := list.next
 			END;
 
-			list.pos := pos;  Gadgets.ReadRef( M.R, F.lib, list.obj );  Files.ReadLInt( M.R, pos )
+			list.pos := pos;  Gadgets.ReadRef( M.R, F.lib, list.obj );  Files.ReadInt32( M.R, pos )
 		END;
 		F.tobjlist := temp
 	END LoadTextList;
@@ -221,7 +221,7 @@ All that complicated stuff is done since antsCommandList can handle objects as r
 				WITH M: Objects.FileMsg DO
 					IF M.id = Objects.store THEN Files.WriteNum( M.R, 0 );  Gadgets.objecthandle( F, M );  WriteTextList( F, M )
 					ELSIF M.id = Objects.load THEN
-						Files.ReadNum( M.R, ver );  Gadgets.objecthandle( F, M );  LoadTextList( F, M );  RestoreTextList( F )
+						Files.ReadNum32( M.R, ver );  Gadgets.objecthandle( F, M );  LoadTextList( F, M );  RestoreTextList( F )
 					END
 				END
 			ELSIF M IS Objects.BindMsg THEN SetTextLibs( F, M( Objects.BindMsg ).lib );  Gadgets.objecthandle( F, M )

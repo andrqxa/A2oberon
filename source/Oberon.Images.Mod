@@ -2400,9 +2400,9 @@ MODULE Images IN Oberon; (** non-portable *)	(* eos  **)
 		VAR ver, code, w, h, bpr, len: SIGNED32; adr, aa: ADDRESS; fmt: Format; buf: ARRAY 256 OF CHAR; used8 : SIGNED16; used: SIGNED32;
 	BEGIN
 		ASSERT(img#NIL,100);
-		Files.ReadNum(fr, ver);	(* only know version 1 & 2, check below *)
+		Files.ReadNum32(fr, ver);	(* only know version 1 & 2, check below *)
 		ASSERT(ver IN {1, 2}, 101);
-		Files.ReadNum(fr, code);
+		Files.ReadNum32(fr, code);
 		CASE code OF
 		| a1: fmt := A1
 		| a8: fmt := A8
@@ -2415,9 +2415,9 @@ MODULE Images IN Oberon; (** non-portable *)	(* eos  **)
 		| bgr888: fmt := BGR888
 		| bgra8888: fmt := BGRA8888
 		END;
-		Files.ReadNum(fr, w); Files.ReadNum(fr, h);
+		Files.ReadNum32(fr, w); Files.ReadNum32(fr, h);
 		Create(img, SHORT(w), SHORT(h), fmt);
-		Files.ReadNum(fr, bpr);
+		Files.ReadNum32(fr, bpr);
 		ASSERT(bpr <= img.bpr);
 		adr := img.adr;
 		WHILE h > 0 DO
@@ -2432,8 +2432,8 @@ MODULE Images IN Oberon; (** non-portable *)	(* eos  **)
 			DEC(h); INC(adr, img.bpr)
 		END;
 		IF code IN {p8, p16} THEN
-			IF ver = 1 THEN Files.ReadInt(fr, used8); used:=used8;
-			ELSE Files.ReadNum(fr,used)
+			IF ver = 1 THEN Files.ReadInt16(fr, used8); used:=used8;
+			ELSE Files.ReadNum32(fr,used)
 			END;
 			len := 0; NEW(img.fmt.pal);
 			WHILE len < used DO

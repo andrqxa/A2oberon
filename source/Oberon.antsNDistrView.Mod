@@ -198,14 +198,14 @@ VAR
 
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyPort.LayerHandler( obj, msg );  Files.ReadLInt( msg.R, c); obj.maxx := c;
-			Files.ReadLInt( msg.R, c); obj.maxy := c;  Files.ReadBool( msg.R, obj.isotropic );
+			Files.ReadInt16( msg.R, version );  vyPort.LayerHandler( obj, msg );  Files.ReadInt32( msg.R, c); obj.maxx := c;
+			Files.ReadInt32( msg.R, c); obj.maxy := c;  Files.ReadBool( msg.R, obj.isotropic );
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.n := objsub( antsNeighbourhoods.Neighbours ) END
 
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyPort.LayerHandler( obj, msg );  Files.WriteLInt( msg.R, SIGNED32(obj.maxx) );
-			Files.WriteLInt( msg.R, SIGNED32(obj.maxy) );  Files.WriteBool( msg.R, obj.isotropic );  Gadgets.WriteRef( msg.R, obj.lib, obj.n )
+			Files.WriteInt16( msg.R, 0 );  vyPort.LayerHandler( obj, msg );  Files.WriteInt32( msg.R, SIGNED32(obj.maxx) );
+			Files.WriteInt32( msg.R, SIGNED32(obj.maxy) );  Files.WriteBool( msg.R, obj.isotropic );  Gadgets.WriteRef( msg.R, obj.lib, obj.n )
 		ELSE vyPort.LayerHandler( obj, msg )
 		END
 	END HandleFileMsg;

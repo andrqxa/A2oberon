@@ -1313,19 +1313,19 @@ BEGIN
 	Gadgets.framehandle(F, M);
 	Files.WriteNum(M.R, Version);
 	Files.WriteSet(M.R, F.state0);
-	Files.WriteInt(M.R, F.backC); Files.WriteInt(M.R, F.textC); Files.WriteInt(M.R, F.pointC);
-	Files.WriteInt(M.R, F.tab); Files.WriteInt(M.R, F.hoff); Files.WriteInt(M.R, F.levs);
+	Files.WriteInt16(M.R, F.backC); Files.WriteInt16(M.R, F.textC); Files.WriteInt16(M.R, F.pointC);
+	Files.WriteInt16(M.R, F.tab); Files.WriteInt16(M.R, F.hoff); Files.WriteInt16(M.R, F.levs);
 	Files.WriteString(M.R, F.fnt.name);
-	Files.WriteInt(M.R, F.top); Files.WriteInt(M.R, F.bottom);
-	Files.WriteInt(M.R, F.left); Files.WriteInt(M.R, F.right);
+	Files.WriteInt16(M.R, F.top); Files.WriteInt16(M.R, F.bottom);
+	Files.WriteInt16(M.R, F.left); Files.WriteInt16(M.R, F.right);
 	L := F.lines.next;
 	WHILE L # F.lines DO
-		Files.WriteInt(M.R, L.n); Files.WriteInt(M.R, L.lev); Files.WriteLInt(M.R, L.key);
+		Files.WriteInt16(M.R, L.n); Files.WriteInt16(M.R, L.lev); Files.WriteInt32(M.R, L.key);
 		Files.WriteBool(M.R, L.hasSub); Files.WriteBool(M.R, L.folded);
 		L := L.next
 	END;
-	Files.WriteInt(M.R, -1);
-	Files.WriteInt(M.R, F.first.n);
+	Files.WriteInt16(M.R, -1);
+	Files.WriteInt16(M.R, F.first.n);
 	Gadgets.WriteRef(M.R, F.lib, F.vPos);
 	Gadgets.WriteRef(M.R, F.lib, F.vMax);
 	Gadgets.WriteRef(M.R, F.lib, F.hPos);
@@ -1336,24 +1336,24 @@ PROCEDURE LoadFrame (F: Frame; VAR M: Objects.FileMsg);
 VAR L: Line; ver: SIGNED32; n: SIGNED16; fntname: ARRAY 32 OF CHAR;
 BEGIN
 	Gadgets.framehandle(F, M);
-	Files.ReadNum(M.R, ver);
+	Files.ReadNum32(M.R, ver);
 	IF ver >= 1 THEN
 		Files.ReadSet(M.R, F.state0);
-		Files.ReadInt(M.R, F.backC); Files.ReadInt(M.R, F.textC); Files.ReadInt(M.R, F.pointC);
-		Files.ReadInt(M.R, F.tab); Files.ReadInt(M.R, F.hoff); Files.ReadInt(M.R, F.levs);
+		Files.ReadInt16(M.R, F.backC); Files.ReadInt16(M.R, F.textC); Files.ReadInt16(M.R, F.pointC);
+		Files.ReadInt16(M.R, F.tab); Files.ReadInt16(M.R, F.hoff); Files.ReadInt16(M.R, F.levs);
 		Files.ReadString(M.R, fntname); F.fnt := Fonts.This(fntname);
-		Files.ReadInt(M.R, F.top); Files.ReadInt(M.R, F.bottom);
-		Files.ReadInt(M.R, F.left); Files.ReadInt(M.R, F.right);
-		Files.ReadInt(M.R, n);
+		Files.ReadInt16(M.R, F.top); Files.ReadInt16(M.R, F.bottom);
+		Files.ReadInt16(M.R, F.left); Files.ReadInt16(M.R, F.right);
+		Files.ReadInt16(M.R, n);
 		L := F.lines;
 		WHILE n # -1 DO
 			NEW(L.next); L.next.prev := L; L := L.next;
-			L.n := n; Files.ReadInt(M.R, L.lev); Files.ReadLInt(M.R, L.key);
+			L.n := n; Files.ReadInt16(M.R, L.lev); Files.ReadInt32(M.R, L.key);
 			Files.ReadBool(M.R, L.hasSub); Files.ReadBool(M.R, L.folded);
-			Files.ReadInt(M.R, n)
+			Files.ReadInt16(M.R, n)
 		END;
 		F.lines.prev := L; L.next := F.lines;
-		Files.ReadInt(M.R, n);
+		Files.ReadInt16(M.R, n);
 		L := F.lines; REPEAT L := L.next UNTIL (L.n = n) OR (L = F.lines);
 		F.first := L;
 		Gadgets.ReadRef(M.R, F.lib, F.vPos);

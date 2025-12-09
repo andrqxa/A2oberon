@@ -287,17 +287,17 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteInt(M.R, T.nrDraw); Files.WriteInt(M.R, T.curSwap);
+					Files.WriteInt16(M.R, T.nrDraw); Files.WriteInt16(M.R, T.curSwap);
 					i:= T.curSwap;
-					WHILE i >= 0 DO Files.WriteInt(M.R, T.nrVis[i]); DEC(i) END;
+					WHILE i >= 0 DO Files.WriteInt16(M.R, T.nrVis[i]); DEC(i) END;
 					c:= T.visTail.prev;
 					WHILE c # T.visTail DO Cards.WriteCard(M.R, c); c:= c.prev END;
 					Cards.WriteCard(M.R, NIL);	(* sentinell *)
 					Cards.StackHandler(T, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadInt(M.R, T.nrDraw); Files.ReadInt(M.R, T.curSwap);
+					Files.ReadInt16(M.R, T.nrDraw); Files.ReadInt16(M.R, T.curSwap);
 					i:= T.curSwap;
-					WHILE i >= 0 DO Files.ReadInt(M.R, val); T.nrVis[i]:= SHORT(val); DEC(i) END;
+					WHILE i >= 0 DO Files.ReadInt16(M.R, val); T.nrVis[i]:= SHORT(val); DEC(i) END;
 					c:= T.visTail.prev;
 					Cards.ReadCard(M.R, c);
 					WHILE c # NIL DO Cards.AppendCard(T.visTail, c); Cards.ReadCard(M.R, c) END;
@@ -470,8 +470,8 @@ BEGIN
 		ELSIF M IS Objects.AttrMsg THEN ColumnAttr(C, M(Objects.AttrMsg))
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
-				IF M.id = Objects.store THEN Files.WriteInt(M.R, C.nrCards); Cards.StackHandler(C, M)
-				ELSIF M.id = Objects.load THEN Files.ReadInt(M.R, C.nrCards); Cards.StackHandler(C, M)
+				IF M.id = Objects.store THEN Files.WriteInt16(M.R, C.nrCards); Cards.StackHandler(C, M)
+				ELSIF M.id = Objects.load THEN Files.ReadInt16(M.R, C.nrCards); Cards.StackHandler(C, M)
 				END
 			END
 		ELSIF M IS Objects.CopyMsg THEN
@@ -504,10 +504,10 @@ BEGIN
 
 	F:= Files.Old(D.name);
 	IF F # NIL THEN
-		Files.Set(R, F, 0); Files.ReadInt(R, tag);
+		Files.Set(R, F, 0); Files.ReadInt16(R, tag);
 		IF tag = Documents.Id THEN
 			Files.ReadString(R, name);	(* skip over generator name *)
-			Files.ReadInt(R, D.X); Files.ReadInt(R, D.Y); Files.ReadInt(R, D.W); Files.ReadInt(R, D.H);
+			Files.ReadInt16(R, D.X); Files.ReadInt16(R, D.Y); Files.ReadInt16(R, D.W); Files.ReadInt16(R, D.H);
 			Files.Read(R, ch);
 			IF ch = Objects.LibBlockId THEN
 				NEW(lib); Objects.OpenLibrary(lib); Objects.LoadLibrary(lib, F, Files.Pos(R), len);
@@ -565,8 +565,8 @@ BEGIN
 			NEW(B.lib); Objects.OpenLibrary(B.lib); obj.handle(obj, B);
 
 			F:= Files.New(D.name); Files.Set(R, F, 0);
-			Files.WriteInt(R, Documents.Id); Files.WriteString(R, "Solitaire.NewDoc");
-			Files.WriteInt(R, D.X); Files.WriteInt(R, D.Y); Files.WriteInt(R, D.W); Files.WriteInt(R, D.H);
+			Files.WriteInt16(R, Documents.Id); Files.WriteString(R, "Solitaire.NewDoc");
+			Files.WriteInt16(R, D.X); Files.WriteInt16(R, D.Y); Files.WriteInt16(R, D.W); Files.WriteInt16(R, D.H);
 			Objects.StoreLibrary(B.lib, F, Files.Pos(R), len);
 
 			Files.Register(F)

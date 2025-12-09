@@ -92,8 +92,8 @@ BEGIN
 		F := Files.New(D.name);
 		IF F = NIL THEN HALT(99) END;
 		Files.Set(R, F, 0);
-		Files.WriteInt(R, Documents.Id); Files.WriteString(R, "RembrandtDocs.NewDoc");
-		Files.WriteInt(R, D.X); Files.WriteInt(R, D.Y); Files.WriteInt(R, D.W); Files.WriteInt(R, D.H);
+		Files.WriteInt16(R, Documents.Id); Files.WriteString(R, "RembrandtDocs.NewDoc");
+		Files.WriteInt16(R, D.X); Files.WriteInt16(R, D.Y); Files.WriteInt16(R, D.W); Files.WriteInt16(R, D.H);
 		Pictures.Store(obj.pict, F, Files.Pos(R), len);
 		Out.String("Store "); Out.String(D.name); Out.Ln;
 		Files.Register(F)

@@ -81,10 +81,10 @@ TYPE
 	END;
 	| M: Objects.FileMsg DO
 	IF M.id = Objects.load THEN
-	Files.ReadInt(M.R,version);
+	Files.ReadInt16(M.R,version);
 	vyBase.objecthandle(o, M);
 	ELSIF M.id = Objects.store THEN
-	Files.WriteInt(M.R,0);
+	Files.WriteInt16(M.R,0);
 	vyBase.objecthandle(o, M);
 	END
 	ELSE

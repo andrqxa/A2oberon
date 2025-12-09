@@ -48,7 +48,7 @@ TYPE
 	VAR obj: Objects.Object; c: SIGNED32;
 	BEGIN
 		Load^(R);
-		Files.ReadLInt(R,c); x0:=c; Files.ReadLInt(R,c); y0:= c;Files.ReadLInt(R,c); w0:= c; Files.ReadLInt(R,c); h0:=c;
+		Files.ReadInt32(R,c); x0:=c; Files.ReadInt32(R,c); y0:= c;Files.ReadInt32(R,c); w0:= c; Files.ReadInt32(R,c); h0:=c;
 		Gadgets.ReadRef(R,lib,obj); IF obj # NIL THEN in := obj(antsArrayObjects.tINTEGERObject) END;
 		Gadgets.ReadRef(R,lib,obj); IF obj # NIL THEN out := obj(vyRealVec.tChunkedMatrix) END;
 
@@ -57,7 +57,7 @@ TYPE
 	PROCEDURE Store*(VAR R: Files.Rider);
 	BEGIN
 		Store^(R);
-		Files.WriteLInt(R,SIGNED32(x0)); Files.WriteLInt(R,SIGNED32(y0)); Files.WriteLInt(R,SIGNED32(w0)); Files.WriteLInt(R,SIGNED32(h0));
+		Files.WriteInt32(R,SIGNED32(x0)); Files.WriteInt32(R,SIGNED32(y0)); Files.WriteInt32(R,SIGNED32(w0)); Files.WriteInt32(R,SIGNED32(h0));
 		Gadgets.WriteRef(R,lib,in); Gadgets.WriteRef(R,lib,out);
 	END Store;
 

@@ -330,7 +330,7 @@ MODULE GfxMatrix IN Oberon; (** portable *)	(* eos  *)
 		VAR i: SIGNED32;
 	BEGIN
 		FOR i := 0 TO 2 DO
-			Files.WriteReal(r, m[i, 0]); Files.WriteReal(r, m[i, 1])
+			Files.WriteFloat32(r, m[i, 0]); Files.WriteFloat32(r, m[i, 1])
 		END
 	END Write;
 
@@ -338,7 +338,7 @@ MODULE GfxMatrix IN Oberon; (** portable *)	(* eos  *)
 		VAR i: SIGNED32;
 	BEGIN
 		FOR i := 0 TO 2 DO
-			Files.ReadReal(r, m[i, 0]); Files.ReadReal(r, m[i, 1])
+			Files.ReadFloat32(r, m[i, 0]); Files.ReadFloat32(r, m[i, 1])
 		END
 	END Read;
 

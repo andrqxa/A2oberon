@@ -552,7 +552,7 @@ MODULE Watson0 IN Oberon;	(** portable *)	(** PS	/		/	OP2-Version *)
 		Files.Read(R, ch);
 		IF ch # Version THEN Out.String("object file has wrong version"); RETURN END;
 
-		Files.ReadNum(R, symSize); Files.Set(R, F, Files.Pos(R) + symSize); (* skip symbol file *)
+		Files.ReadNum32(R, symSize); Files.Set(R, F, Files.Pos(R) + symSize); (* skip symbol file *)
 
 		Files.ReadBytes(R, ref, 4);	(* ref block pos *)
 		Files.ReadBytes(R, nofentry, 2);	(* # entries *)

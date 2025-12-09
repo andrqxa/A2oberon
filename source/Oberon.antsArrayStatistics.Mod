@@ -88,14 +88,14 @@ TYPE
 
 	PROCEDURE Store( VAR R: Files.Rider;  s: tObject );
 	BEGIN
-		Files.WriteInt( R, 0 );  Gadgets.WriteRef( R, s.lib, s.from );  Gadgets.WriteRef( R, s.lib, s.coocurrence );
+		Files.WriteInt16( R, 0 );  Gadgets.WriteRef( R, s.lib, s.from );  Gadgets.WriteRef( R, s.lib, s.coocurrence );
 		Gadgets.WriteRef( R, s.lib, s.histogram )
 	END Store;
 
 	PROCEDURE Load( VAR R: Files.Rider;  s: tObject );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Gadgets.ReadRef( R, s.lib, objsub );
+		Files.ReadInt16( R, version );  Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.from := objsub( antsArrayObjects.tINTEGERObject ) END;
 		Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.coocurrence := objsub( antsArrayObjects.tINTEGERObject ) END;

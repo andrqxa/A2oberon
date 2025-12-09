@@ -53,17 +53,17 @@ TYPE
 		PROCEDURE  (*VAR seed: tSeedDesc*) Store*( VAR r: Files.Rider );
 		VAR i: SIGNED16;
 		BEGIN
-			Files.WriteLInt( r, SELF.ix1 );  Files.WriteLInt( r, SELF.ix2 );  Files.WriteLInt( r, SELF.ix3 );
-			FOR i := 0 TO 97 DO Files.WriteLReal( r, SELF.r[i] ) END;
-			Files.WriteLInt( r, SELF.iff )
+			Files.WriteInt32( r, SELF.ix1 );  Files.WriteInt32( r, SELF.ix2 );  Files.WriteInt32( r, SELF.ix3 );
+			FOR i := 0 TO 97 DO Files.WriteFloat64( r, SELF.r[i] ) END;
+			Files.WriteInt32( r, SELF.iff )
 		END Store;
 
 		PROCEDURE  (*VAR seed: tSeedDesc*) Load*( VAR r: Files.Rider;  seedVersion: SIGNED16 );
 		VAR i: SIGNED16;
 		BEGIN
-			Files.ReadLInt( r, SELF.ix1 );  Files.ReadLInt( r, SELF.ix2 );  Files.ReadLInt( r, SELF.ix3 );
-			FOR i := 0 TO 97 DO Files.ReadLReal( r, SELF.r[i] ) END;
-			Files.ReadLInt( r, SELF.iff )
+			Files.ReadInt32( r, SELF.ix1 );  Files.ReadInt32( r, SELF.ix2 );  Files.ReadInt32( r, SELF.ix3 );
+			FOR i := 0 TO 97 DO Files.ReadFloat64( r, SELF.r[i] ) END;
+			Files.ReadInt32( r, SELF.iff )
 		END Load;
 
 	END tSeed;
@@ -163,24 +163,24 @@ TYPE
 PROCEDURE Store (obj: tRandom; VAR M: Objects.FileMsg);
 VAR i:SIGNED16;
 BEGIN
-Files.WriteLInt(M.R, obj.seed(tSeed).val);
-Files.WriteLInt(M.R, obj.seed(tSeed).ix1);
-Files.WriteLInt(M.R, obj.seed(tSeed).ix2);
-Files.WriteLInt(M.R, obj.seed(tSeed).ix3);
-FOR i:=0 TO 97 DO Files.WriteLReal(M.R,obj.seed(tSeed).r[i]) END;
-Files.WriteLInt(M.R, obj.seed(tSeed).iff);
+Files.WriteInt32(M.R, obj.seed(tSeed).val);
+Files.WriteInt32(M.R, obj.seed(tSeed).ix1);
+Files.WriteInt32(M.R, obj.seed(tSeed).ix2);
+Files.WriteInt32(M.R, obj.seed(tSeed).ix3);
+FOR i:=0 TO 97 DO Files.WriteFloat64(M.R,obj.seed(tSeed).r[i]) END;
+Files.WriteInt32(M.R, obj.seed(tSeed).iff);
 vyRanBase.Handler(obj, M)
 END Store;
 
 PROCEDURE Load (obj: tRandom; VAR M: Objects.FileMsg);
 VAR i:SIGNED16;
 BEGIN
-Files.ReadLInt(M.R, obj.seed(tSeed).val);
-Files.ReadLInt(M.R, obj.seed(tSeed).ix1);
-Files.ReadLInt(M.R, obj.seed(tSeed).ix2);
-Files.ReadLInt(M.R, obj.seed(tSeed).ix3);
-FOR i:=0 TO 97 DO Files.ReadLReal(M.R,obj.seed(tSeed).r[i]) END;
-Files.ReadLInt(M.R, obj.seed(tSeed).iff);
+Files.ReadInt32(M.R, obj.seed(tSeed).val);
+Files.ReadInt32(M.R, obj.seed(tSeed).ix1);
+Files.ReadInt32(M.R, obj.seed(tSeed).ix2);
+Files.ReadInt32(M.R, obj.seed(tSeed).ix3);
+FOR i:=0 TO 97 DO Files.ReadFloat64(M.R,obj.seed(tSeed).r[i]) END;
+Files.ReadInt32(M.R, obj.seed(tSeed).iff);
 vyRanBase.Handler(obj, M)
 END Load;
 *)

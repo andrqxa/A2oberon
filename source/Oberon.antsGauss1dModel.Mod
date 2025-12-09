@@ -52,15 +52,15 @@ TYPE
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	VAR i: SIGNED32;
 	BEGIN
-		Files.WriteInt( R, 0 );
-		FOR i := 0 TO 5 DO Files.WriteLReal( R, s.a[i] ) END
+		Files.WriteInt16( R, 0 );
+		FOR i := 0 TO 5 DO Files.WriteFloat64( R, s.a[i] ) END
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR version: SIGNED16;  i: SIGNED32;
 	BEGIN
-		Files.ReadInt( R, version );
-		FOR i := 0 TO 5 DO Files.ReadLReal( R, s.a[i] ) END
+		Files.ReadInt16( R, version );
+		FOR i := 0 TO 5 DO Files.ReadFloat64( R, s.a[i] ) END
 	END LoadM;
 
 	PROCEDURE OneSweep( s: antsKernel.Kernel );

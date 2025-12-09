@@ -43,7 +43,7 @@ VAR
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  o: tModel );
 	BEGIN
-		Files.WriteInt( R, version );
+		Files.WriteInt16( R, version );
 		(*Store*)
 		Gadgets.WriteRef( R, o.lib, o.datafct );  Gadgets.WriteRef( R, o.lib, o.fct )
 	END StoreM;
@@ -51,7 +51,7 @@ VAR
 	PROCEDURE LoadM( VAR R: Files.Rider;  o: tModel );
 	VAR version: SIGNED16;  ref: Objects.Object;
 	BEGIN
-		Files.ReadInt( R, version );
+		Files.ReadInt16( R, version );
 		(*Load*)
 		Gadgets.ReadRef( R, o.lib, ref );
 		IF ref # NIL THEN o.datafct := ref( antsFunctions.Function ) END;

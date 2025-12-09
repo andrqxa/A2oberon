@@ -41,16 +41,16 @@ VAR
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteLInt( R, s.dim );  Gadgets.WriteRef( R, s.lib, s.n );  Files.WriteLReal( R, s.mu );
-		Files.WriteLReal( R, s.sigmasq )
+		Files.WriteInt16( R, 0 );  Files.WriteInt32( R, s.dim );  Gadgets.WriteRef( R, s.lib, s.n );  Files.WriteFloat64( R, s.mu );
+		Files.WriteFloat64( R, s.sigmasq )
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadLInt( R, s.dim );  Gadgets.ReadRef( R, s.lib, objsub );
+		Files.ReadInt16( R, version );  Files.ReadInt32( R, s.dim );  Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.n := objsub( antsNeighbourhoods.Neighbours ) END;
-		Files.ReadLReal( R, s.mu );  Files.ReadLReal( R, s.sigmasq )
+		Files.ReadFloat64( R, s.mu );  Files.ReadFloat64( R, s.sigmasq )
 	END LoadM;
 
 	PROCEDURE MakeCaches( m: tModel );

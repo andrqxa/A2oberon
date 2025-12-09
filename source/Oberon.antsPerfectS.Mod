@@ -40,15 +40,15 @@ TYPE
 
 	PROCEDURE Store0( o: tSamplingScheme;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteInt( M.R, 0 );  Gadgets.WriteRef( M.R, o.lib, o.c );  Files.WriteLInt( M.R, o.maxnrsamples )
+		Files.WriteInt16( M.R, 0 );  Gadgets.WriteRef( M.R, o.lib, o.c );  Files.WriteInt32( M.R, o.maxnrsamples )
 	END Store0;
 
 	PROCEDURE Load0( o: tSamplingScheme;  VAR M: Objects.FileMsg );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( M.R, version );  Gadgets.ReadRef( M.R, o.lib, objsub );
+		Files.ReadInt16( M.R, version );  Gadgets.ReadRef( M.R, o.lib, objsub );
 		IF objsub # NIL THEN o.c := objsub( antsMC.Chain ) END;
-		Files.ReadLInt( M.R, o.maxnrsamples )
+		Files.ReadInt32( M.R, o.maxnrsamples )
 	END Load0;
 
 	PROCEDURE Copy*( VAR M: Objects.CopyMsg;  src, dest: tSamplingScheme );

@@ -44,16 +44,16 @@ VAR
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  o: tModel );
 	BEGIN
-		Files.WriteInt( R, version );
+		Files.WriteInt16( R, version );
 		(*Store*)
 		Gadgets.WriteRef( R, o.lib, o.v3 );  Gadgets.WriteRef( R, o.lib, o.v2 );  Gadgets.WriteRef( R, o.lib, o.v1 );
-		Files.WriteInt( R, o.modeltype )
+		Files.WriteInt16( R, o.modeltype )
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  o: tModel );
 	VAR version: SIGNED16;  ref: Objects.Object;
 	BEGIN
-		Files.ReadInt( R, version );
+		Files.ReadInt16( R, version );
 		(*Load*)
 		Gadgets.ReadRef( R, o.lib, ref );
 		IF ref # NIL THEN o.v3 := ref( vyBase.Object ) END;
@@ -61,7 +61,7 @@ VAR
 		IF ref # NIL THEN o.v2 := ref( vyBase.Object ) END;
 		Gadgets.ReadRef( R, o.lib, ref );
 		IF ref # NIL THEN o.v1 := ref( vyBase.Object ) END;
-		IF version > 0 THEN Files.ReadInt( R, o.modeltype ) END
+		IF version > 0 THEN Files.ReadInt16( R, o.modeltype ) END
 	END LoadM;
 
 	PROCEDURE Gitter( VAR val1, val2, val3: FLOAT64 );
