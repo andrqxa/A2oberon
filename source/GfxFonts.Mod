@@ -305,7 +305,7 @@ MODULE GfxFonts; (** non-portable *)	(* eos  *)
 	BEGIN
 		minY := MAX(SIGNED32); maxY := MIN(SIGNED32); base := minY;
 		FOR i := 1 TO 5 DO
-			r.RawNum(y);
+			r.RawNum32(y);
 			IF y > maxY THEN maxY := y END;
 			IF y < minY THEN base := minY; minY := y
 			ELSIF y < base THEN base := y
@@ -319,11 +319,11 @@ MODULE GfxFonts; (** non-portable *)	(* eos  *)
 		outline.xmax := MIN(FLOAT32); outline.ymax := MIN(FLOAT32);
 		NEW(px); NEW(py);
 		ntypes := 1;
-		r.RawNum(nchars);
+		r.RawNum32(nchars);
 		WHILE nchars > 0 DO
 			DEC(nchars);
-			r.Char(ch); r.RawNum(x); left := x;
-			r.RawNum(x);
+			r.Char(ch); r.RawNum32(x); left := x;
+			r.RawNum32(x);
 			IF x >= left THEN
 				outline.width[ORD(ch)] := scale * SHORT(x - left)
 			ELSE
@@ -332,10 +332,10 @@ MODULE GfxFonts; (** non-portable *)	(* eos  *)
 			END;
 
 			(* read contour curves *)
-			r.RawNum(ncontours);
+			r.RawNum32(ncontours);
 			n := 0;
 			WHILE n < ncontours DO
-				r.RawNum(type[n]);
+				r.RawNum32(type[n]);
 				IF type[n] = ntypes THEN
 					r.RawString(str);
 					ASSERT(str = "Graphic");
@@ -352,10 +352,10 @@ MODULE GfxFonts; (** non-portable *)	(* eos  *)
 				IF closed THEN pred[n] := n; succ[n] := n
 				ELSE pred[n] := -1; succ[n] := -1
 				END;
-				r.RawNum(m);
+				r.RawNum32(m);
 				DEC(m);
 				FOR i := 0 TO m DO
-					r.RawNum(x); r.RawNum(y);
+					r.RawNum32(x); r.RawNum32(y);
 					px[n, i] := x - left; py[n, i] := y - base
 				END;
 				IF m < 1 THEN
