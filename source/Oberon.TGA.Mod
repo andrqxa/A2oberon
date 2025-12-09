@@ -28,10 +28,10 @@ BEGIN
 	IF Files.Length(Files.Base(R)) < 18 THEN Out.String("Broken header: file less than 18 bytes long.");
 	ELSE
 		Files.Read(R, H.IDlength); Files.Read(R, H.cmap); Files.Read(R, H.type);
-		Files.ReadInt(R, H.cmaporigin); Files.ReadInt(R, H.cmaplength);
+		Files.ReadInt16(R, H.cmaporigin); Files.ReadInt16(R, H.cmaplength);
 		Files.Read(R, H.csize);
-		Files.ReadInt(R, H.xorigin); Files.ReadInt(R, H.yorigin);
-		Files.ReadInt(R, H.width); Files.ReadInt(R, H.height);
+		Files.ReadInt16(R, H.xorigin); Files.ReadInt16(R, H.yorigin);
+		Files.ReadInt16(R, H.width); Files.ReadInt16(R, H.height);
 		Files.Read(R, H.depth); Files.Read( R, H.descriptor);
 
 		IF H.type = 0 THEN Out.String("Type 0: No image data.");

@@ -156,7 +156,7 @@ MODULE GIFImages IN Oberon; (** non-portable *)	(* eos  **)
 		IF (sig # "GIF87a") & (sig # "GIF89a") THEN RETURN END;
 
 		(* logical screen descriptor *)
-		Files.ReadInt(r, w); Files.ReadInt(r, h);	(* dimensions of logical screen *)
+		Files.ReadInt16(r, w); Files.ReadInt16(r, h);	(* dimensions of logical screen *)
 		Files.Read(r, lcdFlags); Files.Read(r, backGrndIdx); Files.Read(r, ch);	(* ignore aspect ratio *)
 
 		(* set up default color table *)
@@ -204,8 +204,8 @@ MODULE GIFImages IN Oberon; (** non-portable *)	(* eos  **)
 				IF images > 1 THEN
 					Log("ignoring all but first image"); EXIT
 				END;
-				Files.ReadInt(r, left); Files.ReadInt(r, top);
-				Files.ReadInt(r, w); Files.ReadInt(r, h);
+				Files.ReadInt16(r, left); Files.ReadInt16(r, top);
+				Files.ReadInt16(r, w); Files.ReadInt16(r, h);
 				Files.Read(r, idFlags);
 				interlaced := ODD(ASH(ORD(idFlags), -6));
 

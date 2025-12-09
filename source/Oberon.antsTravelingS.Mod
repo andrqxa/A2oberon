@@ -38,19 +38,19 @@ VAR
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  o: tModel );
 	BEGIN
-		Files.WriteInt( R, version );
+		Files.WriteInt16( R, version );
 		(*Store*)
-		Gadgets.WriteRef( R, o.lib, o.cooling );  Files.WriteLReal( R, o.curlen );  Files.WriteLReal( R, o.curtemp );
+		Gadgets.WriteRef( R, o.lib, o.cooling );  Files.WriteFloat64( R, o.curlen );  Files.WriteFloat64( R, o.curtemp );
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  o: tModel );
 	VAR version: SIGNED16;  ref: Objects.Object;
 	BEGIN
-		Files.ReadInt( R, version );
+		Files.ReadInt16( R, version );
 		(*Load*)
 		Gadgets.ReadRef( R, o.lib, ref );
 		IF ref # NIL THEN o.cooling := ref( antsFunctions.Function ) END;
-		Files.ReadLReal( R, o.curlen );  Files.ReadLReal( R, o.curtemp );
+		Files.ReadFloat64( R, o.curlen );  Files.ReadFloat64( R, o.curtemp );
 	END LoadM;
 
 	PROCEDURE Length( vx, vy: vyLongrealVec.tVector ): FLOAT64;

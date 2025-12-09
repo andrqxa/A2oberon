@@ -99,8 +99,8 @@ MODULE OpenTypeFonts; (** AUTHOR "eos, PL"; PURPOSE "Bluebottle port of OpenType
 		file.Write(r, 0X);																		(* family *)
 		file.Write(r, 0X);																		(* variant *)
 		i := inst.font.hhea.ascender + inst.font.hhea.descender + inst.font.hhea.lineGap;
-		Files.WriteInt(r, SHORT(OTInt.MulDiv(i, inst.yppm, 40H*LONG(inst.font.head.unitsPerEm))));	(* height *)
-		Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0);	(* fix later *) (* min/max X/Y *)
+		Files.WriteInt16(r, SHORT(OTInt.MulDiv(i, inst.yppm, 40H*LONG(inst.font.head.unitsPerEm))));	(* height *)
+		Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0);	(* fix later *) (* min/max X/Y *)
 
 		font := inst.font;
 		i := 0; chars := 0; ranges := 0;
@@ -115,17 +115,17 @@ MODULE OpenTypeFonts; (** AUTHOR "eos, PL"; PURPOSE "Bluebottle port of OpenType
 				end[ranges] := i; INC(ranges)
 			END
 		UNTIL i = 256;
-		Files.WriteInt(r, ranges);															(* number of runs *)
+		Files.WriteInt16(r, ranges);															(* number of runs *)
 		i := 0;
 		WHILE i < ranges DO
-			Files.WriteInt(r, beg[i]); Files.WriteInt(r, end[i]);								(* start/end of run *)
+			Files.WriteInt16(r, beg[i]); Files.WriteInt16(r, end[i]);								(* start/end of run *)
 			INC(i)
 		END;
 
 		file.Set(m, file.Pos(r));																(* open rider for later writing metrics *)
 		i := 0;
 		WHILE i < chars DO
-			Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0); Files.WriteInt(r, 0);
+			Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0); Files.WriteInt16(r, 0);
 			INC(i)
 		END;
 
@@ -143,11 +143,11 @@ MODULE OpenTypeFonts; (** AUTHOR "eos, PL"; PURPOSE "Bluebottle port of OpenType
 				ELSE
 					OType.LoadGlyph(inst, Glyph, ras, SHORT(no), mode)
 				END;
-				Files.WriteInt(m, Glyph.awx);												(* advance *)
-				Files.WriteInt(m, Glyph.hbx);												(* horizontal bearing x *)
-				Files.WriteInt(m, Glyph.hby);												(* horizontal bearing y *)
-				Files.WriteInt(m, Glyph.rw);												(* image width *)
-				Files.WriteInt(m, Glyph.rh);													(* image height *)
+				Files.WriteInt16(m, Glyph.awx);												(* advance *)
+				Files.WriteInt16(m, Glyph.hbx);												(* horizontal bearing x *)
+				Files.WriteInt16(m, Glyph.hby);												(* horizontal bearing y *)
+				Files.WriteInt16(m, Glyph.rw);												(* image width *)
+				Files.WriteInt16(m, Glyph.rh);													(* image height *)
 				IF Glyph.rw * Glyph.rh # 0 THEN
 					IF Glyph.hbx < xmin THEN xmin := Glyph.hbx END;
 					IF Glyph.hby < ymin THEN ymin := Glyph.hby END;
@@ -166,8 +166,8 @@ MODULE OpenTypeFonts; (** AUTHOR "eos, PL"; PURPOSE "Bluebottle port of OpenType
 		END;
 
 		file.Set(r, 6);
-		Files.WriteInt(r, xmin); Files.WriteInt(r, xmax);										(* minX/maxX *)
-		Files.WriteInt(r, ymin); Files.WriteInt(r, ymax);										(* minY/maxY *)
+		Files.WriteInt16(r, xmin); Files.WriteInt16(r, xmax);										(* minX/maxX *)
+		Files.WriteInt16(r, ymin); Files.WriteInt16(r, ymax);										(* minY/maxY *)
 		Files.Register(file)
 	END MakeFont;
 

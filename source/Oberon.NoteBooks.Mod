@@ -495,14 +495,14 @@ BEGIN
 					Files.WriteNum(M.R, 1);
 					Gadgets.WriteRef(M.R, F.lib, F.dsc);
 					f := F.pages; x := 0; WHILE f # NIL DO INC(x); f := f.next END; (* count the pages *)
-					Files.WriteInt(M.R, x); (* write the count *)
+					Files.WriteInt16(M.R, x); (* write the count *)
 					f := F.pages; x := 0; WHILE f # NIL DO Gadgets.WriteRef(M.R, F.lib, f); f := f.next END;
 					Gadgets.framehandle(F, M);
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver); IF ver # 1 THEN HALT(99) END;
+					Files.ReadNum32(M.R, ver); IF ver # 1 THEN HALT(99) END;
 					Gadgets.ReadRef(M.R, F.lib, obj);
 					IF (obj # NIL) & (obj IS Display.Frame) THEN F.dsc := obj(Display.Frame) ELSE F.dsc := NIL END;
-					Files.ReadInt(M.R, x); F.pages := NIL;
+					Files.ReadInt16(M.R, x); F.pages := NIL;
 					WHILE x > 0 DO
 						Gadgets.ReadRef(M.R, F.lib, obj);
 						IF (obj # NIL) & (obj IS Display.Frame) THEN InsertPage(F, obj(Display.Frame))

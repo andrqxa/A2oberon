@@ -883,12 +883,12 @@ VAR
 		PROCEDURE InParList( VAR first: Object );
 		VAR last, par: Object;  f: SIGNED32;  flags: SET;   (* ejz *)
 		BEGIN
-				first := NIL;  last := NIL;  Files.ReadNum( R, tag );
+				first := NIL;  last := NIL;  Files.ReadNum32( R, tag );
 			WHILE tag # SFend DO
 
 				flags := {};   (* ejz *)
 				(** fof >> *)
-				IF tag = SFobjflag THEN Files.ReadNum( R, f );  Files.ReadNum( R, tag );
+				IF tag = SFobjflag THEN Files.ReadNum32( R, f );  Files.ReadNum32( R, tag );
 					ASSERT ( f = 13 );
 					INCL( flags, 13 );
 				END;
@@ -898,16 +898,16 @@ VAR
 				IF last = NIL THEN first := par ELSE last.link := par END;
 				last:=par;
 				IF tag = SFvar THEN par.mode := VarPar;
-					Files.ReadNum( R, tag );
+					Files.ReadNum32( R, tag );
 				ELSE par.mode := Var
 				END;
 (** fof >> *)
-				IF tag = SFreadonly THEN par.mode := Con; Files.ReadNum( R, tag );
+				IF tag = SFreadonly THEN par.mode := Con; Files.ReadNum32( R, tag );
 				END;
 (** << fof  *)
-				(*IF	tag=SFleaf	THEN	par.leaf:=TRUE; Files.ReadNum(R, tag)	END;*)
+				(*IF	tag=SFleaf	THEN	par.leaf:=TRUE; Files.ReadNum32(R, tag)	END;*)
 
-				InStruct( par.typ, TRUE );  readString( R, par.name );  Files.ReadNum( R, tag )
+				InStruct( par.typ, TRUE );  readString( R, par.name );  Files.ReadNum32( R, tag )
 			END
 		END InParList;
 
@@ -927,24 +927,24 @@ VAR
 		BEGIN
 			NEW( scope );  scope.mode := Head;  scope.mnolev := -typ.mno;  last := NIL;  btyp := typ.BaseTyp;  conval := NewConst();
 			typ.strobj.conval := conval;
-			Files.ReadNum( R, n );
+			Files.ReadNum32( R, n );
 			flags := SET(n);
 			IF 0 IN flags THEN INCL( conval.setval, protectedObj ) END;
 			IF 1 IN flags THEN INCL( conval.setval, activeObj ) END;
 			IF 2 IN flags THEN INCL( conval.setval, safe ) END;
-			Files.Read( R, typ.strobj.prio );  Files.ReadNum( R, tag );
+			Files.Read( R, typ.strobj.prio );  Files.ReadNum32( R, tag );
 			WHILE (tag < SFtproc) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *) DO
 				NEW( fld );
 				IF last # NIL THEN last.link := fld END;
 				last := fld;
-				IF tag = SFobjflag THEN Files.Read( R, fld.sysflag );  Files.ReadNum( R, tag ) END;
-				IF tag = SFreadonly THEN Files.ReadNum( R, tag );  fld.vis := externalR ELSE fld.vis := external END;
+				IF tag = SFobjflag THEN Files.Read( R, fld.sysflag );  Files.ReadNum32( R, tag ) END;
+				IF tag = SFreadonly THEN Files.ReadNum32( R, tag );  fld.vis := externalR ELSE fld.vis := external END;
 				fld.mode := Fld;  InStruct( fld.typ, FALSE );  readString( R, fld.name );
 				IF fld.name = "" THEN fld.vis := internal END;
-				InsertImport( fld, scope );  Files.ReadNum( R, tag );
+				InsertImport( fld, scope );  Files.ReadNum32( R, tag );
 			END;
 			IF tag = SFtproc THEN
-				Files.ReadNum( R, tag );
+				Files.ReadNum32( R, tag );
 				WHILE tag # SFend DO
 					NEW( fld );  fld.mode := TProc;  fld.vis := external;
 					fld.conval := NewConst();  fld.linkadr := OPM.LANotAlloc;   (* mfix *)
@@ -960,7 +960,7 @@ VAR
 						END;
 						InsertImport( fld, scope );
 					END;
-					Files.ReadNum( R, tag )
+					Files.ReadNum32( R, tag )
 				END;
 			END;
 			ASSERT ( ~(activeObj IN conval.setval) OR (hasBody IN conval.setval) );
@@ -975,7 +975,7 @@ VAR
 				typ := M.struct[-tag]
 			ELSIF tag <= SFlastStruct THEN typ := predefStruct[tag]
 			ELSIF tag <= SFmodOther THEN
-				IF tag = SFmodOther THEN Files.ReadNum( R, tag ) ELSE tag := tag - SFmod1 END;
+				IF tag = SFmodOther THEN Files.ReadNum32( R, tag ) ELSE tag := tag - SFmod1 END;
 				mod := M.import[tag];  readString( R, typname );
 				IF typname[0] # 0X THEN
 					i := 1  ;
@@ -988,7 +988,7 @@ VAR
 					INC( mod.nofreimp );
 					IF mod.nofreimp >= LEN( mod.reimp^ ) THEN DoubleStructArr( mod.reimp ) END;
 					mod.reimp[mod.nofreimp] := typ;
-				ELSE Files.ReadNum( R, typadr );  INC( typadr );
+				ELSE Files.ReadNum32( R, typadr );  INC( typadr );
 					ASSERT ( typadr < LEN( mod.reimp^ ) );
 					typ := mod.reimp[typadr]
 				END
@@ -996,10 +996,10 @@ VAR
 				NEW( typ );  M.struct[M.nofstr] := typ;  typ.tdadr := OPM.TDAdrUndef;  typ.offset := OPM.TDAdrUndef;
 				typ.sref := -M.nofstr;  INC( M.nofstr );
 				IF M.nofstr >= LEN( M.struct^ ) THEN DoubleStructArr( M.struct ) END;
-				IF tag = SFinvisible THEN vis := internal;  Files.ReadNum( R, tag ) ELSE vis := external END;
-				IF tag = SFsysflag THEN Files.ReadNum( R, tag );  typ.sysflag := SHORT( SHORT( tag ) );  Files.ReadNum( R, tag ) END;
+				IF tag = SFinvisible THEN vis := internal;  Files.ReadNum32( R, tag ) ELSE vis := external END;
+				IF tag = SFsysflag THEN Files.ReadNum32( R, tag );  typ.sysflag := SHORT( SHORT( tag ) );  Files.ReadNum32( R, tag ) END;
 				typ.form := strucForm[tag];  typ.comp := strucComp[tag];  typ.mno := -M.mnolev;  typ.size := -1;  typtag := tag;
-				Files.ReadNum( R, tag );  typ.extlev := -1;  InStruct( typ.BaseTyp, par );  btyp := typ.BaseTyp;
+				Files.ReadNum32( R, tag );  typ.extlev := -1;  InStruct( typ.BaseTyp, par );  btyp := typ.BaseTyp;
 				IF (typ.comp = Record) & ((btyp = notyp) OR (btyp = niltyp)) THEN  (*PaCo exports the rec.btyp as notyp*)
 					typ.BaseTyp := NIL
 				ELSIF (typ.comp = Record) & (btyp # NIL ) & (btyp.form = Pointer) THEN typ.BaseTyp := btyp.BaseTyp
@@ -1012,7 +1012,7 @@ VAR
 				| SFtypDynArr, SFtypOpenArr, SFtypDynEnhArr,SFtypOpenEnhArr,SFtypTensor: (*fof*)
 						IF btyp.comp IN {DynArr, OpenArr} THEN typ.n := btyp.n + 1 ELSE typ.n := 0 END;
 				| SFtypArray, SFtypEnhArray: (*fof*)
-						Files.ReadNum( R, typ.n )
+						Files.ReadNum32( R, typ.n )
 				| SFtypPointer:
 				| SFtypRecord:
 						InRecord( typ );  typ.n := -1;
@@ -1032,10 +1032,10 @@ VAR
 		PROCEDURE InObj;
 		BEGIN
 			NEW( obj );  obj.mode := mode;  obj.nxtobj := last;  last := obj;
-			IF (tag = SFobjflag) THEN   Files.Read(R, obj.sysflag);   Files.ReadNum( R, tag )
+			IF (tag = SFobjflag) THEN   Files.Read(R, obj.sysflag);   Files.ReadNum32( R, tag )
 			END;
-			IF tag = SFreadonly THEN Files.ReadNum( R, tag );  obj.vis := externalR ELSE obj.vis := external END;
-			(*IF tag=SFleaf THEN Files.ReadNum(R, tag); obj.leaf:=TRUE END;*)
+			IF tag = SFreadonly THEN Files.ReadNum32( R, tag );  obj.vis := externalR ELSE obj.vis := external END;
+			(*IF tag=SFleaf THEN Files.ReadNum32(R, tag); obj.leaf:=TRUE END;*)
 			InStruct( obj.typ, FALSE );  readString( R, obj.name );
 			IF operator THEN obj.prio := 126 END;
 			InsertImport( obj, M )
@@ -1062,14 +1062,14 @@ VAR
 			NEW( conval );  obj.conval := conval;
 			CASE tag OF
 			| SFtypBool, SFtypChar, SFtypSInt..SFtypLInt:
-					Files.ReadNum( R, conval.intval )
+					Files.ReadNum32( R, conval.intval )
 			| SFtypSet:
-					Files.ReadNum( R, int);
+					Files.ReadNum32( R, int);
 					conval.setval := SET(int);
 			| SFtypReal:
-					Files.ReadReal( R, r );  conval.realval := r;  conval.intval := OPM.ConstNotAlloc
+					Files.ReadFloat32( R, r );  conval.realval := r;  conval.intval := OPM.ConstNotAlloc
 			| SFtypLReal:
-					Files.ReadLReal( R, conval.realval );  conval.intval := OPM.ConstNotAlloc
+					Files.ReadFloat64( R, conval.realval );  conval.intval := OPM.ConstNotAlloc
 			| SFtypString:
 					NEW( conval.ext );  readString( R, conval.ext^ );  s := 0;
 					WHILE conval.ext[s] # 0X DO INC( s ) END;
@@ -1097,52 +1097,52 @@ VAR
 				IF OPM.noerr THEN
 					i := 0;
 					WHILE i < nofmod DO modules[i].nofreimp := 0;  INC( i ) END;
-					last := NIL;  Files.ReadNum( R, tag );
+					last := NIL;  Files.ReadNum32( R, tag );
 
 					(** fof >> *)
 					flag := {};
-					IF tag = SFsysflag THEN Files.ReadNum( R, int); flag := SET(int);  Files.ReadNum( R, tag );  END;
+					IF tag = SFsysflag THEN Files.ReadNum32( R, int); flag := SET(int);  Files.ReadNum32( R, tag );  END;
 					(** << fof  *)
 
 					IF tag = SFconst THEN
-						mode := Con;  Files.ReadNum( R, tag );
-						WHILE (tag < SFvar) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *)  DO InObj;  InConst;  Files.ReadNum( R, tag ) END
+						mode := Con;  Files.ReadNum32( R, tag );
+						WHILE (tag < SFvar) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *)  DO InObj;  InConst;  Files.ReadNum32( R, tag ) END
 					END;
 					IF tag = SFvar THEN
-						mode := Var;  Files.ReadNum( R, tag );
-						WHILE (tag < SFxproc) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *) DO InObj;  Files.ReadNum( R, tag ) END
+						mode := Var;  Files.ReadNum32( R, tag );
+						WHILE (tag < SFxproc) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *) DO InObj;  Files.ReadNum32( R, tag ) END
 					END;
 					IF tag = SFxproc THEN
-						mode := XProc;  Files.ReadNum( R, tag );
+						mode := XProc;  Files.ReadNum32( R, tag );
 						WHILE (tag < SFoperator) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *)  DO
-							InObj;  InParList( obj.link );  Files.ReadNum( R, tag );  obj.conval := NewConst();  obj.conval.setval := {};
+							InObj;  InParList( obj.link );  Files.ReadNum32( R, tag );  obj.conval := NewConst();  obj.conval.setval := {};
 						END
 					END;
 					IF tag = SFoperator THEN
-						mode := XProc;  operator := TRUE;  Files.ReadNum( R, tag );
+						mode := XProc;  operator := TRUE;  Files.ReadNum32( R, tag );
 						WHILE (tag < SFcproc) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *)  (*SFalias*) DO
-							InObj;  InParList( obj.link );  obj.conval := NewConst();  obj.conval.setval := {};  Files.ReadNum( R, tag )
+							InObj;  InParList( obj.link );  obj.conval := NewConst();  obj.conval.setval := {};  Files.ReadNum32( R, tag )
 						END;
 						operator := FALSE;
 					END;
 					IF tag = SFcproc THEN
-						mode := CProc;  Files.ReadNum( R, tag );
+						mode := CProc;  Files.ReadNum32( R, tag );
 						WHILE (tag < SFalias) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *) DO
 							InObj;  InParList( obj.link );  obj.conval := NewConst();  obj.conval.setval := {hasBody, asmProc};  InCProc;
-							Files.ReadNum( R, tag )
+							Files.ReadNum32( R, tag )
 						END
 					END;
 					IF tag = SFalias THEN
-						Files.ReadNum( R, tag );
+						Files.ReadNum32( R, tag );
 						WHILE  (tag < SFtyp)OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *) DO
 							NEW( obj );  obj.vis := external;  obj.mode := Typ;  InStruct( obj.typ, FALSE );  readString( R, obj.name );
 							IF obj.typ.strobj.vis = internal THEN INCL( obj.typ.strobj.flag, typeVisible ) END;
-							InsertImport( obj, M );  CompOldSym( obj );  Files.ReadNum( R, tag )
+							InsertImport( obj, M );  CompOldSym( obj );  Files.ReadNum32( R, tag )
 						END
 					END;
 					IF tag = SFtyp THEN
-						Files.ReadNum( R, tag );
-						WHILE (tag < SFend) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *) DO InStruct( tdum, FALSE );  Files.ReadNum( R, tag ) END
+						Files.ReadNum32( R, tag );
+						WHILE (tag < SFend) OR ((SFtypOpenEnhArr<=tag)&(tag <= SFtypEnhArray)) (* fof *) DO InStruct( tdum, FALSE );  Files.ReadNum32( R, tag ) END
 					END;
 					M.publics := last;
 					WHILE last # NIL DO

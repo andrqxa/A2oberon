@@ -754,32 +754,32 @@ VAR
 		(*! store Picts as GIF for color preserving or store colors *)
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadLInt( msg.R, w );
-			Files.ReadLInt( msg.R, h );  obj.w := w;  obj.h := h;
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadInt32( msg.R, w );
+			Files.ReadInt32( msg.R, h );  obj.w := w;  obj.h := h;
 			IF obj IS tINTEGERObject THEN
 				WITH obj: tINTEGERObject DO
-					Files.ReadLInt( msg.R, depth );  obj.A := LoadINTEGERArray( msg.R );  obj.depth := depth;
+					Files.ReadInt32( msg.R, depth );  obj.A := LoadINTEGERArray( msg.R );  obj.depth := depth;
 				END;
 			ELSIF obj IS tLONGINTObject THEN
 				WITH obj: tLONGINTObject DO
-					Files.ReadLInt( msg.R, depth );  obj.A := LoadLONGINTArray( msg.R );  obj.depth := depth;
+					Files.ReadInt32( msg.R, depth );  obj.A := LoadLONGINTArray( msg.R );  obj.depth := depth;
 				END;
 			ELSIF obj IS tLONGREALObject THEN
 				WITH obj: tLONGREALObject DO
-					Files.ReadLReal( msg.R, rdepth );  obj.A := LoadLONGREALArray( msg.R );  obj.depth := rdepth
+					Files.ReadFloat64( msg.R, rdepth );  obj.A := LoadLONGREALArray( msg.R );  obj.depth := rdepth
 				END;
 			END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteLInt( msg.R, SIGNED32(obj.w) );
-			Files.WriteLInt( msg.R, SIGNED32(obj.h) );
+			Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteInt32( msg.R, SIGNED32(obj.w) );
+			Files.WriteInt32( msg.R, SIGNED32(obj.h) );
 			IF obj IS tINTEGERObject THEN
-				WITH obj: tINTEGERObject DO Files.WriteLInt( msg.R, obj.depth );  StoreINTEGERArray( msg.R, obj.A );
+				WITH obj: tINTEGERObject DO Files.WriteInt32( msg.R, obj.depth );  StoreINTEGERArray( msg.R, obj.A );
 				END;
 			ELSIF obj IS tLONGINTObject THEN
-				WITH obj: tLONGINTObject DO Files.WriteLInt( msg.R, obj.depth );  StoreLONGINTArray( msg.R, obj.A );
+				WITH obj: tLONGINTObject DO Files.WriteInt32( msg.R, obj.depth );  StoreLONGINTArray( msg.R, obj.A );
 				END;
 			ELSIF obj IS tLONGREALObject THEN
-				WITH obj: tLONGREALObject DO Files.WriteLReal( msg.R, obj.depth );  StoreLONGREALArray( msg.R, obj.A )
+				WITH obj: tLONGREALObject DO Files.WriteFloat64( msg.R, obj.depth );  StoreLONGREALArray( msg.R, obj.A )
 				END;
 			END
 		ELSE vyBase.objecthandle( obj, msg )

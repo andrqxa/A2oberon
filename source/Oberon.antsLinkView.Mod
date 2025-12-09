@@ -418,13 +418,13 @@ END NodeUsers;
 
 	PROCEDURE StoreL( VAR R: Files.Rider;  L: tLayer );
 	BEGIN
-		Files.WriteInt( R, 0 );  Gadgets.WriteRef( R, L.lib, L.graph );  Gadgets.WriteRef( R, L.lib, L.root )
+		Files.WriteInt16( R, 0 );  Gadgets.WriteRef( R, L.lib, L.graph );  Gadgets.WriteRef( R, L.lib, L.root )
 	END StoreL;
 
 	PROCEDURE LoadL( VAR R: Files.Rider;  n: tLayer );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Gadgets.ReadRef( R, n.lib, objsub );
+		Files.ReadInt16( R, version );  Gadgets.ReadRef( R, n.lib, objsub );
 		ASSERT ( objsub # NIL );
 		IF (objsub # NIL ) THEN n.graph := objsub( vyGraph.tGraph ) END;
 		Gadgets.ReadRef( R, n.lib, objsub );

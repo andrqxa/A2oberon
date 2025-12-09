@@ -49,7 +49,7 @@ MODULE AsciiCoder IN Oberon;	(** portable *) (* Wolfgang Weck 14 Dec 93, compres
 	BEGIN
 		i := 0; REPEAT table[i] := 0X; INC(i) UNTIL i = N;
 		Files.Set(from, src, 0); Files.Set(to, dest, 0);
-		Files.ReadNum(from, i);
+		Files.ReadNum32(from, i);
 		IF i > 0 THEN
 			Files.Read(from, ch); val := ORD(ch); bit := 0; hash := 0;
 			REPEAT

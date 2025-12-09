@@ -332,19 +332,19 @@ PROCEDURE WriteList (obj: List; VAR M: Objects.FileMsg);
 	BEGIN
 		n := n.next;
 		WHILE n.key # NoKey DO
-			Files.WriteLInt(M.R, n.key); Files.WriteString(M.R, n.s); Files.WriteLInt(M.R, n.state);
+			Files.WriteInt32(M.R, n.key); Files.WriteString(M.R, n.s); Files.WriteInt32(M.R, n.state);
 			IF n.dsc # NIL THEN Files.Write(M.R, 0FFX); WriteNodes(n.dsc)
 			ELSE Files.Write(M.R, 0X)
 			END;
 			n := n.next
 		END;
-		Files.WriteLInt(M.R, NoKey)
+		Files.WriteInt32(M.R, NoKey)
 	END WriteNodes;
 
 BEGIN
 	Files.WriteNum(M.R, VersionNo);
 	Files.WriteSet(M.R, obj.state0);
-	Files.WriteLInt(M.R, obj.key);
+	Files.WriteInt32(M.R, obj.key);
 	WriteNodes(obj.tail);
 	Gadgets.objecthandle(obj, M)
 END WriteList;
@@ -356,27 +356,27 @@ VAR ver: SIGNED32;
 	VAR n: Node; key: SIGNED32; str: ListRiders.String; ch: CHAR;
 	BEGIN
 		n := tail;
-		Files.ReadLInt(M.R, key);
+		Files.ReadInt32(M.R, key);
 		WHILE key # NoKey DO
 			NEW(n.next); n.next.prev := n; n := n.next;
 			n.key := key; n.pos := n.prev.pos + 1;
 			Files.ReadString(M.R, n.s); NEW(str); COPY(n.s, str.s); n.d := str;
-			Files.ReadLInt(M.R, n.state);
+			Files.ReadInt32(M.R, n.state);
 			Files.Read(M.R, ch);
 			IF ch = 0FFX THEN
 				n.dsc := NewNode(NIL, NoKey); n.dsc.pos := -1; n.dsc.dsc := n;
 				ReadNodes(n.dsc)
 			END;
-			Files.ReadLInt(M.R, key)
+			Files.ReadInt32(M.R, key)
 		END;
 		n.next := tail; tail.prev := n
 	END ReadNodes;
 
 BEGIN
-	Files.ReadNum(M.R, ver);
+	Files.ReadNum32(M.R, ver);
 	IF ver >= 1 THEN
 		Files.ReadSet(M.R, obj.state0);
-		Files.ReadLInt(M.R, obj.key);
+		Files.ReadInt32(M.R, obj.key);
 		ReadNodes(obj.tail)
 	END;
 	Gadgets.objecthandle(obj, M)

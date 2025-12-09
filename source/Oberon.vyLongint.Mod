@@ -61,7 +61,7 @@ BEGIN
 	ASSERT(start >= 0, 100);  ASSERT(count >= 0, 101);
 	ASSERT(start <= LEN(x) - count, 102);
 	count := start + count;
-	WHILE start < count DO Files.WriteLInt(R, x[start]);  INC(start) END
+	WHILE start < count DO Files.WriteInt32(R, x[start]);  INC(start) END
 END Write;
 
 PROCEDURE Read* (VAR R: Files.Rider;  count: index;  VAR x: ARRAY OF int;  start: index);
@@ -70,7 +70,7 @@ BEGIN
 	ASSERT(start >= 0, 100);  ASSERT(count >= 0, 101);
 	ASSERT(start <= LEN(x) - count, 102);
 	count := start + count;
-	WHILE start < count DO Files.ReadLInt(R, x[start]);  INC(start) END
+	WHILE start < count DO Files.ReadInt32(R, x[start]);  INC(start) END
 END Read;
 
 (*= Formatted write, eg. packed, sparse... *)
@@ -97,11 +97,11 @@ PROCEDURE WriteFmt* (prefform: SIGNED32;  VAR R: Files.Rider;  count: index;  VA
 
 BEGIN
 	(*! add implementations for non plain. form ignored so far *)
-	Files.WriteLInt(R, fmtplain);
-	Files.WriteLInt(R, SIGNED32(start));
-	Files.WriteLInt(R, SIGNED32(count));
+	Files.WriteInt32(R, fmtplain);
+	Files.WriteInt32(R, SIGNED32(start));
+	Files.WriteInt32(R, SIGNED32(count));
 	Write(R, count, x, start);
-	Files.WriteLInt(R, fmtend)
+	Files.WriteInt32(R, fmtend)
 END WriteFmt;
 
 PROCEDURE ReadFmt* (VAR form: SIGNED32;  VAR R: Files.Rider;  count: index;  VAR x: ARRAY OF int;  start: index);
@@ -110,11 +110,11 @@ PROCEDURE ReadFmt* (VAR form: SIGNED32;  VAR R: Files.Rider;  count: index;  VAR
 
 BEGIN
 	(*! add implementations for non plain. form ignored so far *)
-	Files.ReadLInt(R, form);
-	Files.ReadLInt(R, t); start := t;
-	Files.ReadLInt(R, t); count := t;
+	Files.ReadInt32(R, form);
+	Files.ReadInt32(R, t); start := t;
+	Files.ReadInt32(R, t); count := t;
 	Read(R, count, x, start);
-	Files.ReadLInt(R, stop);
+	Files.ReadInt32(R, stop);
 	ASSERT(stop = fmtend, 100)
 END ReadFmt;
 

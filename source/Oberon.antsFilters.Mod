@@ -46,13 +46,13 @@ CONST
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadInt( msg.R, obj.type );
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadInt16( msg.R, obj.type );
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.weights := objsub( antsNeighbourhoods.Neighbours ) ELSE obj.weights := NIL END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.fct := objsub( antsFunctions.Function ) ELSE obj.fct := NIL END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteInt( msg.R, obj.type );
+			Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteInt16( msg.R, obj.type );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.weights );  Gadgets.WriteRef( msg.R, obj.lib, obj.fct )
 		ELSE vyBase.objecthandle( obj, msg )
 		END

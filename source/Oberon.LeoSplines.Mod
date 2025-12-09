@@ -371,15 +371,15 @@ MODULE LeoSplines IN Oberon; (** portable **)	(* eos  *)
 				c := obj(Spline);
 
 				(* shape part *)
-				Files.ReadNum(msg.R, ver);
+				Files.ReadNum32(msg.R, ver);
 				ASSERT(ver IN {1, 2}, 111);
 				IF ver = 1 THEN
-					Files.ReadInt(msg.R, i); Files.ReadInt(msg.R, i); Files.ReadInt(msg.R, i); Files.ReadInt(msg.R, i);
-					Files.ReadReal(msg.R, real)
+					Files.ReadInt16(msg.R, i); Files.ReadInt16(msg.R, i); Files.ReadInt16(msg.R, i); Files.ReadInt16(msg.R, i);
+					Files.ReadFloat32(msg.R, real)
 				END;
 
 				(* container part *)
-				Files.ReadNum(msg.R, ver);
+				Files.ReadNum32(msg.R, ver);
 				ASSERT(ver IN {1, 2}, 112);
 				REPEAT
 					Gadgets.ReadRef(msg.R, c.lib, obj);
@@ -405,7 +405,7 @@ MODULE LeoSplines IN Oberon; (** portable **)	(* eos  *)
 				END;
 
 				(* curve part *)
-				Files.ReadNum(msg.R, ver);
+				Files.ReadNum32(msg.R, ver);
 				ASSERT(ver = 1, 111);
 				Gadgets.ReadRef(msg.R, c.lib, obj);
 				IF (obj # NIL) & (obj IS LeoPens.Pen) THEN

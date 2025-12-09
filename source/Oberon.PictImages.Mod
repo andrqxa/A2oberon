@@ -162,13 +162,13 @@ MODULE PictImages IN Oberon; (** non-portable *)	(* eos  **)
 	BEGIN
 		file := Files.Old(fname);
 		IF file # NIL THEN
-			Files.Set(r, file, 0); Files.ReadInt(r, id);
+			Files.Set(r, file, 0); Files.ReadInt16(r, id);
 			IF id = 07F7H THEN	(* document *)
-				Files.ReadString(r, gen); Files.Set(r, file, Files.Pos(r) + 4*2); Files.ReadInt(r, id)
+				Files.ReadString(r, gen); Files.Set(r, file, Files.Pos(r) + 4*2); Files.ReadInt16(r, id)
 			END;
 
 			IF id = Pictures.PictFileId THEN
-				Files.ReadInt(r, w); Files.ReadInt(r, h); Files.ReadInt(r, depth);
+				Files.ReadInt16(r, w); Files.ReadInt16(r, h); Files.ReadInt16(r, depth);
 
 				(* load picture palette *)
 				i := 0; n := ASH(1, depth); default := TRUE;
@@ -239,8 +239,8 @@ MODULE PictImages IN Oberon; (** non-portable *)	(* eos  **)
 		file := Files.New(fname);
 		IF file # NIL THEN
 			Files.Set(r, file, 0);
-			Files.WriteInt(r, Pictures.PictFileId);
-			Files.WriteInt(r, img.width); Files.WriteInt(r, img.height);
+			Files.WriteInt16(r, Pictures.PictFileId);
+			Files.WriteInt16(r, img.width); Files.WriteInt16(r, img.height);
 
 			(* find out which format to use *)
 			pal := img.fmt.pal;
@@ -266,7 +266,7 @@ MODULE PictImages IN Oberon; (** non-portable *)	(* eos  **)
 			END;
 
 			(* write palette *)
-			Files.WriteInt(r, depth);
+			Files.WriteInt16(r, depth);
 			i := 0;
 			WHILE i < ASH(1, depth) DO
 				Files.Write(r, pal.col[i, R]); Files.Write(r, pal.col[i, G]); Files.Write(r, pal.col[i, B]);

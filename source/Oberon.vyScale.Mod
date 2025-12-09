@@ -216,20 +216,20 @@ VAR
 
 	PROCEDURE Store0( o: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteInt( M.R, o.hdigits );  Files.WriteInt( M.R, o.vdigits );  vyAxis.StoreAxe( M.R, o.haxe );
-		vyAxis.StoreAxe( M.R, o.vaxe );  Files.WriteInt( M.R, o.ow );  Files.WriteInt( M.R, o.oh );  Files.WriteLReal( M.R, o.hr );
-		Files.WriteLReal( M.R, o.vr );  Files.WriteInt( M.R, o.dx );  Files.WriteInt( M.R, o.dy );  Files.WriteInt( M.R, o.xregion );
-		Files.WriteInt( M.R, o.yregion );  Files.WriteBool( M.R, o.ToReal );  Files.WriteReal( M.R, o.trx );
-		Files.WriteReal( M.R, o.try );
+		Files.WriteInt16( M.R, o.hdigits );  Files.WriteInt16( M.R, o.vdigits );  vyAxis.StoreAxe( M.R, o.haxe );
+		vyAxis.StoreAxe( M.R, o.vaxe );  Files.WriteInt16( M.R, o.ow );  Files.WriteInt16( M.R, o.oh );  Files.WriteFloat64( M.R, o.hr );
+		Files.WriteFloat64( M.R, o.vr );  Files.WriteInt16( M.R, o.dx );  Files.WriteInt16( M.R, o.dy );  Files.WriteInt16( M.R, o.xregion );
+		Files.WriteInt16( M.R, o.yregion );  Files.WriteBool( M.R, o.ToReal );  Files.WriteFloat32( M.R, o.trx );
+		Files.WriteFloat32( M.R, o.try );
 	END Store0;
 
 	PROCEDURE Load0( o: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.ReadInt( M.R, o.hdigits );  Files.ReadInt( M.R, o.vdigits );  vyAxis.LoadAxe( M.R, o.haxe );
-		vyAxis.LoadAxe( M.R, o.vaxe );  Files.ReadInt( M.R, o.ow );  Files.ReadInt( M.R, o.oh );  Files.ReadLReal( M.R, o.hr );
-		Files.ReadLReal( M.R, o.vr );  Files.ReadInt( M.R, o.dx );  Files.ReadInt( M.R, o.dy );  Files.ReadInt( M.R, o.xregion );
-		Files.ReadInt( M.R, o.yregion );  Files.ReadBool( M.R, o.ToReal );  Files.ReadReal( M.R, o.trx );
-		Files.ReadReal( M.R, o.try );
+		Files.ReadInt16( M.R, o.hdigits );  Files.ReadInt16( M.R, o.vdigits );  vyAxis.LoadAxe( M.R, o.haxe );
+		vyAxis.LoadAxe( M.R, o.vaxe );  Files.ReadInt16( M.R, o.ow );  Files.ReadInt16( M.R, o.oh );  Files.ReadFloat64( M.R, o.hr );
+		Files.ReadFloat64( M.R, o.vr );  Files.ReadInt16( M.R, o.dx );  Files.ReadInt16( M.R, o.dy );  Files.ReadInt16( M.R, o.xregion );
+		Files.ReadInt16( M.R, o.yregion );  Files.ReadBool( M.R, o.ToReal );  Files.ReadFloat32( M.R, o.trx );
+		Files.ReadFloat32( M.R, o.try );
 	END Load0;
 
 	PROCEDURE Copy*( VAR M: Objects.CopyMsg;  src, dest: tLayer );

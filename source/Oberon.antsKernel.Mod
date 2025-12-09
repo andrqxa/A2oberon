@@ -213,39 +213,39 @@ END Metropolis;
 
 	PROCEDURE Store( VAR R: Files.Rider;  s: Kernel );
 	BEGIN
-		Files.WriteInt( R, 5 );  Gadgets.WriteRef( R, s.lib, s.A );
+		Files.WriteInt16( R, 5 );  Gadgets.WriteRef( R, s.lib, s.A );
 		(*
 	Gadgets.WriteRef(R, s.lib, s.Aorig); (*! remove *)
 	*)
 		Gadgets.WriteRef( R, s.lib, s.par );
-		IF s.makeTemperature = constScheme THEN Files.WriteInt( R, 0 )
-		ELSIF s.makeTemperature = loganneal THEN Files.WriteInt( R, 1 )
-		ELSIF s.makeTemperature = linanneal THEN Files.WriteInt( R, 2 )
-		ELSIF s.makeTemperature = expanneal THEN Files.WriteInt( R, 3 )
+		IF s.makeTemperature = constScheme THEN Files.WriteInt16( R, 0 )
+		ELSIF s.makeTemperature = loganneal THEN Files.WriteInt16( R, 1 )
+		ELSIF s.makeTemperature = linanneal THEN Files.WriteInt16( R, 2 )
+		ELSIF s.makeTemperature = expanneal THEN Files.WriteInt16( R, 3 )
 		END;
 		(*
-	ELSIF s.define = metropolisd THEN Files.WriteInt(R, 4)
-	ELSIF s.define = logmetranneal THEN Files.WriteInt(R, 5)
-	ELSIF s.define = linmetranneal THEN Files.WriteInt(R, 6)
-	ELSIF s.define =  expmetranneal THEN Files.WriteInt(R, 7)
+	ELSIF s.define = metropolisd THEN Files.WriteInt16(R, 4)
+	ELSIF s.define = logmetranneal THEN Files.WriteInt16(R, 5)
+	ELSIF s.define = linmetranneal THEN Files.WriteInt16(R, 6)
+	ELSIF s.define =  expmetranneal THEN Files.WriteInt16(R, 7)
 	END;
 	*)
-		Files.WriteString( R, s.samplerType );  Files.WriteInt( R, s.ModelClassCount );
+		Files.WriteString( R, s.samplerType );  Files.WriteInt16( R, s.ModelClassCount );
 		vyLinks.StoreLinks( R, s.lib, s.ModelClass );
-		IF s.visit = linearv THEN Files.WriteInt( R, 0 )
-		ELSIF s.visit = chequerboardv THEN Files.WriteInt( R, 1 )
-		ELSIF s.visit = randomv THEN Files.WriteInt( R, 2 )
+		IF s.visit = linearv THEN Files.WriteInt16( R, 0 )
+		ELSIF s.visit = chequerboardv THEN Files.WriteInt16( R, 1 )
+		ELSIF s.visit = randomv THEN Files.WriteInt16( R, 2 )
 		ELSE
-			Files.WriteInt( R, 3 ) (* linear Visit as default *)
+			Files.WriteInt16( R, 3 ) (* linear Visit as default *)
 		END;
-		Files.WriteBool( R, s.parallel );  Files.WriteBool( R, s.initwithorig );  Files.WriteLInt( R, s.cacheSize );
-		Files.WriteLReal( R, s.temperature )
+		Files.WriteBool( R, s.parallel );  Files.WriteBool( R, s.initwithorig );  Files.WriteInt32( R, s.cacheSize );
+		Files.WriteFloat64( R, s.temperature )
 	END Store;
 
 	PROCEDURE Load( VAR R: Files.Rider;  s: Kernel );
 	VAR objsub: Objects.Object;  coolint: SIGNED16;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Gadgets.ReadRef( R, s.lib, objsub );
+		Files.ReadInt16( R, version );  Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.A := objsub( vyBase.Object ) END;
 		IF version < 2 THEN
 			Gadgets.ReadRef( R, s.lib, objsub );
@@ -261,7 +261,7 @@ END Metropolis;
 			vyBase.Subscribe( s.par, s ) (* fof 020526, wrong order before *)
 		END;
 		(* OpenSampler(s,s.par,0,0,FALSE,FALSE); *)
-		Files.ReadInt( R, coolint );
+		Files.ReadInt16( R, coolint );
 		IF version < 5 THEN
 			IF coolint = 0 THEN
 				s.makeTemperature := constScheme;  s.samplerType := gibbsSampler;  s.cacheSize := staticCacheSize
@@ -288,9 +288,9 @@ END Metropolis;
 			END;
 			Files.ReadString( R, s.samplerType )
 		END;
-		IF version > 0 THEN Files.ReadInt( R, s.ModelClassCount );  vyLinks.LoadLinks( R, s.lib, s.ModelClass ) END;
+		IF version > 0 THEN Files.ReadInt16( R, s.ModelClassCount );  vyLinks.LoadLinks( R, s.lib, s.ModelClass ) END;
 		IF version > 2 THEN
-			Files.ReadInt( R, coolint );
+			Files.ReadInt16( R, coolint );
 			IF coolint = 0 THEN s.visit := linearVisit
 			ELSIF coolint = 1 THEN s.visit := checkerBoardVisit
 			ELSIF coolint = 2 THEN s.visit := randomVisit
@@ -298,7 +298,7 @@ END Metropolis;
 			END
 		END;
 		IF version > 3 THEN Files.ReadBool( R, s.parallel );  Files.ReadBool( R, s.initwithorig ) END;
-		IF version > 4 THEN Files.ReadLInt( R, s.cacheSize );  Files.ReadLReal( R, s.temperature ) END
+		IF version > 4 THEN Files.ReadInt32( R, s.cacheSize );  Files.ReadFloat64( R, s.temperature ) END
 
 	END Load;
 

@@ -873,7 +873,7 @@ MODULE LeoPenEditors IN Oberon; (** portable **)	(* eos  *)
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver)
+					Files.ReadNum32(msg.R, ver)
 				END
 			END
 		ELSE

@@ -236,14 +236,14 @@ MODULE Styles IN Oberon;	(** portable *) (* RS, Wed, 9-Jun-1993 *)
 			i := 0; WHILE i < style.nTabs DO ReadLong(R, style.tab[i]); INC(i) END;
 			WHILE i < MaxTabs DO style.tab[i] := 0; INC(i) END;
 		ELSIF x = Version THEN	(*[CF|1]*)
-			Files.ReadNum(R, n); style.opts := IntToSet(n);
-			Files.ReadNum(R, style.paraW);
-			Files.ReadNum(R, style.left);	(* left offset *)
-			Files.ReadNum(R, style.lsp);	(* line spacing *)
-			IF style.lsp > 0 THEN Files.ReadNum(R, style.dsr) END;
-			Files.ReadNum(R, style.gap);
+			Files.ReadNum32(R, n); style.opts := IntToSet(n);
+			Files.ReadNum32(R, style.paraW);
+			Files.ReadNum32(R, style.left);	(* left offset *)
+			Files.ReadNum32(R, style.lsp);	(* line spacing *)
+			IF style.lsp > 0 THEN Files.ReadNum32(R, style.dsr) END;
+			Files.ReadNum32(R, style.gap);
 			Files.Read(R, style.nTabs);
-			i := 0; WHILE i < style.nTabs DO Files.ReadNum(R, style.tab[i]); INC(i) END;
+			i := 0; WHILE i < style.nTabs DO Files.ReadNum32(R, style.tab[i]); INC(i) END;
 			WHILE i < MaxTabs DO style.tab[i] := 0; INC(i) END;
 		ELSE HALT(99)
 		END

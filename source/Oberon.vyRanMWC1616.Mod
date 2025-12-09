@@ -57,13 +57,13 @@ TYPE
 
 		PROCEDURE  (*VAR seed: tSeedDesc*) Store*( VAR r: Files.Rider );
 		BEGIN
-			Files.WriteLInt( r, SELF.x );  Files.WriteLInt( r, SELF.y );  Files.WriteLInt( r, SELF.a );  Files.WriteLInt( r, SELF.b )
+			Files.WriteInt32( r, SELF.x );  Files.WriteInt32( r, SELF.y );  Files.WriteInt32( r, SELF.a );  Files.WriteInt32( r, SELF.b )
 		END Store;
 
 		PROCEDURE  (*VAR seed: tSeedDesc*) Load*( VAR r: Files.Rider;  seedVersion: SIGNED16 );
 		BEGIN
 			IF seedVersion # cSeedVersion THEN HALT( 100 ) END;
-			Files.ReadLInt( r, SELF.x );  Files.ReadLInt( r, SELF.y );  Files.ReadLInt( r, SELF.a );  Files.ReadLInt( r, SELF.b )
+			Files.ReadInt32( r, SELF.x );  Files.ReadInt32( r, SELF.y );  Files.ReadInt32( r, SELF.a );  Files.ReadInt32( r, SELF.b )
 		END Load;
 
 	END tSeed;

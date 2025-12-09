@@ -108,14 +108,14 @@ VAR
 
 	PROCEDURE Store0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteLReal( M.R, obj.xr );  Files.WriteLReal( M.R, obj.yr );  Files.WriteString( M.R, obj.string );
+		Files.WriteFloat64( M.R, obj.xr );  Files.WriteFloat64( M.R, obj.yr );  Files.WriteString( M.R, obj.string );
 		Files.WriteString( M.R, obj.font )
 	END Store0;
 
 	PROCEDURE Load0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
 		(* dlink:=M.dlink;	*)
-		Files.ReadLReal( M.R, obj.xr );  Files.ReadLReal( M.R, obj.yr );  Files.ReadString( M.R, obj.string );
+		Files.ReadFloat64( M.R, obj.xr );  Files.ReadFloat64( M.R, obj.yr );  Files.ReadString( M.R, obj.string );
 		Files.ReadString( M.R, obj.font )
 	END Load0;
 

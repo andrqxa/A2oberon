@@ -177,7 +177,7 @@ IMPORT
 					r.Char(version);
 				END;
 				IF version = FileVersion THEN
-				r.RawNum(dummy);	(*skip symfile size*)
+				r.RawNum32(dummy);	(*skip symfile size*)
 				ELSIF version = FileVersionOC THEN
 				r.RawInt32(dummy);
 				END;

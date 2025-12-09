@@ -206,9 +206,9 @@ VAR
 
 	PROCEDURE Store0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Gadgets.WriteRef( M.R, obj.lib, obj.ox );  Files.WriteLReal( M.R, obj.xr );  Files.WriteLReal( M.R, obj.yr );
-		Files.WriteLReal( M.R, obj.wr );  Files.WriteLReal( M.R, obj.hr );  Files.WriteLReal( M.R, obj.dx );
-		Files.WriteLInt( M.R, obj.ticks );  Files.WriteBool( M.R, obj.hot );  Files.WriteBool( M.R, obj.vScale );
+		Gadgets.WriteRef( M.R, obj.lib, obj.ox );  Files.WriteFloat64( M.R, obj.xr );  Files.WriteFloat64( M.R, obj.yr );
+		Files.WriteFloat64( M.R, obj.wr );  Files.WriteFloat64( M.R, obj.hr );  Files.WriteFloat64( M.R, obj.dx );
+		Files.WriteInt32( M.R, obj.ticks );  Files.WriteBool( M.R, obj.hot );  Files.WriteBool( M.R, obj.vScale );
 		Files.WriteBool( M.R, obj.hScale )
 	END Store0;
 
@@ -217,8 +217,8 @@ VAR
 	BEGIN
 		Gadgets.ReadRef( M.R, obj.lib, objsub );
 		IF objsub # NIL THEN obj.ox := objsub( vyBase.Object ) END;
-		Files.ReadLReal( M.R, obj.xr );  Files.ReadLReal( M.R, obj.yr );  Files.ReadLReal( M.R, obj.wr );
-		Files.ReadLReal( M.R, obj.hr );  Files.ReadLReal( M.R, obj.dx );  Files.ReadLInt( M.R, obj.ticks );
+		Files.ReadFloat64( M.R, obj.xr );  Files.ReadFloat64( M.R, obj.yr );  Files.ReadFloat64( M.R, obj.wr );
+		Files.ReadFloat64( M.R, obj.hr );  Files.ReadFloat64( M.R, obj.dx );  Files.ReadInt32( M.R, obj.ticks );
 		Files.ReadBool( M.R, obj.hot );  Files.ReadBool( M.R, obj.vScale );  Files.ReadBool( M.R, obj.hScale )
 	END Load0;
 

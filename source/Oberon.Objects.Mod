@@ -366,11 +366,11 @@ Most entities in Oberon are derived from this base type.
 		IF obj = NIL THEN
 			IF L.f # NIL THEN
 				Files.Set(L.R, L.f, ind.org + LONG(ref)*4);
-				Files.ReadLInt(L.R, objOrg);
+				Files.ReadInt32(L.R, objOrg);
 				IF objOrg > ind.org THEN
 					NewObj := NIL;
 					Files.Set(L.R, L.f, objOrg);
-					Files.ReadInt(L.R, n);
+					Files.ReadInt16(L.R, n);
 					IF n < 0 THEN nl := MAX(SIGNED32) - n ELSE nl := n END; (* fof *)
 					SplitName(L.GName[nl], MName, PName);
 					Mod := Modules.ThisMod(MName);
@@ -387,7 +387,7 @@ Most entities in Oberon are derived from this base type.
 						ind.index[ref] := obj;
 						(* read in data *)
 						M.id := load; Stamp(M);
-						Files.ReadLInt(L.R, M.len);
+						Files.ReadInt32(L.R, M.len);
 						Files.Set(M.R, L.f, Files.Pos(L.R));
 						IF M.len > 0 THEN obj.handle(obj, M) END
 					ELSE ind.index[ref] := NoObj
@@ -434,26 +434,26 @@ Most entities in Oberon are derived from this base type.
 	BEGIN
 		ind := L.ind(ArrayIndex); dict:= L.dict(ListDict);
 		Files.Set(R, f, pos); Files.Read(R, type);
-		Files.ReadLInt(R, clen);
+		Files.ReadInt32(R, clen);
 		Files.Set(S, f, pos + 1 + clen);
-		Files.ReadLInt(S, dlen);
-		Files.ReadInt(S, key);
+		Files.ReadInt32(S, dlen);
+		Files.ReadInt16(S, key);
 		WHILE key # MIN(SIGNED16) DO NEW(entry);
 			Files.ReadString(S, entry.name);
 			entry.key := key;
 			entry.next := dict.first; dict.first := entry;
 			IF key < dict.key THEN dict.key := key END;
-			Files.ReadInt(S, key)
+			Files.ReadInt16(S, key)
 		END;
 		IF type >= 0 THEN (*old format*)
 			Files.Read(R, ch); Files.Read(R, ch);
-			Files.ReadInt(R, i); Files.ReadInt(R, i); Files.ReadInt(R, i);
-			Files.ReadInt(R, i); Files.ReadInt(R, i)
+			Files.ReadInt16(R, i); Files.ReadInt16(R, i); Files.ReadInt16(R, i);
+			Files.ReadInt16(R, i); Files.ReadInt16(R, i)
 		END;
-		Files.ReadInt(R, NofRuns);
+		Files.ReadInt16(R, NofRuns);
 		k := 0;
 		 WHILE k # NofRuns DO
-			Files.ReadInt(R, run[k].beg); Files.ReadInt(R, run[k].end);
+			Files.ReadInt16(R, run[k].beg); Files.ReadInt16(R, run[k].end);
 			INC(k)
 		END;
 		N := 0; k := 0; m := 0;
@@ -481,7 +481,7 @@ Most entities in Oberon are derived from this base type.
 		k := 0; m := 0;
 		WHILE k < NofRuns DO m := run[k].beg;
 			WHILE m < run[k].end DO
-				Files.ReadLInt(M.R, M.len);
+				Files.ReadInt32(M.R, M.len);
 				pos := Files.Pos(M.R)+M.len;
 				IF M.len # 0 THEN
 					obj := ind.index[m];
@@ -506,15 +506,15 @@ Most entities in Oberon are derived from this base type.
 	BEGIN
 		ind := L.ind(ArrayIndex);
 		Files.Set(R, f, pos);
-		Files.ReadLInt(R, version);
+		Files.ReadInt32(R, version);
 		IF version = Version THEN
-			Files.ReadLInt(R, gorg); Files.ReadLInt(R, dorg);
-			Files.ReadInt(R, L.maxref); ind.size := L.maxref; ind.org := Files.Pos(R);
+			Files.ReadInt32(R, gorg); Files.ReadInt32(R, dorg);
+			Files.ReadInt16(R, L.maxref); ind.size := L.maxref; ind.org := Files.Pos(R);
 			IF L.maxref > 0 THEN NEW(ind.index, L.maxref) END;
 			FOR i := 0 TO L.maxref - 1 DO ind.index[i] := NIL END;
 			(* read generator table *)
 			Files.Set(R, f, gorg);
-			Files.ReadInt(R, key); N:= key;
+			Files.ReadInt16(R, key); N:= key;
 			IF N > 0 THEN
 				NEW(L.GName, N);
 				FOR n := 0 TO N - 1 DO Files.ReadString(R, L.GName[n]) END
@@ -524,14 +524,14 @@ Most entities in Oberon are derived from this base type.
 			(* read dict *)
 			dict := L.dict(ListDict);
 			Files.Set(R, f, dorg);
-			Files.ReadInt(R, key);
+			Files.ReadInt16(R, key);
 			WHILE (key # MIN(SIGNED16)) & ~R.eof DO
 				NEW(entry);
 				Files.ReadString(R, entry.name);
 				entry.key := key;
 				entry.next := dict.first; dict.first := entry;
 				IF key < dict.key THEN dict.key := key END;
-				Files.ReadInt(R, key)
+				Files.ReadInt16(R, key)
 			END;
 
 			L.f := f; Files.Set(L.R, f, ind.org);
@@ -551,10 +551,10 @@ Most entities in Oberon are derived from this base type.
 		ind := L.ind(ArrayIndex);
 		Files.Set(R, f, pos);
 		Files.Write(R, LibBlockId);
-		Files.WriteLInt(R, Version);
-		Files.WriteLInt(R, -1);	(* place holder genTable pos *)
-		Files.WriteLInt(R, -1);	(* place holder dict pos *)
-		Files.WriteInt(R, L.maxref);
+		Files.WriteInt32(R, Version);
+		Files.WriteInt32(R, -1);	(* place holder genTable pos *)
+		Files.WriteInt32(R, -1);	(* place holder dict pos *)
+		Files.WriteInt16(R, L.maxref);
 		indorg := Files.Pos(R); Files.Set(indR, f, indorg);
 		IF L.maxref > 0 THEN Files.WriteBytes(R, ind.index^, LONG(L.maxref)*4) END;
 
@@ -566,21 +566,21 @@ Most entities in Oberon are derived from this base type.
 			obj := ind.index[i];
 			IF obj = NIL THEN	(* object is not load yet *)
 				Files.Set(L.R, L.f, ind.org + 4*i);
-				Files.ReadLInt(L.R, org);
+				Files.ReadInt32(L.R, org);
 				IF org >= 0 THEN	(* there is an object in the file *)
 					Files.Set(L.R, L.f, org);
-					Files.ReadInt(L.R, m); Files.ReadLInt(L.R, olen);
+					Files.ReadInt16(L.R, m); Files.ReadInt32(L.R, olen);
 					COPY(L.GName[m], GName[N]);
 					n := 0;
 					WHILE GName[n] # GName[N] DO INC(n) END;
 					IF n = N THEN INC(N) END;
 
-					Files.WriteLInt(indR, Files.Pos(R));	(* write index *)
-					Files.WriteInt(R, SHORT(n));
-					Files.WriteLInt(R, olen);
+					Files.WriteInt32(indR, Files.Pos(R));	(* write index *)
+					Files.WriteInt16(R, SHORT(n));
+					Files.WriteInt32(R, olen);
 					WHILE olen > 0 DO Files.Read(L.R, ch); Files.Write(R, ch); DEC(olen) END
 				ELSE	(* there was never an object with this ref *)
-					Files.WriteLInt(indR, -1)
+					Files.WriteInt32(indR, -1)
 				END
 			ELSIF obj # NoObj THEN	(* there is an object to store *)
 				A.res := -1; obj.handle(obj, A); COPY(A.s, GName[N]);
@@ -588,22 +588,22 @@ Most entities in Oberon are derived from this base type.
 				WHILE GName[n] # GName[N] DO INC(n) END;
 				IF n = N THEN INC(N) END;
 
-				Files.WriteLInt(indR, Files.Pos(R));	(* write index *)
-				Files.WriteInt(R, SHORT(n));
+				Files.WriteInt32(indR, Files.Pos(R));	(* write index *)
+				Files.WriteInt16(R, SHORT(n));
 				Files.Set(M.R, f, Files.Pos(R));
-				Files.WriteLInt(M.R, 0); obj.handle(obj, M);
+				Files.WriteInt32(M.R, 0); obj.handle(obj, M);
 				olen := Files.Pos(M.R) - Files.Pos(R) - 4;
-				Files.WriteLInt(R, olen);
+				Files.WriteInt32(R, olen);
 				Files.Set(R, f, Files.Pos(M.R))
 			ELSE	(* no object *)
-				Files.WriteLInt(indR, -1)
+				Files.WriteInt32(indR, -1)
 			END
 		END;
 
 		(* write generator table *)
 		i := Files.Pos(R);
-		Files.Set(R, f, pos + 5); Files.WriteLInt(R, i); Files.Set(R, f, i);
-		Files.WriteInt(R, SHORT(N));
+		Files.Set(R, f, pos + 5); Files.WriteInt32(R, i); Files.Set(R, f, i);
+		Files.WriteInt16(R, SHORT(N));
 		IF N > 0 THEN
 			NEW(L.GName, N);
 			FOR n := 0 TO N-1 DO
@@ -614,14 +614,14 @@ Most entities in Oberon are derived from this base type.
 
 		(* store dict *)
 		i := Files.Pos(R);
-		Files.Set(R, f, pos + 9); Files.WriteLInt(R, i); Files.Set(R, f, i);
+		Files.Set(R, f, pos + 9); Files.WriteInt32(R, i); Files.Set(R, f, i);
 		entry := L.dict(ListDict).first;
 		WHILE entry # NIL DO
-			Files.WriteInt(R, entry.key); i := 0;
+			Files.WriteInt16(R, entry.key); i := 0;
 			Files.WriteString(R, entry.name);
 			entry := entry.next
 		END;
-		Files.WriteInt(R, MIN(SIGNED16));
+		Files.WriteInt16(R, MIN(SIGNED16));
 		len := Files.Pos(R) - pos;
 		L.f := f; ind.org := indorg;
 		Files.Set(L.R, L.f, ind.org)

@@ -31,7 +31,7 @@ END WriteVersion;
 (* Check the version number *)
 PROCEDURE ReadVersion(VAR R: Files.Rider);
 VAR x: SIGNED32;
-BEGIN Files.ReadNum(R, x);
+BEGIN Files.ReadNum32(R, x);
 	IF x # VersionNo THEN
 		Texts.WriteString(W, "Version "); Texts.WriteInt(W, VersionNo, 3); Texts.WriteString(W, " of ");
 		Texts.WriteString(W, ModName); Texts.WriteString(W, " cannot read version "); Texts.WriteInt(W, x, 3);
@@ -59,7 +59,7 @@ BEGIN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
 					WriteVersion(M.R);
-					Files.WriteInt(M.R, obj.x);
+					Files.WriteInt16(M.R, obj.x);
 
 					(* Write pointers *)
 					Gadgets.WriteRef(M.R, obj.lib, obj.ptr0);
@@ -67,7 +67,7 @@ BEGIN
 					Gadgets.framehandle(obj, M)
 				ELSIF M.id = Objects.load THEN
 					ReadVersion(M.R);
-					Files.ReadInt(M.R, obj.x);
+					Files.ReadInt16(M.R, obj.x);
 
 					(* Read pointers back, checking their type. Dummies are discarded *)
 					Gadgets.ReadRef(M.R, obj.lib, obj0);

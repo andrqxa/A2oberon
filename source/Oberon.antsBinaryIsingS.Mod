@@ -53,13 +53,13 @@ TYPE
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteLReal( R, s.h );  Files.WriteLReal( R, s.beta )
+		Files.WriteInt16( R, 0 );  Files.WriteFloat64( R, s.h );  Files.WriteFloat64( R, s.beta )
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadLReal( R, s.h );  Files.ReadLReal( R, s.beta );  Open( s, s.beta, s.h, s.coolingTemp )
+		Files.ReadInt16( R, version );  Files.ReadFloat64( R, s.h );  Files.ReadFloat64( R, s.beta );  Open( s, s.beta, s.h, s.coolingTemp )
 	END LoadM;
 
 	PROCEDURE OneSweep( s: antsKernel.Kernel );

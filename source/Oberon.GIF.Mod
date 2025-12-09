@@ -83,7 +83,7 @@ MODULE GIF IN Oberon;	(** portable *) (* rm 1.9.1996, ejz 8.11.96 *)
 			i: SIGNED32;
 			ch: CHAR;
 	BEGIN
-		Files.ReadInt(R, LSD.width); Files.ReadInt(R, LSD.height);
+		Files.ReadInt16(R, LSD.width); Files.ReadInt16(R, LSD.height);
 		Files.Read(R, ch); i := ORD(ch);
 		Files.Read(R, ch); (* Background Color Index into Global Color Table*)
 		Files.Read(R, ch);
@@ -114,7 +114,7 @@ MODULE GIF IN Oberon;	(** portable *) (* rm 1.9.1996, ejz 8.11.96 *)
 		ELSIF ch = 0F9X THEN (* Graphic Control Extension *)
 			Files.Read(R, ch); Files.Read(R, ch);
 			Ext.transparency := ODD(ORD(ch));
-			Files.ReadInt(R, time); Files.Read(R, ch);
+			Files.ReadInt16(R, time); Files.Read(R, ch);
 			Ext.transparencyIndex := ORD(ch)
 		ELSE
 		END;
@@ -129,8 +129,8 @@ MODULE GIF IN Oberon;	(** portable *) (* rm 1.9.1996, ejz 8.11.96 *)
 			i: SIGNED32;
 			ch: CHAR;
 	BEGIN
-		Files.ReadInt(R, IDesc.left); Files.ReadInt(R, IDesc.top);
-		Files.ReadInt(R, IDesc.width); Files.ReadInt(R, IDesc.height);
+		Files.ReadInt16(R, IDesc.left); Files.ReadInt16(R, IDesc.top);
+		Files.ReadInt16(R, IDesc.width); Files.ReadInt16(R, IDesc.height);
 		Files.Read(R, ch); i := ORD(ch);
 		IDesc.LCTSize := SIGNED16(ASH(1, (i MOD 8)+1)); i := i DIV 32;
 		i := i DIV 2;

@@ -59,14 +59,14 @@ TYPE
 		(*! store Picts as GIF for color preserving or store colors *)
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadLReal( msg.R, obj.from );
-			Files.ReadLReal( msg.R, obj.to );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadFloat64( msg.R, obj.from );
+			Files.ReadFloat64( msg.R, obj.to );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.x := objsub( vyLongrealVec.tVector ) END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.f := objsub( antsFunctions.Function ) END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteLReal( msg.R, obj.from );
-			Files.WriteLReal( msg.R, obj.to );  Gadgets.WriteRef( msg.R, obj.lib, obj.x );  Gadgets.WriteRef( msg.R, obj.lib, obj.f )
+			Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteFloat64( msg.R, obj.from );
+			Files.WriteFloat64( msg.R, obj.to );  Gadgets.WriteRef( msg.R, obj.lib, obj.x );  Gadgets.WriteRef( msg.R, obj.lib, obj.f )
 		ELSE vyBase.objecthandle( obj, msg )
 		END
 	END HandleFileMsg;

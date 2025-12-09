@@ -654,36 +654,36 @@ BEGIN
 		i:= 0;
 		WHILE (i < Ranks) DO
 			Files.WriteString(M.R,F.score[i].name);
-			Files.WriteLInt(M.R,F.score[i].points);
-			Files.WriteInt(M.R,F.score[i].level);
-			Files.WriteInt(M.R,F.score[i].rows);
+			Files.WriteInt32(M.R,F.score[i].points);
+			Files.WriteInt16(M.R,F.score[i].level);
+			Files.WriteInt16(M.R,F.score[i].rows);
 			INC(i);
 		END;
 		Files.Write(M.R,F.curr); Files.Write(M.R,F.next);
 		Files.Write(M.R,F.angle); Files.Write(M.R,F.line);
 		Files.Write(M.R,F.row); Files.Write(M.R,F.rank);
-		Files.Write(M.R,F.mult); Files.WriteInt(M.R,F.delay);
-		Files.WriteInt(M.R,F.figures); Files.WriteBool(M.R,F.match);
+		Files.Write(M.R,F.mult); Files.WriteInt16(M.R,F.delay);
+		Files.WriteInt16(M.R,F.figures); Files.WriteBool(M.R,F.match);
 		Files.WriteBool(M.R,F.preview); Files.WriteBool(M.R,F.paused);
-		Files.WriteLInt(M.R,F.lap1); Files.WriteLInt(M.R,F.lap2);
+		Files.WriteInt32(M.R,F.lap1); Files.WriteInt32(M.R,F.lap2);
 		i:= 0;
 		WHILE (i < PotLines) DO Files.WriteString(M.R,F.pot[i]); INC(i); END;
 	ELSIF (M.id = Objects.load) THEN
 		i:= 0;
 		WHILE (i < Ranks) DO
 			Files.ReadString(M.R,F.score[i].name);
-			Files.ReadLInt(M.R,F.score[i].points);
-			Files.ReadInt(M.R,F.score[i].level);
-			Files.ReadInt(M.R,F.score[i].rows);
+			Files.ReadInt32(M.R,F.score[i].points);
+			Files.ReadInt16(M.R,F.score[i].level);
+			Files.ReadInt16(M.R,F.score[i].rows);
 			INC(i);
 		END;
 		Files.Read(M.R,F.curr); Files.Read(M.R,F.next);
 		Files.Read(M.R,F.angle); Files.Read(M.R,F.line);
 		Files.Read(M.R,F.row); Files.Read(M.R,F.rank);
-		Files.Read(M.R,F.mult); Files.ReadInt(M.R,F.delay);
-		Files.ReadInt(M.R,F.figures); Files.ReadBool(M.R,F.match);
+		Files.Read(M.R,F.mult); Files.ReadInt16(M.R,F.delay);
+		Files.ReadInt16(M.R,F.figures); Files.ReadBool(M.R,F.match);
 		Files.ReadBool(M.R,F.preview); Files.ReadBool(M.R,F.paused);
-		Files.ReadLInt(M.R,F.lap1); Files.ReadLInt(M.R,F.lap2);
+		Files.ReadInt32(M.R,F.lap1); Files.ReadInt32(M.R,F.lap2);
 		i:= 0;
 		WHILE (i < PotLines) DO Files.ReadString(M.R,F.pot[i]); INC(i); END;
 	END;
@@ -789,10 +789,10 @@ END PotFigure;
 PROCEDURE PotFile(R: Frame; VAR M: FileMsg);
 BEGIN
 	IF (M.id = Objects.store) THEN
-		Files.WriteInt(M.R,R.scale);
+		Files.WriteInt16(M.R,R.scale);
 		Files.WriteBool(M.R,R.blank);
 	ELSIF (M.id = Objects.load) THEN
-		Files.ReadInt(M.R,R.scale);
+		Files.ReadInt16(M.R,R.scale);
 		Files.ReadBool(M.R,R.blank);
 	END;
 	Panels.PanelHandler(R,M);
@@ -980,9 +980,9 @@ END ScoreCopy;
 PROCEDURE ScoreFile(S: ScoreField; VAR M: FileMsg);
 BEGIN
 	IF (M.id = Objects.store) THEN
-		Files.WriteInt(M.R,S.ndx); Files.WriteInt(M.R,S.xofs);
+		Files.WriteInt16(M.R,S.ndx); Files.WriteInt16(M.R,S.xofs);
 	ELSIF (M.id = Objects.load) THEN
-		Files.ReadInt(M.R,S.ndx); Files.ReadInt(M.R,S.xofs);
+		Files.ReadInt16(M.R,S.ndx); Files.ReadInt16(M.R,S.xofs);
 	END;
 	TextFields.TextFieldHandler(S,M);
 END ScoreFile;
@@ -1318,12 +1318,12 @@ VAR
 	lib: Objects.Library;
 	R: Files.Rider;
 BEGIN
-	Files.Set(R,F,0); Files.ReadInt(R,tag);
+	Files.Set(R,F,0); Files.ReadInt16(R,tag);
 	IF (tag = Documents.Id) THEN
 		Files.ReadString(R,str);								(* Skip over Generator *)
 		Files.ReadString(R,str);								(* Document Version *)
-		Files.ReadInt(R,D.X); Files.ReadInt(R,D.Y);
-		Files.ReadInt(R,D.W); Files.ReadInt(R,D.H);
+		Files.ReadInt16(R,D.X); Files.ReadInt16(R,D.Y);
+		Files.ReadInt16(R,D.W); Files.ReadInt16(R,D.H);
 		Files.Read(R,id);
 		IF (str # Version) & (str # CompVers) THEN   (* Check Program Version *)
 			Out.String("Unmatching "); Out.String(str); Out.Ln();
@@ -1421,10 +1421,10 @@ BEGIN
 		NEW(B.lib); Objects.OpenLibrary(B.lib); D.dsc.handle(D.dsc,B);
 		Objects.Stamp(A); A.id:= Objects.get; A.name:= "Gen"; D.handle(D,A);
 		F:= Files.New(D.name); Files.Set(R,F,0);
-		Files.WriteInt(R,Documents.Id);
+		Files.WriteInt16(R,Documents.Id);
 		Files.WriteString(R,A.s); Files.WriteString(R,Version);
-		Files.WriteInt(R,D.X); Files.WriteInt(R,D.Y);
-		Files.WriteInt(R,D.W); Files.WriteInt(R,D.H);
+		Files.WriteInt16(R,D.X); Files.WriteInt16(R,D.Y);
+		Files.WriteInt16(R,D.W); Files.WriteInt16(R,D.H);
 		Objects.StoreLibrary(B.lib,F,Files.Pos(R),len);
 		Files.Register(F); Files.Close(F);
 		Out.Char(22X); Out.String(D.name); Out.Char(22X); Out.Ln();

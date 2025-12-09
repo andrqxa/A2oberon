@@ -646,10 +646,10 @@ END Scan;
 PROCEDURE DoWriteBinaryMatrix* (VAR R: Files.Rider; VAR A: ARRAY OF ARRAY OF FLOAT64);
 VAR i,j: SIGNED32;
 BEGIN
-Files.WriteLInt(R,LEN(A)); Files.WriteLInt(R,LEN(A[0]));
+Files.WriteInt32(R,LEN(A)); Files.WriteInt32(R,LEN(A[0]));
 FOR i := 0 TO LEN(A)-1 DO
 FOR j := 0 TO LEN(A[0])-1 DO
-Files.WriteLReal(R,A[i,j]);
+Files.WriteFloat64(R,A[i,j]);
 END;
 END;
 END DoWriteBinaryMatrix;
@@ -657,11 +657,11 @@ END DoWriteBinaryMatrix;
 PROCEDURE DoReadBinaryMatrix* (VAR R: Files.Rider; VAR A: ARRAY OF ARRAY OF FLOAT64; VAR h,w: SIGNED32): BOOLEAN;
 VAR i,j: SIGNED32;
 BEGIN
-Files.ReadLInt(R,h); Files.ReadLInt(R,w);
+Files.ReadInt32(R,h); Files.ReadInt32(R,w);
 IF  (LEN(A)<h) OR (LEN(A[0])<w) THEN RETURN FALSE END;
 FOR i := 0 TO h-1 DO
 FOR j := 0 TO w-1 DO
-Files.ReadLReal(R,A[i,j]);
+Files.ReadFloat64(R,A[i,j]);
 END;
 END;
 RETURN TRUE;
@@ -670,14 +670,14 @@ END DoReadBinaryMatrix;
 PROCEDURE DoReadBinaryRow* (VAR R: Files.Rider; v: vyLongrealVec.tVector; y: SIGNED32; VAR w: SIGNED32);
 VAR i,j,h: SIGNED32;dummy: FLOAT64;
 BEGIN
-Files.ReadLInt(R,h); Files.ReadLInt(R,w);
+Files.ReadInt32(R,h); Files.ReadInt32(R,w);
 FOR i := 0 TO y-1 DO
 FOR j := 0 TO w-1 DO
-Files.ReadLReal(R,dummy);
+Files.ReadFloat64(R,dummy);
 END;
 END;
 FOR j := 0 TO w-1 DO
-Files.ReadLReal(R,dummy);
+Files.ReadFloat64(R,dummy);
 vyLongrealVec.Set(dummy,v,j);
 END;
 END DoReadBinaryRow;

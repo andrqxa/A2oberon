@@ -471,10 +471,10 @@ MODULE Colors IN Oberon; (** portable **)	(* eos  *)
 			WITH msg: Objects.FileMsg DO
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1);
-					Files.WriteReal(msg.R, col.r); Files.WriteReal(msg.R, col.g); Files.WriteReal(msg.R, col.b)
+					Files.WriteFloat32(msg.R, col.r); Files.WriteFloat32(msg.R, col.g); Files.WriteFloat32(msg.R, col.b)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
-					Files.ReadReal(msg.R, col.r); Files.ReadReal(msg.R, col.g); Files.ReadReal(msg.R, col.b)
+					Files.ReadNum32(msg.R, ver);
+					Files.ReadFloat32(msg.R, col.r); Files.ReadFloat32(msg.R, col.g); Files.ReadFloat32(msg.R, col.b)
 				END
 			END
 		END

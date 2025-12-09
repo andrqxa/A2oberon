@@ -1307,25 +1307,25 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 			VAR i: SIGNED32;  r: FLOAT32;  lr: FLOAT64;  str: PCS.String;  set: SET32;  c: PCT.Const;
 		BEGIN
 			CASE	tag	OF
-			| SFtypBool:	R.RawNum(i);
+			| SFtypBool:	R.RawNum32(i);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / Bool / "); PCM.LogWNum(i) END;
 									IF	i = 0	THEN	c := PCT.False	ELSE	c := PCT.True	END
-			| SFtypChar8:	R.RawNum(i);
+			| SFtypChar8:	R.RawNum32(i);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / Char / "); PCM.LogWNum(i) END;
 									c := PCT.NewIntConst(i, PCT.Char8)
-			| SFtypInt8:	R.RawNum(i);
+			| SFtypInt8:	R.RawNum32(i);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / SInt / "); PCM.LogWNum(i) END;
 									c := PCT.NewIntConst(i, PCT.Int8)
-			| SFtypInt16:	R.RawNum(i);
+			| SFtypInt16:	R.RawNum32(i);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / Int / "); PCM.LogWNum(i) END;
 									c := PCT.NewIntConst(i, PCT.Int16)
-			| SFtypInt32:	R.RawNum(i);
+			| SFtypInt32:	R.RawNum32(i);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / LInt / "); PCM.LogWNum(i) END;
 									c := PCT.NewIntConst(i, PCT.Int32)
 			| SFtypInt64:	R.RawFloat64(lr);
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / HInt / ") END;
 									c := PCT.NewInt64Const(SYSTEM.VAL(SIGNED64, lr))
-			| SFtypSet:	R.RawNum(SYSTEM.VAL(SIGNED32, set));
+			| SFtypSet:	R.RawNum32(SYSTEM.VAL(SIGNED32, set));
 									IF TraceImport THEN PCM.LogWLn; PCM.LogWStr("InConst / Set / "); PCM.LogWHex(SIGNED32(set)) END;
 									c := PCT.NewSetConst(set)
 			| SFtypFloat32:	R.RawFloat32(r);
@@ -1347,11 +1347,11 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 		BEGIN
 			styp := NIL;
 			NEW(s); PCT.InitScope(s, upper, {}, TRUE); PCT.SetOwner(s);
-			R.RawNum(tag);
+			R.RawNum32(tag);
 			WHILE  tag#SFend  DO
 				flags := {}; (* ejz *)
 				IF tag = SFobjflag THEN
-					R.RawNum(f); R.RawNum(tag);
+					R.RawNum32(f); R.RawNum32(tag);
 					IF f = PCM.CParam THEN (* fof for Linux *)
 						INCL(flags, PCT.CParam)
 					ELSIF f = PCM.WinAPIParam THEN
@@ -1360,12 +1360,12 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 					END;
 				END;
 					IF  tag=SFvar  THEN
-					var:=TRUE; R.RawNum(tag);
+					var:=TRUE; R.RawNum32(tag);
 				ELSE var:=FALSE
 				END;
 (** fof >> *)
 				IF tag = SFreadonly THEN  (* var const *)
-					INCL(flags,PCM.ReadOnly); R.RawNum(tag);
+					INCL(flags,PCM.ReadOnly); R.RawNum32(tag);
 				END;
 (** << fof  *)
 				InStruct(str); ReadStrIndex(R, readString, name);
@@ -1375,7 +1375,7 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 					s.CreatePar(PCT.Public, var, name, flags, str, 0 (* fof *),  res); (* ASSERT(res = PCT.Ok) *) (* ejz *)
 					Assert(res = PCT.Ok);
 				END;
-				R.RawNum(tag)
+				R.RawNum32(tag)
 			END;
 			IF styp # NIL THEN
 				s.CreatePar(PCT.Public, svar, PCT.SelfName, {}, styp, 0 (* fof *), res); (* ASSERT(res = PCT.Ok) *)
@@ -1391,7 +1391,7 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 			NEW(s);
 			PCT.SetOwner(s);
 			PCT.InitScope(s, scope, {}, TRUE);
-			R.RawNum(SYSTEM.VAL(SIGNED32, mode));
+			R.RawNum32(SYSTEM.VAL(SIGNED32, mode));
 			PCT.InitRecord(rec, btyp, intf, s, PCT.interface IN mode, TRUE, TRUE, res); (* ASSERT(res = PCT.Ok); *)
 			Assert(res = PCT.Ok);
 			rec.mode := mode;
@@ -1400,17 +1400,17 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 				PCM.LogWLn; PCM.LogWStr("Rec / Mode / "); PCM.LogWHex(SIGNED32(rec.mode));
 				PCM.LogWLn; PCM.LogWStr("Rec / Prio / "); PCM.LogWNum(rec.prio)
 			END;
-			R.RawNum(tag);
+			R.RawNum32(tag);
 			WHILE  (tag < SFtproc) OR ((SFtypOpenEnhArr <= tag) & (tag <= SFtypStaticEnhArray)) (* fof *)    DO	(*read fields*)
 				InObj(name, vis, flags, typ);
 				IF  name = empty  THEN vis := PCT.Internal; name := PCT.Anonymous END;
 				s.CreateVar(name, vis, flags, typ, 0, (* fof *)NIL, res);
 				(* ASSERT(res = PCT.Ok); *)
 				Assert(res = PCT.Ok);
-				R.RawNum(tag);
+				R.RawNum32(tag);
 			END;
 			IF tag=SFtproc THEN
-				R.RawNum(tag);
+				R.RawNum32(tag);
 				WHILE  tag#SFend  DO
 					InObj(name, vis, flags, typ);
 					IF  name = empty  THEN  vis := PCT.Internal; ReadStrIndex(R, readString, name)  END;
@@ -1419,13 +1419,13 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 					Assert(res = PCT.Ok);
 
 					(* This identifies a inlined Indexer *)
-					R.RawNum(tag);
+					R.RawNum32(tag);
 					IF tag = InlineMarker THEN
 						INCL(flag, PCT.Inline);
 						INCL(flag, PCT.Indexer);
 						INCL(flag, PCT.Operator);
 						mscope.code := InCProc();
-						R.RawNum(tag)
+						R.RawNum32(tag)
 					END;
 
 					PCT.ChangeState(mscope, PCT.structdeclared, PCM.InvalidPosition);
@@ -1458,7 +1458,7 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 					IF typ.owner # NIL THEN PCM.LogWStr0(typ.owner.name) ELSE PCM.LogWNum(tag) END
 				END
 			ELSIF tag <= SFmodOther THEN (*modno ( structname | 0X oldimpstruct)*)
-				IF tag = SFmodOther THEN R.RawNum(tag) ELSE tag := tag-SFmod1 END;	(*tag = [0 .. +oo[ *)
+				IF tag = SFmodOther THEN R.RawNum32(tag) ELSE tag := tag-SFmod1 END;	(*tag = [0 .. +oo[ *)
 				mod := MAttr.import[tag]; ReadStrIndex(R, readString, typname);
 				modAttr := mod.sym(Module);
 				IF typname # empty THEN	(*first import of struct*)
@@ -1472,7 +1472,7 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 						PCM.LogWStr("."); PCM.LogWStr0(typname);
 					END
 				ELSE
-					R.RawNum(typadr); typ := modAttr.reimp[typadr];
+					R.RawNum32(typadr); typ := modAttr.reimp[typadr];
 					IF TraceImport THEN
 						PCM.LogWLn; PCM.LogWStr("InStruct / Re-Imported "); PCM.LogWStr0(mod.name);
 						PCM.LogWStr("."); PCM.LogWStr0(typ.owner.name);
@@ -1482,9 +1482,9 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 				strref := MAttr.nofstr; INC(MAttr.nofstr);
 				IF MAttr.nofstr >= LEN(MAttr.struct) THEN ExtendStructArray(MAttr.struct) END;
 				vis := PCT.Public; sysflag := 0;
-				IF tag = SFinvisible THEN vis := PCT.Internal; R.RawNum(tag)  END;
-				IF tag = SFsysflag THEN R.RawNum(sysflag); R.RawNum(tag)  END;
-				typtag := tag; R.RawNum(tag);
+				IF tag = SFinvisible THEN vis := PCT.Internal; R.RawNum32(tag)  END;
+				IF tag = SFsysflag THEN R.RawNum32(sysflag); R.RawNum32(tag)  END;
+				typtag := tag; R.RawNum32(tag);
 				(*first create the structure, to be used in recursive structs*)
 				CASE typtag OF
 				| SFtypOpenArr,  SFtypArray:
@@ -1523,7 +1523,7 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 						PCT.InitOpenArray(arr, btyp, res); (* ASSERT(res = PCT.Ok); *)
 						Assert(res = PCT.Ok);
 						ReadStrIndex(R, readString, name);
-						R.RawNum(flags); (* realtime flags , ignored in PACO *)
+						R.RawNum32(flags); (* realtime flags , ignored in PACO *)
 						IF TraceImport THEN
 							PCM.LogWLn; PCM.LogWStr("InStruct / User / OpenArr ");
 							IF name # empty THEN  PCM.LogWStr0(name) END
@@ -1542,7 +1542,7 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 						Assert( res = PCT.Ok );
 						ReadStrIndex( R, readString, name );
 				| SFtypStaticEnhArray:  (*fof*)
-						ReadStrIndex( R, readString, name );  R.RawNum( len );
+						ReadStrIndex( R, readString, name );  R.RawNum32( len );
 						PCT.InitStaticEnhArray( earr, len, btyp, {PCT.static}, res );   (* ASSERT(res = PCT.Ok); *)
 						Assert( res = PCT.Ok );
 						IF TraceImport THEN
@@ -1552,8 +1552,8 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 (** << fof  *)
 				| SFtypArray:
 						ReadStrIndex(R, readString, name);
-						R.RawNum(flags); (* realtime flags , ignored in PACO *)
-						R.RawNum(len);
+						R.RawNum32(flags); (* realtime flags , ignored in PACO *)
+						R.RawNum32(len);
 						PCT.InitStaticArray(arr, len, btyp, res); (* ASSERT(res = PCT.Ok); *)
 						Assert(res = PCT.Ok);
 						IF TraceImport THEN
@@ -1569,7 +1569,7 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 							Assert(res = PCT.Ok);
 						END;
 						ReadStrIndex(R, readString, name);
-						R.RawNum(flags); (* realtime flags , ignored in PACO *)
+						R.RawNum32(flags); (* realtime flags , ignored in PACO *)
 						IF TraceImport THEN
 							PCM.LogWLn; PCM.LogWStr("InStruct / User / Pointer ");
 							IF name # empty THEN  PCM.LogWStr0(name) END
@@ -1589,11 +1589,11 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 							ELSE
 								EXIT
 							END;
-							R.RawNum(tag);
+							R.RawNum32(tag);
 							InStruct(btyp)
 						END;
 						ReadStrIndex(R, readString, name);
-						R.RawNum(flags); (* realtime flags , ignored in PACO *)
+						R.RawNum32(flags); (* realtime flags , ignored in PACO *)
 						InRecord(rec, btyp, intf);
 						IF TraceImport THEN
 							PCM.LogWLn; PCM.LogWStr("InStruct / User / Record ");
@@ -1602,7 +1602,7 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 				| SFtypProcTyp:
 
 						ReadStrIndex(R, readString, name);
-						R.RawNum(SYSTEM.VAL(SIGNED32, sf));
+						R.RawNum32(SYSTEM.VAL(SIGNED32, sf));
 						IF sysflag # SFdelegate THEN INCL (sf, PCT.StaticMethodsOnly) END;
 						PCT.InitDelegate(proc, btyp, InParList(scope), sf, res); (* ASSERT(res = PCT.Ok); *)
 						Assert(res = PCT.Ok);
@@ -1641,13 +1641,13 @@ PROCEDURE Import*(self: PCT.Module; VAR M: PCT.Module; modname: StringPool.Index
 		BEGIN
 			flag := {}; vis:=PCT.Public;
 			IF tag=SFobjflag THEN
-				R.RawNum(f); R.RawNum(tag);
+				R.RawNum32(f); R.RawNum32(tag);
 				IF f = PCM.Untraced THEN flag := SET32({f});
 				ELSIF f = PCM.RealtimeProc THEN flag := {PCT.RealtimeProc} (* ug *)
 				ELSE PCM.LogWLn; PCM.LogWStr("PCOM.InObj: unknown objflag");
 				END
 			END;
-			IF tag=SFreadonly THEN  R.RawNum(tag); vis := readonly   END;
+			IF tag=SFreadonly THEN  R.RawNum32(tag); vis := readonly   END;
 			InStruct(typ); readString(R, name);
 			IF name = "" THEN
 				idx := empty
@@ -1705,13 +1705,13 @@ BEGIN
 		ASSERT(MAttr.import[i].sym # NIL, 502);
 		MAttr.import[i].sym(Module).nofreimp := 0
 	END;	(*reset reimports*)
-	R.RawNum(tag);
+	R.RawNum32(tag);
 	flag := {};
 	IF tag = SFsysflag THEN
-		R.RawNum(SYSTEM.VAL(SIGNED32, flag)); R.RawNum(tag);
+		R.RawNum32(SYSTEM.VAL(SIGNED32, flag)); R.RawNum32(tag);
 	END;
 	IF ~selfimport THEN PCT.InitScope(scope, NIL, flag, TRUE) END;
-	IF	tag=SFconst	THEN R.RawNum(tag);
+	IF	tag=SFconst	THEN R.RawNum32(tag);
 		WHILE	(tag < SFvar) OR ((SFtypOpenEnhArr <= tag) & (tag <= SFtypStaticEnhArray)) (* fof *)	DO
 			InObj(name, vis, flag, str);
 			IF ~selfimport THEN
@@ -1721,11 +1721,11 @@ BEGIN
 			ELSE
 				Insert(scope, PCT.NewValue(name, vis, InConst()))
 			END;
-			R.RawNum(tag)
+			R.RawNum32(tag)
 		END
 	END;
 	IF Trace THEN  PCM.LogWLn; PCM.LogWStr("OM.Import var....") END;
-	IF	tag=SFvar	THEN	R.RawNum(tag);
+	IF	tag=SFvar	THEN	R.RawNum32(tag);
 		WHILE	(tag < SFxproc) OR ((SFtypOpenEnhArr <= tag) & (tag <= SFtypStaticEnhArray)) (* fof *)	DO
 			InObj(name, vis, flag, str);
 			IF ~selfimport THEN
@@ -1737,11 +1737,11 @@ BEGIN
 				Assert(res = PCT.Ok);
 				(* ASSERT(res = PCT.Ok) *)
 			END;
-			R.RawNum(tag)
+			R.RawNum32(tag)
 		END
 	END;
 	IF Trace THEN  PCM.LogWLn; PCM.LogWStr("OM.Import xproc....") END;
-	IF	tag=SFxproc	THEN	R.RawNum(tag);
+	IF	tag=SFxproc	THEN	R.RawNum32(tag);
 		WHILE	(tag < (*SFcproc*) SFoperator)  OR ((SFtypOpenEnhArr <= tag) & (tag <= SFtypStaticEnhArray)) (* fof *)	DO
 			InObj(name, vis, flag, str); pscope := InParList(scope);
 			IF ~selfimport THEN
@@ -1754,18 +1754,18 @@ BEGIN
 				(* ASSERT(res = PCT.Ok); *)
 				Insert(scope, proc);
 			END;
-			PCT.ChangeState(pscope, PCT.structdeclared, -1); R.RawNum(tag)
+			PCT.ChangeState(pscope, PCT.structdeclared, -1); R.RawNum32(tag)
 		END
 	END;
-	IF	tag=SFoperator	THEN	R.RawNum(tag);
+	IF	tag=SFoperator	THEN	R.RawNum32(tag);
 		WHILE	(tag < SFcproc) OR ((SFtypOpenEnhArr <= tag) & (tag <= SFtypStaticEnhArray)) (* fof *)	DO
 			InObj(name, vis, flag, str); pscope := InParList(scope);
 			INCL(flag, PCT.Operator);
-			R.RawNum(tag);
+			R.RawNum32(tag);
 			IF tag = InlineMarker THEN
 				INCL(flag, PCT.Inline);
 				pscope.code := InCProc();
-				R.RawNum(tag);
+				R.RawNum32(tag);
 			END;
 			IF ~selfimport THEN
 				scope.CreateProc(name, vis, flag, pscope, str, 0, (* fof *)res);
@@ -1778,10 +1778,10 @@ BEGIN
 				Insert(scope, proc);
 			END;
 			PCT.ChangeState(pscope, PCT.structdeclared, -1);
-			(* R.RawNum(tag) *)
+			(* R.RawNum32(tag) *)
 		END
 	END;
-	IF  tag = SFcproc  THEN	R.RawNum(tag);
+	IF  tag = SFcproc  THEN	R.RawNum32(tag);
 		WHILE	(tag < SFalias) OR ((SFtypOpenEnhArr <= tag) & (tag <= SFtypStaticEnhArray)) (* fof *)	DO
 			InObj(name, vis, flag, str); pscope := InParList(scope);
 			INCL(flag, PCT.Inline);
@@ -1795,10 +1795,10 @@ BEGIN
 				(* ASSERT(res = PCT.Ok) *)
 			END;
 			pscope.code := InCProc();
-			PCT.ChangeState(pscope, PCT.structdeclared, -1); R.RawNum(tag)
+			PCT.ChangeState(pscope, PCT.structdeclared, -1); R.RawNum32(tag)
 		END
 	END;
-	IF	tag=SFalias	THEN	R.RawNum(tag);
+	IF	tag=SFalias	THEN	R.RawNum32(tag);
 		WHILE	(tag < SFtyp) OR ((SFtypOpenEnhArr <= tag) & (tag <= SFtypStaticEnhArray)) (* fof *)	DO
 			InStruct(str); ReadStrIndex(R, readString, name);
 			IF ~selfimport THEN
@@ -1808,11 +1808,11 @@ BEGIN
 			ELSE
 				NEW(type); PCT.InitType(type, name, PCT.Public, str); Insert(scope, type)
 			END;
-			R.RawNum(tag)
+			R.RawNum32(tag)
 		END
 	END;
-	IF	tag=SFtyp	THEN	R.RawNum(tag);
-		WHILE	(tag < SFend) OR ((SFtypOpenEnhArr <= tag) & (tag <= SFtypStaticEnhArray)) (* fof *)	DO	InStruct(str); R.RawNum(tag)	END
+	IF	tag=SFtyp	THEN	R.RawNum32(tag);
+		WHILE	(tag < SFend) OR ((SFtypOpenEnhArr <= tag) & (tag <= SFtypStaticEnhArray)) (* fof *)	DO	InStruct(str); R.RawNum32(tag)	END
 	END;
 	IF importError THEN
 		M := NIL

@@ -2147,23 +2147,23 @@ BEGIN
 	f := Files.New(name); Files.Set(r, f, 0);
 
 	Texts.WriteString(W, " with InstrTabLen = "); Texts.WriteInt(W, InstrTabLen, 0);
-	Files.WriteInt(r, InstrTabLen);
+	Files.WriteInt16(r, InstrTabLen);
 	FOR i := 0 TO InstrTabLen-1 DO
 		Files.WriteString(r, InstrTab[i].name);
 		IF InstrTab[i].name # "" THEN
-			Files.WriteInt(r, InstrTab[i].start); Files.WriteInt(r, InstrTab[i].end);
+			Files.WriteInt16(r, InstrTab[i].start); Files.WriteInt16(r, InstrTab[i].end);
 			Files.WriteSet(r, InstrTab[i].target)
 		END
 	END;
 
 	Texts.WriteString(W, " and OpTabLen = "); Texts.WriteInt(W, OpTabN, 0); Texts.WriteLn(W);
 	Texts.WriteInt(W, Files.Pos(r),1); Texts.WriteLn(W);
-	Files.WriteInt(r, OpTabN);
+	Files.WriteInt16(r, OpTabN);
 	FOR i:= 0 TO OpTabN-1 DO
-		Files.WriteInt(r, OpTab[i].op[0]); Files.WriteInt(r, OpTab[i].op[1]); Files.WriteInt(r, OpTab[i].op[2]);
-		Files.WriteInt(r, OpTab[i].op0); Files.WriteInt(r, OpTab[i].op1);
-		Files.WriteInt(r, OpTab[i].op2);
-		Files.WriteInt(r, OpTab[i].opc); Files.WriteInt(r, OpTab[i].reg)
+		Files.WriteInt16(r, OpTab[i].op[0]); Files.WriteInt16(r, OpTab[i].op[1]); Files.WriteInt16(r, OpTab[i].op[2]);
+		Files.WriteInt16(r, OpTab[i].op0); Files.WriteInt16(r, OpTab[i].op1);
+		Files.WriteInt16(r, OpTab[i].op2);
+		Files.WriteInt16(r, OpTab[i].opc); Files.WriteInt16(r, OpTab[i].reg)
 	END;
 	Files.Register(f);
 	Texts.Append(Oberon.Log, W.buf)
@@ -2184,21 +2184,21 @@ BEGIN
 	IF f # NIL THEN
 		Files.Set(r, f, 0);
 		count := 0;
-		Files.ReadInt(r, InstrTabLen);  NEW(InstrTab, InstrTabLen);
+		Files.ReadInt16(r, InstrTabLen);  NEW(InstrTab, InstrTabLen);
 		FOR i := 0 TO InstrTabLen-1 DO
 			Files.ReadString(r, InstrTab[i].name);
 			IF InstrTab[i].name # "" THEN
 				INC(count);
-				Files.ReadInt(r, InstrTab[i].start); Files.ReadInt(r, InstrTab[i].end);
+				Files.ReadInt16(r, InstrTab[i].start); Files.ReadInt16(r, InstrTab[i].end);
 				Files.ReadSet(r, InstrTab[i].target)
 			END
 		END;
-		Files.ReadInt(r, OpTabLen);  NEW(OpTab, OpTabLen);
+		Files.ReadInt16(r, OpTabLen);  NEW(OpTab, OpTabLen);
 		FOR i:= 0 TO OpTabLen-1 DO
-			Files.ReadInt(r, OpTab[i].op[0]); Files.ReadInt(r, OpTab[i].op[1]); Files.ReadInt(r, OpTab[i].op[2]);
-			Files.ReadInt(r, OpTab[i].op0); Files.ReadInt(r, OpTab[i].op1);
-			Files.ReadInt(r, OpTab[i].op2);
-			Files.ReadInt(r, OpTab[i].opc); Files.ReadInt(r, OpTab[i].reg)
+			Files.ReadInt16(r, OpTab[i].op[0]); Files.ReadInt16(r, OpTab[i].op[1]); Files.ReadInt16(r, OpTab[i].op[2]);
+			Files.ReadInt16(r, OpTab[i].op0); Files.ReadInt16(r, OpTab[i].op1);
+			Files.ReadInt16(r, OpTab[i].op2);
+			Files.ReadInt16(r, OpTab[i].opc); Files.ReadInt16(r, OpTab[i].reg)
 		END;
 		Files.Close(f)
 	ELSE

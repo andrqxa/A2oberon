@@ -231,7 +231,7 @@ END ImageToPict;
 	BEGIN
 		IF pict = NIL THEN Pictures.NewPicture;  pict := Objects.NewObj( Pictures.Picture ) ELSE Objects.NewObj := pict END;
 		msg.R := R;  msg.id := Objects.load;  msg.len := 0;  done := FALSE;  i := 0;  pos := Files.Pos( msg.R );
-		Files.ReadInt( msg.R, id );  Files.Set( msg.R, Files.Base( msg.R ), pos );
+		Files.ReadInt16( msg.R, id );  Files.Set( msg.R, Files.Base( msg.R ), pos );
 		IF id = Pictures.PictFileId THEN
 			Pictures.Handle( pict, msg );  msg.len := Files.Pos( msg.R );
 			IF msg.len > 0 THEN done := TRUE;  RETURN END

@@ -165,10 +165,10 @@ MODULE Books0 IN Oberon; (** portable *)	(* ejz  *)
 					IF M.id = Objects.load THEN
 						Files.Read(M.R, F.mode);
 						IF F IS LocFrame THEN
-							Files.ReadLInt(M.R, F(LocFrame).pos1);
-							Files.ReadLInt(M.R, F(LocFrame).pos2)
+							Files.ReadInt32(M.R, F(LocFrame).pos1);
+							Files.ReadInt32(M.R, F(LocFrame).pos2)
 						ELSIF F IS ExtFrame THEN
-							Files.ReadLInt(M.R, ind);
+							Files.ReadInt32(M.R, ind);
 							Files.ReadString(M.R, name);
 							Fixup(F(ExtFrame))
 						ELSE HALT(99)
@@ -176,10 +176,10 @@ MODULE Books0 IN Oberon; (** portable *)	(* ejz  *)
 					ELSIF M.id = Objects.store THEN
 						Files.Write(M.R, F.mode);
 						IF F IS LocFrame THEN
-							Files.WriteLInt(M.R, F(LocFrame).pos1);
-							Files.WriteLInt(M.R, F(LocFrame).pos2)
+							Files.WriteInt32(M.R, F(LocFrame).pos1);
+							Files.WriteInt32(M.R, F(LocFrame).pos2)
 						ELSIF F IS ExtFrame THEN
-							Files.WriteLInt(M.R, F(ExtFrame).imp.book.ind);
+							Files.WriteInt32(M.R, F(ExtFrame).imp.book.ind);
 							Files.WriteString(M.R, F(ExtFrame).imp.name)
 						ELSE HALT(99)
 						END
@@ -348,12 +348,12 @@ MODULE Books0 IN Oberon; (** portable *)	(* ejz  *)
 				WITH M: Objects.FileMsg DO
 					IF M.id = Objects.store THEN
 						Files.Write(M.R, F.mode);
-						Files.WriteLInt(M.R, F.beg);
-						Files.WriteLInt(M.R, F.end)
+						Files.WriteInt32(M.R, F.beg);
+						Files.WriteInt32(M.R, F.end)
 					ELSIF M.id = Objects.load THEN
 						Files.Read(M.R, F.mode);
-						Files.ReadLInt(M.R, F.beg);
-						Files.ReadLInt(M.R, F.end)
+						Files.ReadInt32(M.R, F.beg);
+						Files.ReadInt32(M.R, F.end)
 					END;
 					Gadgets.framehandle(F, M);
 					(* !! *)

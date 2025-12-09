@@ -101,11 +101,11 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteReal(M.R, obj.real);
-					Files.WriteReal(M.R, obj.imag)
+					Files.WriteFloat32(M.R, obj.real);
+					Files.WriteFloat32(M.R, obj.imag)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadReal(M.R, obj.real);
-					Files.ReadReal(M.R, obj.imag)
+					Files.ReadFloat32(M.R, obj.real);
+					Files.ReadFloat32(M.R, obj.imag)
 				END;
 				Gadgets.objecthandle(obj, M)
 			END

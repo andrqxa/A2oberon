@@ -358,19 +358,19 @@ END keepsel;
 
 	PROCEDURE WriteCoordinate*( VAR R: Files.Rider;  VAR  (*IN*) c: tCoordinate );
 	BEGIN
-		IF c = NIL THEN Files.WriteInt( R, 0 )
-				ELSE Files.WriteInt( R, 90 );   (*magic number*)
-			Files.WriteInt( R, c.x );  Files.WriteInt( R, c.y );  Files.WriteInt( R, c.dx );  Files.WriteInt( R, c.dy );
-			Files.WriteInt( R, c.vx );  Files.WriteInt( R, c.vy );  Files.WriteInt( R, c.px );  Files.WriteInt( R, c.py );
-			Files.WriteInt( R, c.pw );  Files.WriteInt( R, c.ph );  Files.WriteBool( R, c.fixed );  Files.WriteBool( R, c.free );
+		IF c = NIL THEN Files.WriteInt16( R, 0 )
+				ELSE Files.WriteInt16( R, 90 );   (*magic number*)
+			Files.WriteInt16( R, c.x );  Files.WriteInt16( R, c.y );  Files.WriteInt16( R, c.dx );  Files.WriteInt16( R, c.dy );
+			Files.WriteInt16( R, c.vx );  Files.WriteInt16( R, c.vy );  Files.WriteInt16( R, c.px );  Files.WriteInt16( R, c.py );
+			Files.WriteInt16( R, c.pw );  Files.WriteInt16( R, c.ph );  Files.WriteBool( R, c.fixed );  Files.WriteBool( R, c.free );
 			(*
 		Files.WriteBool(R, c.allowfractions);  Files.WriteBool(R, c.allowstretch)
 		*)
 			(*
 		IF c.sel # NIL  THEN
-		Files.WriteLReal(R,c.sel.x); Files.WriteLReal(R,c.sel.y); Files.WriteLReal(R,c.sel.w); Files.WriteLReal(R,c.sel.h)
+		Files.WriteFloat64(R,c.sel.x); Files.WriteFloat64(R,c.sel.y); Files.WriteFloat64(R,c.sel.w); Files.WriteFloat64(R,c.sel.h)
 		ELSE
-		Files.WriteLReal(R,MIN(FLOAT64)); Files.WriteLReal(R,MIN(FLOAT64)); Files.WriteLReal(R,MIN(FLOAT64)); Files.WriteLReal(R,MIN(FLOAT64))
+		Files.WriteFloat64(R,MIN(FLOAT64)); Files.WriteFloat64(R,MIN(FLOAT64)); Files.WriteFloat64(R,MIN(FLOAT64)); Files.WriteFloat64(R,MIN(FLOAT64))
 		END;
 		*)
 		END
@@ -379,20 +379,20 @@ END keepsel;
 	PROCEDURE ReadCoordinate*( VAR R: Files.Rider;  VAR  (*IN*) c: tCoordinate );
 	VAR flag: SIGNED16;  b: BOOLEAN;
 	BEGIN
-		Files.ReadInt( R, flag );
+		Files.ReadInt16( R, flag );
 		IF flag = 0 THEN c := NIL
 		ELSE
 			(* ASSERT(flag = 87, 100);   (*magic number*)*)
-			Files.ReadInt( R, c.x );  Files.ReadInt( R, c.y );  Files.ReadInt( R, c.dx );  Files.ReadInt( R, c.dy );
-			Files.ReadInt( R, c.vx );  Files.ReadInt( R, c.vy );  Files.ReadInt( R, c.px );  Files.ReadInt( R, c.py );
-			Files.ReadInt( R, c.pw );  Files.ReadInt( R, c.ph );
+			Files.ReadInt16( R, c.x );  Files.ReadInt16( R, c.y );  Files.ReadInt16( R, c.dx );  Files.ReadInt16( R, c.dy );
+			Files.ReadInt16( R, c.vx );  Files.ReadInt16( R, c.vy );  Files.ReadInt16( R, c.px );  Files.ReadInt16( R, c.py );
+			Files.ReadInt16( R, c.pw );  Files.ReadInt16( R, c.ph );
 			IF flag = 87 THEN Files.ReadBool( R, b );  Files.ReadBool( R, b );  c.fixed := FALSE
 			ELSIF flag > 87 THEN Files.ReadBool( R, c.fixed )
 			END;
 			IF flag > 88 THEN
 				(*
 			IF c.sel # NIL THEN NEW(c.sel) END;
-			Files.ReadLReal(R,c.sel.x); Files.ReadLReal(R,c.sel.y); Files.ReadLReal(R,c.sel.w); Files.ReadLReal(R,c.sel.h);
+			Files.ReadFloat64(R,c.sel.x); Files.ReadFloat64(R,c.sel.y); Files.ReadFloat64(R,c.sel.w); Files.ReadFloat64(R,c.sel.h);
 			IF c.sel.x = MIN(FLOAT64) THEN c.sel := NIL END;
 			*)
 			END;

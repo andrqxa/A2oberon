@@ -482,10 +482,10 @@ MODULE VinciShapes IN Oberon; (** portable *)	(* eos  *)
 			res := Scheme.LookupVariable(par.sym, s.env, val);
 			CASE par.kind OF
 			| bool: Files.WriteBool(r, Scheme.BoolValue(val))
-			| int: Scheme.GetInteger(val, l, res); Files.WriteNum(r, l); Files.WriteLInt(r, par.imin); Files.WriteLInt(r, par.imax)
-			| real: Scheme.GetReal(val, x); Files.WriteReal(r, SHORT(x)); Files.WriteReal(r, par.rmin); Files.WriteReal(r, par.rmax)
+			| int: Scheme.GetInteger(val, l, res); Files.WriteNum(r, l); Files.WriteInt32(r, par.imin); Files.WriteInt32(r, par.imax)
+			| real: Scheme.GetReal(val, x); Files.WriteFloat32(r, SHORT(x)); Files.WriteFloat32(r, par.rmin); Files.WriteFloat32(r, par.rmax)
 			| string: Scheme.GetString(val, 0, Scheme.StringLen(val), str); Files.WriteString(r, str)
-			| color: ColorToInt(val, l); Files.WriteLInt(r, l)
+			| color: ColorToInt(val, l); Files.WriteInt32(r, l)
 			| object, shape, pen: Gadgets.WriteRef(r, s.lib, Scheme.RefValue(val))
 			| name:
 			END;
@@ -503,13 +503,13 @@ MODULE VinciShapes IN Oberon; (** portable *)	(* eos  *)
 			CASE par.kind OF
 			| bool: Files.ReadBool(r, b); IF b THEN val := Scheme.true ELSE val := Scheme.false END
 			| int:
-				Files.ReadNum(r, l); Files.ReadLInt(r, par.imin); Files.ReadLInt(r, par.imax);
+				Files.ReadNum32(r, l); Files.ReadInt32(r, par.imin); Files.ReadInt32(r, par.imax);
 				val := Scheme.NewInteger(l)
 			| real:
-				Files.ReadReal(r, x); Files.ReadReal(r, par.rmin); Files.ReadReal(r, par.rmax);
+				Files.ReadFloat32(r, x); Files.ReadFloat32(r, par.rmin); Files.ReadFloat32(r, par.rmax);
 				val := Scheme.NewReal(x)
 			| string: Files.ReadString(r, str); val := Scheme.NewLiteral(str, strPool)
-			| color: Files.ReadLInt(r, l); IntToColor(l, val);
+			| color: Files.ReadInt32(r, l); IntToColor(l, val);
 			| object: Gadgets.ReadRef(r, s.lib, obj); val := Scheme.NewRef(obj)
 			| shape:
 				Gadgets.ReadRef(r, s.lib, obj);
@@ -572,7 +572,7 @@ MODULE VinciShapes IN Oberon; (** portable *)	(* eos  *)
 					Gadgets.WriteRef(msg.R, s.lib, s.text);
 					WriteParams(s, msg.R)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Gadgets.ReadRef(msg.R, s.lib, obj);
 					IF (obj # NIL) & (obj IS Texts.Text) THEN
 						top := s.top;
@@ -764,11 +764,11 @@ MODULE VinciShapes IN Oberon; (** portable *)	(* eos  *)
 				Leonardo.HandleShape(frame, msg);
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1);
-					Files.WriteReal(msg.R, frame.w); Files.WriteReal(msg.R, frame.h);
+					Files.WriteFloat32(msg.R, frame.w); Files.WriteFloat32(msg.R, frame.h);
 					GfxMatrix.Write(msg.R, frame.mat)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
-					Files.ReadReal(msg.R, frame.w); Files.ReadReal(msg.R, frame.h);
+					Files.ReadNum32(msg.R, ver);
+					Files.ReadFloat32(msg.R, frame.w); Files.ReadFloat32(msg.R, frame.h);
 					GfxMatrix.Read(msg.R, frame.mat);
 					GfxMatrix.ApplyToRect(frame.mat, 0, 0, frame.w, frame.h, frame.llx, frame.lly, frame.urx, frame.ury)
 				END

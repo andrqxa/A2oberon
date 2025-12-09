@@ -89,9 +89,9 @@ VAR
 
 	PROCEDURE StoreNode( VAR R: Files.Rider;  n: tNode );
 	BEGIN
-		Files.WriteLReal( R, n.x );  Files.WriteLReal( R, n.y );  Files.WriteString( R, n.name );  Files.WriteInt( R, n.mode );
-		Files.WriteBool( R, n.mark );  Files.WriteBool( R, n.selected );  Files.WriteInt( R, n.shape );  Files.WriteInt( R, n.col );
-		Files.WriteInt( R, n.bkCol );  Files.WriteInt( R, n.inDegree );  Files.WriteInt( R, n.outDegree );
+		Files.WriteFloat64( R, n.x );  Files.WriteFloat64( R, n.y );  Files.WriteString( R, n.name );  Files.WriteInt16( R, n.mode );
+		Files.WriteBool( R, n.mark );  Files.WriteBool( R, n.selected );  Files.WriteInt16( R, n.shape );  Files.WriteInt16( R, n.col );
+		Files.WriteInt16( R, n.bkCol );  Files.WriteInt16( R, n.inDegree );  Files.WriteInt16( R, n.outDegree );
 		Files.WriteBool( R, n.vis );  Gadgets.WriteRef( R, n.lib, n.next );  Gadgets.WriteRef( R, n.lib, n.nextSelected );
 		Gadgets.WriteRef( R, n.lib, n.firstOutEdge );  Gadgets.WriteRef( R, n.lib, n.firstInEdge )
 	END StoreNode;
@@ -99,9 +99,9 @@ VAR
 	PROCEDURE LoadNode( VAR R: Files.Rider;  n: tNode );
 	VAR objsub: Objects.Object;
 	BEGIN
-		Files.ReadLReal( R, n.x );  Files.ReadLReal( R, n.y );  Files.ReadString( R, n.name );  Files.ReadInt( R, n.mode );
-		Files.ReadBool( R, n.mark );  Files.ReadBool( R, n.selected );  Files.ReadInt( R, n.shape );  Files.ReadInt( R, n.col );
-		Files.ReadInt( R, n.bkCol );  Files.ReadInt( R, n.inDegree );  Files.ReadInt( R, n.outDegree );  Files.ReadBool( R, n.vis );
+		Files.ReadFloat64( R, n.x );  Files.ReadFloat64( R, n.y );  Files.ReadString( R, n.name );  Files.ReadInt16( R, n.mode );
+		Files.ReadBool( R, n.mark );  Files.ReadBool( R, n.selected );  Files.ReadInt16( R, n.shape );  Files.ReadInt16( R, n.col );
+		Files.ReadInt16( R, n.bkCol );  Files.ReadInt16( R, n.inDegree );  Files.ReadInt16( R, n.outDegree );  Files.ReadBool( R, n.vis );
 		Gadgets.ReadRef( R, n.lib, objsub );
 		IF (objsub # NIL ) & (objsub IS tNode) THEN n.next := objsub( tNode ) END;
 		Gadgets.ReadRef( R, n.lib, objsub );

@@ -285,13 +285,13 @@ TYPE
 
 	PROCEDURE StoreFXd( VAR R: Files.Rider;  s: FunctionXd );
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteString( R, s.Mapping )
+		Files.WriteInt16( R, 0 );  Files.WriteString( R, s.Mapping )
 	END StoreFXd;
 
 	PROCEDURE LoadFXd( VAR R: Files.Rider;  s: FunctionXd );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadString( R, s.Mapping );
+		Files.ReadInt16( R, version );  Files.ReadString( R, s.Mapping );
 		IF antsOnTheFly.SetXd( "", s.Mapping ) THEN
 			s.fxd := antsOnTheFly.fXd;  COPY( antsOnTheFly.fXdName, s.Mapping );  s.get := GetFxd
 		END
@@ -299,14 +299,14 @@ TYPE
 
 	PROCEDURE StoreF( VAR R: Files.Rider;  s: Function );
 	BEGIN
-		Files.WriteInt( R, 0 );  Gadgets.WriteRef( R, s.lib, s.of );  Gadgets.WriteRef( R, s.lib, s.x );
+		Files.WriteInt16( R, 0 );  Gadgets.WriteRef( R, s.lib, s.of );  Gadgets.WriteRef( R, s.lib, s.x );
 		Gadgets.WriteRef( R, s.lib, s.val );  Files.WriteString( R, s.Mapping );  Files.WriteBool( R, s.editable )
 	END StoreF;
 
 	PROCEDURE LoadF( VAR R: Files.Rider;  s: Function );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Gadgets.ReadRef( R, s.lib, objsub );
+		Files.ReadInt16( R, version );  Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.of := objsub( Function ) END;
 		Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.x := objsub( vyBase.tVector ) END;

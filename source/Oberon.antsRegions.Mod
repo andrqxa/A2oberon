@@ -78,11 +78,11 @@ END Responsible;
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.r := objsub( tRegion ) END;
 			Files.ReadBool( msg.R, obj.filled )
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 1 );  Gadgets.WriteRef( msg.R, obj.lib, obj.r );  Files.WriteBool( msg.R, obj.filled )
+			Files.WriteInt16( msg.R, 1 );  Gadgets.WriteRef( msg.R, obj.lib, obj.r );  Files.WriteBool( msg.R, obj.filled )
 		END
 	END LayerHandleFileMsg;
 
@@ -201,11 +201,11 @@ END LayerInit;
 			ELSIF M IS Objects.FileMsg THEN
 				WITH M: Objects.FileMsg DO
 					IF M.id = Objects.load THEN
-						vyBase.objecthandle( o, M );  Files.ReadInt( M.R, version );  Files.ReadInt( M.R, o.x );
-						Files.ReadInt( M.R, o.y );  Files.ReadInt( M.R, o.w );  Files.ReadInt( M.R, o.h )
+						vyBase.objecthandle( o, M );  Files.ReadInt16( M.R, version );  Files.ReadInt16( M.R, o.x );
+						Files.ReadInt16( M.R, o.y );  Files.ReadInt16( M.R, o.w );  Files.ReadInt16( M.R, o.h )
 					ELSIF M.id = Objects.store THEN
-						vyBase.objecthandle( o, M );  Files.WriteInt( M.R, 0 );  Files.WriteInt( M.R, o.x );  Files.WriteInt( M.R, o.y );
-						Files.WriteInt( M.R, o.w );  Files.WriteInt( M.R, o.h )
+						vyBase.objecthandle( o, M );  Files.WriteInt16( M.R, 0 );  Files.WriteInt16( M.R, o.x );  Files.WriteInt16( M.R, o.y );
+						Files.WriteInt16( M.R, o.w );  Files.WriteInt16( M.R, o.h )
 					END
 				END;
 			ELSE vyBase.objecthandle( o, M )

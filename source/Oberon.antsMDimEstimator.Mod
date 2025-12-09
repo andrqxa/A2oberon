@@ -94,23 +94,23 @@ VAR
 
 	PROCEDURE StoreF( VAR R: Files.Rider;  s: Estimator );
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteLInt( R, s.lowdim );  Files.WriteLInt( R, s.highdim );
+		Files.WriteInt16( R, 0 );  Files.WriteInt32( R, s.lowdim );  Files.WriteInt32( R, s.highdim );
 		vyLinks.StoreLinks( R, s.lib, s.Isotropic );  vyLinks.StoreLinks( R, s.lib, s.NonIsotropic );
-		Gadgets.WriteRef( R, s.lib, s.nisoAIC );  Gadgets.WriteRef( R, s.lib, s.isoAIC );  Files.WriteInt( R, s.nisoAICMin );
-		Files.WriteInt( R, s.isoAICMin );  Files.WriteBool( R, s.nisoAICMinTotal );  Files.WriteBool( R, s.isoAICMinTotal );
+		Gadgets.WriteRef( R, s.lib, s.nisoAIC );  Gadgets.WriteRef( R, s.lib, s.isoAIC );  Files.WriteInt16( R, s.nisoAICMin );
+		Files.WriteInt16( R, s.isoAICMin );  Files.WriteBool( R, s.nisoAICMinTotal );  Files.WriteBool( R, s.isoAICMinTotal );
 	END StoreF;
 
 	PROCEDURE LoadF( VAR R: Files.Rider;  s: Estimator );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadLInt( R, s.lowdim );  Files.ReadLInt( R, s.highdim );
+		Files.ReadInt16( R, version );  Files.ReadInt32( R, s.lowdim );  Files.ReadInt32( R, s.highdim );
 		vyLinks.LoadLinks( R, s.lib, s.Isotropic );  vyLinks.LoadLinks( R, s.lib, s.NonIsotropic );
 
 		Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.nisoAIC := objsub( vyBase.tVector ) END;
 		Gadgets.ReadRef( R, s.lib, objsub );
 		IF objsub # NIL THEN s.isoAIC := objsub( vyBase.tVector ) END;
-		Files.ReadInt( R, s.nisoAICMin );  Files.ReadInt( R, s.isoAICMin );  Files.ReadBool( R, s.nisoAICMinTotal );
+		Files.ReadInt16( R, s.nisoAICMin );  Files.ReadInt16( R, s.isoAICMin );  Files.ReadBool( R, s.nisoAICMinTotal );
 		Files.ReadBool( R, s.isoAICMinTotal );
 
 	END LoadF;

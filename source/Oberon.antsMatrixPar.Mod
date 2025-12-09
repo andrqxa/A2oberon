@@ -40,18 +40,18 @@ TYPE
 	PROCEDURE WriteMatrix( VAR R: Files.Rider;  n: Matrix );
 	VAR y, x: SIGNED16;
 	BEGIN
-		Files.WriteInt( R, 0 );  Files.WriteInt( R, n.dimy );  Files.WriteInt( R, n.dimx );
+		Files.WriteInt16( R, 0 );  Files.WriteInt16( R, n.dimy );  Files.WriteInt16( R, n.dimx );
 		FOR y := 0 TO n.dimy - 1 DO
-			FOR x := 0 TO n.dimx - 1 DO Files.WriteLReal( R, n.par[y, x] ) END
+			FOR x := 0 TO n.dimx - 1 DO Files.WriteFloat64( R, n.par[y, x] ) END
 		END
 	END WriteMatrix;
 
 	PROCEDURE ReadMatrix( VAR R: Files.Rider;  VAR n: Matrix );
 	VAR y, x: SIGNED16;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );  Files.ReadInt( R, n.dimy );  Files.ReadInt( R, n.dimx );  NEW( n.par, n.dimy, n.dimx );
+		Files.ReadInt16( R, version );  Files.ReadInt16( R, n.dimy );  Files.ReadInt16( R, n.dimx );  NEW( n.par, n.dimy, n.dimx );
 		FOR y := 0 TO n.dimy - 1 DO
-			FOR x := 0 TO n.dimx - 1 DO Files.ReadLReal( R, n.par[y, x] ) END
+			FOR x := 0 TO n.dimx - 1 DO Files.ReadFloat64( R, n.par[y, x] ) END
 		END
 	END ReadMatrix;
 

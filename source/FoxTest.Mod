@@ -1,7 +1,7 @@
 MODULE FoxTest;	(** AUTHOR "fof"; PURPOSE "Fox tester"; *)
 (* (c) fof ETH Zürich, 2008 *)
 
-IMPORT Basic := FoxBasic, TestSuite, Diagnostics, Streams, Commands, Shell, Options, Files, Strings, Versioning, CompilerInterface, Texts, TextUtilities, Modules, KernelLog;
+IMPORT UTF8Strings, Basic := FoxBasic, TestSuite, Diagnostics, Streams, Commands, Shell, Options, Files, Strings, Versioning, CompilerInterface, Texts, TextUtilities, Modules, KernelLog;
 
 TYPE
 	Command = ARRAY 256 OF CHAR;
@@ -196,6 +196,27 @@ TYPE
 		END;
 	END Compile;
 
+	PROCEDURE UTF8Size(text : Texts.Text; startPos, len : SIZE): SIZE;
+	VAR i, length, pos,size : SIZE; r : Texts.TextReader; ch : Texts.Char32; ok : BOOLEAN;
+		string: ARRAY 16 OF CHAR;
+	BEGIN
+		text.AcquireRead;
+		NEW(r, text);
+		r.SetPosition(startPos);
+		size := 0;i := 0; length := len; ok := TRUE;
+		WHILE (i < length) & ok DO
+			r.ReadCh(ch);
+			IF (ch > 0) THEN
+				pos := 0;
+				ok := UTF8Strings.EncodeChar(ch, string, pos);
+				INC(size,pos);
+			END;
+			INC(i);
+		END;
+		text.ReleaseRead;
+		RETURN size
+	END UTF8Size;
+
 	PROCEDURE GetTextReader(text: Texts.Text): Streams.Reader;
 	VAR
 		buffer : POINTER TO ARRAY OF CHAR;
@@ -206,7 +227,7 @@ TYPE
 		length := text.GetLength();
 		text.ReleaseRead;
 		IF length = 0 THEN length := 1 END;
-		NEW(buffer, length);
+		NEW(buffer, UTF8Size(text, 0, length)+1);
 		TextUtilities.TextToStr(text, buffer^);
 		(* prepare the reader *)
 		NEW(reader, LEN(buffer)); reader.SetRaw(buffer^, 0, LEN(buffer));

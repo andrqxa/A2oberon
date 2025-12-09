@@ -596,14 +596,14 @@ MODULE News IN Oberon; (** portable *)	(* ejz,  *)
 			key, org: SIGNED32;
 	BEGIN
 		Files.Set(R, refs, 0);
-		Files.ReadLInt(R, org);
+		Files.ReadInt32(R, org);
 		WHILE ~R.eof DO
-			Files.ReadLInt(R, key);
+			Files.ReadInt32(R, key);
 			Files.Set(R, refs, org);
 			Files.ReadString(R, line);
 			WriteArticle(key, line);
 			Texts.Insert(T, 0, Wr.buf);
-			Files.ReadLInt(R, org)
+			Files.ReadInt32(R, org)
 		END
 	END ListArts;
 
@@ -615,12 +615,12 @@ MODULE News IN Oberon; (** portable *)	(* ejz,  *)
 	BEGIN
 		inthread := FALSE;
 		Files.Set(R, refs, org);
-		Files.ReadLInt(R, sorg);
-		Files.ReadLInt(R, app);
-		Files.ReadLInt(R, app);
+		Files.ReadInt32(R, sorg);
+		Files.ReadInt32(R, app);
+		Files.ReadInt32(R, app);
 		WHILE (app >= 0) & ~inthread DO	(* for all references *)
 			inthread := thread = app;
-			Files.ReadLInt(R, app)
+			Files.ReadInt32(R, app)
 		END;
 		IF inthread & ~marked[key-beg] THEN
 			marked[key-beg] := TRUE;
@@ -652,9 +652,9 @@ MODULE News IN Oberon; (** portable *)	(* ejz,  *)
 			BTrees.SearchLInt(indexA, a, org, re);
 			IF re = BTrees.Done THEN
 				Files.Set(R, refs, org);
-				Files.ReadLInt(R, sorg);
-				Files.ReadLInt(R, porg);
-				Files.ReadLInt(R, porg);
+				Files.ReadInt32(R, sorg);
+				Files.ReadInt32(R, porg);
+				Files.ReadInt32(R, porg);
 				IF porg < 0 THEN	(* article has no references *)
 					Files.Set(R, refs, sorg);
 					Files.ReadString(R, line);
@@ -755,8 +755,8 @@ MODULE News IN Oberon; (** portable *)	(* ejz,  *)
 						org := Files.Pos(R);
 						BTrees.InsertStr(indexM, msgid, org, bres);	(* add msgid to msgs index *)
 						BTrees.InsertLInt(indexA, nr, org, bres);
-						Files.WriteLInt(R, -1);	(* offset of title line *)
-						Files.WriteLInt(R, nr);	(* the article nr. for article msgid *)
+						Files.WriteInt32(R, -1);	(* offset of title line *)
+						Files.WriteInt32(R, nr);	(* the article nr. for article msgid *)
 						iRef := i; fixup := 0;
 						WHILE line[i] = "<" DO
 							j := 0;
@@ -772,24 +772,24 @@ MODULE News IN Oberon; (** portable *)	(* ejz,  *)
 							Strings.Upper(msgid, msgid);
 							BTrees.SearchStr(indexM, msgid, org2, bres);	(* lookup the msgid referenced *)
 							IF bres = BTrees.Done THEN
-								Files.WriteLInt(R, org2)	(* add it to the references list *)
+								Files.WriteInt32(R, org2)	(* add it to the references list *)
 							ELSE	(* referenced article no longer available *)
-								Files.WriteLInt(R, -2); INC(fixup)
+								Files.WriteInt32(R, -2); INC(fixup)
 							END;
 							WHILE (line[i] # 0X) & (line[i] # "<") DO
 								INC(i)
 							END
 						END;
-						Files.WriteLInt(R, -1);	(* end of reference list *)
+						Files.WriteInt32(R, -1);	(* end of reference list *)
 						org2 := Files.Pos(R);
 						Files.Set(R, refs, org);	(* fixup for title line *)
-						Files.WriteLInt(R, org2);
+						Files.WriteInt32(R, org2);
 						Files.Set(R, refs, org2);	(* write the title line *)
 						Files.WriteString(R, line);
 						IF thread & (fixup > 0) THEN
 							Files.Set(R, refs, org);
-							Files.ReadLInt(R, org);
-							Files.ReadLInt(R, org);
+							Files.ReadInt32(R, org);
+							Files.ReadInt32(R, org);
 							i := iRef;
 							WHILE line[i] = "<" DO
 								j := 0;
@@ -803,24 +803,24 @@ MODULE News IN Oberon; (** portable *)	(* ejz,  *)
 								END;
 								msgid[j] := 0X;
 								Strings.Upper(msgid, msgid);
-								Files.ReadLInt(R, org);
+								Files.ReadInt32(R, org);
 								IF org = -2 THEN
 									org2 := Files.Length(refs); DEC(beg);
 									BTrees.InsertStr(indexM, msgid, org2, bres);
 									BTrees.InsertLInt(indexA, beg, org2, bres);
 									org := Files.Pos(R)-4;
 									Files.Set(R, refs, org2);
-									Files.WriteLInt(R, -1);	(* offset of title line *)
-									Files.WriteLInt(R, beg);	(* the article nr. for article msgid *)
-									Files.WriteLInt(R, -1);	(* end of reference list *)
+									Files.WriteInt32(R, -1);	(* offset of title line *)
+									Files.WriteInt32(R, beg);	(* the article nr. for article msgid *)
+									Files.WriteInt32(R, -1);	(* end of reference list *)
 									org3 := Files.Pos(R);
 									Strings.IntToStr(beg, dummy); Strings.AppendCh(dummy, Strings.Tab);
 									Strings.Append(dummy, "Was: "); Strings.Append(dummy, msgid);
 									Files.WriteString(R, dummy);	(* write the title line *)
 									Files.Set(R, refs, org2);
-									Files.WriteLInt(R, org3);	(* fixup for title line *)
+									Files.WriteInt32(R, org3);	(* fixup for title line *)
 									Files.Set(R, refs, org);
-									Files.WriteLInt(R, org2);
+									Files.WriteInt32(R, org2);
 									DEC(fixup)
 								END;
 								WHILE (line[i] # 0X) & (line[i] # "<") DO

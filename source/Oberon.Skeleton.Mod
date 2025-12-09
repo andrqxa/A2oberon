@@ -125,8 +125,8 @@ BEGIN
 			END
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
-				IF M.id = Objects.store THEN Files.WriteInt(M.R, F.col)
-				ELSIF M.id = Objects.load THEN Files.ReadInt(M.R, F.col)
+				IF M.id = Objects.store THEN Files.WriteInt16(M.R, F.col)
+				ELSIF M.id = Objects.load THEN Files.ReadInt16(M.R, F.col)
 				END;
 				Gadgets.framehandle(F, M)
 			END

@@ -244,11 +244,11 @@ BEGIN Bitmap.colors[i] := col;
 END SetAColor;
 
 PROCEDURE WriteColor (RF: vyBase.FilesWriter;  col: Color);
-BEGIN Files.WriteInt(RF, col.r);  Files.WriteInt(RF, col.g);  Files.WriteInt(RF, col.b);
+BEGIN Files.WriteInt16(RF, col.r);  Files.WriteInt16(RF, col.g);  Files.WriteInt16(RF, col.b);
 END WriteColor;
 
 PROCEDURE ReadColor (RF: vyBase.FilesReader;  VAR col: Color);
-BEGIN Files.ReadInt(RF, col.r);  Files.ReadInt(RF, col.g);  Files.ReadInt(RF, col.b);
+BEGIN Files.ReadInt16(RF, col.r);  Files.ReadInt16(RF, col.g);  Files.ReadInt16(RF, col.b);
 END ReadColor;
 
 
@@ -256,8 +256,8 @@ PROCEDURE Write* (VAR RF: vyBase.FilesWriter;  Bitmap: tBitmap );
 VAR
 	NumOfBytes, NumOfColors, count: SIGNED32;
 BEGIN
-	Files.WriteInt(RF, Bitmap.W);  Files.WriteInt(RF, Bitmap.H);  Files.WriteInt(RF, Bitmap.Depth);
-	Files.WriteInt(RF, Bitmap.ColorDepth);
+	Files.WriteInt16(RF, Bitmap.W);  Files.WriteInt16(RF, Bitmap.H);  Files.WriteInt16(RF, Bitmap.Depth);
+	Files.WriteInt16(RF, Bitmap.ColorDepth);
 	NumOfColors :=  exp2(Bitmap.ColorDepth);
 	count := 0;
 	WHILE(count < NumOfColors) DO WriteColor(RF, Bitmap.colors[count]);  INC(count);  END;
@@ -274,8 +274,8 @@ VAR
 	NumOfBytes, NumOfColors, count: SIGNED32;
 	W, H, Depth, ColorDepth : SIGNED16;
 BEGIN
-	Files.ReadInt(RF, W);  Files.ReadInt(RF, H);  Files.ReadInt(RF, Depth);
-	Files.ReadInt(RF, ColorDepth);
+	Files.ReadInt16(RF, W);  Files.ReadInt16(RF, H);  Files.ReadInt16(RF, Depth);
+	Files.ReadInt16(RF, ColorDepth);
 	Bitmap := NewBitmap(W, H, Depth, ColorDepth);
 	NumOfColors :=  exp2(Bitmap.ColorDepth);
 	count := 0;

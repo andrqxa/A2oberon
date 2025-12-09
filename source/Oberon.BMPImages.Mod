@@ -271,25 +271,25 @@ MODULE BMPImages IN Oberon; (** portable **)	(* eos  *)
 		(* bitmap file header *)
 		Files.ReadBytes(r, type, 2);
 		IF (type[0] # "B") OR (type[1] # "M") THEN RETURN END;
-		Files.ReadLInt(r, size); Files.ReadLInt(r, reserved); Files.ReadLInt(r, offset);
+		Files.ReadInt32(r, size); Files.ReadInt32(r, reserved); Files.ReadInt32(r, offset);
 
 		(* bitmap info header *)
-		Files.ReadLInt(r, size);	(* size of bitmap info header *)
+		Files.ReadInt32(r, size);	(* size of bitmap info header *)
 		IF size > 28H THEN Log("ignoring extra header fields") END;
-		Files.ReadLInt(r, width); Files.ReadLInt(r, height);
-		Files.ReadInt(r, planes);
+		Files.ReadInt32(r, width); Files.ReadInt32(r, height);
+		Files.ReadInt16(r, planes);
 		IF planes # 1 THEN LogInt("don't know how to treat % planes", planes) END;
-		Files.ReadInt(r, bpp);
+		Files.ReadInt16(r, bpp);
 		IF ~((bpp = 1) OR (bpp = 4) OR (bpp = 8) OR (bpp = 16) OR (bpp = 24) OR (bpp = 32)) THEN
 			LogInt("can't deal with % bits per pixel", bpp); RETURN
 		END;
-		Files.ReadLInt(r, compression);
+		Files.ReadInt32(r, compression);
 		IF ~(compression IN {RGB, RLE8, RLE4, BITFIELDS}) THEN
 			LogInt("can't deal with compression type %", compression); RETURN
 		END;
-		Files.Set(r, file, Files.Pos(r) + 12); Files.ReadLInt(r, colors);
+		Files.Set(r, file, Files.Pos(r) + 12); Files.ReadInt32(r, colors);
 		IF (colors = 0) & (bpp < 16) THEN colors := ASH(1, bpp) END;
-		Files.ReadLInt(r, importantColors);
+		Files.ReadInt32(r, importantColors);
 
 		(* color table *)
 		IF bpp < 16 THEN
@@ -302,7 +302,7 @@ MODULE BMPImages IN Oberon; (** portable **)	(* eos  *)
 			END;
 			Images.InitPalette(pal, SHORT(colors), 2 + bpp DIV 4)
 		ELSIF ((bpp = 16) OR (bpp = 32)) & (compression = BITFIELDS) THEN
-			Files.ReadLInt(r, redMask); Files.ReadLInt(r, greenMask); Files.ReadLInt(r, blueMask)
+			Files.ReadInt32(r, redMask); Files.ReadInt32(r, greenMask); Files.ReadInt32(r, blueMask)
 		END;
 
 		(* bitmap data *)

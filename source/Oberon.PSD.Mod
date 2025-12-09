@@ -39,7 +39,7 @@ MODULE PSD IN Oberon; (** portable *)	(* ejz  *)
 		IF ver # 1 THEN RETURN FALSE END;
 		ReadLInt(R, sig);
 		IF sig # 0 THEN RETURN FALSE END;
-		Files.ReadInt(R, ver);
+		Files.ReadInt16(R, ver);
 		RETURN ver = 0
 	END CheckFormat;
 

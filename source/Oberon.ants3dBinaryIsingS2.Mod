@@ -40,17 +40,17 @@ TYPE
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	BEGIN
-		Files.WriteInt( R, 1 )
+		Files.WriteInt16( R, 1 )
 		(*
-	Files.WriteLReal(R, s.h); Files.WriteLReal(R, s.beta);  Files.WriteLReal(R, s.penalty);
+	Files.WriteFloat64(R, s.h); Files.WriteFloat64(R, s.beta);  Files.WriteFloat64(R, s.penalty);
 	*)
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );
-		IF version < 1 THEN Files.ReadLReal( R, s.par[0] );  Files.ReadLReal( R, s.par[1] );  Files.ReadLReal( R, s.par[2] ) END
+		Files.ReadInt16( R, version );
+		IF version < 1 THEN Files.ReadFloat64( R, s.par[0] );  Files.ReadFloat64( R, s.par[1] );  Files.ReadFloat64( R, s.par[2] ) END
 	END LoadM;
 
 	PROCEDURE U( m: tModel;  a: ARRAY OF SIGNED16 ): FLOAT64;

@@ -255,15 +255,15 @@ MODULE GfxDemo IN Oberon; (** portable *)	(* eos  *)
 				Gadgets.framehandle(frame, msg);
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1);
-					Files.WriteInt(msg.R, frame.maxIter);
+					Files.WriteInt16(msg.R, frame.maxIter);
 					Files.Write(msg.R, CHR(frame.fgCol.r)); Files.Write(msg.R, CHR(frame.fgCol.g));
 					Files.Write(msg.R, CHR(frame.fgCol.b));
 					Files.Write(msg.R, CHR(frame.bgCol.r)); Files.Write(msg.R, CHR(frame.bgCol.g));
 					Files.Write(msg.R, CHR(frame.bgCol.b))
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					IF ver >= 1 THEN
-						Files.ReadInt(msg.R, frame.maxIter);
+						Files.ReadInt16(msg.R, frame.maxIter);
 						Files.Read(msg.R, ch); frame.fgCol.r := ORD(ch);
 						Files.Read(msg.R, ch); frame.fgCol.g := ORD(ch);
 						Files.Read(msg.R, ch); frame.fgCol.b := ORD(ch);

@@ -40,22 +40,22 @@ VAR
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  o: tModel );
 	BEGIN
-		Files.WriteInt( R, version );
+		Files.WriteInt16( R, version );
 		(*Store*)
-		Gadgets.WriteRef( R, o.lib, o.v2 );  Gadgets.WriteRef( R, o.lib, o.v1 );  Files.WriteLReal( R, o.ph );
-		Files.WriteLReal( R, o.pv );
+		Gadgets.WriteRef( R, o.lib, o.v2 );  Gadgets.WriteRef( R, o.lib, o.v1 );  Files.WriteFloat64( R, o.ph );
+		Files.WriteFloat64( R, o.pv );
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  o: tModel );
 	VAR version: SIGNED16;  ref: Objects.Object;
 	BEGIN
-		Files.ReadInt( R, version );
+		Files.ReadInt16( R, version );
 		(*Load*)
 		Gadgets.ReadRef( R, o.lib, ref );
 		IF ref # NIL THEN o.v2 := ref( vyBase.Object ) END;
 		Gadgets.ReadRef( R, o.lib, ref );
 		IF ref # NIL THEN o.v1 := ref( vyBase.Object ) END;
-		Files.ReadLReal( R, o.ph );  Files.ReadLReal( R, o.pv );
+		Files.ReadFloat64( R, o.ph );  Files.ReadFloat64( R, o.pv );
 	END LoadM;
 
 	PROCEDURE OneSweep( s: antsKernel.Kernel );

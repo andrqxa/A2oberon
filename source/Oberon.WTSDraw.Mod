@@ -28,8 +28,8 @@ MODULE WTSDraw IN Oberon;	(** portable *)
 		elem: ARRAY 8 OF PROCEDURE (VAR R: Files.Rider; col, x, y, w, h: SIGNED16): Display.Frame;
 
 	PROCEDURE Data(VAR R: Files.Rider; VAR x, y, w, h, color: SIGNED16);
-	BEGIN Files.ReadInt(R, x); Files.ReadInt(R, y);
-		Files.ReadInt(R, w); Files.ReadInt(R, h); Files.ReadInt(R, color)
+	BEGIN Files.ReadInt16(R, x); Files.ReadInt16(R, y);
+		Files.ReadInt16(R, w); Files.ReadInt16(R, h); Files.ReadInt16(R, color)
 	END Data;
 
 	PROCEDURE ReadString(VAR R: Files.Rider; VAR s: ARRAY  OF CHAR);
@@ -85,7 +85,7 @@ MODULE WTSDraw IN Oberon;	(** portable *)
 	PROCEDURE Rect(VAR R: Files.Rider; col, x, y, w, h: SIGNED16): Display.Frame;
 		VAR state: SET; len: SIGNED16; lw, vers: SIGNED8; L: BasicFigures.Figure;
 	BEGIN
-		Files.ReadInt(R, len); Files.Read(R, lw); Files.Read(R, vers);
+		Files.ReadInt16(R, len); Files.Read(R, lw); Files.Read(R, vers);
 		state := {}; IF vers > 0 THEN INCL(state, BasicFigures.filled); col := -BasicFigures.filled + vers END;
 		NEW(L); BasicFigures.InitRect(L, w, h); L.width := lw; L.col := col; L.X := x; L.Y := y;
 		RETURN L
@@ -94,7 +94,7 @@ MODULE WTSDraw IN Oberon;	(** portable *)
 	PROCEDURE Curves(VAR R: Files.Rider; col, x, y, w, h: SIGNED16): Display.Frame;
 		VAR len, kind, lw, r: SIGNED16; C: BasicFigures.Figure;
 	BEGIN
-		Files.ReadInt(R, len); Files.ReadInt(R, kind); Files.ReadInt(R, lw);
+		Files.ReadInt16(R, len); Files.ReadInt16(R, kind); Files.ReadInt16(R, lw);
 		IF kind = 0 THEN RETURN Line(col, x, y, w, h)
 		ELSIF kind = 1 THEN RETURN Line(col, x, y, w, -h)
 		ELSIF kind = 2 THEN

@@ -203,16 +203,16 @@ VAR
 
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyPort.LayerHandler( obj, msg );  Files.ReadLInt( msg.R, obj.maxx );
-			Files.ReadLInt( msg.R, obj.maxy );  Files.ReadBool( msg.R, obj.isotropic );
+			Files.ReadInt16( msg.R, version );  vyPort.LayerHandler( obj, msg );  Files.ReadInt32( msg.R, obj.maxx );
+			Files.ReadInt32( msg.R, obj.maxy );  Files.ReadBool( msg.R, obj.isotropic );
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.n := objsub( antsNeighbourhoods.Neighbours ) END;
 			IF version > 0 THEN Files.ReadBool( msg.R, obj.viewnum ) END;
-			IF version > 1 THEN Files.ReadLReal( msg.R, obj.max ) END
+			IF version > 1 THEN Files.ReadFloat64( msg.R, obj.max ) END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 2 );  vyPort.LayerHandler( obj, msg );  Files.WriteLInt( msg.R, obj.maxx );
-			Files.WriteLInt( msg.R, obj.maxy );  Files.WriteBool( msg.R, obj.isotropic );
-			Gadgets.WriteRef( msg.R, obj.lib, obj.n );  Files.WriteBool( msg.R, obj.viewnum );  Files.WriteLReal( msg.R, obj.max )
+			Files.WriteInt16( msg.R, 2 );  vyPort.LayerHandler( obj, msg );  Files.WriteInt32( msg.R, obj.maxx );
+			Files.WriteInt32( msg.R, obj.maxy );  Files.WriteBool( msg.R, obj.isotropic );
+			Gadgets.WriteRef( msg.R, obj.lib, obj.n );  Files.WriteBool( msg.R, obj.viewnum );  Files.WriteFloat64( msg.R, obj.max )
 		ELSE vyPort.LayerHandler( obj, msg )
 		END
 	END HandleFileMsg;

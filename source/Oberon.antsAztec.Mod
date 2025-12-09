@@ -36,14 +36,14 @@ TYPE
 
 	PROCEDURE StoreM( VAR R: Files.Rider;  s: tModel );
 	BEGIN
-		Files.WriteInt( R, 1 );  Files.WriteLReal( R, s.horprob )
+		Files.WriteInt16( R, 1 );  Files.WriteFloat64( R, s.horprob )
 	END StoreM;
 
 	PROCEDURE LoadM( VAR R: Files.Rider;  s: tModel );
 	VAR version: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, version );
-		IF version > 0 THEN Files.ReadLReal( R, s.horprob ) ELSE s.horprob := 0.5 END
+		Files.ReadInt16( R, version );
+		IF version > 0 THEN Files.ReadFloat64( R, s.horprob ) ELSE s.horprob := 0.5 END
 	END LoadM;
 
 	PROCEDURE OneSweep( s: antsKernel.Kernel );

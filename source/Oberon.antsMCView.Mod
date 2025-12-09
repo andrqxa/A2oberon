@@ -71,28 +71,28 @@ VAR
 	PROCEDURE StoreVector( VAR R: Files.Rider;  VAR V: Vector );
 	VAR i: SIZE;
 	BEGIN
-		IF V = NIL THEN Files.WriteLInt( R, 0 );  RETURN END;
-		Files.WriteLInt( R, SIGNED32(LEN( V )) );
-		FOR i := 0 TO LEN( V ) - 1 DO Files.WriteLReal( R, V[i] ) END
+		IF V = NIL THEN Files.WriteInt32( R, 0 );  RETURN END;
+		Files.WriteInt32( R, SIGNED32(LEN( V )) );
+		FOR i := 0 TO LEN( V ) - 1 DO Files.WriteFloat64( R, V[i] ) END
 	END StoreVector;
 
 	PROCEDURE LoadVector( VAR R: Files.Rider;  VAR V: Vector );
 	VAR i: SIZE; w: SIGNED32;
 	BEGIN
-		Files.ReadLInt( R, w );
+		Files.ReadInt32( R, w );
 		IF w = 0 THEN V := NIL;  RETURN END;
 		NEW( V, w );
-		FOR i := 0 TO LEN( V ) - 1 DO Files.ReadLReal( R, V[i] ) END
+		FOR i := 0 TO LEN( V ) - 1 DO Files.ReadFloat64( R, V[i] ) END
 	END LoadVector;
 
 	PROCEDURE StoreMatrix( VAR R: Files.Rider;  VAR M: Matrix );
 	VAR i, j: SIZE;
 	BEGIN
-		IF M = NIL THEN Files.WriteLInt( R, 0 );  Files.WriteLInt( R, 0 )
+		IF M = NIL THEN Files.WriteInt32( R, 0 );  Files.WriteInt32( R, 0 )
 		ELSE
-			Files.WriteLInt( R, SIGNED32(LEN( M )) );  Files.WriteLInt( R, SIGNED32(LEN( M[0] )) );
+			Files.WriteInt32( R, SIGNED32(LEN( M )) );  Files.WriteInt32( R, SIGNED32(LEN( M[0] )) );
 			FOR i := 0 TO LEN( M ) - 1 DO
-				FOR j := 0 TO LEN( M[0] ) - 1 DO Files.WriteLReal( R, M[i, j] ) END
+				FOR j := 0 TO LEN( M[0] ) - 1 DO Files.WriteFloat64( R, M[i, j] ) END
 			END
 		END
 	END StoreMatrix;
@@ -100,41 +100,41 @@ VAR
 	PROCEDURE LoadMatrix( VAR R: Files.Rider;  VAR M: Matrix );
 	VAR w, h: SIGNED32; i, j: SIZE;
 	BEGIN
-		Files.ReadLInt( R, h );  Files.ReadLInt( R, w );
+		Files.ReadInt32( R, h );  Files.ReadInt32( R, w );
 		IF (h = 0) OR (w = 0) THEN M := NIL;  RETURN END;
 		NEW( M, h, w );
 		FOR i := 0 TO LEN( M ) - 1 DO
-			FOR j := 0 TO LEN( M[0] ) - 1 DO Files.ReadLReal( R, M[i, j] ) END
+			FOR j := 0 TO LEN( M[0] ) - 1 DO Files.ReadFloat64( R, M[i, j] ) END
 		END
 	END LoadMatrix;
 
 	PROCEDURE StoreMap( VAR R: Files.Rider;  m: Map );
 	VAR i: SIZE;
 	BEGIN
-		IF m = NIL THEN Files.WriteLInt( R, 0 )
+		IF m = NIL THEN Files.WriteInt32( R, 0 )
 		ELSE
-			Files.WriteLInt( R, SIGNED32(LEN( m )));
-			FOR i := 0 TO LEN( m ) - 1 DO Files.WriteLInt( R, m[i] ) END
+			Files.WriteInt32( R, SIGNED32(LEN( m )));
+			FOR i := 0 TO LEN( m ) - 1 DO Files.WriteInt32( R, m[i] ) END
 		END
 	END StoreMap;
 
 	PROCEDURE LoadMap( VAR R: Files.Rider;  VAR m: Map );
 	VAR len: SIGNED32; i: SIZE;
 	BEGIN
-		Files.ReadLInt( R, len );
+		Files.ReadInt32( R, len );
 		IF len = 0 THEN m := NIL
 		ELSE
 			NEW( m, len );
-			FOR i := 0 TO LEN( m ) - 1 DO Files.ReadLInt( R, m[i] ) END
+			FOR i := 0 TO LEN( m ) - 1 DO Files.ReadInt32( R, m[i] ) END
 		END
 	END LoadMap;
 
 	PROCEDURE StoreUsage( VAR R: Files.Rider;  m: Usage );
 	VAR i: SIZE;
 	BEGIN
-		IF m = NIL THEN Files.WriteLInt( R, 0 )
+		IF m = NIL THEN Files.WriteInt32( R, 0 )
 		ELSE
-			Files.WriteLInt( R, SIGNED32(LEN( m )) );
+			Files.WriteInt32( R, SIGNED32(LEN( m )) );
 			FOR i := 0 TO LEN( m ) - 1 DO Files.WriteBool( R, m[i] ) END
 		END
 	END StoreUsage;
@@ -142,7 +142,7 @@ VAR
 	PROCEDURE LoadUsage( VAR R: Files.Rider;  VAR m: Usage );
 	VAR len: SIGNED32; i: SIZE;
 	BEGIN
-		Files.ReadLInt( R, len );
+		Files.ReadInt32( R, len );
 		IF len = 0 THEN m := NIL
 		ELSE
 			NEW( m, len );
@@ -152,20 +152,20 @@ VAR
 
 	PROCEDURE StoreMapQueue( VAR R: Files.Rider;  q: MapQueue );
 	BEGIN
-		Files.WriteInt( R, 0 );
+		Files.WriteInt16( R, 0 );
 		WHILE (q # NIL ) DO
-			Files.WriteInt( R, 1 );  StoreMap( R, q.m );  StoreUsage( R, q.u );  Files.WriteBool( R, q.coal );  q := q.next
+			Files.WriteInt16( R, 1 );  StoreMap( R, q.m );  StoreUsage( R, q.u );  Files.WriteBool( R, q.coal );  q := q.next
 		END;
-		Files.WriteInt( R, 0 )
+		Files.WriteInt16( R, 0 )
 	END StoreMapQueue;
 
 	PROCEDURE LoadMapQueue( VAR R: Files.Rider;  VAR q: MapQueue );
 	VAR ver, ident: SIGNED16;  m: MapQueue;
 	BEGIN
-		Files.ReadInt( R, ver );  Files.ReadInt( R, ident );
+		Files.ReadInt16( R, ver );  Files.ReadInt16( R, ident );
 		WHILE (ident # 0) DO
 			IF m = NIL THEN NEW( m );  q := m ELSE NEW( m.next );  m := m.next END;
-			LoadMap( R, m.m );  LoadUsage( R, m.u );  Files.ReadBool( R, m.coal );  Files.ReadInt( R, ident )
+			LoadMap( R, m.m );  LoadUsage( R, m.u );  Files.ReadBool( R, m.coal );  Files.ReadInt16( R, ident )
 		END
 	END LoadMapQueue;
 
@@ -173,18 +173,18 @@ VAR
 	VAR comp: Mapper;
 	BEGIN
 		comp := DefaultMapper;
-		IF m = comp THEN Files.WriteInt( R, 1 );  RETURN END;
+		IF m = comp THEN Files.WriteInt16( R, 1 );  RETURN END;
 		comp := OneRMapper;
-		IF m = comp THEN Files.WriteInt( R, 2 );  RETURN END;
+		IF m = comp THEN Files.WriteInt16( R, 2 );  RETURN END;
 		comp := MapperIt;
-		IF m = comp THEN Files.WriteInt( R, 2 );  RETURN END;
-		Files.WriteInt( R, 0 )
+		IF m = comp THEN Files.WriteInt16( R, 2 );  RETURN END;
+		Files.WriteInt16( R, 0 )
 	END StoreMapper;
 
 	PROCEDURE LoadMapper( VAR R: Files.Rider;  VAR m: Mapper );
 	VAR type: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, type );
+		Files.ReadInt16( R, type );
 		IF type = 1 THEN m := DefaultMapper
 		ELSIF type = 2 THEN m := OneRMapper
 		ELSIF type = 3 THEN m := MapperIt
@@ -193,15 +193,15 @@ VAR
 
 	PROCEDURE StoreChain( VAR R: Files.Rider;  VAR c: Chain );
 	BEGIN
-		Files.WriteInt( R, 0 );  StoreMapQueue( R, c.q );  Files.WriteLInt( R, c.qlen );  StoreMapper( R, c.m );
-		StoreMatrix( R, c.A );  StoreMatrix( R, c.cA );  Files.WriteLInt( R, c.dim );  StoreVector( R, c.ran )
+		Files.WriteInt16( R, 0 );  StoreMapQueue( R, c.q );  Files.WriteInt32( R, c.qlen );  StoreMapper( R, c.m );
+		StoreMatrix( R, c.A );  StoreMatrix( R, c.cA );  Files.WriteInt32( R, c.dim );  StoreVector( R, c.ran )
 	END StoreChain;
 
 	PROCEDURE LoadChain( VAR R: Files.Rider;  VAR c: Chain );
 	VAR ver: SIGNED16;
 	BEGIN
-		Files.ReadInt( R, ver );  LoadMapQueue( R, c.q );  Files.ReadLInt( R, c.qlen );  LoadMapper( R, c.m );
-		LoadMatrix( R, c.A );  LoadMatrix( R, c.cA );  Files.ReadLInt( R, c.dim );  LoadVector( R, c.ran )
+		Files.ReadInt16( R, ver );  LoadMapQueue( R, c.q );  Files.ReadInt32( R, c.qlen );  LoadMapper( R, c.m );
+		LoadMatrix( R, c.A );  LoadMatrix( R, c.cA );  Files.ReadInt32( R, c.dim );  LoadVector( R, c.ran )
 	END LoadChain;
 
 	PROCEDURE DefaultMapper( VAR m: ARRAY OF SIGNED32 );
@@ -379,11 +379,11 @@ VAR
 
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyPort.LayerHandler( obj, msg );  Files.ReadInt( msg.R, obj.type );
+			Files.ReadInt16( msg.R, version );  vyPort.LayerHandler( obj, msg );  Files.ReadInt16( msg.R, obj.type );
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.c := objsub( Chain ) END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyPort.LayerHandler( obj, msg );  Files.WriteInt( msg.R, obj.type );
+			Files.WriteInt16( msg.R, 0 );  vyPort.LayerHandler( obj, msg );  Files.WriteInt16( msg.R, obj.type );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.c )
 		ELSE vyPort.LayerHandler( obj, msg )
 		END

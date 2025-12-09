@@ -305,7 +305,7 @@ VAR
 	PROCEDURE Store0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
 		Gadgets.WriteRef( M.R, obj.lib, NIL );   (* hack to insert version control, fof 020212 *)
-		Files.WriteInt( M.R, 1 );   (* version control *)
+		Files.WriteInt16( M.R, 1 );   (* version control *)
 
 		Gadgets.WriteRef( M.R, obj.lib, obj.x );  Gadgets.WriteRef( M.R, obj.lib, obj.y );
 		Files.WriteBool( M.R, obj.ViewLastOnly )
@@ -315,7 +315,7 @@ VAR
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
 		version := 0;  dlink := M.dlink;  Gadgets.ReadRef( M.R, obj.lib, objsub );
-		IF objsub = NIL THEN Files.ReadInt( M.R, version );  Gadgets.ReadRef( M.R, obj.lib, objsub ) END;
+		IF objsub = NIL THEN Files.ReadInt16( M.R, version );  Gadgets.ReadRef( M.R, obj.lib, objsub ) END;
 		IF (objsub # NIL ) & (objsub IS vyBase.tVector) THEN obj.x := objsub( vyBase.tVector ) END;
 		Gadgets.ReadRef( M.R, obj.lib, objsub );
 		IF (objsub # NIL ) & (objsub IS vyBase.tVector) THEN obj.y := objsub( vyBase.tVector ) END;

@@ -95,12 +95,12 @@ CONST
 		(*! store Picts as GIF for color preserving or store colors *)
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  antsArrayPictures.Handler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
+			Files.ReadInt16( msg.R, version );  antsArrayPictures.Handler( obj, msg );  Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF (objsub # NIL ) & (objsub IS vyBase.tVector) THEN obj.histogram := objsub( vyBase.tVector ) END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF (objsub # NIL ) & (objsub IS antsHistogramEdit.tObject) THEN obj.curve := objsub( antsHistogramEdit.tObject ) END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  antsArrayPictures.Handler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.histogram );
+			Files.WriteInt16( msg.R, 0 );  antsArrayPictures.Handler( obj, msg );  Gadgets.WriteRef( msg.R, obj.lib, obj.histogram );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.curve )
 		ELSE antsArrayObjects.Handler( obj, msg )
 		END

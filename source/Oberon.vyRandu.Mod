@@ -172,13 +172,13 @@ END HandleAttributes;
 (*
 PROCEDURE Store (obj: tRandom;  VAR M: Objects.FileMsg);
 BEGIN
-Files.WriteLInt(M.R, obj.seed(vyRanBase.tLongintSeed).val);
+Files.WriteInt32(M.R, obj.seed(vyRanBase.tLongintSeed).val);
 vyRanBase.Handler(obj, M)
 END Store;
 
 PROCEDURE Load (obj: tRandom;  VAR M: Objects.FileMsg);
 BEGIN
-Files.ReadLInt(M.R, obj.seed(vyRanBase.tLongintSeed).val);
+Files.ReadInt32(M.R, obj.seed(vyRanBase.tLongintSeed).val);
 vyRanBase.Handler(obj, M)
 END Load;
 *)

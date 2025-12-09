@@ -82,7 +82,7 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 	BEGIN
 		IF T.free > T.org THEN
 			pos := T.free; Files.Set(R, T.F, pos);
-			Files.ReadLInt(R, T.free) (* next free *)
+			Files.ReadInt32(R, T.free) (* next free *)
 		ELSE
 			pos := Files.Length(T.F); Files.Set(R, T.F, pos);
 			WHILE size > 0 DO
@@ -95,11 +95,11 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 	PROCEDURE ToFree(T: Tree; P: Page);
 		VAR R: Files.Rider;
 	BEGIN
-		Files.Set(R, T.F, P.org); Files.WriteLInt(R, T.free);
+		Files.Set(R, T.F, P.org); Files.WriteInt32(R, T.free);
 		Files.Set(R, T.F, T.org);
-		Files.WriteInt(R, Tag); Files.WriteInt(R, T.class);
-		Files.WriteInt(R, T.maxCache);
-		T.free := P.org; Files.WriteLInt(R, T.free)
+		Files.WriteInt16(R, Tag); Files.WriteInt16(R, T.class);
+		Files.WriteInt16(R, T.maxCache);
+		T.free := P.org; Files.WriteInt32(R, T.free)
 	END ToFree;
 
 (* Force write back of a page. *)
@@ -110,14 +110,14 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 	BEGIN
 		ASSERT(p.org <= Files.Length(T.F));
 		Files.Set(R, T.F, p.org);
-		Files.WriteLInt(R, p.org);
-		Files.WriteInt(R, p.m);
+		Files.WriteInt32(R, p.org);
+		Files.WriteInt16(R, p.m);
 		Files.WriteBool(R, p.discard);
-		Files.WriteLInt(R, p.p0);
+		Files.WriteInt32(R, p.p0);
 		FOR i := 0 TO p.m-1 DO
-			Files.WriteLInt(R, p.e[i].key);
-			Files.WriteLInt(R, p.e[i].org);
-			Files.WriteLInt(R, p.e[i].p)
+			Files.WriteInt32(R, p.e[i].key);
+			Files.WriteInt32(R, p.e[i].org);
+			Files.WriteInt32(R, p.e[i].p)
 		END;
 		p.dirty := FALSE
 	END WriteLIntPage;
@@ -167,14 +167,14 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 		IF p0 = NIL THEN
 			p := NewLIntPage(T);
 			Files.Set(R, T.F, org);
-			Files.ReadLInt(R, p.org); ASSERT(p.org = org);
-			Files.ReadInt(R, p.m);
+			Files.ReadInt32(R, p.org); ASSERT(p.org = org);
+			Files.ReadInt16(R, p.m);
 			Files.ReadBool(R, p.discard); ASSERT(~p.discard);
-			Files.ReadLInt(R, p.p0);
+			Files.ReadInt32(R, p.p0);
 			FOR i := 0 TO p.m-1 DO
-				Files.ReadLInt(R, p.e[i].key);
-				Files.ReadLInt(R, p.e[i].org);
-				Files.ReadLInt(R, p.e[i].p)
+				Files.ReadInt32(R, p.e[i].key);
+				Files.ReadInt32(R, p.e[i].org);
+				Files.ReadInt32(R, p.e[i].p)
 			END;
 			p.dirty := FALSE
 		ELSE
@@ -575,9 +575,9 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 		END;
 		T.F := F; T.org := org;
 		Files.Set(R, F, org);
-		Files.WriteInt(R, Tag); Files.WriteInt(R, LInt);
-		Files.WriteInt(R, T.maxCache);
-		T.free := -1; Files.WriteLInt(R, T.free);
+		Files.WriteInt16(R, Tag); Files.WriteInt16(R, LInt);
+		Files.WriteInt16(R, T.maxCache);
+		T.free := -1; Files.WriteInt32(R, T.free);
 		T.root := AllocSpace(T, LIntPageSize);
 		T.class := LInt; T.noCache := 0;
 		T.cache := NewLIntPage(T);
@@ -594,14 +594,14 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 	BEGIN
 		ASSERT(p.org <= Files.Length(T.F));
 		Files.Set(R, T.F, p.org);
-		Files.WriteLInt(R, p.org);
-		Files.WriteInt(R, p.m);
+		Files.WriteInt32(R, p.org);
+		Files.WriteInt16(R, p.m);
 		Files.WriteBool(R, p.discard);
-		Files.WriteLInt(R, p.p0);
+		Files.WriteInt32(R, p.p0);
 		FOR i := 0 TO p.m-1 DO
 			Files.WriteBytes(R, p.e[i].key, StrKeySize);
-			Files.WriteLInt(R, p.e[i].org);
-			Files.WriteLInt(R, p.e[i].p)
+			Files.WriteInt32(R, p.e[i].org);
+			Files.WriteInt32(R, p.e[i].p)
 		END;
 		p.dirty := FALSE
 	END WriteStrPage;
@@ -651,14 +651,14 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 		IF p0 = NIL THEN
 			p := NewStrPage(T);
 			Files.Set(R, T.F, org);
-			Files.ReadLInt(R, p.org); ASSERT(p.org = org);
-			Files.ReadInt(R, p.m);
+			Files.ReadInt32(R, p.org); ASSERT(p.org = org);
+			Files.ReadInt16(R, p.m);
 			Files.ReadBool(R, p.discard); ASSERT(~p.discard);
-			Files.ReadLInt(R, p.p0);
+			Files.ReadInt32(R, p.p0);
 			FOR i := 0 TO p.m-1 DO
 				Files.ReadBytes(R, p.e[i].key, StrKeySize);
-				Files.ReadLInt(R, p.e[i].org);
-				Files.ReadLInt(R, p.e[i].p)
+				Files.ReadInt32(R, p.e[i].org);
+				Files.ReadInt32(R, p.e[i].p)
 			END;
 			p.dirty := FALSE
 		ELSE
@@ -1063,9 +1063,9 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 		END;
 		T.F := F; T.org := org;
 		Files.Set(R, F, org);
-		Files.WriteInt(R, Tag); Files.WriteInt(R, Str);
-		Files.WriteInt(R, T.maxCache);
-		T.free := -1; Files.WriteLInt(R, T.free);
+		Files.WriteInt16(R, Tag); Files.WriteInt16(R, Str);
+		Files.WriteInt16(R, T.maxCache);
+		T.free := -1; Files.WriteInt32(R, T.free);
 		T.root := AllocSpace(T, StrPageSize);
 		T.class := Str; T.noCache := 0;
 		T.cache := NewStrPage(T);
@@ -1083,8 +1083,8 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 	BEGIN
 		NEW(T); T.F := F; T.org := org;
 		Files.Set(R, F, org);
-		Files.ReadInt(R, tag); ASSERT(tag = Tag); Files.ReadInt(R, T.class);
-		Files.ReadInt(R, T.maxCache); Files.ReadLInt(R, T.free);
+		Files.ReadInt16(R, tag); ASSERT(tag = Tag); Files.ReadInt16(R, T.class);
+		Files.ReadInt16(R, T.maxCache); Files.ReadInt32(R, T.free);
 		IF T.maxCache < 4 THEN T.maxCache := 4 END;
 		T.root := Files.Pos(R); T.noCache := 0; T.cache := NIL;
 		RETURN T
@@ -1097,8 +1097,8 @@ MODULE BTrees IN Oberon;	(** portable *) (* ejz,  *)
 			p: Page;
 	BEGIN
 		Files.Set(R, T.F, T.org);
-		Files.WriteInt(R, Tag); Files.WriteInt(R, T.class);
-		Files.WriteInt(R, T.maxCache); Files.WriteLInt(R, T.free);
+		Files.WriteInt16(R, Tag); Files.WriteInt16(R, T.class);
+		Files.WriteInt16(R, T.maxCache); Files.WriteInt32(R, T.free);
 		p := T.cache;
 		WHILE p # NIL DO
 			IF p.dirty THEN

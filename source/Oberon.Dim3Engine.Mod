@@ -322,12 +322,12 @@ END Distance;
 
 PROCEDURE WriteVector (VAR R: Files.Rider; VAR v: Vector);
 BEGIN
-	Files.WriteReal(R, v[0]); Files.WriteReal(R, v[1]); Files.WriteReal(R, v[2])
+	Files.WriteFloat32(R, v[0]); Files.WriteFloat32(R, v[1]); Files.WriteFloat32(R, v[2])
 END WriteVector;
 
 PROCEDURE ReadVector (VAR R: Files.Rider; VAR v: Vector);
 BEGIN
-	Files.ReadReal(R, v[0]); Files.ReadReal(R, v[1]); Files.ReadReal(R, v[2])
+	Files.ReadFloat32(R, v[0]); Files.ReadFloat32(R, v[1]); Files.ReadFloat32(R, v[2])
 END ReadVector;
 
 
@@ -455,7 +455,7 @@ VAR i, j: SIGNED16;
 BEGIN
 	FOR i := 0 TO 2 DO
 		FOR j := 0 TO 3 DO
-			Files.WriteReal(R, M[i, j])
+			Files.WriteFloat32(R, M[i, j])
 		END
 	END
 END WriteMatrix;
@@ -465,7 +465,7 @@ VAR i, j: SIGNED16;
 BEGIN
 	FOR i := 0 TO 2 DO
 		FOR j := 0 TO 3 DO
-			Files.ReadReal(R, M[i, j])
+			Files.ReadFloat32(R, M[i, j])
 		END
 	END
 END ReadMatrix;
@@ -764,8 +764,8 @@ BEGIN
 	Files.WriteBool(R, texture.stringTexture);
 	Files.WriteBool(R, texture.transparent);
 	IF texture.stringTexture THEN
-		Files.WriteReal(R, texture.fontCol[0]); Files.WriteReal(R, texture.fontCol[1]); Files.WriteReal(R, texture.fontCol[2]);
-		Files.WriteReal(R, texture.backCol[0]); Files.WriteReal(R, texture.backCol[1]); Files.WriteReal(R, texture.backCol[2]);
+		Files.WriteFloat32(R, texture.fontCol[0]); Files.WriteFloat32(R, texture.fontCol[1]); Files.WriteFloat32(R, texture.fontCol[2]);
+		Files.WriteFloat32(R, texture.backCol[0]); Files.WriteFloat32(R, texture.backCol[1]); Files.WriteFloat32(R, texture.backCol[2]);
 		Files.WriteString(R, texture.name); Files.WriteString(R, texture.font);
 	ELSE
 		Files.WriteString(R, texture.name);
@@ -778,8 +778,8 @@ BEGIN
 	Files.ReadBool(R, stringTexture);
 	Files.ReadBool(R, transp);
 	IF stringTexture THEN
-		Files.ReadReal(R, fontCol[0]); Files.ReadReal(R, fontCol[1]); Files.ReadReal(R, fontCol[2]);
-		Files.ReadReal(R, backCol[0]); Files.ReadReal(R, backCol[1]); Files.ReadReal(R, backCol[2]);
+		Files.ReadFloat32(R, fontCol[0]); Files.ReadFloat32(R, fontCol[1]); Files.ReadFloat32(R, fontCol[2]);
+		Files.ReadFloat32(R, backCol[0]); Files.ReadFloat32(R, backCol[1]); Files.ReadFloat32(R, backCol[2]);
 		Files.ReadString(R, name); Files.ReadString(R, font);
 		InitStringTexture(poly, name, font, fontCol, backCol, transp);
 	ELSE
@@ -841,13 +841,13 @@ BEGIN
 			INC(n);
 			p := p.next
 		END;
-		Files.WriteInt(R, n);
+		Files.WriteInt16(R, n);
 		IF texture THEN	(* write texture coordinates *)
-			Files.WriteReal(R, ref.u); Files.WriteReal(R, ref.v);
+			Files.WriteFloat32(R, ref.u); Files.WriteFloat32(R, ref.v);
 		END;
 		ref := ref.next
 	UNTIL ref = poly.contour;
-	Files.WriteInt(R, -1)
+	Files.WriteInt16(R, -1)
 END WritePoly;
 
 PROCEDURE ReadPoly (VAR R: Files.Rider; poly: Polygon);
@@ -855,7 +855,7 @@ VAR n: SIGNED16; p: Point; texture: BOOLEAN; u, v:FLOAT32;
 BEGIN
 	Files.ReadBool(R, texture);
 	IF texture THEN ReadTexture(R, poly) END;
-	Files.ReadInt(R, n);
+	Files.ReadInt16(R, n);
 	WHILE n >= 0 DO
 		p := poly.shape.points;
 		WHILE n > 0 DO
@@ -863,12 +863,12 @@ BEGIN
 			DEC(n)
 		END;
 		IF texture THEN
-			Files.ReadReal(R, u); Files.ReadReal(R, v);
+			Files.ReadFloat32(R, u); Files.ReadFloat32(R, v);
 			AppendTexturePoint(poly.contour, p, u, v)
 		ELSE
 			AppendPoint(poly.contour, p);
 		END;
-		Files.ReadInt(R, n)
+		Files.ReadInt16(R, n)
 	END
 END ReadPoly;
 
@@ -1199,16 +1199,16 @@ END InitLight;
 
 PROCEDURE WriteLight (VAR R: Files.Rider; l: Light);
 BEGIN
-	Files.WriteInt(R, l.type);
+	Files.WriteInt16(R, l.type);
 	WriteVector(R, l.dir);
-	Files.WriteReal(R, l.inten);
+	Files.WriteFloat32(R, l.inten);
 END WriteLight;
 
 PROCEDURE ReadLight (VAR R: Files.Rider; l: Light);
 BEGIN
-	Files.ReadInt(R, l.type);
+	Files.ReadInt16(R, l.type);
 	ReadVector(R, l.dir);
-	Files.ReadReal(R, l.inten);
+	Files.ReadFloat32(R, l.inten);
 END ReadLight;
 
 
@@ -1466,9 +1466,9 @@ BEGIN
 	Files.WriteBool(R, dither IN shape.state);
 	Files.WriteBool(R, specular IN shape.state);
 	WriteMatrix(R, shape.T);
-	Files.WriteReal(R, shape.color[0]); Files.WriteReal(R, shape.color[1]); Files.WriteReal(R, shape.color[2]);
-	Files.WriteReal(R, shape.diffuse);
-	Files.WriteReal(R, shape.speccoef); Files.WriteInt(R, shape.specexpo);
+	Files.WriteFloat32(R, shape.color[0]); Files.WriteFloat32(R, shape.color[1]); Files.WriteFloat32(R, shape.color[2]);
+	Files.WriteFloat32(R, shape.diffuse);
+	Files.WriteFloat32(R, shape.speccoef); Files.WriteInt16(R, shape.specexpo);
 	IF shape.cmd # NIL THEN
 		Files.Write(R, 1X);
 		Files.WriteString(R, shape.cmd^)
@@ -1478,25 +1478,25 @@ BEGIN
 
 	p := shape.realPoints; n := 0;
 	WHILE p # NIL DO INC(n); p := p.next END;
-	Files.WriteInt(R, n);
+	Files.WriteInt16(R, n);
 	p := shape.realPoints;
 	WHILE p # NIL DO WritePoint(R, p); p := p.next END;
 
 	poly := shape.realPolygons; n := 0;
 	WHILE poly # NIL DO INC(n); poly := poly.next END;
-	Files.WriteInt(R, n);
+	Files.WriteInt16(R, n);
 	poly := shape.realPolygons;
 	WHILE poly # NIL DO WritePoly(R, poly); poly := poly.next END;
 
 	l := shape.lights; n := 0;
 	WHILE l # NIL DO INC(n); l := l.next END;
-	Files.WriteInt(R, n);
+	Files.WriteInt16(R, n);
 	l := shape.lights;
 	WHILE l # NIL DO WriteLight(R, l); l := l.next END;
 
 	sub := shape.subshapes; n := 0;
 	WHILE sub # NIL DO INC(n); sub := sub.next END;
-	Files.WriteInt(R, n);
+	Files.WriteInt16(R, n);
 	sub := shape.subshapes;
 	WHILE sub # NIL DO WriteShape(R, sub); sub := sub.next END
 END WriteShape;
@@ -1510,16 +1510,16 @@ BEGIN
 	Files.ReadBool(R, bool); IF bool THEN shape.state := shape.state + {dither} END;
 	Files.ReadBool(R, bool); IF bool THEN shape.state := shape.state + {specular} END;
 	ReadMatrix(R, shape.T);
-	Files.ReadReal(R, shape.color[0]); Files.ReadReal(R, shape.color[1]); Files.ReadReal(R, shape.color[2]);
-	Files.ReadReal(R, shape.diffuse);
-	Files.ReadReal(R, shape.speccoef); Files.ReadInt(R, shape.specexpo);
+	Files.ReadFloat32(R, shape.color[0]); Files.ReadFloat32(R, shape.color[1]); Files.ReadFloat32(R, shape.color[2]);
+	Files.ReadFloat32(R, shape.diffuse);
+	Files.ReadFloat32(R, shape.speccoef); Files.ReadInt16(R, shape.specexpo);
 	Files.Read(R, ch);
 	IF ch # 0X THEN
 		NEW(shape.cmd);
 		Files.ReadString(R, shape.cmd^)
 	END;
 
-	Files.ReadInt(R, n);
+	Files.ReadInt16(R, n);
 	IF n > 0 THEN
 		NewPoint(p); ReadPoint(R, p); DEC(n);
 		shape.points := p;
@@ -1528,7 +1528,7 @@ BEGIN
 		END
 	END;
 
-	Files.ReadInt(R, n);
+	Files.ReadInt16(R, n);
 	IF n > 0 THEN
 		NewPolygon(poly); poly.shape := shape; ReadPoly(R, poly); DEC(n);
 		shape.polygons := poly;
@@ -1537,7 +1537,7 @@ BEGIN
 		END
 	END;
 
-	Files.ReadInt(R, n);
+	Files.ReadInt16(R, n);
 	IF n > 0 THEN
 		NEW(l); ReadLight(R, l); DEC(n);
 		shape.lights := l;
@@ -1546,7 +1546,7 @@ BEGIN
 		END
 	END;
 
-	Files.ReadInt(R, n);
+	Files.ReadInt16(R, n);
 	IF n > 0 THEN
 		NEW(sub); sub.parent := shape; ReadShape(R, sub); DEC(n);
 		shape.subshapes := sub;
@@ -1925,13 +1925,13 @@ END GetCameraTrafo;
 
 PROCEDURE WriteCamera* (VAR R: Files.Rider; VAR C: Camera);
 BEGIN
-	Files.WriteReal(R, C.fov);
+	Files.WriteFloat32(R, C.fov);
 	WriteVector(R, C.pos); WriteVector(R, C.u); WriteVector(R, C.v); WriteVector(R, C.w);
 END WriteCamera;
 
 PROCEDURE ReadCamera* (VAR R: Files.Rider; VAR C: Camera);
 BEGIN
-	Files.ReadReal(R, C.fov);
+	Files.ReadFloat32(R, C.fov);
 	ReadVector(R, C.pos); ReadVector(R, C.u); ReadVector(R, C.v); ReadVector(R, C.w)
 END ReadCamera;
 
@@ -2289,23 +2289,23 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteReal(M.R, w.ambient);
+					Files.WriteFloat32(M.R, w.ambient);
 					WriteShape(M.R, w.shape);
-					Files.WriteInt(M.R, w.skyCol);
-					Files.WriteInt(M.R, w.gndCol);
+					Files.WriteInt16(M.R, w.skyCol);
+					Files.WriteInt16(M.R, w.gndCol);
 					Files.WriteBool(M.R, w.horizon)
 				ELSIF M.id = Objects.load THEN
 					FreeShape(w.shape); BSPFree(w.bspTree);
 					w.bspTree := NIL; w.time := -1;
-					Files.ReadReal(M.R, w.ambient);
+					Files.ReadFloat32(M.R, w.ambient);
 					ReadShape(M.R, w.shape);
 					CalcBound(w.shape);
 					CalcShapePlanes(w.shape);
 					ShadeShape(w, w.shape);
 					ReorderPolygons(w.shape);
 					InsertShape(w.shape, w.bspTree);
-					Files.ReadInt(M.R, w.skyCol);
-					Files.ReadInt(M.R, w.gndCol);
+					Files.ReadInt16(M.R, w.skyCol);
+					Files.ReadInt16(M.R, w.gndCol);
 					Files.ReadBool(M.R, w.horizon)
 				END;
 				Gadgets.objecthandle(w, M)

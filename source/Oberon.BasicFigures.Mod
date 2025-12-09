@@ -419,22 +419,22 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN (* store private data here *)
-					Files.WriteInt(M.R, 1); Files.WriteInt(M.R, F.col);
-					Files.WriteInt(M.R, F.width); Files.WriteInt(M.R, F.patno); Files.WriteSet(M.R, F.state0);
+					Files.WriteInt16(M.R, 1); Files.WriteInt16(M.R, F.col);
+					Files.WriteInt16(M.R, F.width); Files.WriteInt16(M.R, F.patno); Files.WriteSet(M.R, F.state0);
 					x := 0; p := F.p; WHILE p # NIL DO INC(x); p := p.next END;
-					Files.WriteInt(M.R, x);
+					Files.WriteInt16(M.R, x);
 
-					p := F.p; WHILE p # NIL DO Files.WriteInt(M.R, p.x); Files.WriteInt(M.R, p.y); p := p.next END;
+					p := F.p; WHILE p # NIL DO Files.WriteInt16(M.R, p.x); Files.WriteInt16(M.R, p.y); p := p.next END;
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN (* load private data here *)
-					Files.ReadInt(M.R, x);
+					Files.ReadInt16(M.R, x);
 					IF x # 1 THEN HALT(99) END;
-					Files.ReadInt(M.R, F.col); Files.ReadInt(M.R, F.width); Files.ReadInt(M.R, F.patno);
+					Files.ReadInt16(M.R, F.col); Files.ReadInt16(M.R, F.width); Files.ReadInt16(M.R, F.patno);
 					Files.ReadSet(M.R, F.state0);
-					Files.ReadInt(M.R, x);
+					Files.ReadInt16(M.R, x);
 					p0 := NIL;
 					WHILE x > 0 DO
-						NEW(p); Files.ReadInt(M.R, p.x); Files.ReadInt(M.R, p.y);
+						NEW(p); Files.ReadInt16(M.R, p.x); Files.ReadInt16(M.R, p.y);
 						IF p0 = NIL THEN F.p := p ELSE p0.next := p; p.prev := p0 END;
 						p0 := p;
 						DEC(x)

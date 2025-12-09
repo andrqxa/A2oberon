@@ -2466,22 +2466,22 @@ MODULE ScriptGadgets IN Oberon; (** portable *)	(* RS, Wed, 9-Jun-1993 / KR, Mon
 			ELSIF M IS Objects.FileMsg THEN
 				WITH M : Objects.FileMsg DO
 					IF M.id = Objects.store THEN
-						Files.WriteInt(M.R,version);
-						Files.WriteInt(M.R,F.left);
+						Files.WriteInt16(M.R,version);
+						Files.WriteInt16(M.R,F.left);
 						Files.WriteString(M.R,F.cmd);
 						Files.WriteSet(M.R,F.defStyle.opts);
-						Files.WriteLInt(M.R,F.defStyle.paraW);
-						Files.WriteInt(M.R,F.profile);
+						Files.WriteInt32(M.R,F.defStyle.paraW);
+						Files.WriteInt16(M.R,F.profile);
 						Gadgets.framehandle(F,M);
 						Gadgets.WriteRef(M.R, F.lib,F.text);
 						Files.WriteSet(M.R,F.state0);
 					ELSE
-						Files.ReadInt(M.R,i);
-						Files.ReadInt(M.R,F.left);
+						Files.ReadInt16(M.R,i);
+						Files.ReadInt16(M.R,F.left);
 						Files.ReadString(M.R,F.cmd);
 						Files.ReadSet(M.R,F.defStyle.opts);
-						Files.ReadLInt(M.R,F.defStyle.paraW);
-						Files.ReadInt(M.R,F.profile);
+						Files.ReadInt32(M.R,F.defStyle.paraW);
+						Files.ReadInt16(M.R,F.profile);
 						Gadgets.framehandle(F,M);
 						IF i = 0 THEN F.text := F.obj(Texts.Text)
 						ELSE

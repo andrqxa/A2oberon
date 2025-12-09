@@ -520,10 +520,10 @@ BEGIN
 					Files.WriteNum(M.R, 0);
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					IF ver # 1 THEN HALT(42) END;
 					Files.ReadString(M.R, F.caption);
-					Files.ReadNum(M.R, ver);
+					Files.ReadNum32(M.R, ver);
 					Gadgets.framehandle(F, M);
 					IF (F.obj # NIL) & (F.obj IS Objects.Dummy) THEN
 						Texts.WriteString(W, "Discarding "); Texts.WriteString(W, F.obj(Objects.Dummy).GName);
@@ -1204,36 +1204,36 @@ BEGIN
 	IF F.sel THEN Files.WriteNum(M.R, 1) ELSE Files.WriteNum(M.R, 0) END;
 	IF F.pin THEN Files.WriteNum(M.R, 1) ELSE Files.WriteNum(M.R, 0) END;
 	Files.WriteBool(M.R, F.pos);
-	Files.WriteInt(M.R, F.cX); Files.WriteInt(M.R, F.cY);
-	Files.WriteInt(M.R, F.oX); Files.WriteInt(M.R, F.oY);
+	Files.WriteInt16(M.R, F.cX); Files.WriteInt16(M.R, F.cY);
+	Files.WriteInt16(M.R, F.oX); Files.WriteInt16(M.R, F.oY);
 	Gadgets.framehandle(F, M)
 END StoreIconizer;
 
 PROCEDURE LoadIconizer (F: Iconizer; VAR M: Objects.FileMsg);
 VAR ver, i: SIGNED32; obj: Objects.Object;
 BEGIN
-	Files.ReadNum(M.R, ver);
+	Files.ReadNum32(M.R, ver);
 	IF (ver = 2) OR (ver = 3) THEN
 		Gadgets.ReadRef(M.R, F.lib, obj);
 		IF (obj # NIL) & (obj IS Display.Frame) THEN F.closedF := obj(Display.Frame) END;
 		Gadgets.ReadRef(M.R, F.lib, obj);
 		IF (obj # NIL) & (obj IS Display.Frame)  THEN F.openF := obj(Display.Frame) END;
-		Files.ReadNum(M.R, i); F.closed := (i = 1);
-		Files.ReadNum(M.R, i); F.popup := (i = 1);
-		Files.ReadNum(M.R, i); F.sel := (i = 1);
-		IF ver = 3 THEN Files.ReadNum(M.R, i); F.pin := (i = 1) ELSE F.pin:=TRUE END;
+		Files.ReadNum32(M.R, i); F.closed := (i = 1);
+		Files.ReadNum32(M.R, i); F.popup := (i = 1);
+		Files.ReadNum32(M.R, i); F.sel := (i = 1);
+		IF ver = 3 THEN Files.ReadNum32(M.R, i); F.pin := (i = 1) ELSE F.pin:=TRUE END;
 		Files.ReadBool(M.R, F.pos);
-		Files.ReadInt(M.R, F.cX); Files.ReadInt(M.R, F.cY);
-		Files.ReadInt(M.R, F.oX); Files.ReadInt(M.R, F.oY);
+		Files.ReadInt16(M.R, F.cX); Files.ReadInt16(M.R, F.cY);
+		Files.ReadInt16(M.R, F.oX); Files.ReadInt16(M.R, F.oY);
 		Gadgets.framehandle(F, M)
 	ELSIF ver = 1 THEN (* oldversion *)
 		Gadgets.ReadRef(M.R, F.lib, obj);
 		IF (obj # NIL) & (obj IS Display.Frame) THEN F.closedF := obj(Display.Frame) END;
 		Gadgets.ReadRef(M.R, F.lib, obj);
 		IF (obj # NIL) & (obj IS Display.Frame)  THEN F.openF := obj(Display.Frame) END;
-		Files.ReadNum(M.R, i); F.closed := (i = 1);
-		Files.ReadNum(M.R, i); F.popup := (i = 1);
-		Files.ReadNum(M.R, i); F.sel := (i = 1); F.pos := FALSE; F.pin:=TRUE;
+		Files.ReadNum32(M.R, i); F.closed := (i = 1);
+		Files.ReadNum32(M.R, i); F.popup := (i = 1);
+		Files.ReadNum32(M.R, i); F.sel := (i = 1); F.pos := FALSE; F.pin:=TRUE;
 		Gadgets.framehandle(F, M)
 	ELSE
 		HALT(42)

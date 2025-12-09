@@ -238,15 +238,15 @@ END Attributes;
 PROCEDURE StoreName0 (obj: tName;  VAR M: Objects.FileMsg);
 BEGIN
 	Files.WriteString(M.R, obj.Name);
-	Files.WriteLInt(M.R, obj.id);
-	Files.WriteLInt(M.R, obj.highid)
+	Files.WriteInt32(M.R, obj.id);
+	Files.WriteInt32(M.R, obj.highid)
 END StoreName0;
 
 PROCEDURE LoadName0 (obj: tName;  VAR M: Objects.FileMsg);
 BEGIN
 	Files.ReadString(M.R, obj.Name);
-	Files.ReadLInt(M.R, obj.id);
-	Files.ReadLInt(M.R, obj.highid);
+	Files.ReadInt32(M.R, obj.id);
+	Files.ReadInt32(M.R, obj.highid);
 	DoInsert(NameBase, obj)
 END LoadName0;
 

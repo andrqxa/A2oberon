@@ -208,8 +208,8 @@ BEGIN
 	String("Store "); ToLog;
 	IF D.name # "" THEN
 		f:= Files.New(D.name); IF f = NIL THEN HALT(99) END;
-		Files.Set(R, f, 0); Files.WriteInt(R, Documents.Id); Files.WriteString(R, "Columbus.NewDoc");
-		Files.WriteInt(R, D.X); Files.WriteInt(R, D.Y); Files.WriteInt(R, D.W); Files.WriteInt(R, D.H);
+		Files.Set(R, f, 0); Files.WriteInt16(R, Documents.Id); Files.WriteString(R, "Columbus.NewDoc");
+		Files.WriteInt16(R, D.X); Files.WriteInt16(R, D.Y); Files.WriteInt16(R, D.W); Files.WriteInt16(R, D.H);
 		Files.Register(f);
 		Char(22X); String(D.name); Char(22X)
 	ELSE String("[Untitled document]")

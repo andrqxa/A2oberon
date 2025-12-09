@@ -418,21 +418,21 @@ VAR
 	VAR i: SIGNED16;
 	BEGIN
 		Gadgets.WriteRef( M.R, obj.lib, obj.x );
-		FOR i := 0 TO maxBins - 1 DO Files.WriteLInt( M.R, obj.bins[i] ) END;
-		FOR i := 0 TO maxBins - 1 DO Files.WriteLInt( M.R, obj.selectBins[i] ) END;
-		Files.WriteInt( M.R, obj.nrBins );
+		FOR i := 0 TO maxBins - 1 DO Files.WriteInt32( M.R, obj.bins[i] ) END;
+		FOR i := 0 TO maxBins - 1 DO Files.WriteInt32( M.R, obj.selectBins[i] ) END;
+		Files.WriteInt16( M.R, obj.nrBins );
 		IF obj.nrBins >= maxBins THEN (* patch, fof 0711 *)
 			FOR i := maxBins TO obj.nrBins-1 DO
-				Files.WriteLInt( M.R, obj.bins[i] );
-				Files.WriteLInt( M.R, obj.selectBins[i] );
+				Files.WriteInt32( M.R, obj.bins[i] );
+				Files.WriteInt32( M.R, obj.selectBins[i] );
 			END;
 		END;
 
-		Files.WriteLInt( M.R, obj.maxBinHeight );  Files.WriteLReal( M.R, obj.leftBound );
-		Files.WriteLReal( M.R, obj.rightBound );  Files.WriteLReal( M.R, obj.offset );  Files.WriteLReal( M.R, obj.leftHist );
-		Files.WriteLReal( M.R, obj.rightHist );  Files.WriteLReal( M.R, obj.width );  Files.WriteBool( M.R, obj.adapting );
-		Files.WriteBool( M.R, obj.respectBounds );  Files.WriteLInt( M.R, obj.toosmall );  Files.WriteLInt( M.R, obj.toolarge );
-		Files.WriteLInt( M.R, obj.nans )
+		Files.WriteInt32( M.R, obj.maxBinHeight );  Files.WriteFloat64( M.R, obj.leftBound );
+		Files.WriteFloat64( M.R, obj.rightBound );  Files.WriteFloat64( M.R, obj.offset );  Files.WriteFloat64( M.R, obj.leftHist );
+		Files.WriteFloat64( M.R, obj.rightHist );  Files.WriteFloat64( M.R, obj.width );  Files.WriteBool( M.R, obj.adapting );
+		Files.WriteBool( M.R, obj.respectBounds );  Files.WriteInt32( M.R, obj.toosmall );  Files.WriteInt32( M.R, obj.toolarge );
+		Files.WriteInt32( M.R, obj.nans )
 	END Store0;
 
 	PROCEDURE Load0( obj: tLayer;  VAR M: Objects.FileMsg );
@@ -441,22 +441,22 @@ VAR
 		dlink := M.dlink;  Gadgets.ReadRef( M.R, obj.lib, objsub );
 		IF (objsub # NIL ) & (objsub IS vyBase.tVector) THEN obj.x := objsub( vyBase.tVector ) END;
 		(*NEW(obj.bins, maxBins);*)
-		FOR i := 0 TO maxBins - 1 DO Files.ReadLInt( M.R, obj.bins[i] ) END;
+		FOR i := 0 TO maxBins - 1 DO Files.ReadInt32( M.R, obj.bins[i] ) END;
 		(*NEW(obj.selectBins, maxBins);*)
-		FOR i := 0 TO maxBins - 1 DO Files.ReadLInt( M.R, obj.selectBins[i] ) END;
-		Files.ReadInt( M.R, obj.nrBins );
+		FOR i := 0 TO maxBins - 1 DO Files.ReadInt32( M.R, obj.selectBins[i] ) END;
+		Files.ReadInt16( M.R, obj.nrBins );
 		IF obj.nrBins >= maxBins THEN (* patch, fof 0711*)
 			FOR i := maxBins TO obj.nrBins-1 DO
-				Files.ReadLInt( M.R, obj.bins[i] );
-				Files.ReadLInt( M.R, obj.selectBins[i] );
+				Files.ReadInt32( M.R, obj.bins[i] );
+				Files.ReadInt32( M.R, obj.selectBins[i] );
 			END;
 		END;
 
-		Files.ReadLInt( M.R, obj.maxBinHeight );  Files.ReadLReal( M.R, obj.leftBound );
-		Files.ReadLReal( M.R, obj.rightBound );  Files.ReadLReal( M.R, obj.offset );  Files.ReadLReal( M.R, obj.leftHist );
-		Files.ReadLReal( M.R, obj.rightHist );  Files.ReadLReal( M.R, obj.width );  Files.ReadBool( M.R, obj.adapting );
-		Files.ReadBool( M.R, obj.respectBounds );  Files.ReadLInt( M.R, obj.toosmall );  Files.ReadLInt( M.R, obj.toolarge );
-		Files.ReadLInt( M.R, obj.nans )
+		Files.ReadInt32( M.R, obj.maxBinHeight );  Files.ReadFloat64( M.R, obj.leftBound );
+		Files.ReadFloat64( M.R, obj.rightBound );  Files.ReadFloat64( M.R, obj.offset );  Files.ReadFloat64( M.R, obj.leftHist );
+		Files.ReadFloat64( M.R, obj.rightHist );  Files.ReadFloat64( M.R, obj.width );  Files.ReadBool( M.R, obj.adapting );
+		Files.ReadBool( M.R, obj.respectBounds );  Files.ReadInt32( M.R, obj.toosmall );  Files.ReadInt32( M.R, obj.toolarge );
+		Files.ReadInt32( M.R, obj.nans )
 	END Load0;
 
 	PROCEDURE Handler*( obj: Objects.Object;  VAR msg: Objects.ObjMsg );   (*vs 0.0a1	md  20.07.94 *)

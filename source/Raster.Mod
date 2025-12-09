@@ -4626,9 +4626,9 @@ MODULE Raster; (** non-portable *)	(* eos, TF  **)
 		VAR ver, code, w, h, bpr, len: SIGNED32; bytesRead: SIZE; adr, aa: ADDRESS; fmt: Format; buf: ARRAY 256 OF CHAR; used: SIGNED32;
 	BEGIN
 		ASSERT(img#NIL,100);
-		fr.RawNum(ver);	(* know version 1&2*)
+		fr.RawNum32(ver);	(* know version 1&2*)
 		ASSERT(ver IN {1,2},101);
-		fr.RawNum(code);
+		fr.RawNum32(code);
 		CASE code OF
 		| a1: fmt := A1
 		| a8: fmt := A8
@@ -4641,9 +4641,9 @@ MODULE Raster; (** non-portable *)	(* eos, TF  **)
 		| bgr888: fmt := BGR888
 		| bgra8888: fmt := BGRA8888
 		END;
-		fr.RawNum(w); fr.RawNum(h);
+		fr.RawNum32(w); fr.RawNum32(h);
 		Create(img, SHORT(w), SHORT(h), fmt);
-		fr.RawNum(bpr);
+		fr.RawNum32(bpr);
 		ASSERT(bpr <= img.bpr);
 		adr := img.adr;
 		WHILE h > 0 DO
@@ -4658,7 +4658,7 @@ MODULE Raster; (** non-portable *)	(* eos, TF  **)
 			DEC(h); INC(adr, img.bpr)
 		END;
 		IF code IN {p8,p16} THEN
-			fr.RawNum(used);
+			fr.RawNum32(used);
 			len := 0;
 			NEW(img.fmt.pal); img.fmt.pal.Init(used);
 			WHILE len < used DO

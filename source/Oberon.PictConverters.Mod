@@ -21,7 +21,7 @@ MODULE PictConverters IN Oberon;	(** portable *) (* rm 1.9.1996, ejz 8.12.96, af
 	PROCEDURE WriteScrDesc(VAR R: Files.Rider; P: Pictures.Picture);
 		VAR i: SIGNED32;
 	BEGIN
-		Files.WriteInt(R, P.width); Files.WriteInt(R, P.height);
+		Files.WriteInt16(R, P.width); Files.WriteInt16(R, P.height);
 		i := ASH(7+P.depth, 4); i := i+P.depth-1;
 		Files.Write(R, CHR(i));
 		Files.Write(R, CHR(0));
@@ -48,8 +48,8 @@ MODULE PictConverters IN Oberon;	(** portable *) (* rm 1.9.1996, ejz 8.12.96, af
 	PROCEDURE WriteImageDesc(VAR R: Files.Rider; P: Pictures.Picture);
 	BEGIN
 		Files.Write(R, 2CX);
-		Files.WriteInt(R, 0); Files.WriteInt(R, 0);
-		Files.WriteInt(R, P.width); Files.WriteInt(R, P.height);
+		Files.WriteInt16(R, 0); Files.WriteInt16(R, 0);
+		Files.WriteInt16(R, P.width); Files.WriteInt16(R, P.height);
 		Files.Write(R, CHR(P.depth-1))
 	END WriteImageDesc;
 
@@ -199,12 +199,12 @@ MODULE PictConverters IN Oberon;	(** portable *) (* rm 1.9.1996, ejz 8.12.96, af
 					Texts.Scan(S);
 					IF S.class IN {Texts.Name, Texts.String} THEN
 						IF Fi # NIL THEN
-							Files.Set(R, Fi, 0); Files.ReadInt(R, tag);
+							Files.Set(R, Fi, 0); Files.ReadInt16(R, tag);
 							IF tag = Documents.Id THEN
 								Files.ReadString(R, name);
-								Files.ReadInt(R, tag); Files.ReadInt(R, tag);
-								Files.ReadInt(R, tag); Files.ReadInt(R, tag);
-								Files.ReadInt(R, tag)
+								Files.ReadInt16(R, tag); Files.ReadInt16(R, tag);
+								Files.ReadInt16(R, tag); Files.ReadInt16(R, tag);
+								Files.ReadInt16(R, tag)
 							END;
 							IF tag = Pictures.PictFileId THEN
 								Texts.WriteString(W, " => "); Texts.WriteString(W, S.s);

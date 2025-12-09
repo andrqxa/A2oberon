@@ -270,13 +270,13 @@ VAR
 
 	PROCEDURE StoreV0( obj: tView;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteInt( M.R, 0 );  vyPort.LayerHandler( obj, M );  Gadgets.WriteRef( M.R, obj.lib, obj.o )
+		Files.WriteInt16( M.R, 0 );  vyPort.LayerHandler( obj, M );  Gadgets.WriteRef( M.R, obj.lib, obj.o )
 	END StoreV0;
 
 	PROCEDURE LoadV0( obj: tView;  VAR M: Objects.FileMsg );
 	VAR objsub: Objects.Object;  version: SIGNED16;
 	BEGIN
-		Files.ReadInt( M.R, version );  vyPort.LayerHandler( obj, M );  Gadgets.ReadRef( M.R, obj.lib, objsub );
+		Files.ReadInt16( M.R, version );  vyPort.LayerHandler( obj, M );  Gadgets.ReadRef( M.R, obj.lib, objsub );
 		IF objsub # NIL THEN obj.o := objsub( tObject ) END
 	END LoadV0;
 
@@ -396,15 +396,15 @@ VAR
 		(*! store Picts as GIF for color preserving or store colors *)
 	BEGIN
 		IF msg.id = Objects.load THEN
-			Files.ReadInt( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadLReal( msg.R, obj.x0 );
-			Files.ReadLReal( msg.R, obj.y0 );  Files.ReadLReal( msg.R, obj.w );  Files.ReadLReal( msg.R, obj.h );
+			Files.ReadInt16( msg.R, version );  vyBase.objecthandle( obj, msg );  Files.ReadFloat64( msg.R, obj.x0 );
+			Files.ReadFloat64( msg.R, obj.y0 );  Files.ReadFloat64( msg.R, obj.w );  Files.ReadFloat64( msg.R, obj.h );
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.x := objsub( vyBase.tVector ) ELSE obj.x := NIL END;
 			Gadgets.ReadRef( msg.R, obj.lib, objsub );
 			IF objsub # NIL THEN obj.y := objsub( vyBase.tVector ) ELSE obj.y := NIL END
 		ELSIF msg.id = Objects.store THEN
-			Files.WriteInt( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteLReal( msg.R, obj.x0 );
-			Files.WriteLReal( msg.R, obj.y0 );  Files.WriteLReal( msg.R, obj.w );  Files.WriteLReal( msg.R, obj.h );
+			Files.WriteInt16( msg.R, 0 );  vyBase.objecthandle( obj, msg );  Files.WriteFloat64( msg.R, obj.x0 );
+			Files.WriteFloat64( msg.R, obj.y0 );  Files.WriteFloat64( msg.R, obj.w );  Files.WriteFloat64( msg.R, obj.h );
 			Gadgets.WriteRef( msg.R, obj.lib, obj.x );  Gadgets.WriteRef( msg.R, obj.lib, obj.y )
 		ELSE vyBase.objecthandle( obj, msg )
 		END

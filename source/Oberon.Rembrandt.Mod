@@ -661,39 +661,39 @@ END Copy;
 
 PROCEDURE StoreFrame(F: Frame; VAR M: Objects.FileMsg);
 BEGIN
-	Files.WriteInt(M.R, 16971);
+	Files.WriteInt16(M.R, 16971);
 	Gadgets.framehandle(F, M);
-	Files.WriteInt(M.R, F.col); Files.WriteBool(M.R, F.locked);
+	Files.WriteInt16(M.R, F.col); Files.WriteBool(M.R, F.locked);
 	IF F.locked THEN
-		Files.WriteInt(M.R, F.lockdata.lw); Files.WriteInt(M.R, F.lockdata.lh);
-		Files.WriteInt(M.R, F.lockdata.lpx); Files.WriteInt(M.R, F.lockdata.lpy);
-		Files.WriteInt(M.R, F.lockdata.actlw); Files.WriteInt(M.R, F.lockdata.actlh);
-		Files.WriteInt(M.R, F.pict.width); Files.WriteInt(M.R, F.pict.height)
+		Files.WriteInt16(M.R, F.lockdata.lw); Files.WriteInt16(M.R, F.lockdata.lh);
+		Files.WriteInt16(M.R, F.lockdata.lpx); Files.WriteInt16(M.R, F.lockdata.lpy);
+		Files.WriteInt16(M.R, F.lockdata.actlw); Files.WriteInt16(M.R, F.lockdata.actlh);
+		Files.WriteInt16(M.R, F.pict.width); Files.WriteInt16(M.R, F.pict.height)
 	END;
-	Files.WriteBool(M.R, F.border); Files.WriteInt(M.R, F.px);
-	Files.WriteInt(M.R, F.py);
-	Files.WriteInt(M.R, F.W);
-	Files.WriteInt(M.R, F.H);
+	Files.WriteBool(M.R, F.border); Files.WriteInt16(M.R, F.px);
+	Files.WriteInt16(M.R, F.py);
+	Files.WriteInt16(M.R, F.W);
+	Files.WriteInt16(M.R, F.H);
 	Gadgets.WriteRef(M.R, F.lib, F.pict)
 END StoreFrame;
 
 PROCEDURE LoadFrame(F: Frame; VAR M: Objects.FileMsg);
 VAR version, w, h: SIGNED16; obj: Objects.Object;
 BEGIN
-	Files.ReadInt(M.R, version);
+	Files.ReadInt16(M.R, version);
 	IF (version#16970) & (version#16971) THEN HALT(99) END;
 	Gadgets.framehandle(F, M);
-	Files.ReadInt(M.R, F.col); Files.ReadBool(M.R, F.locked);
+	Files.ReadInt16(M.R, F.col); Files.ReadBool(M.R, F.locked);
 	IF F.locked THEN
-		Files.ReadInt(M.R, F.lockdata.lw); Files.ReadInt(M.R, F.lockdata.lh);
-		Files.ReadInt(M.R, F.lockdata.lpx); Files.ReadInt(M.R, F.lockdata.lpy);
-		Files.ReadInt(M.R, F.lockdata.actlw); Files.ReadInt(M.R, F.lockdata.actlh);
-		Files.ReadInt(M.R, w); Files.ReadInt(M.R, h)
+		Files.ReadInt16(M.R, F.lockdata.lw); Files.ReadInt16(M.R, F.lockdata.lh);
+		Files.ReadInt16(M.R, F.lockdata.lpx); Files.ReadInt16(M.R, F.lockdata.lpy);
+		Files.ReadInt16(M.R, F.lockdata.actlw); Files.ReadInt16(M.R, F.lockdata.actlh);
+		Files.ReadInt16(M.R, w); Files.ReadInt16(M.R, h)
 	END;
-	Files.ReadBool(M.R, F.border); Files.ReadInt(M.R, F.px);
-	Files.ReadInt(M.R, F.py);
-	Files.ReadInt(M.R, F.W);
-	Files.ReadInt(M.R, F.H);
+	Files.ReadBool(M.R, F.border); Files.ReadInt16(M.R, F.px);
+	Files.ReadInt16(M.R, F.py);
+	Files.ReadInt16(M.R, F.W);
+	Files.ReadInt16(M.R, F.H);
 	IF version = 16970 THEN
 		F.pict.handle(F.pict, M);
 		IF (F.lib # NIL) & (F.lib.name # "") & (F.pict.lib # F.lib) THEN Gadgets.BindObj(F.pict, F.lib) END

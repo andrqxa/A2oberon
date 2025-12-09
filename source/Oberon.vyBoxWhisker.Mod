@@ -167,13 +167,13 @@ VAR
 
 	PROCEDURE Store0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteReal( M.R, obj.yLoc );  Files.WriteReal( M.R, obj.height );  Gadgets.WriteRef( M.R, obj.lib, obj.x )
+		Files.WriteFloat32( M.R, obj.yLoc );  Files.WriteFloat32( M.R, obj.height );  Gadgets.WriteRef( M.R, obj.lib, obj.x )
 	END Store0;
 
 	PROCEDURE Load0( obj: tLayer;  VAR M: Objects.FileMsg );
 	VAR objsub: Objects.Object;
 	BEGIN
-		dlink := M.dlink;  Files.ReadReal( M.R, obj.yLoc );  Files.ReadReal( M.R, obj.height );
+		dlink := M.dlink;  Files.ReadFloat32( M.R, obj.yLoc );  Files.ReadFloat32( M.R, obj.height );
 		Gadgets.ReadRef( M.R, obj.lib, objsub );
 		IF (objsub # NIL ) & (objsub IS vyBase.tVector) THEN obj.x := objsub( vyBase.tVector ) END
 	END Load0;

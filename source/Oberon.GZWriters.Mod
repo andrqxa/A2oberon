@@ -89,8 +89,8 @@ BEGIN
 	IF w.res = ZlibWriters.Ok THEN
 		Files.Close(w.file);
 		Files.Set(r, w.file, Files.Length(w.file));
-		Files.WriteLInt(r, w.zw.crc32);	(* CRC32 *)
-		Files.WriteLInt(r, w.pos);	(* ISIZE: Input Size *)
+		Files.WriteInt32(r, w.zw.crc32);	(* CRC32 *)
+		Files.WriteInt32(r, w.pos);	(* ISIZE: Input Size *)
 		Files.Close(w.file)
 	END
 END Close;

@@ -1277,20 +1277,20 @@ END GenCode;
 		f := Files.Old(FileName);
 		IF f # NIL THEN
 			Files.Set(r, f, 0);
-			Files.ReadInt(r, s); InstrTabLen := s;  NEW(InstrTab, InstrTabLen);
+			Files.ReadInt16(r, s); InstrTabLen := s;  NEW(InstrTab, InstrTabLen);
 			FOR i := 0 TO InstrTabLen-1 DO
 				Files.ReadString(r, InstrTab[i].name);
 				IF InstrTab[i].name # "" THEN
-					Files.ReadInt(r, InstrTab[i].start); Files.ReadInt(r, InstrTab[i].end);
+					Files.ReadInt16(r, InstrTab[i].start); Files.ReadInt16(r, InstrTab[i].end);
 					Files.ReadSet(r, InstrTab[i].target)
 				END
 			END;
-			Files.ReadInt(r, s); OpTabLen := s;  NEW(OpTab, OpTabLen);
+			Files.ReadInt16(r, s); OpTabLen := s;  NEW(OpTab, OpTabLen);
 			FOR i:= 0 TO OpTabLen-1 DO
-				Files.ReadInt(r, OpTab[i].op[0]); Files.ReadInt(r, OpTab[i].op[1]); Files.ReadInt(r, OpTab[i].op[2]);
-				Files.ReadInt(r, OpTab[i].op0); Files.ReadInt(r, OpTab[i].op1);
-				Files.ReadInt(r, OpTab[i].op2);
-				Files.ReadInt(r, OpTab[i].opc); Files.ReadInt(r, OpTab[i].reg);
+				Files.ReadInt16(r, OpTab[i].op[0]); Files.ReadInt16(r, OpTab[i].op[1]); Files.ReadInt16(r, OpTab[i].op[2]);
+				Files.ReadInt16(r, OpTab[i].op0); Files.ReadInt16(r, OpTab[i].op1);
+				Files.ReadInt16(r, OpTab[i].op2);
+				Files.ReadInt16(r, OpTab[i].opc); Files.ReadInt16(r, OpTab[i].reg);
 			END;
 			Files.Close(f)
 		ELSE

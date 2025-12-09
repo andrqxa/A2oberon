@@ -266,14 +266,14 @@ MODULE VinciGadgets IN Oberon; (** portable *)	(* eos  *)
 				Gadgets.framehandle(frame, msg);
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1);	(* version *)
-					Files.WriteInt(msg.R, frame.ox); Files.WriteInt(msg.R, frame.oy + frame.H);
-					Files.WriteReal(msg.R, frame.scale)
+					Files.WriteInt16(msg.R, frame.ox); Files.WriteInt16(msg.R, frame.oy + frame.H);
+					Files.WriteFloat32(msg.R, frame.scale)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					IF ver > 0 THEN
-						Files.ReadInt(msg.R, frame.ox); Files.ReadInt(msg.R, frame.oy);
+						Files.ReadInt16(msg.R, frame.ox); Files.ReadInt16(msg.R, frame.oy);
 						frame.oy := frame.oy - frame.H;
-						Files.ReadReal(msg.R, frame.scale)
+						Files.ReadFloat32(msg.R, frame.scale)
 					END;
 					frame.body := Scheme.nil
 				END

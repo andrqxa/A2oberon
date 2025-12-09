@@ -319,15 +319,15 @@ MODULE LeoPens IN Oberon; (** portable **)	(* eos  *)
 	PROCEDURE WriteWidePen* (pen: WidePen; VAR r: Files.Rider);
 	BEGIN
 		Files.WriteNum(r, 1);
-		Files.WriteReal(r, pen.width); Files.WriteReal(r, pen.limit);
+		Files.WriteFloat32(r, pen.width); Files.WriteFloat32(r, pen.limit);
 		Files.Write(r, pen.capstyle); Files.Write(r, pen.joinstyle)
 	END WriteWidePen;
 
 	PROCEDURE ReadWidePen* (pen: WidePen; VAR r: Files.Rider);
 		VAR ver: SIGNED32;
 	BEGIN
-		Files.ReadNum(r, ver);
-		Files.ReadReal(r, pen.width); Files.ReadReal(r, pen.limit);
+		Files.ReadNum32(r, ver);
+		Files.ReadFloat32(r, pen.width); Files.ReadFloat32(r, pen.limit);
 		Files.Read(r, pen.capstyle); Files.Read(r, pen.joinstyle)
 	END ReadWidePen;
 
@@ -358,7 +358,7 @@ MODULE LeoPens IN Oberon; (** portable **)	(* eos  *)
 				IF msg.id = Objects.store THEN
 					Files.WriteNum(msg.R, 1)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver)
+					Files.ReadNum32(msg.R, ver)
 				END
 			END
 		ELSE
@@ -510,10 +510,10 @@ MODULE LeoPens IN Oberon; (** portable **)	(* eos  *)
 					WriteWidePen(pen, msg.R);
 					Gadgets.WriteRef(msg.R, pen.lib, pen.img);
 					IF pen.img # NIL THEN
-						Files.WriteReal(msg.R, pen.px); Files.WriteReal(msg.R, pen.py)
+						Files.WriteFloat32(msg.R, pen.px); Files.WriteFloat32(msg.R, pen.py)
 					END
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Files.Read(msg.R, ch); pen.col.r := ORD(ch);
 					Files.Read(msg.R, ch); pen.col.g := ORD(ch);
 					Files.Read(msg.R, ch); pen.col.b := ORD(ch);
@@ -521,7 +521,7 @@ MODULE LeoPens IN Oberon; (** portable **)	(* eos  *)
 					Gadgets.ReadRef(msg.R, pen.lib, obj);
 					IF (obj # NIL) & (obj IS Images.Image) THEN
 						pen.img := obj(Images.Image);
-						Files.ReadReal(msg.R, pen.px); Files.ReadReal(msg.R, pen.py)
+						Files.ReadFloat32(msg.R, pen.px); Files.ReadFloat32(msg.R, pen.py)
 					END
 				END
 			END
@@ -674,17 +674,17 @@ MODULE LeoPens IN Oberon; (** portable **)	(* eos  *)
 					Files.Write(msg.R, CHR(pen.col.r)); Files.Write(msg.R, CHR(pen.col.g)); Files.Write(msg.R, CHR(pen.col.b));
 					Gadgets.WriteRef(msg.R, pen.lib, pen.img);
 					IF pen.img # NIL THEN
-						Files.WriteReal(msg.R, pen.px); Files.WriteReal(msg.R, pen.py)
+						Files.WriteFloat32(msg.R, pen.px); Files.WriteFloat32(msg.R, pen.py)
 					END
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Files.Read(msg.R, ch); pen.col.r := ORD(ch);
 					Files.Read(msg.R, ch); pen.col.g := ORD(ch);
 					Files.Read(msg.R, ch); pen.col.b := ORD(ch);
 					Gadgets.ReadRef(msg.R, pen.lib, obj);
 					IF (obj # NIL) & (obj IS Images.Image) THEN
 						pen.img := obj(Images.Image);
-						Files.ReadReal(msg.R, pen.px); Files.ReadReal(msg.R, pen.py)
+						Files.ReadFloat32(msg.R, pen.px); Files.ReadFloat32(msg.R, pen.py)
 					END
 				END
 			END
@@ -861,22 +861,22 @@ MODULE LeoPens IN Oberon; (** portable **)	(* eos  *)
 					Files.WriteNum(msg.R, pen.len);
 					n := 0;
 					WHILE n < pen.len DO
-						Files.WriteReal(msg.R, pen.on[n]); Files.WriteReal(msg.R, pen.off[n]); INC(n)
+						Files.WriteFloat32(msg.R, pen.on[n]); Files.WriteFloat32(msg.R, pen.off[n]); INC(n)
 					END;
-					Files.WriteReal(msg.R, pen.phase);
+					Files.WriteFloat32(msg.R, pen.phase);
 					Files.WriteBool(msg.R, pen.continuous)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Gadgets.ReadRef(msg.R, pen.lib, obj);
 					IF (obj = NIL) OR ~(obj IS Pen) THEN NewStroker; obj := Objects.NewObj END;
 					pen.base := obj(Pen);
 					pen.destructive := ~(pen.base IS Stroker); pen.zeroDistOnly := pen.base.zeroDistOnly;
-					Files.ReadNum(msg.R, pen.len);
+					Files.ReadNum32(msg.R, pen.len);
 					n := 0;
 					WHILE n < pen.len DO
-						Files.ReadReal(msg.R, pen.on[n]); Files.ReadReal(msg.R, pen.off[n]); INC(n)
+						Files.ReadFloat32(msg.R, pen.on[n]); Files.ReadFloat32(msg.R, pen.off[n]); INC(n)
 					END;
-					Files.ReadReal(msg.R, pen.phase);
+					Files.ReadFloat32(msg.R, pen.phase);
 					Files.ReadBool(msg.R, pen.continuous)
 				END
 			END
@@ -1123,7 +1123,7 @@ MODULE LeoPens IN Oberon; (** portable **)	(* eos  *)
 					Gadgets.WriteRef(msg.R, pen.lib, pen.lower);
 					Gadgets.WriteRef(msg.R, pen.lib, pen.upper)
 				ELSIF msg.id = Objects.load THEN
-					Files.ReadNum(msg.R, ver);
+					Files.ReadNum32(msg.R, ver);
 					Gadgets.ReadRef(msg.R, pen.lib, obj);
 					IF (obj = NIL) OR ~(obj IS Pen) THEN NewStroker; obj := Objects.NewObj END;
 					pen.lower := obj(Pen);

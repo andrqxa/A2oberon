@@ -492,9 +492,9 @@ PROCEDURE LoadCaption(F: Caption; VAR M: Objects.FileMsg);
 VAR ver, len: SIGNED32; chr: CHAR; name: ARRAY 256 OF CHAR; i, col: SIGNED16;
 	fnt: Objects.Library; ch: CHAR;
 BEGIN
-	Files.ReadNum(M.R, ver);
+	Files.ReadNum32(M.R, ver);
 	IF (ver = 4) OR (ver = 5) THEN
-		IF ver = 5 THEN Files.ReadNum(M.R, ver); F.underlined:=(ver=1) END;
+		IF ver = 5 THEN Files.ReadNum32(M.R, ver); F.underlined:=(ver=1) END;
 		Files.Read(M.R, chr); (* read TextBlockId *)
 		IF chr # Texts.TextBlockId THEN HALT(99) END;
 		Texts.Load(F.text, Files.Base(M.R), Files.Pos(M.R), len);
@@ -508,8 +508,8 @@ BEGIN
 			Gadgets.framehandle(F, M);
 		ELSIF chr = 02X THEN
 			Gadgets.framehandle(F, M);
-			 IF ver = 3 THEN Files.ReadInt(M.R, col) ELSE col := Display.FG END;
-			Files.ReadInt(M.R, i); Objects.GetName(F.lib.dict, i, name);
+			 IF ver = 3 THEN Files.ReadInt16(M.R, col) ELSE col := Display.FG END;
+			Files.ReadInt16(M.R, i); Objects.GetName(F.lib.dict, i, name);
 			(* IF name = "Elektra.Scn.Fnt" THEN name := "Electra.Scn.Fnt" END; *)
 			fnt := Objects.ThisLibrary(name);
 			Texts.SetFont(W, fnt); Texts.SetColor(W, SHORT(col));
@@ -1285,14 +1285,14 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.load THEN
-					Files.ReadNum(M.R, ver); IF (ver < 2) OR (ver > 5) THEN HALT(99) END;
+					Files.ReadNum32(M.R, ver); IF (ver < 2) OR (ver > 5) THEN HALT(99) END;
 					Files.ReadString(M.R, F.val);
 					IF ver >= 3 THEN
-						Files.ReadInt(M.R, F.col);
+						Files.ReadInt16(M.R, F.col);
 						IF (ver = 3) & (F.col = 0) THEN F.col := Display3.textbackC END;
 						IF ver>=5 THEN
 							Files.ReadString(M.R, fontname); F.font:=ThisFont(fontname);
-							Files.ReadInt(M.R, F.textcol);
+							Files.ReadInt16(M.R, F.textcol);
 							IF F.font=NIL THEN F.font:=Fonts.Default END;
 						ELSE F.font:=Fonts.Default; F.textcol:=Display3.textC
 						END;
@@ -1302,9 +1302,9 @@ BEGIN
 					Gadgets.framehandle(F, M)
 				ELSIF M.id = Objects.store THEN
 					Files.WriteNum(M.R, 5);
-					Files.WriteString(M.R, F.val); Files.WriteInt(M.R, F.col);
+					Files.WriteString(M.R, F.val); Files.WriteInt16(M.R, F.col);
 					Files.WriteString(M.R, F.font.name);
-					Files.WriteInt(M.R, F.textcol);
+					Files.WriteInt16(M.R, F.textcol);
 					Gadgets.framehandle(F, M)
 				END
 			END

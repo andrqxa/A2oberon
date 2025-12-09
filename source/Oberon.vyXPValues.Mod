@@ -148,12 +148,12 @@ TYPE
 
 	PROCEDURE (*v: ExpXP*)Store*( VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteLReal( M.R, SELF.lambda );  SELF.Store^( M )
+		Files.WriteFloat64( M.R, SELF.lambda );  SELF.Store^( M )
 	END Store;
 
 	PROCEDURE (*v: ExpXP*)Load*( VAR M: Objects.FileMsg );
 	BEGIN
-		Files.ReadLReal( M.R, SELF.lambda );  SELF.Load^( M )
+		Files.ReadFloat64( M.R, SELF.lambda );  SELF.Load^( M )
 	END Load;
 
 	PROCEDURE (* VAR obj: ExpXPDesc*)NewData*;
@@ -196,9 +196,9 @@ TYPE
 	PROCEDURE (*v: KolSmirXP*)Store*( VAR M: Objects.FileMsg );
 	VAR i, len: SIZE;
 	BEGIN
-		Gadgets.WriteRef( M.R, SELF.lib, SELF.source );  Files.WriteLInt( M.R, SIGNED32(SELF.n) );  len := LEN( SELF.values^ );  Files.WriteLInt( M.R, SIGNED32(len) );
-		FOR i := 0 TO len - 1 DO Files.WriteLReal( M.R, SELF.values[i] ) END;
-		Files.WriteLInt( M.R, SIGNED32(SELF.cur) );  SELF.Store^( M )
+		Gadgets.WriteRef( M.R, SELF.lib, SELF.source );  Files.WriteInt32( M.R, SIGNED32(SELF.n) );  len := LEN( SELF.values^ );  Files.WriteInt32( M.R, SIGNED32(len) );
+		FOR i := 0 TO len - 1 DO Files.WriteFloat64( M.R, SELF.values[i] ) END;
+		Files.WriteInt32( M.R, SIGNED32(SELF.cur) );  SELF.Store^( M )
 	END Store;
 
 	PROCEDURE (*v: KolSmirXP*)Load*( VAR M: Objects.FileMsg );
@@ -207,9 +207,9 @@ TYPE
 		Gadgets.ReadRef( M.R, SELF.lib, objsub );
 		WITH objsub: vyLongrealVec.tLONGREAL DO SELF.source := objsub
 		END;
-		Files.ReadLInt( M.R, c); SELF.n := c;  Files.ReadLInt( M.R, c); len := c; NEW( SELF.values, len );
-		FOR i := 0 TO len - 1 DO Files.ReadLReal( M.R, SELF.values[i] ) END;
-		Files.ReadLInt( M.R, c); SELF.cur := c;  SELF.Load^( M )
+		Files.ReadInt32( M.R, c); SELF.n := c;  Files.ReadInt32( M.R, c); len := c; NEW( SELF.values, len );
+		FOR i := 0 TO len - 1 DO Files.ReadFloat64( M.R, SELF.values[i] ) END;
+		Files.ReadInt32( M.R, c); SELF.cur := c;  SELF.Load^( M )
 	END Load;
 
 	END KolSmirXP;
@@ -228,8 +228,8 @@ TYPE
 	PROCEDURE (*v: KolSmirVecXP*)Store*( VAR M: Objects.FileMsg );
 	VAR len, i: SIZE;
 	BEGIN
-		Gadgets.WriteRef( M.R, SELF.lib, SELF.source );  Files.WriteLInt( M.R, SIGNED32(SELF.n) );  len := LEN( SELF.a^ );  Files.WriteLInt( M.R, SIGNED32(len) );
-		FOR i := 0 TO len - 1 DO Files.WriteLReal( M.R, SELF.a[i] ) END;
+		Gadgets.WriteRef( M.R, SELF.lib, SELF.source );  Files.WriteInt32( M.R, SIGNED32(SELF.n) );  len := LEN( SELF.a^ );  Files.WriteInt32( M.R, SIGNED32(len) );
+		FOR i := 0 TO len - 1 DO Files.WriteFloat64( M.R, SELF.a[i] ) END;
 		SELF.Store^( M )
 	END Store;
 
@@ -239,8 +239,8 @@ TYPE
 		Gadgets.ReadRef( M.R, SELF.lib, objsub );
 		WITH objsub: vyBase.tVector DO SELF.source := objsub
 		END;
-		Files.ReadLInt( M.R, c); SELF.n := c; Files.ReadLInt( M.R, c); len := c;  NEW( SELF.a, len );
-		FOR i := 0 TO len - 1 DO Files.ReadLReal( M.R, SELF.a[i] ) END;
+		Files.ReadInt32( M.R, c); SELF.n := c; Files.ReadInt32( M.R, c); len := c;  NEW( SELF.a, len );
+		FOR i := 0 TO len - 1 DO Files.ReadFloat64( M.R, SELF.a[i] ) END;
 		SELF.Load^( M )
 	END Load;
 

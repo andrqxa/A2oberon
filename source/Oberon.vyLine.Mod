@@ -115,15 +115,15 @@ TYPE
 
 	PROCEDURE Store0( obj: tLayer;  VAR M: Objects.FileMsg );
 	BEGIN
-		Files.WriteBool( M.R, obj.lBounded );  Files.WriteBool( M.R, obj.rBounded );  Files.WriteReal( M.R, obj.lBound );
-		Files.WriteReal( M.R, obj.rBound );  Files.WriteReal( M.R, obj.a );  Files.WriteReal( M.R, obj.b )
+		Files.WriteBool( M.R, obj.lBounded );  Files.WriteBool( M.R, obj.rBounded );  Files.WriteFloat32( M.R, obj.lBound );
+		Files.WriteFloat32( M.R, obj.rBound );  Files.WriteFloat32( M.R, obj.a );  Files.WriteFloat32( M.R, obj.b )
 	END Store0;
 
 	PROCEDURE Load0( obj: tLayer;  VAR M: Objects.FileMsg );
 	VAR
 	BEGIN
-		Files.ReadBool( M.R, obj.lBounded );  Files.ReadBool( M.R, obj.rBounded );  Files.ReadReal( M.R, obj.lBound );
-		Files.ReadReal( M.R, obj.rBound );  Files.ReadReal( M.R, obj.a );  Files.ReadReal( M.R, obj.b )
+		Files.ReadBool( M.R, obj.lBounded );  Files.ReadBool( M.R, obj.rBounded );  Files.ReadFloat32( M.R, obj.lBound );
+		Files.ReadFloat32( M.R, obj.rBound );  Files.ReadFloat32( M.R, obj.a );  Files.ReadFloat32( M.R, obj.b )
 	END Load0;
 
 	PROCEDURE Handler*( obj: Objects.Object;  VAR msg: Objects.ObjMsg );

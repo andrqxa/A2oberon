@@ -339,24 +339,24 @@ BEGIN
 		ELSIF M IS Objects.FileMsg THEN
 			WITH M: Objects.FileMsg DO
 				IF M.id = Objects.store THEN
-					Files.WriteInt(M.R, 1);
+					Files.WriteInt16(M.R, 1);
 					Files.WriteSet(M.R,F.state0);
 					Files.WriteNum(M.R,F.timeDiff);
-					Files.WriteInt(M.R, F.col);
+					Files.WriteInt16(M.R, F.col);
 					Gadgets.framehandle(F, M);
 				ELSIF M.id = Objects.load THEN
-					Files.ReadInt(M.R, x);
+					Files.ReadInt16(M.R, x);
 					IF x # 1 THEN
 						Files.Set(M.R, Files.Base(M.R), Files.Pos(M.R) - 1);
 						Files.ReadSet(M.R,F.state0);
-						IF new IN F.state0 THEN Files.ReadNum(M.R,F.timeDiff) END;
+						IF new IN F.state0 THEN Files.ReadNum32(M.R,F.timeDiff) END;
 						INCL(F.state0,new);
 						Gadgets.framehandle(F, M)
 					ELSE
 						Files.ReadSet(M.R,F.state0);
-						IF new IN F.state0 THEN Files.ReadNum(M.R,F.timeDiff) END;
+						IF new IN F.state0 THEN Files.ReadNum32(M.R,F.timeDiff) END;
 						INCL(F.state0,new);
-						Files.ReadInt(M.R, F.col);
+						Files.ReadInt16(M.R, F.col);
 						Gadgets.framehandle(F, M)
 					END
 				END

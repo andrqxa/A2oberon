@@ -105,7 +105,7 @@ MODULE GZReaders IN Oberon;	(** Stefan Walthert  **)
 			ZlibReaders.Close(r.zr);
 			IF r.zr.res = ZlibReaders.Ok THEN
 				Files.Set(fr, r.file, Files.Length(r.file) - 8);
-				Files.ReadLInt(fr, crc32);
+				Files.ReadInt32(fr, crc32);
 				IF crc32 # r.zr.crc32 THEN
 					r.res := DataError
 				ELSE

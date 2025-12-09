@@ -93,10 +93,10 @@ MODULE Compress IN Oberon; (** portable *)	(* ejz  *)
 		IF (h.name[0] = DocId0) & (h.name[1] = DocId1) THEN
 			(* new doc-format skip header *)
 			Files.Set(R, Files.Base(R), pos);
-			Files.ReadInt(R, i);
+			Files.ReadInt16(R, i);
 			Files.ReadString(R, h.name);
-			Files.ReadInt(R, i); Files.ReadInt(R, i);
-			Files.ReadInt(R, i); Files.ReadInt(R, i);
+			Files.ReadInt16(R, i); Files.ReadInt16(R, i);
+			Files.ReadInt16(R, i); Files.ReadInt16(R, i);
 			ReadHeader(R, h, err);
 			RETURN
 		END;
@@ -104,9 +104,9 @@ MODULE Compress IN Oberon; (** portable *)	(* ejz  *)
 			h.name := EOFName; err := FALSE;
 			RETURN
 		END;
-		Files.ReadLInt(R, h.length); Files.ReadLInt(R, h.check);
-		Files.ReadLInt(R, h.date); Files.ReadLInt(R, h.time);
-		Files.ReadReal(R, h.ratio);
+		Files.ReadInt32(R, h.length); Files.ReadInt32(R, h.check);
+		Files.ReadInt32(R, h.date); Files.ReadInt32(R, h.time);
+		Files.ReadFloat32(R, h.ratio);
 		IF h.length < 0 THEN
 			Files.ReadSet(R, h.extensions);
 			h.length := -h.length
@@ -143,13 +143,13 @@ MODULE Compress IN Oberon; (** portable *)	(* ejz  *)
 		h.check := h.check+ENTIER(h.ratio)+h.length+(h.time MOD xx)+(h.date MOD xx);
 		Files.WriteBytes(R, h.name, 32);
 		IF h.extensions # {} THEN
-			Files.WriteLInt(R, -h.length)
+			Files.WriteInt32(R, -h.length)
 		ELSE
-			Files.WriteLInt(R, h.length)
+			Files.WriteInt32(R, h.length)
 		END;
-		Files.WriteLInt(R, h.check);
-		Files.WriteLInt(R, h.date); Files.WriteLInt(R, h.time);
-		Files.WriteReal(R, h.ratio);
+		Files.WriteInt32(R, h.check);
+		Files.WriteInt32(R, h.date); Files.WriteInt32(R, h.time);
+		Files.WriteFloat32(R, h.ratio);
 		IF h.extensions # {} THEN
 			Files.WriteSet(R, h.extensions)
 		END
@@ -860,14 +860,14 @@ TextFrames *)
 	PROCEDURE WriteDocHead(VAR R: Files.Rider);
 	BEGIN
 		(* TextDocs *)
-		Files.WriteInt(R, Documents.Id);
+		Files.WriteInt16(R, Documents.Id);
 		(* TextDocs *)
 		(* TextFrames
 		Files.Write(R, DocId0); Files.Write(R, DocId1);
 		TextFrames *)
 		Files.WriteString(R, "Compress.NewDoc");
-		Files.WriteInt(R, 0); Files.WriteInt(R, 0);
-		Files.WriteInt(R, 200); Files.WriteInt(R, 250)
+		Files.WriteInt16(R, 0); Files.WriteInt16(R, 0);
+		Files.WriteInt16(R, 200); Files.WriteInt16(R, 250)
 	END WriteDocHead;
 
 (** Delete entry (file) from the archive (archive).

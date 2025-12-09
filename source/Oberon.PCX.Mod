@@ -39,9 +39,9 @@ BEGIN
 	ELSE
 		Files.Read(R,pcxh.version); Files.Read(R,pcxh.encoding);
 		Files.Read(R,pcxh.bits);
-		Files.ReadInt(R,pcxh.xMin); Files.ReadInt(R,pcxh.yMin);
-		Files.ReadInt(R,pcxh.xMax); Files.ReadInt(R,pcxh.yMax);
-		Files.ReadInt(R,pcxh.hRes); Files.ReadInt(R,pcxh.vRes);
+		Files.ReadInt16(R,pcxh.xMin); Files.ReadInt16(R,pcxh.yMin);
+		Files.ReadInt16(R,pcxh.xMax); Files.ReadInt16(R,pcxh.yMax);
+		Files.ReadInt16(R,pcxh.hRes); Files.ReadInt16(R,pcxh.vRes);
 		IF (pcxh.bits <= 4X) OR (pcxh.version = 00X) OR (pcxh.version = 03X) THEN
 			pcxh.palPos:= Files.Pos(R);
 		ELSE
@@ -49,7 +49,7 @@ BEGIN
 		END;
 		Files.ReadBytes(R,filler,48);
 		Files.Read(R,pcxh.vMode); Files.Read(R,pcxh.planes);
-		Files.ReadInt(R,pcxh.bytesPerLine); Files.ReadInt(R,pcxh.paletteInfo);
+		Files.ReadInt16(R,pcxh.bytesPerLine); Files.ReadInt16(R,pcxh.paletteInfo);
 		Files.ReadBytes(R,filler,58); pcxh.picPos:= Files.Pos(R);
 		RETURN(TRUE);
 	END;

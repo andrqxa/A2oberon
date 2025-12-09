@@ -37,12 +37,12 @@ MODULE LeoDocs IN Oberon; (** portable **)	(* eos  *)
 		main := NIL;
 		file := Files.Old(doc.name);
 		IF file # NIL THEN
-			Files.Set(r, file, 0); Files.ReadInt(r, tag);
+			Files.Set(r, file, 0); Files.ReadInt16(r, tag);
 			IF tag = Documents.Id THEN
 				Files.ReadString(r, name);
-				Files.ReadInt(r, doc.X); Files.ReadInt(r, doc.Y);
-				Files.ReadInt(r, doc.W); Files.ReadInt(r, doc.H);
-				Files.ReadInt(r, ref);
+				Files.ReadInt16(r, doc.X); Files.ReadInt16(r, doc.Y);
+				Files.ReadInt16(r, doc.W); Files.ReadInt16(r, doc.H);
+				Files.ReadInt16(r, ref);
 				Files.Read(r, ch);
 				IF ch = Objects.LibBlockId THEN
 					NEW(lib); Objects.OpenLibrary(lib);
@@ -90,12 +90,12 @@ MODULE LeoDocs IN Oberon; (** portable **)	(* eos  *)
 			file := Files.New(doc.name);
 			IF file # NIL THEN
 				Files.Set(r, file, 0);
-				Files.WriteInt(r, Documents.Id);
+				Files.WriteInt16(r, Documents.Id);
 				Attributes.GetString(doc, "Gen", gen);
 				Files.WriteString(r, gen);
-				Files.WriteInt(r, doc.X); Files.WriteInt(r, doc.Y);
-				Files.WriteInt(r, doc.W); Files.WriteInt(r, doc.H);
-				Files.WriteInt(r, main.ref);
+				Files.WriteInt16(r, doc.X); Files.WriteInt16(r, doc.Y);
+				Files.WriteInt16(r, doc.W); Files.WriteInt16(r, doc.H);
+				Files.WriteInt16(r, main.ref);
 				Objects.StoreLibrary(bm.lib, file, Files.Pos(r), len);
 				Files.Register(file);
 				sm.F := NIL; sm.fig := main.obj(Leonardo.Figure);

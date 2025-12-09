@@ -505,7 +505,7 @@ VAR
 	(* Lesen eines SIGNED16 vom InputFile, 2 Byte  *)
 	PROCEDURE ReadInt(cInfo: CInfoPtr; VAR int:SIGNED16):BOOLEAN;
 	BEGIN
-		F.ReadInt(cInfo.src.rider, int);
+		F.ReadInt16(cInfo.src.rider, int);
 		int := BIT.ISWAP(int);
 		IF ~cInfo.src.rider.eof THEN
 			cInfo.src.startOfFile:= FALSE;

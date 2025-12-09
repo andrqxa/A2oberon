@@ -1099,12 +1099,12 @@ BEGIN F := NIL;
 		Files.Read(R, F.type);
 		Files.Read(R, F.family);
 		Files.Read(R, F.variant);
-		Files.ReadInt(R, F.height);
-		Files.ReadInt(R, F.minX);
-		Files.ReadInt(R, F.maxX);
-		Files.ReadInt(R, F.minY);
-		Files.ReadInt(R, F.maxY);
-		Files.ReadInt(R, F.nofRuns);
+		Files.ReadInt16(R, F.height);
+		Files.ReadInt16(R, F.minX);
+		Files.ReadInt16(R, F.maxX);
+		Files.ReadInt16(R, F.minY);
+		Files.ReadInt16(R, F.maxY);
+		Files.ReadInt16(R, F.nofRuns);
 	(*
 		Out.String("type = "); Out.Int(ORD(F.type), 0); Out.Ln;
 		Out.String("family = "); Out.Int(ORD(F.family), 0); Out.Ln;
@@ -1117,7 +1117,7 @@ BEGIN F := NIL;
 	*)
 		k := 0;
 		WHILE k # F.nofRuns DO
-			Files.ReadInt(R, F.run[k].beg); Files.ReadInt(R, F.run[k].end);
+			Files.ReadInt16(R, F.run[k].beg); Files.ReadInt16(R, F.run[k].end);
 			INC(k)
 		END;
 
@@ -1126,9 +1126,9 @@ BEGIN F := NIL;
 			k:=0;
 			WHILE (k#F.nofRuns) & ~((F.run[k].beg<=l) & (F.run[k].end>l)) DO INC(k) END;
 			IF k#F.nofRuns THEN
-				Files.ReadInt(R, F.box[l].dx);
-				Files.ReadInt(R, F.box[l].x); Files.ReadInt(R, F.box[l].y);
-				Files.ReadInt(R, F.box[l].w); Files.ReadInt(R, F.box[l].h);
+				Files.ReadInt16(R, F.box[l].dx);
+				Files.ReadInt16(R, F.box[l].x); Files.ReadInt16(R, F.box[l].y);
+				Files.ReadInt16(R, F.box[l].w); Files.ReadInt16(R, F.box[l].h);
 				bitW := bitW + (F.box[l].w + 7) DIV 8;
 				F.p[l]:= 1
 			ELSE	(* Charakter nicht vorhanden *)
@@ -1187,9 +1187,9 @@ BEGIN
 	Files.Write(R, F.type);
 	Files.Write(R, F.family);
 	Files.Write(R, F.variant);
-	Files.WriteInt(R, F.height);
-	Files.WriteInt(R, F.minX); Files.WriteInt(R, F.maxX);
-	Files.WriteInt(R, F.minY); Files.WriteInt(R, F.maxY);
+	Files.WriteInt16(R, F.height);
+	Files.WriteInt16(R, F.minX); Files.WriteInt16(R, F.maxX);
+	Files.WriteInt16(R, F.minY); Files.WriteInt16(R, F.maxY);
 	i:= 0; nofRuns:= 0;
 	WHILE i#256 DO
 		WHILE (i#256) & (F.p[i]=undef) DO INC(i) END;
@@ -1200,10 +1200,10 @@ BEGIN
 			INC(nofRuns)
 		END
 	END;
-	Files.WriteInt(R, nofRuns);
+	Files.WriteInt16(R, nofRuns);
 	k := 0;
 	WHILE k # nofRuns DO
-		Files.WriteInt(R, F.run[k].beg); Files.WriteInt(R, F.run[k].end);
+		Files.WriteInt16(R, F.run[k].beg); Files.WriteInt16(R, F.run[k].end);
 		INC(k);
 	END;
 	l := 0;
@@ -1211,9 +1211,9 @@ BEGIN
 		k:=0;
 		WHILE (k#nofRuns) & ~((F.run[k].beg<=l) & (F.run[k].end>l)) DO INC(k) END;
 		IF k#nofRuns THEN
-			Files.WriteInt(R, F.box[l].dx);
-			Files.WriteInt(R, F.box[l].x); Files.WriteInt(R, F.box[l].y);
-			Files.WriteInt(R, F.box[l].w); Files.WriteInt(R, F.box[l].h);
+			Files.WriteInt16(R, F.box[l].dx);
+			Files.WriteInt16(R, F.box[l].x); Files.WriteInt16(R, F.box[l].y);
+			Files.WriteInt16(R, F.box[l].w); Files.WriteInt16(R, F.box[l].h);
 		END;
 		INC(l);
 	END;

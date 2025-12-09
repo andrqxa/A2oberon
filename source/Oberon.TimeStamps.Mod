@@ -163,11 +163,11 @@ MODULE TimeStamps IN Oberon;	(** portable *) (* ejz *)
 					END;
 					Gadgets.framehandle(F, M);
 					IF M.id = Objects.store THEN
-						Files.WriteInt(M.R, F.col);
+						Files.WriteInt16(M.R, F.col);
 						Files.WriteString(M.R, F.font.name);
 						Files.WriteString(M.R, F.cap)
 					ELSIF M.id = Objects.load THEN
-						Files.ReadInt(M.R, F.col);
+						Files.ReadInt16(M.R, F.col);
 						NEW(F.font);
 						Files.ReadString(M.R, F.font.name);
 						F.font := Fonts.This(F.font.name);
@@ -228,9 +228,9 @@ MODULE TimeStamps IN Oberon;	(** portable *) (* ejz *)
 				WITH M: Objects.FileMsg DO
 					Handle(F, M);
 					IF M.id = Objects.store THEN
-						Files.WriteLInt(M.R, F.revision)
+						Files.WriteInt32(M.R, F.revision)
 					ELSIF M.id = Objects.load THEN
-						Files.ReadLInt(M.R, F.revision)
+						Files.ReadInt32(M.R, F.revision)
 					END
 				END
 			ELSIF M IS Objects.CopyMsg THEN

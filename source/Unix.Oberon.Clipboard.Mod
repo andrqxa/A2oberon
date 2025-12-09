@@ -87,11 +87,11 @@ BEGIN
 		Machine.Release(Machine.X11);
 	ELSIF (event.selection = X11.XAPRIMARY) & (event.target = oberonType) THEN
 		ev.property := event.property;
-		f := Files.New(""); Files.Set(r, f, 0); Files.WriteLInt(r, 0);
+		f := Files.New(""); Files.Set(r, f, 0); Files.WriteInt32(r, 0);
 		Texts.Store(scrap, f, Files.Pos(r), size);
 		NEW(selectionData, Files.Length(f));
 		IF selectionData # NIL THEN
-			Files.Set(r, f, 0); Files.WriteLInt(r, Files.Length(f)-4);
+			Files.Set(r, f, 0); Files.WriteInt32(r, Files.Length(f)-4);
 			Files.Set(r, f, 0); Files.Read(r, ch); i:= 0;
 			WHILE ~r.eof DO
 				selectionData[i] := ch; INC(i);
@@ -128,12 +128,12 @@ BEGIN
 				FOR i := 0 TO 3 DO
 					SYSTEM.GET(adr, ch); INC(adr); Files.Write(r, ch)
 				END;
-				Files.Set(r, f, 0); Files.ReadLInt(r, i);
+				Files.Set(r, f, 0); Files.ReadInt32(r, i);
 				WHILE i > 0 DO
 					SYSTEM.GET(adr, ch); INC(adr); Files.Write(r, ch);
 					DEC(i)
 				END;
-				Files.Set(r, f, 0); Files.ReadLInt(r, i); Files.Read(r, ch);
+				Files.Set(r, f, 0); Files.ReadInt32(r, i); Files.Read(r, ch);
 				Texts.Load(scrap, f, Files.Pos(r), i)
 			ELSE
 				WHILE len > 0 DO

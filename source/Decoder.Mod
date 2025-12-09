@@ -608,7 +608,7 @@ TYPE
 			IF reader.Available() > 0 THEN
 				ch := reader.Get();
 				ASSERT(ch = OFFHdrBodyRef);
-				reader.RawNum(tmp); ofs := tmp;
+				reader.RawNum32(tmp); ofs := tmp;
 				reader.RawString(name);
 				ASSERT(name = "$$");
 				name := "@Body";
@@ -625,7 +625,7 @@ TYPE
 			WHILE (reader.Available() > 0) & (reader.Peek() = OFFHdrProcRef) DO
 				ch := reader.Get();
 				prevOfs := ofs;
-				reader.RawNum(tmp); ofs := tmp;
+				reader.RawNum32(tmp); ofs := tmp;
 				IF (codeScaleCallback # NIL) THEN codeScaleCallback(ofs) END;
 				ASSERT(procInfo # NIL);
 				procInfo.codeSize := ofs - prevOfs; (* set size of previous procedure *)
@@ -693,13 +693,13 @@ TYPE
 			ELSIF (fieldInfo.type >= 81H) & (fieldInfo.type <= 90H) THEN
 				fieldInfo.kind := VarArray;
 				DEC(fieldInfo.type, 80H);
-				reader.RawNum(fieldInfo.dim)
+				reader.RawNum32(fieldInfo.dim)
 			ELSE
 				(*ASSERT((fieldInfo.type = 16H) OR (fieldInfo.type = 1DH));*)
 				fieldInfo.kind := VarRecord;
-				reader.RawNum(fieldInfo.tdadr)
+				reader.RawNum32(fieldInfo.tdadr)
 			END;
-			reader.RawNum(fieldInfo.offset);
+			reader.RawNum32(fieldInfo.offset);
 			reader.RawString(fieldInfo.name);
 			RETURN fieldInfo
 		END DecodeField;
@@ -1219,7 +1219,7 @@ TYPE
 			ASSERT(ch = 82X);
 			NEW(module.entry, header.entries);
 			FOR i := 0 TO header.entries-1 DO
-				r.RawNum(e);
+				r.RawNum32(e);
 				module.entry[i] := e
 			END
 		END DecodeEntries;
@@ -1233,7 +1233,7 @@ TYPE
 			ch := r.Get();
 			ASSERT(ch = 83X);
 			FOR i := 0 TO header.commands-1 DO
-				r.RawNum(num); r.RawNum(num); r.RawString(n); r.RawNum(num)
+				r.RawNum32(num); r.RawNum32(num); r.RawString(n); r.RawNum32(num)
 			END
 		END SkipCommands;
 
@@ -1245,7 +1245,7 @@ TYPE
 			ch := r.Get();
 			ASSERT(ch = 84X);
 			FOR i := 0 TO header.pointers-1 DO
-				r.RawNum(num)
+				r.RawNum32(num)
 			END
 		END SkipPointers;
 
@@ -1272,13 +1272,13 @@ TYPE
 			NEW(varConstLinks,nofVarConstLinks);
 			FOR i := 0 TO nofVarConstLinks-1 DO
 				ch := r.Get();
-				r.RawNum(num);
+				r.RawNum32(num);
 				r.RawInt32(count);
 				varConstLinks[i].num := i;
 				varConstLinks[i].ch := ch;
 				NEW(varConstLinks[i].links,count);
 				FOR j := 0 TO count-1 DO
-					r.RawNum(num);
+					r.RawNum32(num);
 					varConstLinks[i].links[j] := num;
 				END
 			END
@@ -1294,15 +1294,15 @@ TYPE
 			NEW(links,nofLinks);
 			FOR i := 0 TO nofLinks-1 DO
 				r.SkipBytes(2);  (* skip 2 characters *)
-				r.RawNum(num);
+				r.RawNum32(num);
 				links[i].num := num;
 			END;
 			NEW(entries,header.entries);
 			FOR i := 0 TO header.entries-1 DO
-				r.RawNum(num);
+				r.RawNum32(num);
 				entries[i].num := num;
 			END;
-			r.RawNum(num)
+			r.RawNum32(num)
 		END SkipLinks;
 
 		PROCEDURE SkipConsts;
@@ -1324,7 +1324,7 @@ TYPE
 			VAR adr, fp, off, i, len, exp: SIGNED32; check: POINTER TO ARRAY OF SIGNED32;export: Export;
 			BEGIN
 				r.RawInt32(exp);
-				r.RawNum(fp);
+				r.RawNum32(fp);
 				len := 0;
 				IF fp # 0 THEN NEW(check, exp) END;
 				WHILE fp # 0 DO
@@ -1333,7 +1333,7 @@ TYPE
 					export.fp := fp;
 					AddExport(export);
 					IF (fp = 1) THEN
-						r.RawNum(off);
+						r.RawNum32(off);
 						export.val := off;
 						IF off >= 0 THEN
 							INC(count);
@@ -1341,7 +1341,7 @@ TYPE
 						END
 					ELSE
 						IF level = 0 THEN
-							r.RawNum(adr);
+							r.RawNum32(adr);
 							export.val := adr;
 							(*
 							i := 0;
@@ -1358,7 +1358,7 @@ TYPE
 							check[len] := fp; INC(len)
 						END;
 					END;
-					r.RawNum(fp)
+					r.RawNum32(fp)
 				END
 			END LoadScope;
 
@@ -1380,9 +1380,9 @@ TYPE
 					name : ARRAY 256 OF CHAR;
 					use: Use;
 				BEGIN
-					r.RawNum(fp);
+					r.RawNum32(fp);
 					r.RawString(name);
-					r.RawNum(arg);
+					r.RawNum32(arg);
 					NEW(use);
 					use.fp := fp;
 					COPY(name,use.name);
@@ -1391,16 +1391,16 @@ TYPE
 					IF arg > 0 THEN
 						IF r.Peek() = 1X THEN
 							ch := r.Get();
-							r.RawNum(arg)
+							r.RawNum32(arg)
 						END
 					ELSIF arg < 0 THEN
 					ELSE
 						IF r.Peek() = 1X THEN
 							(* read used record *)
 							ch := r.Get();
-							r.RawNum(arg); (* tdentry *)
+							r.RawNum32(arg); (* tdentry *)
 							IF r.Peek() # 0X THEN
-								r.RawNum(arg); (* FP *)
+								r.RawNum32(arg); (* FP *)
 								r.RawString(name);
 								ASSERT(name = "@");
 							END;
@@ -1444,13 +1444,13 @@ TYPE
 			typeCount := header.types;
 			NEW(types, typeCount);
 			FOR i := 0 TO header.types-1 DO
-				r.RawNum(size);
-				r.RawNum(tdaddr);
+				r.RawNum32(size);
+				r.RawNum32(tdaddr);
 				(* read Base *)
-				r.RawNum(moduleBase); r.RawNum(entry);
+				r.RawNum32(moduleBase); r.RawNum32(entry);
 				(* read Count *)
-				r.RawNum(nofMethods); nofMethods := ABS (nofMethods);
-				r.RawNum(nofInhMethods); r.RawNum(nofNewMethods); r.RawInt32(nofPointers);
+				r.RawNum32(nofMethods); nofMethods := ABS (nofMethods);
+				r.RawNum32(nofInhMethods); r.RawNum32(nofNewMethods); r.RawInt32(nofPointers);
 				r.RawString(name);
 				r.RawInt32(tdSize); (* ug *)
 				NEW(type, name);
@@ -1474,7 +1474,7 @@ TYPE
 				type.procedureCount := nofNewMethods;
 				NEW(type.procedures, type.procedureCount);
 				FOR j := 0 TO type.procedureCount-1 DO
-					r.RawNum(methNr); r.RawNum(entryNr);
+					r.RawNum32(methNr); r.RawNum32(entryNr);
 					NEW(procInfo, "", module.entry[entryNr], entryNr);
 					procInfo.method := TRUE;
 					AddProcedure(procInfo);
@@ -1484,7 +1484,7 @@ TYPE
 				KernelLog.String(" - PtrOfs: ");
 				(* read Pointers *)
 				FOR j := 0 TO nofPointers-1 DO
-					r.RawNum(ptrOfs);
+					r.RawNum32(ptrOfs);
 					KernelLog.Int(ptrOfs,1); KernelLog.String(" ");
 				END;
 				KernelLog.Ln;
@@ -1501,9 +1501,9 @@ TYPE
 			FOR i := 0 TO header.exTableLen -1 DO
 				r.Char(tag);
 				ASSERT(tag = 0FEX);
-				r.RawNum(a); module.exTable[i].pcFrom := a;
-				r.RawNum(a); module.exTable[i].pcTo := a;
-				r.RawNum(a); module.exTable[i].pcHandler := a;
+				r.RawNum32(a); module.exTable[i].pcFrom := a;
+				r.RawNum32(a); module.exTable[i].pcTo := a;
+				r.RawNum32(a); module.exTable[i].pcHandler := a;
 			END;
 		END DecodeExTable;
 
@@ -1517,16 +1517,16 @@ TYPE
 			NEW(gcInfo,noProcs);
 			FOR i := 0 TO noProcs - 1 DO
 				NEW(gcInfo[i]);
-				r.RawNum(codeoffset);
-				r.RawNum(beginOffset);
-				r.RawNum(endOffset);
+				r.RawNum32(codeoffset);
+				r.RawNum32(beginOffset);
+				r.RawNum32(endOffset);
 				gcInfo[i].codeOffset := codeoffset;
 				gcInfo[i].beginOffset := beginOffset;
 				gcInfo[i].endOffset := endOffset;
 				r.RawInt32(nofptrs);
 				NEW(gcInfo[i].pointers,nofptrs);
 				FOR j := 0 TO nofptrs - 1 DO
-					r.RawNum(p);
+					r.RawNum32(p);
 					gcInfo[i].pointers[j] := p;
 				END
 			END
@@ -1556,7 +1556,7 @@ TYPE
 			version := ORD(r.Get());
 			IF version = 0ADH THEN version := ORD(r.Get()) END;
 			IF version = 0B1H THEN (* PACO object file *)
-				r.RawNum(symSize);
+				r.RawNum32(symSize);
 			ELSIF (version >= 0B2H) THEN (*fof: OC object file *)
 				r.RawInt32(symSize);
 			END;

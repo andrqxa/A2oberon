@@ -89,8 +89,8 @@ BEGIN
 	Files.Read(FR,c);
 	IF (c = CHR(Documents.Id)) THEN	(* skip document header *)
 		Files.Read(FR,c); Files.ReadString(FR,line);
-		Files.ReadInt(FR,val); Files.ReadInt(FR,val);
-		Files.ReadInt(FR,val); Files.ReadInt(FR,val);
+		Files.ReadInt16(FR,val); Files.ReadInt16(FR,val);
+		Files.ReadInt16(FR,val); Files.ReadInt16(FR,val);
 		Files.Read(FR,c);
 	END;
 	IF (c = Texts.TextBlockId) THEN

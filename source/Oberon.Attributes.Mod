@@ -378,8 +378,8 @@ BEGIN
 		IF A IS BoolAttr THEN Files.Write(R, Sboolean);
 			IF A(BoolAttr).b THEN Files.Write(R, 1X) ELSE Files.Write(R, 0X) END;
 		ELSIF A IS CharAttr THEN Files.Write(R, Schar); Files.Write(R, A(CharAttr).c);
-		ELSIF A IS IntAttr THEN Files.Write(R, Sint); Files.WriteLInt(R, A(IntAttr).i);
-		ELSIF A IS RealAttr THEN Files.Write(R, Sreal); Files.WriteLReal(R, A(RealAttr).r);
+		ELSIF A IS IntAttr THEN Files.Write(R, Sint); Files.WriteInt32(R, A(IntAttr).i);
+		ELSIF A IS RealAttr THEN Files.Write(R, Sreal); Files.WriteFloat64(R, A(RealAttr).r);
 		ELSIF A IS StringAttr THEN Files.Write(R, Sstring); Files.WriteString(R, A(StringAttr).s);
 		ELSE HALT(42)
 		END;
@@ -403,9 +403,9 @@ BEGIN
 			ELSIF ORD(ch) = Schar THEN
 				NEW(c); COPY(name, c.name); Files.Read(R, c.c); a := c;
 			ELSIF ORD(ch) = Sint THEN
-				NEW(i); COPY(name, i.name); Files.ReadLInt(R, i.i); a := i;
+				NEW(i); COPY(name, i.name); Files.ReadInt32(R, i.i); a := i;
 			ELSIF ORD(ch) = Sreal THEN
-				NEW(r); COPY(name, r.name); Files.ReadLReal(R, r.r); a := r;
+				NEW(r); COPY(name, r.name); Files.ReadFloat64(R, r.r); a := r;
 			ELSIF ORD(ch) = Sstring THEN
 				NEW(s); COPY(name, s.name); Files.ReadString(R, s.s); a := s;
 			ELSE HALT(42)
