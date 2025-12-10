@@ -11,9 +11,6 @@ CONST
 	FullStringError* = 5;
 	BitSizeError* = 6;
 
-	radix10 = 10;
-	radix16 = 16;
-
 TYPE
 	String* = POINTER TO ARRAY OF CHAR;
 
@@ -535,11 +532,36 @@ BEGIN
 	s[j] := 0X;
 END UIntToStr;
 
+(** Tries to parse an unsigned 32-bit integer from a string at a given position
+
+    The [[TryScanUInt32At]] procedure attempts to parse an unsigned 32-bit integer from a string starting at the specified position. It supports various number formats including binary (0b), octal (0o), and hexadecimal (0x) prefixes.
+
+    == Parameters
+    |= Parameter |= Description |
+    | pos | Input/Output. The position in the string to start parsing from. Updated to the position after the parsed number. |
+    | number | The input string containing the number to parse. |
+    | base | The number base to use for parsing. If 0, the base is auto-detected from prefixes. |
+    | value | Output. The parsed unsigned 32-bit integer value. |
+    | res | Output. Result code indicating success or specific error type. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    The procedure sets the res parameter to indicate specific error conditions:
+    * EmptyStringError - Empty string at the starting position
+    * BaseError - Invalid base value (must be 2-36)
+    * SyntaxError - Invalid number syntax
+    * RangeError - Number exceeds the range of UNSIGNED32
+
+    == Special Features
+    Supports digit separators using apostrophes (') and the 'H' suffix for hexadecimal numbers without the 0x prefix.
+*)
 PROCEDURE TryScanUInt32At*(VAR pos: SIZE; CONST number: ARRAY OF CHAR; base: UNSIGNED32; VAR value: UNSIGNED32; VAR res: INTEGER): BOOLEAN;
 VAR len := LEN(number): SIZE; answer := 0: UNSIGNED32;
 	d := 0: SIGNED32; c: CHAR; hasPrefix := FALSE: BOOLEAN;
 BEGIN
-	IF (pos >= len) OR (number[pos] = 0X) THEN
+	IF CharOrDefault(number, pos, len) = 0X THEN
 		res := EmptyStringError;
 		value := 0;
 		RETURN FALSE;
@@ -547,24 +569,27 @@ BEGIN
 
 	IF base = 0 THEN
 		base := 10;
-		IF (number[pos] = '0') & (pos + 2 <= len) THEN
-			c := number[pos+1];
+		IF (CharOrDefault(number, pos, len) = '0') & (pos + 2 <= len) THEN
+			c := CharOrDefault(number, pos + 1, len);
 			IF c = 'b' THEN
 				INC(pos, 2); base := 2; hasPrefix := TRUE;
 			ELSIF c = 'o' THEN
 				INC(pos, 2); base := 8; hasPrefix := TRUE;
-			ELSIF (c = 'x') OR (c = 'u') THEN
+			ELSIF (c = 'x') THEN
 				INC(pos, 2); base := 16; hasPrefix := TRUE;
 			END;
-			IF (number[pos] = "'") & (pos + 1 < len) & IsDigit(number[pos+1], base, d) THEN INC(pos); END;
+			IF (CharOrDefault(number, pos, len) = "'")
+					& IsDigit(CharOrDefault(number, pos+1, len), base, d) THEN
+				INC(pos);
+			END;
 		END;
-	ELSIF (base < 2) OR (base > 16) THEN
+	ELSIF (base < 2) OR (base > 36) THEN
 		res := BaseError;
 		value := 0;
 		RETURN FALSE;
 	END;
 
-	IF (pos >= len) OR ~IsDigit(number[pos], base, d) THEN
+	IF ~IsDigit(CharOrDefault(number, pos, len), base, d) THEN
 		res := SyntaxError;
 		value := 0;
 		RETURN FALSE;
@@ -572,7 +597,7 @@ BEGIN
 
 	answer := d; INC(pos);
 	LOOP
-		c := number[pos];
+		c := CharOrDefault(number, pos, len);
 		IF IsDigit(c, base, d) THEN
 			IF answer > MAX(UNSIGNED32) DIV base THEN
 				res := RangeError;
@@ -589,7 +614,7 @@ BEGIN
 			END;
 			answer := try;
 		ELSIF (c = "'") THEN
-			IF ((pos + 1 >= len) OR ~IsDigit(number[pos+1], base, d)) THEN
+			IF ~IsDigit(CharOrDefault(number, pos + 1, len), base, d) THEN
 				res := SyntaxError;
 				value := 0;
 				RETURN FALSE;
@@ -599,22 +624,52 @@ BEGIN
 		END;
 		INC(pos);
 	END;
-	IF (base = 16) & ~hasPrefix & (number[pos] = "H") THEN INC(pos); END;
+	IF (base = 16) & ~hasPrefix & (CharOrDefault(number, pos, len) = 'H') THEN INC(pos); END;
 
 	value := answer;
 	res := Ok;
 	RETURN TRUE;
 END TryScanUInt32At;
 
-PROCEDURE TryScanInt32At*(VAR pos: SIZE; CONST number: ARRAY OF CHAR; base: UNSIGNED32; VAR value: SIGNED32; VAR res: INTEGER): BOOLEAN;
-VAR answer: UNSIGNED32; isNegative := number[pos] = '-': BOOLEAN;
-BEGIN
-	IF isNegative OR (number[pos] = "+") THEN INC(pos); END;
-	value := 0;
+(** Tries to parse a signed 32-bit integer from a string at a given position
 
-	IF TryScanUInt32At(pos, number, base, answer, res) THEN
+    The [[TryScanInt32At]] procedure attempts to parse a signed 32-bit integer from a string starting at the specified position. It handles optional '+' or '-' signs and delegates the actual parsing to [[TryScanUInt32At]].
+
+    == Parameters
+    |= Parameter |= Description |
+    | pos | Input/Output. The position in the string to start parsing from. Updated to the position after the parsed number. |
+    | number | The input string containing the number to parse. |
+    | base | The number base to use for parsing. If 0, the base is auto-detected from prefixes. |
+    | value | Output. The parsed signed 32-bit integer value. |
+    | res | Output. Result code indicating success or specific error type. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    The procedure sets the res parameter to indicate specific error conditions, including:
+    * RangeError - Number exceeds the range of SIGNED32
+    * Any errors returned by [[TryScanUInt32At]]
+
+    == Special Features
+    Special handling for the minimum SIGNED32 value which cannot be represented as a positive number.
+*)
+PROCEDURE TryScanInt32At*(VAR pos: SIZE; CONST number: ARRAY OF CHAR; base: UNSIGNED32; VAR value: SIGNED32; VAR res: INTEGER): BOOLEAN;
+VAR answer: UNSIGNED32; c := CharOrDefault(number, pos, LEN(number)); isNegative := c = '-';
+BEGIN
+	value := 0;
+	IF isNegative OR (c = '+') THEN INC(pos); c := CharOrDefault(number, pos, LEN(number)) END;
+
+	IF c = 0X THEN
+		res := EmptyStringError;
+		value := 0;
+		RETURN FALSE;
+	ELSIF TryScanUInt32At(pos, number, base, answer, res) THEN
 		IF isNegative THEN
-			IF answer <= UNSIGNED32(MIN(SIGNED32)) THEN
+			IF answer = UNSIGNED32(-MIN(SIGNED32)) THEN
+				value := MIN(SIGNED32);
+				RETURN TRUE;
+			ELSIF answer <= UNSIGNED32(MAX(SIGNED32)) THEN
 				value := -SIGNED32(answer);
 				RETURN TRUE;
 			ELSE
@@ -634,11 +689,36 @@ BEGIN
 	RETURN FALSE;
 END TryScanInt32At;
 
+(** Tries to parse an unsigned 64-bit integer from a string at a given position
+
+    The [[TryScanUInt64At]] procedure attempts to parse an unsigned 64-bit integer from a string starting at the specified position. It supports various number formats including binary (0b), octal (0o), and hexadecimal (0x) prefixes.
+
+    == Parameters
+    |= Parameter |= Description |
+    | pos | Input/Output. The position in the string to start parsing from. Updated to the position after the parsed number. |
+    | number | The input string containing the number to parse. |
+    | base | The number base to use for parsing. If 0, the base is auto-detected from prefixes. |
+    | value | Output. The parsed unsigned 64-bit integer value. |
+    | res | Output. Result code indicating success or specific error type. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    The procedure sets the res parameter to indicate specific error conditions:
+    * EmptyStringError - Empty string at the starting position
+    * BaseError - Invalid base value (must be 2-36)
+    * SyntaxError - Invalid number syntax
+    * RangeError - Number exceeds the range of UNSIGNED64
+
+    == Special Features
+    Supports digit separators using apostrophes (') and the 'H' suffix for hexadecimal numbers without the 0x prefix.
+*)
 PROCEDURE TryScanUInt64At*(VAR pos: SIZE; CONST number: ARRAY OF CHAR; base: UNSIGNED32; VAR value: UNSIGNED64; VAR res: INTEGER): BOOLEAN;
 VAR len := LEN(number): SIZE; answer := 0: UNSIGNED64;
 	d := 0: SIGNED32; c: CHAR; hasPrefix := FALSE: BOOLEAN;
 BEGIN
-	IF (pos >= len) OR (number[pos] = 0X) THEN
+	IF CharOrDefault(number, pos, len) = 0X THEN
 		res := EmptyStringError;
 		value := 0;
 		RETURN FALSE;
@@ -646,24 +726,27 @@ BEGIN
 
 	IF base = 0 THEN
 		base := 10;
-		IF (number[pos] = '0') & (pos + 2 <= len) THEN
-			c := number[pos+1];
+		IF (CharOrDefault(number, pos, len) = '0') & (pos + 2 <= len) THEN
+			c := CharOrDefault(number, pos + 1, len);
 			IF c = 'b' THEN
 				INC(pos, 2); base := 2; hasPrefix := TRUE;
 			ELSIF c = 'o' THEN
 				INC(pos, 2); base := 8; hasPrefix := TRUE;
-			ELSIF (c = 'x') OR (c = 'u') THEN
+			ELSIF (c = 'x') THEN
 				INC(pos, 2); base := 16; hasPrefix := TRUE;
 			END;
-			IF (number[pos] = "'") & (pos + 1 < len) & IsDigit(number[pos+1], base, d) THEN INC(pos); END;
+			IF (CharOrDefault(number, pos, len) = "'")
+					& IsDigit(CharOrDefault(number, pos + 1, len), base, d) THEN
+				INC(pos);
+			END;
 		END;
-	ELSIF (base < 2) OR (base > 16) THEN
+	ELSIF (base < 2) OR (base > 36) THEN
 		res := BaseError;
 		value := 0;
 		RETURN FALSE;
 	END;
 
-	IF (pos >= len) OR ~IsDigit(number[pos], base, d) THEN
+	IF ~IsDigit(CharOrDefault(number, pos, len), base, d) THEN
 		res := SyntaxError;
 		value := 0;
 		RETURN FALSE;
@@ -671,7 +754,7 @@ BEGIN
 
 	answer := d; INC(pos);
 	LOOP
-		c := number[pos];
+		c := CharOrDefault(number, pos, len);
 		IF IsDigit(c, base, d) THEN
 			IF answer > MAX(UNSIGNED64) DIV base THEN
 				res := RangeError;
@@ -688,7 +771,7 @@ BEGIN
 			END;
 			answer := try;
 		ELSIF (c = "'") THEN
-			IF ((pos + 1 >= len) OR ~IsDigit(number[pos+1], base, d)) THEN
+			IF ~IsDigit(CharOrDefault(number, pos + 1, len), base, d) THEN
 				res := SyntaxError;
 				value := 0;
 				RETURN FALSE;
@@ -698,22 +781,52 @@ BEGIN
 		END;
 		INC(pos);
 	END;
-	IF (base = 16) & ~hasPrefix & (number[pos] = "H") THEN INC(pos); END;
+	IF (base = 16) & ~hasPrefix & (CharOrDefault(number, pos, len) = 'H') THEN INC(pos); END;
 
 	value := answer;
 	res := Ok;
 	RETURN TRUE;
 END TryScanUInt64At;
 
-PROCEDURE TryScanInt64At*(VAR pos: SIZE; CONST number: ARRAY OF CHAR; base: UNSIGNED32; VAR value: SIGNED64; VAR res: INTEGER): BOOLEAN;
-VAR answer: UNSIGNED64; isNegative := number[pos] = '-': BOOLEAN;
-BEGIN
-	IF isNegative OR (number[pos] = "+") THEN INC(pos); END;
-	value := 0;
+(** Tries to parse a signed 64-bit integer from a string at a given position
 
-	IF TryScanUInt64At(pos, number, base, answer, res) THEN
+    The [[TryScanInt64At]] procedure attempts to parse a signed 64-bit integer from a string starting at the specified position. It handles optional '+' or '-' signs and delegates the actual parsing to [[TryScanUInt64At]].
+
+    == Parameters
+    |= Parameter |= Description |
+    | pos | Input/Output. The position in the string to start parsing from. Updated to the position after the parsed number. |
+    | number | The input string containing the number to parse. |
+    | base | The number base to use for parsing. If 0, the base is auto-detected from prefixes. |
+    | value | Output. The parsed signed 64-bit integer value. |
+    | res | Output. Result code indicating success or specific error type. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    The procedure sets the res parameter to indicate specific error conditions, including:
+    * RangeError - Number exceeds the range of SIGNED64
+    * Any errors returned by [[TryScanUInt64At]]
+
+    == Special Features
+    Special handling for the minimum SIGNED64 value which cannot be represented as a positive number.
+*)
+PROCEDURE TryScanInt64At*(VAR pos: SIZE; CONST number: ARRAY OF CHAR; base: UNSIGNED32; VAR value: SIGNED64; VAR res: INTEGER): BOOLEAN;
+VAR answer: UNSIGNED64; c := CharOrDefault(number, pos, LEN(number)); isNegative := c = '-';
+BEGIN
+	value := 0;
+	IF isNegative OR (c = '+') THEN INC(pos); c := CharOrDefault(number, pos, LEN(number)) END;
+
+	IF c = 0X THEN
+		res := EmptyStringError;
+		value := 0;
+		RETURN FALSE;
+	ELSIF TryScanUInt64At(pos, number, base, answer, res) THEN
 		IF isNegative THEN
-			IF answer <= UNSIGNED64(MIN(SIGNED64)) THEN
+			IF answer = UNSIGNED64(-MIN(SIGNED64)) THEN
+				value := MIN(SIGNED64);
+				RETURN TRUE;
+			ELSIF answer <= UNSIGNED64(MAX(SIGNED64)) THEN
 				value := -SIGNED64(answer);
 				RETURN TRUE;
 			ELSE
@@ -733,22 +846,44 @@ BEGIN
 	RETURN FALSE;
 END TryScanInt64At;
 
-PROCEDURE TryParseInt32*(CONST number: ARRAY OF CHAR; VAR value: SIGNED32; pos := 0: SIZE): BOOLEAN;
-VAR answer := 0: UNSIGNED32; isNegative := number[pos] = "-": BOOLEAN;
-BEGIN
-	IF isNegative OR (number[pos] = "+") THEN INC(pos); END;
+(** Tries to parse a signed 32-bit integer from a string
 
+    The [[TryParseInt32]] procedure attempts to parse a signed 32-bit integer from a string starting at the specified position. It handles optional '+' or '-' signs and delegates the actual parsing to [[TryParseUInt32]].
+
+    == Parameters
+    |= Parameter |= Description |
+    | number | The input string containing the number to parse. |
+    | value | Output. The parsed signed 32-bit integer value. |
+    | pos | Input. The position in the string to start parsing from. Defaults to 0. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    Returns FALSE if parsing fails. In case of overflow or invalid format, the value parameter is set to either MIN(SIGNED32) or MAX(SIGNED32) depending on the context.
+
+    == Special Features
+    Special handling for the minimum SIGNED32 value (-2147483648) which cannot be represented as a positive number.
+*)
+PROCEDURE TryParseInt32*(CONST number: ARRAY OF CHAR; VAR value: SIGNED32; pos := 0: SIZE): BOOLEAN;
+VAR answer := 0: UNSIGNED32; c := CharOrDefault(number, pos, LEN(number)); isNegative := c = '-';
+BEGIN
 	value := 0;
-	IF TryParseUInt32(number, answer, pos) THEN
+	IF isNegative OR (c = '+') THEN INC(pos); c := CharOrDefault(number, pos, LEN(number)) END;
+
+	IF (c # 0X) & TryParseUInt32(number, answer, pos) THEN
 		IF isNegative THEN
-			IF (answer <= UNSIGNED32(MIN(SIGNED32))) THEN
+			IF answer = UNSIGNED32(-MIN(SIGNED32)) THEN
+				value := MIN(SIGNED32);
+				RETURN TRUE;
+			ELSIF answer <= UNSIGNED32(MAX(SIGNED32)) THEN
 				value := -SIGNED32(answer);
 				RETURN TRUE;
 			ELSE
 				value := MIN(SIGNED32);
 			END;
 		ELSE
-			IF (answer <= UNSIGNED32(MAX(SIGNED32))) THEN
+			IF answer <= UNSIGNED32(MAX(SIGNED32)) THEN
 				value := SIGNED32(answer);
 				RETURN TRUE;
 			ELSE
@@ -759,22 +894,44 @@ BEGIN
 	RETURN FALSE;
 END TryParseInt32;
 
-PROCEDURE TryParseInt64*(CONST number: ARRAY OF CHAR; VAR value: SIGNED64; pos := 0: SIZE): BOOLEAN;
-VAR answer := 0: UNSIGNED64; isNegative := number[pos] = "-": BOOLEAN;
-BEGIN
-	IF isNegative OR (number[pos] = "+") THEN INC(pos); END;
+(** Tries to parse a signed 64-bit integer from a string
 
+    The [[TryParseInt64]] procedure attempts to parse a signed 64-bit integer from a string starting at the specified position. It handles optional '+' or '-' signs and delegates the actual parsing to [[TryParseUInt64]].
+
+    == Parameters
+    |= Parameter |= Description |
+    | number | The input string containing the number to parse. |
+    | value | Output. The parsed signed 64-bit integer value. |
+    | pos | Input. The position in the string to start parsing from. Defaults to 0. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    Returns FALSE if parsing fails. In case of overflow or invalid format, the value parameter is set to either MIN(SIGNED64) or MAX(SIGNED64) depending on the context.
+
+    == Special Features
+    Special handling for the minimum SIGNED64 value which cannot be represented as a positive number.
+*)
+PROCEDURE TryParseInt64*(CONST number: ARRAY OF CHAR; VAR value: SIGNED64; pos := 0: SIZE): BOOLEAN;
+VAR answer := 0: UNSIGNED64; c := CharOrDefault(number, pos, LEN(number)); isNegative := c = '-';
+BEGIN
 	value := 0;
-	IF TryParseUInt64(number, answer, pos) THEN
+	IF isNegative OR (c = '+') THEN INC(pos); c := CharOrDefault(number, pos, LEN(number)) END;
+
+	IF (c # 0X) & TryParseUInt64(number, answer, pos) THEN
 		IF isNegative THEN
-			IF (answer <= UNSIGNED64(MIN(SIGNED64))) THEN
+			IF answer = UNSIGNED64(-MIN(SIGNED64)) THEN
+				value := MIN(SIGNED64);
+				RETURN TRUE;
+			ELSIF answer <= UNSIGNED64(MAX(SIGNED64)) THEN
 				value := -SIGNED64(answer);
 				RETURN TRUE;
 			ELSE
 				value := MIN(SIGNED64);
 			END;
 		ELSE
-			IF (answer <= UNSIGNED64(MAX(SIGNED64))) THEN
+			IF answer <= UNSIGNED64(MAX(SIGNED64)) THEN
 				value := SIGNED64(answer);
 				RETURN TRUE;
 			ELSE
@@ -785,22 +942,41 @@ BEGIN
 	RETURN FALSE;
 END TryParseInt64;
 
-PROCEDURE TryParseSize*(CONST number: ARRAY OF CHAR; VAR value: SIZE; pos := 0: SIZE): BOOLEAN;
-VAR answer := 0: ADDRESS; isNegative := number[pos] = "-": BOOLEAN;
-BEGIN
-	IF isNegative OR (number[pos] = "+") THEN INC(pos); END;
+(** Tries to parse a SIZE value from a string
 
+    The [[TryParseSize]] procedure attempts to parse a SIZE value from a string starting at the specified position. It handles optional '+' or '-' signs and delegates the actual parsing to [[TryParseAddress]].
+
+    == Parameters
+    |= Parameter |= Description |
+    | number | The input string containing the number to parse. |
+    | value | Output. The parsed SIZE value. |
+    | pos | Input. The position in the string to start parsing from. Defaults to 0. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    Returns FALSE if parsing fails. In case of overflow or invalid format, the value parameter is set to either MIN(SIZE) or MAX(SIZE) depending on the context.
+*)
+PROCEDURE TryParseSize*(CONST number: ARRAY OF CHAR; VAR value: SIZE; pos := 0: SIZE): BOOLEAN;
+VAR answer := 0: ADDRESS; c := CharOrDefault(number, pos, LEN(number)); isNegative := c = '-';
+BEGIN
 	value := 0;
-	IF TryParseAddress(number, answer, pos) THEN
+	IF isNegative OR (c = '+') THEN INC(pos); c := CharOrDefault(number, pos, LEN(number)) END;
+
+	IF (c # 0X) & TryParseAddress(number, answer, pos) THEN
 		IF isNegative THEN
-			IF (answer <= ADDRESS(MIN(SIZE))) THEN
+			IF answer = ADDRESS(-MIN(SIZE)) THEN
+				value := MIN(SIZE);
+				RETURN TRUE;
+			ELSIF answer <= ADDRESS(MAX(SIZE)) THEN
 				value := -SIZE(answer);
 				RETURN TRUE;
 			ELSE
 				value := MIN(SIZE);
 			END;
 		ELSE
-			IF (answer <= ADDRESS(MAX(SIZE))) THEN
+			IF answer <= ADDRESS(MAX(SIZE)) THEN
 				value := SIZE(answer);
 				RETURN TRUE;
 			ELSE
@@ -811,27 +987,46 @@ BEGIN
 	RETURN FALSE;
 END TryParseSize;
 
+(** Tries to parse an unsigned 32-bit integer from a string
+
+    The [[TryParseUInt32]] procedure attempts to parse an unsigned 32-bit integer from a string starting at the specified position. It supports various number formats including binary (0b), octal (0o), and hexadecimal (0x) prefixes.
+
+    == Parameters
+    |= Parameter |= Description |
+    | number | The input string containing the number to parse. |
+    | value | Output. The parsed unsigned 32-bit integer value. |
+    | pos | Input. The position in the string to start parsing from. Defaults to 0. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    Returns FALSE if parsing fails due to invalid syntax or overflow. In case of overflow, the value parameter is set to MAX(UNSIGNED32).
+
+    == Special Features
+    Auto-detects the number base from prefixes (0b for binary, 0o for octal or 0x for hexadecimal). If no prefix is present, it defaults to base 10.
+*)
 PROCEDURE TryParseUInt32*(CONST number: ARRAY OF CHAR; VAR value: UNSIGNED32; pos := 0: SIZE): BOOLEAN;
-VAR len := LEN(number): SIZE; answer := 0: UNSIGNED32; base := radix10, d := 0: SIGNED32;
+VAR len := LEN(number): SIZE; answer := 0: UNSIGNED32; base := 10, d := 0: SIGNED32;
 BEGIN
-	IF (number[pos] = '0') & (pos + 2 <= len) THEN
-		VAR c := number[pos+1];
+	IF (CharOrDefault(number, pos, len) = '0') & (pos + 2 <= len) THEN
+		VAR c := CharOrDefault(number, pos + 1, len);
 		IF c = 'b' THEN
 			INC(pos, 2); base := 2;
 		ELSIF c = 'o' THEN
 			INC(pos, 2); base := 8;
-		ELSIF (c = 'x') OR (c = 'u') THEN
+		ELSIF (c = 'x') THEN
 			INC(pos, 2); base := 16;
 		END;
 	END;
 
-	IF (pos >= len) OR ~IsDigit(number[pos], base, d) THEN
+	IF ~IsDigit(CharOrDefault(number, pos, len), base, d) THEN
 		value := 0;
 		RETURN FALSE;
 	END;
 
 	answer := d; INC(pos);
-	WHILE (pos < len ) & IsDigit(number[pos], base, d) DO
+	WHILE IsDigit(CharOrDefault(number, pos, len), base, d) DO
 		IF answer > MAX(UNSIGNED32) DIV base THEN
 			value := MAX(UNSIGNED32);
 			RETURN FALSE;
@@ -852,27 +1047,46 @@ BEGIN
 	RETURN TRUE;
 END TryParseUInt32;
 
+(** Tries to parse an unsigned 64-bit integer from a string
+
+    The [[TryParseUInt64]] procedure attempts to parse an unsigned 64-bit integer from a string starting at the specified position. It supports various number formats including binary (0b), octal (0o), and hexadecimal (0x) prefixes.
+
+    == Parameters
+    |= Parameter |= Description |
+    | number | The input string containing the number to parse. |
+    | value | Output. The parsed unsigned 64-bit integer value. |
+    | pos | Input. The position in the string to start parsing from. Defaults to 0. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    Returns FALSE if parsing fails due to invalid syntax or overflow. In case of overflow, the value parameter is set to MAX(UNSIGNED64).
+
+    == Special Features
+    Auto-detects the number base from prefixes (0b for binary, 0o for octal or 0x for hexadecimal). If no prefix is present, it defaults to base 10.
+*)
 PROCEDURE TryParseUInt64*(CONST number: ARRAY OF CHAR; VAR value: UNSIGNED64; pos := 0: SIZE): BOOLEAN;
-VAR len := LEN(number): SIZE; answer := 0: UNSIGNED64; base := radix10, d := 0: SIGNED32;
+VAR len := LEN(number): SIZE; answer := 0: UNSIGNED64; base := 10, d := 0: SIGNED32;
 BEGIN
-	IF (number[pos] = '0') & (pos + 2 <= len) THEN
-		VAR c := number[pos+1];
+	IF (CharOrDefault(number, pos, len) = '0') & (pos + 2 <= len) THEN
+		VAR c := CharOrDefault(number, pos + 1, len);
 		IF c = 'b' THEN
 			INC(pos, 2); base := 2;
 		ELSIF c = 'o' THEN
 			INC(pos, 2); base := 8;
-		ELSIF (c = 'x') OR (c = 'u') THEN
+		ELSIF (c = 'x') THEN
 			INC(pos, 2); base := 16;
 		END;
 	END;
 
-	IF (pos >= len) OR ~IsDigit(number[pos], base, d) THEN
+	IF ~IsDigit(CharOrDefault(number, pos, len), base, d) THEN
 		value := 0;
 		RETURN FALSE;
 	END;
 
 	answer := d; INC(pos);
-	WHILE (pos < len ) & IsDigit(number[pos], base, d) DO
+	WHILE IsDigit(CharOrDefault(number, pos, len), base, d) DO
 		IF answer > MAX(UNSIGNED64) DIV base THEN
 			value := MAX(UNSIGNED64);
 			RETURN FALSE;
@@ -893,27 +1107,46 @@ BEGIN
 	RETURN TRUE;
 END TryParseUInt64;
 
+(** Tries to parse a memory address (ADDRESS) from a string
+
+    The [[TryParseAddress]] procedure attempts to parse a memory address (ADDRESS) from a string starting at the specified position. It supports various number formats including binary (0b), octal (0o), and hexadecimal (0x) prefixes.
+
+    == Parameters
+    |= Parameter |= Description |
+    | number | The input string containing the number to parse. |
+    | value | Output. The parsed memory address (ADDRESS). |
+    | pos | Input. The position in the string to start parsing from. Defaults to 0. |
+
+    == Return Value
+    Returns TRUE if parsing was successful, FALSE otherwise.
+
+    == Error Handling
+    Returns FALSE if parsing fails due to invalid syntax or overflow. In case of overflow, the value parameter is set to MAX(ADDRESS).
+
+    == Special Features
+    Auto-detects the number base from prefixes (0b for binary, 0o for octal, 0x for hexadecimal). If no prefix is present, it defaults to base 10.
+*)
 PROCEDURE TryParseAddress*(CONST number: ARRAY OF CHAR; VAR value: ADDRESS; pos := 0: SIZE): BOOLEAN;
-VAR len := LEN(number): SIZE; answer := 0: ADDRESS; base := radix10, d := 0: SIGNED32;
+VAR len := LEN(number): SIZE; answer := 0: ADDRESS; base := 10, d := 0: SIGNED32;
 BEGIN
-	IF (number[pos] = '0') & (pos + 2 <= len) THEN
-		VAR c := number[pos+1];
+	IF (CharOrDefault(number, pos, len) = '0') & (pos + 2 <= len) THEN
+		VAR c := CharOrDefault(number, pos + 1, len);
 		IF c = 'b' THEN
 			INC(pos, 2); base := 2;
 		ELSIF c = 'o' THEN
 			INC(pos, 2); base := 8;
-		ELSIF (c = 'x') OR (c = 'u') THEN
+		ELSIF (c = 'x') THEN
 			INC(pos, 2); base := 16;
 		END;
 	END;
 
-	IF (pos >= len) OR ~IsDigit(number[pos], base, d) THEN
+	IF ~IsDigit(CharOrDefault(number, pos, len), base, d) THEN
 		value := 0;
 		RETURN FALSE;
 	END;
 
 	answer := d; INC(pos);
-	WHILE (pos < len ) & IsDigit(number[pos], base, d) DO
+	WHILE IsDigit(CharOrDefault(number, pos, len), base, d) DO
 		IF answer > MAX(ADDRESS) DIV base THEN
 			value := MAX(ADDRESS);
 			RETURN FALSE;
@@ -1071,7 +1304,7 @@ BEGIN
 		IF (string[i] = "+") OR (string[i] = "-") THEN
 			negative := (string[i] = "-"); INC(i);
 		END;
-		ASSERT(TryScanUInt32At(i, string, radix16, answer, res));
+		ASSERT(TryScanUInt32At(i, string, 16, answer, res));
 		IF negative THEN val := -SIGNED32(answer) ELSE val := SIGNED32(answer) END;
 	END;
 END HexStrToInt;
@@ -1085,7 +1318,7 @@ BEGIN
 	(* skip whitespace *)
 	WHILE (i < length) & (string[i] # 0X) & (string[i] <= " ") DO INC(i); END;
 	IF (i < length) THEN
-		ASSERT(TryScanUInt32At(i, string, radix16, val, res));
+		ASSERT(TryScanUInt32At(i, string, 16, val, res));
 	END;
 END HexStrToUInt32;
 
@@ -1237,7 +1470,7 @@ END Equal;
 PROCEDURE ContainsChar*(CONST string : ARRAY OF CHAR; ch : CHAR; ignoreCase : BOOLEAN) : BOOLEAN;
 BEGIN
 	IF ignoreCase THEN
-		RETURN (Find (string, 0, LOW (ch)) # -1) & (Find (string, 0, UP (ch)) # -1)
+		RETURN (Find (string, 0, LOW (ch)) # -1) OR (Find (string, 0, UP (ch)) # -1)
 	ELSE
 		RETURN Find (string, 0, ch) # -1
 	END
@@ -1374,41 +1607,123 @@ BEGIN
 	RETURN n;
 END UpperCaseInNew;
 
+(** Checks if a character is a valid digit for a specified radix
+
+    The [[IsDigit]] function determines if a given character is a valid digit for a specified number base (radix). It is a general-purpose utility used by parsing procedures.
+
+    == Parameters
+    |= Parameter |= Description |
+    | c | The character to be checked. |
+    | radix | The number base (from 2 to 36). |
+    | d | Output. The numeric value of the digit if the character is valid. |
+
+    == Return Value
+    Returns TRUE if `c` is a valid digit for the given `radix`, otherwise FALSE.
+
+    == Details
+    The function is case-insensitive and supports digits '0'-'9' and letters 'A'-'Z' for values 10-35. It returns FALSE if the radix is outside the range of 2-36.
+*)
 PROCEDURE IsDigit*(c: CHAR; radix: UNSIGNED32; VAR d: SIGNED32): BOOLEAN;
-VAR t: UNSIGNED32;
+VAR val: SIGNED32;
 BEGIN
-	t := ORD32(c) - ORD32('0');
-	IF t > radix10 THEN
-		t := ORD32(CAP(c)) - ORD32('A') + 10;
+	IF (radix < 2) OR (radix > 36) THEN
+		RETURN FALSE;
 	END;
-	d := SIGNED32(t);
-	RETURN t < radix;
+
+	VAR code := ORD32(CAP(c));
+
+	IF (code >= ORD32('0')) & (code <= ORD32('9')) THEN
+		val := code - ORD32('0');
+	ELSIF (code >= ORD32('A')) & (code <= ORD32('Z')) THEN
+		val := code - ORD32('A') + 10;
+	ELSE
+		RETURN FALSE;
+	END;
+
+	IF val < radix THEN
+		d := val;
+		RETURN TRUE;
+	ELSE
+		RETURN FALSE;
+	END;
 END IsDigit;
 
+(** Checks if a character is a decimal digit (0-9)
+
+    The [[IsDecimal]] function is a specialized and optimized version of [[IsDigit]] that checks if a character is a valid decimal digit (base 10).
+
+    == Parameters
+    |= Parameter |= Description |
+    | c | The character to be checked. |
+    | d | Output. The numeric value of the digit (0-9) if the character is valid. |
+
+    == Return Value
+    Returns TRUE if `c` is a decimal digit ('0'-'9'), otherwise FALSE.
+*)
 PROCEDURE IsDecimal*(c: CHAR; VAR d: SIGNED32): BOOLEAN;
-VAR t: UNSIGNED32;
+VAR code: SIGNED32;
 BEGIN
-  t := ORD32(c) - ORD32('0');
-  IF t < radix10 THEN
-	d := SIGNED32(t);
-	RETURN TRUE
+	code := ORD32(c);
+	IF (code >= ORD32('0')) & (code <= ORD32('9')) THEN
+		d := code - ORD32('0');
+		RETURN TRUE;
+	ELSE
+		RETURN FALSE;
   END;
-  RETURN FALSE
 END IsDecimal;
 
+(** Checks if a character is a hexadecimal digit (0-9, A-F)
+
+    The [[IsHexadecimal]] function is a specialized version of [[IsDigit]] that checks if a character is a valid hexadecimal digit (base 16).
+
+    == Parameters
+    |= Parameter |= Description |
+    | c | The character to be checked. |
+    | d | Output. The numeric value of the digit (0-15) if the character is valid. |
+
+    == Return Value
+    Returns TRUE if `c` is a hexadecimal digit ('0'-'9', 'A'-'F', 'a'-'f'), otherwise FALSE.
+
+    == Details
+    The function is case-insensitive.
+*)
 PROCEDURE IsHexadecimal*(c: CHAR; VAR d: SIGNED32): BOOLEAN;
-VAR t: UNSIGNED32;
+VAR code, val: UNSIGNED32;
 BEGIN
-	t := ORD32(c) - ORD32('0');
-	IF t >= radix10 THEN
-		t := ORD32(CAP(c)) - ORD32('A') + 10;
-		IF t >= radix16 THEN
-			RETURN FALSE;
-		END;
+	code := ORD32(CAP(c));
+
+	IF (code >= ORD32('0')) & (code <= ORD32('9')) THEN
+		val := code - ORD32('0');
+	ELSIF (code >= ORD32('A')) & (code <= ORD32('F')) THEN
+		val := code - ORD32('A') + 10;
+	ELSE
+		RETURN FALSE;
 	END;
-	d := SIGNED32(t);
+	d := SIGNED32(val);
 	RETURN TRUE;
 END IsHexadecimal;
+
+(** Safely retrieves a character from an array, providing a default on out-of-bounds access
+
+    The [[CharOrDefault]] function provides a safe way to access a character in an array by its index. It prevents runtime errors by returning a default character if the index is outside the array's bounds.
+
+    == Parameters
+    |= Parameter |= Description |
+    | s | The input character array (string). |
+    | pos | The index of the character to retrieve. |
+    | limit | The size limit of the array. |
+    | default | The character to return if `pos` is out of bounds. Defaults to the null character (0X). |
+
+    == Return Value
+    Returns the character at `s[pos]` if `pos` is less than `limit`. Otherwise, returns the `default` character.
+*)
+PROCEDURE CharOrDefault*(CONST s: ARRAY OF CHAR; pos, limit: SIZE; default := 0X: CHAR): CHAR;
+BEGIN
+	IF (pos >= 0) & (pos < limit) THEN
+		RETURN s[pos];
+	END;
+	RETURN default;
+END CharOrDefault;
 
 END Strings.
 
