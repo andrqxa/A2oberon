@@ -214,6 +214,7 @@ To update: Configuration.Init ~
 			<Section name="Image">
 				<Setting name="BMP" value="BMPCodec.EncoderFactory"/>
 				<Setting name="GIF" value="GIFCodec.ImageEncoderFactory"/>
+				<Setting name="PICT" value="PictCodec.EncoderFactory"/>
 			</Section>
 			<Section name="Video"/>
 			<Section name="Audio">
@@ -250,6 +251,7 @@ To update: Configuration.Init ~
 				<Setting name="JPG" value="JPEGDecoder.Factory"/>
 				<Setting name="SVG" value="SVGDecoder.Factory"/>
 				<Setting name="TIF" value="TIFCodec.DecoderFactory"/>
+				<Setting name="PICT" value="PictCodec.DecoderFactory"/>
 			</Section>
 			<Section name="Video">
 				<Setting name="DivX" value="DivXDecoder.Factory"/>
