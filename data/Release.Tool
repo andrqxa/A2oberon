@@ -891,8 +891,9 @@ PACKAGE ApplicationsMini ARCHIVE "ApplicationsMini.zip" SOURCE "ApplicationsMini
 	BIT.Mod
 
 	# Image codecs
-	PNGDecoder.Mod BMPCodec.Mod GIFCodec.Mod
+	PNGDecoder.Mod BMPCodec.Mod GIFCodec.Mod PictCodec.Mod
 	JPEGDecoder.Mod JPEGEncoder.Mod
+	
 
 	# Animation codecs
 	AnimationCodec.Mod
