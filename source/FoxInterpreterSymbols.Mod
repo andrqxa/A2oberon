@@ -467,6 +467,11 @@ TYPE
 								i:= SIGNED16(h); stack.PushI(i);
 								RETURN TRUE;
 							END;
+						| Reflection.sfTypeWORD :
+							IF v.GetInt(h) THEN
+								i:= SIGNED16(h); stack.PushI(i);
+								RETURN TRUE;
+							END;
 						| Reflection.sfTypeLONGINT,Reflection.sfTypeSIGNED32:
 							IF v.GetInt(h) THEN
 								l:= SIGNED32(h); stack.PushL(l);
@@ -558,6 +563,9 @@ TYPE
 					NEW(int, SIGNED8(stack.CallH(address)));
 					RETURN int;
 			| Reflection.sfTypeINTEGER,Reflection.sfTypeSIGNED16 :
+					NEW(int,  SIGNED16(stack.CallH(address)));
+					RETURN int;
+			| Reflection.sfTypeWORD :
 					NEW(int,  SIGNED16(stack.CallH(address)));
 					RETURN int;
 			| Reflection.sfTypeLONGINT,Reflection.sfTypeSIGNED32:
