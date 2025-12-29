@@ -11,7 +11,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 MODULE Complex IN Oberon;	(** portable *)
 
 IMPORT
-	Math IN A2, Files, Objects, Gadgets, Strings;
+	Math32 IN A2, Files, Objects, Gadgets, Strings;
 
 TYPE
 	Complex* = POINTER TO ComplexDesc;
@@ -23,19 +23,19 @@ PROCEDURE Phi(obj: Complex): FLOAT32;
 VAR x: FLOAT32;
 BEGIN
 	IF obj.real = 0.0 THEN
-		IF obj.imag < 0.0 THEN x := (Math.pi / 2)*3
+		IF obj.imag < 0.0 THEN x := (Math32.pi / 2)*3
 		ELSIF obj.imag = 0.0 THEN x := 0.0
-		ELSE x := Math.pi / 2
+		ELSE x := Math32.pi / 2
 		END
 	ELSE
 		IF obj.imag = 0.0 THEN
-			IF obj.real < 0.0 THEN x := Math.pi
+			IF obj.real < 0.0 THEN x := Math32.pi
 			ELSE x := 0.0
 			END
 		ELSE
-			x := Math.arctan(obj.imag/obj.real);
-			IF obj.real < 0 THEN x := Math.pi + x
-			ELSIF obj.imag < 0 THEN x := Math.pi*2 + x
+			x := Math32.arctan(obj.imag/obj.real);
+			IF obj.real < 0 THEN x := Math32.pi + x
+			ELSIF obj.imag < 0 THEN x := Math32.pi*2 + x
 			END
 		END
 	END;
@@ -58,7 +58,7 @@ BEGIN
 					IF M.name = "Gen" THEN M.class := Objects.String; COPY("Complex.New", M.s); M.res := 0
 					ELSIF M.name = "Real" THEN M.class := Objects.Real; M.x := obj.real; M.res := 0
 					ELSIF M.name = "Imag" THEN M.class := Objects.Real; M.x := obj.imag; M.res := 0
-					ELSIF M.name = "Rho" THEN M.class := Objects.Real; M.x := Math.sqrt(obj.real*obj.real + obj.imag*obj.imag); M.res := 0
+					ELSIF M.name = "Rho" THEN M.class := Objects.Real; M.x := Math32.sqrt(obj.real*obj.real + obj.imag*obj.imag); M.res := 0
 					ELSIF M.name = "Phi" THEN M.class := Objects.Real; M.x := Phi(obj); M.res := 0
 					ELSE Gadgets.objecthandle(obj, M)
 					END
@@ -73,14 +73,14 @@ BEGIN
 						IF M.class = Objects.String THEN Strings.StrToReal(M.s, x); M.x := SHORT(x); M.class := Objects.Real END;
 						IF M.class = Objects.Real THEN
 							x := Phi(obj);
-							obj.real := M.x*Math.cos(SHORT(x)); obj.imag := M.x*Math.sin(SHORT(x));
+							obj.real := M.x*Math32.cos(SHORT(x)); obj.imag := M.x*Math32.sin(SHORT(x));
 							M.res := 0
 						END
 					ELSIF M.name = "Phi" THEN
 						IF M.class = Objects.String THEN Strings.StrToReal(M.s, x); M.x := SHORT(x); M.class := Objects.Real END;
 						IF M.class = Objects.Real THEN
-							x := Math.sqrt(obj.real*obj.real + obj.imag*obj.imag);
-							obj.real := SHORT(x*Math.cos(M.x)); obj.imag := SHORT(x*Math.sin(M.x));
+							x := Math32.sqrt(obj.real*obj.real + obj.imag*obj.imag);
+							obj.real := SHORT(x*Math32.cos(M.x)); obj.imag := SHORT(x*Math32.sin(M.x));
 							M.res := 0
 						END
 					ELSIF M.name = "Value" THEN (* cannot be set *)

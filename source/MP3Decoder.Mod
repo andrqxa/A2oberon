@@ -1,7 +1,7 @@
 (* MP3 Decoder written by Christof Dornbierer , adapted to Codecs by Urs Müller, cleaned by PL *)
 MODULE MP3Decoder;
 
-IMPORT SYSTEM, Files, Streams, KernelLog,  Math, SoundDevices, Codecs;
+IMPORT SYSTEM, Files, Streams, KernelLog,  Math32, SoundDevices, Codecs;
 
 CONST 	MAXBUF = 4096;
 		MPEGLAYER1 = 1;
@@ -1858,22 +1858,22 @@ BEGIN
 
 	ISPOW[0] := 0.0;
 	FOR i:= 1 TO 8206 DO
-		ISPOW[i] := Math.exp(4/3*Math.ln(i));
+		ISPOW[i] := Math32.exp(4/3*Math32.ln(i));
 	END;
 
-	LN2 := Math.ln(2);
+	LN2 := Math32.ln(2);
 
 	FOR i:= 0 TO 255 DO
-		GGPOW[i] :=Math.exp( 0.25 * (i -210.0) * LN2);
+		GGPOW[i] :=Math32.exp( 0.25 * (i -210.0) * LN2);
 	END;
 
 	FOR i:= 0 TO 7 DO
-		SGPOW[i] := Math.exp( -2.0 * i * LN2);
+		SGPOW[i] := Math32.exp( -2.0 * i * LN2);
 	END;
 
 	FOR i:= 0 TO 1 DO
 		FOR j:= 0 TO 15 DO
-			SFSPOW[i][j] := Math.exp( -0.5 * (1.0 + i) * j * LN2);
+			SFSPOW[i][j] := Math32.exp( -0.5 * (1.0 + i) * j * LN2);
 		END;
 	END;
 
@@ -1881,7 +1881,7 @@ BEGIN
 		FOR j:= 0 TO 15 DO
 			FOR k:= 0 TO 1 DO
 				FOR l:= 0 TO 21 DO
-					SFLPOW[i][j][k][l] := Math.exp( (-0.5 * (1.0 + i) * (j + (k*PRETAB[l]))) * LN2);
+					SFLPOW[i][j][k][l] := Math32.exp( (-0.5 * (1.0 + i) * (j + (k*PRETAB[l]))) * LN2);
 				END;
 			END;
 		END;
@@ -1890,7 +1890,7 @@ BEGIN
 	(* Init tangens table for joint stereo processing *)
 
 	FOR i:= 0 TO 7 DO
-		STEREOTAN[i] := Math.sin(i * Math.pi /12) / Math.cos(i * Math.pi /12);
+		STEREOTAN[i] := Math32.sin(i * Math32.pi /12) / Math32.cos(i * Math32.pi /12);
 	END;
 
 	(* Init tables used to reduce antialiasing *)
@@ -1899,30 +1899,30 @@ BEGIN
 	CI[4] := -0.095; CI[5] := -0.041; CI[6] := -0.0142; CI[7] := -0.0037;
 
 	FOR i := 0 TO 7 DO
-		sq := Math.sqrt(1.0 + CI[i]*CI[i]);
+		sq := Math32.sqrt(1.0 + CI[i]*CI[i]);
 		CS[i] := 1.0 / sq;
 		CA[i] := CI[i]/sq;
 	END;
 
 	(* Init table for IMDCT *)
 	FOR i:=0 TO 35 DO
-		IMDCTWIN[0][i] := Math.sin(Math.pi / 36 * (i + 0.5));
+		IMDCTWIN[0][i] := Math32.sin(Math32.pi / 36 * (i + 0.5));
 	END;
 		FOR i:=0 TO 17 DO
-		IMDCTWIN[1][i] := Math.sin(Math.pi / 36 * (i + 0.5));
+		IMDCTWIN[1][i] := Math32.sin(Math32.pi / 36 * (i + 0.5));
 	END;
 	FOR i:=18 TO 23 DO
 		IMDCTWIN[1][i] := 1.0;
 	END;
 	FOR i:=24 TO 29 DO
-		IMDCTWIN[1][i] := Math.sin(Math.pi / 12 * (i + 0.5 - 18.0));
+		IMDCTWIN[1][i] := Math32.sin(Math32.pi / 12 * (i + 0.5 - 18.0));
 	END;
 	FOR i:=30 TO 35 DO
 		IMDCTWIN[1][i] := 0.0;
 	END;
 
 	FOR i:=0 TO 11 DO
-		IMDCTWIN[2][i] := Math.sin(Math.pi / 12 * (i + 0.5));
+		IMDCTWIN[2][i] := Math32.sin(Math32.pi / 12 * (i + 0.5));
 	END;
 	FOR i:=12 TO 35 DO
 		IMDCTWIN[2][i] := 0.0;
@@ -1932,44 +1932,44 @@ BEGIN
 		IMDCTWIN[3][i] := 0.0;
 	END;
 	FOR i:=6 TO 11 DO
-		IMDCTWIN[3][i] := Math.sin(Math.pi / 12 * (i + 0.5 - 6.0));
+		IMDCTWIN[3][i] := Math32.sin(Math32.pi / 12 * (i + 0.5 - 6.0));
 	END;
 	FOR i:=12 TO 17 DO
 		IMDCTWIN[3][i] := 1.0;
 	END;
 	FOR i:=18 TO 35 DO
-		IMDCTWIN[3][i] := Math.sin(Math.pi / 36 * (i + 0.5));
+		IMDCTWIN[3][i] := Math32.sin(Math32.pi / 36 * (i + 0.5));
 	END;
 
 	FOR i:= 0 TO 2 DO
-		POSTTWIDDLE6[i] := 1.0 / (2.0 * Math.cos((2 * i + 1) * (Math.pi / (2 * 6))));
+		POSTTWIDDLE6[i] := 1.0 / (2.0 * Math32.cos((2 * i + 1) * (Math32.pi / (2 * 6))));
 	END;
 
 	FOR i:= 0 TO 3 DO
-		POSTTWIDDLE9[i] := 1.0 / (2.0 * Math.cos((2 * i + 1) * (Math.pi / (2 * 9))));
+		POSTTWIDDLE9[i] := 1.0 / (2.0 * Math32.cos((2 * i + 1) * (Math32.pi / (2 * 9))));
 	END;
 
 	FOR i:= 0 TO 5 DO
-		POSTTWIDDLE12[i] := 1.0 / (2.0 * Math.cos((2 * i + 1) * (Math.pi / (2 * 12))));
+		POSTTWIDDLE12[i] := 1.0 / (2.0 * Math32.cos((2 * i + 1) * (Math32.pi / (2 * 12))));
 	END;
 
 	FOR i:= 0 TO 8 DO
-		POSTTWIDDLE18[i] := 1.0 / (2.0 * Math.cos((2 * i + 1) * (Math.pi / (2 * 18))));
+		POSTTWIDDLE18[i] := 1.0 / (2.0 * Math32.cos((2 * i + 1) * (Math32.pi / (2 * 18))));
 	END;
 
 	FOR i:= 0 TO 17 DO
-		POSTTWIDDLE36[i] := 1.0 / (2.0 * Math.cos((2 * i + 1) * (Math.pi / (2 * 36))));
+		POSTTWIDDLE36[i] := 1.0 / (2.0 * Math32.cos((2 * i + 1) * (Math32.pi / (2 * 36))));
 	END;
 
 	FOR i:=0 TO 4 DO
-		IMDCTCOS[i] := Math.cos((i * Math.pi) / 9);
+		IMDCTCOS[i] := Math32.cos((i * Math32.pi) / 9);
 	END;
 
 	FOR i:=0 TO 3 DO
-		IMDCTSIN[i] := Math.sin((2 * i + 1) * (Math.pi / 18));
+		IMDCTSIN[i] := Math32.sin((2 * i + 1) * (Math32.pi / 18));
 	END;
 
-	IMDCTSQRT := Math.sqrt(3) / 2;
+	IMDCTSQRT := Math32.sqrt(3) / 2;
 
 	(* Init table for Subband Synthesis *)
 
@@ -2102,14 +2102,14 @@ BEGIN
 	GS[504] := 0.000030518; GS[505] := 0.000030518; GS[506] := 0.000015259; GS[507] := 0.000015259;
 	GS[508] := 0.000015259; GS[509] := 0.000015259; GS[510] := 0.000015259; GS[511] := 0.000015259;
 
-	DCTCOS[0][0] := Math.cos((2 * 0 + 1) * 0 * (Math.pi/4));
-	DCTCOS[0][1] := Math.cos((2 * 0 + 1) * 1* (Math.pi/4));
-	DCTCOS[1][0] := Math.cos((2 * 1 + 1) * 0 * (Math.pi/4));
-	DCTCOS[1][1] := Math.cos((2 * 1 + 1) * 1 * (Math.pi/4));
+	DCTCOS[0][0] := Math32.cos((2 * 0 + 1) * 0 * (Math32.pi/4));
+	DCTCOS[0][1] := Math32.cos((2 * 0 + 1) * 1* (Math32.pi/4));
+	DCTCOS[1][0] := Math32.cos((2 * 1 + 1) * 0 * (Math32.pi/4));
+	DCTCOS[1][1] := Math32.cos((2 * 1 + 1) * 1 * (Math32.pi/4));
 
 	FOR j:=0 TO 32 DO
 		FOR i:= 0 TO 15 DO
-			DCTTWIDDLE[i][j] := 1.0 / (2.0 * Math.cos((2 * i + 1) * (Math.pi / (2 * j))));
+			DCTTWIDDLE[i][j] := 1.0 / (2.0 * Math32.cos((2 * i + 1) * (Math32.pi / (2 * j))));
 		END;
 	END;
 

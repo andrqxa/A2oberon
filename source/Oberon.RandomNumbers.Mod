@@ -3,7 +3,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 
 MODULE RandomNumbers IN Oberon;	(** portable *)
 (* Random Number Generator, page 12 *)
-IMPORT SYSTEM, Math IN A2, Oberon;
+IMPORT SYSTEM, Math32 IN A2, Oberon;
 
 VAR Z, t, d: SIGNED32;
 
@@ -24,7 +24,7 @@ END Uniform;
 
 PROCEDURE Exp*(mu: FLOAT32): FLOAT32;
 BEGIN
-	RETURN -Math.ln(Uniform())/mu
+	RETURN -Math32.ln(Uniform())/mu
 END Exp;
 
 (** Initialize the random number seed. *)

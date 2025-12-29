@@ -5,7 +5,7 @@ MODULE Clocks IN Oberon; (** portable *)	(* Fri, 23-Apr-1993*)
 
 IMPORT
 	Input, Dates, Strings, Display, Display3, Printer, Printer3, Texts, Objects, Gadgets, Oberon,
-	Fonts, Math IN A2, Files, Modules;
+	Fonts, Math32 IN A2, Files, Modules;
 
 CONST
 	tickId* = 0; alarmId* = 1;
@@ -178,8 +178,8 @@ PROCEDURE Line2(M: Display3.Mask; ang: SIGNED16; x0, y0, r1, r2, color: SIGNED16
 	VAR x1, y1, x2, y2: SIGNED16; s,c,a : FLOAT32;
 BEGIN
 	ang := (15-ang) MOD 60;
-	a := 2 * Math.pi / 60 * ang;
-	s := Math.sin(a); c := Math.cos(a);
+	a := 2 * Math32.pi / 60 * ang;
+	s := Math32.sin(a); c := Math32.cos(a);
 	x1 := SHORT(ENTIER(r1*c + 0.5));
 	y1 := SHORT(ENTIER(r1*s + 0.5));
 	x2 := SHORT(ENTIER(r2*c + 0.5));
@@ -264,8 +264,8 @@ PROCEDURE PrintClock(F: Clock; VAR M: Display.DisplayMsg);
 		VAR x1, y1, x2, y2: SIGNED16; s,c,a : FLOAT32;
 	BEGIN
 		ang := (15-ang) MOD 60;
-		a := 2 * Math.pi / 60 * ang;
-		s := Math.sin(a); c := Math.cos(a);
+		a := 2 * Math32.pi / 60 * ang;
+		s := Math32.sin(a); c := Math32.cos(a);
 		x1 := SHORT(ENTIER(r1*c + 0.5));
 		y1 := SHORT(ENTIER(r1*s + 0.5));
 		x2 := SHORT(ENTIER(r2*c + 0.5));

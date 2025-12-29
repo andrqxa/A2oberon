@@ -3,7 +3,7 @@ MODULE W3dClusterWatch;	(** AUTHOR "TF"; PURPOSE "Simple 3d viewer"; *)
 
 IMPORT
 (* Low level *)
-	KernelLog, Kernel, MathL, Streams, Modules, Files, Commands,
+	KernelLog, Kernel, Math64, Streams, Modules, Files, Commands,
 	Strings,
 (* Window Manager *)
 	WM := WMWindowManager, Rect := WMRectangles, Raster, WMGraphics,
@@ -246,7 +246,7 @@ TYPE
 		PROCEDURE Render;
 		VAR pos, dir, up : Vectors.TVector3d;
 		BEGIN {EXCLUSIVE}
-			pos := Vectors.VAdd3(lookat, Vectors.Vector3d(MathL.cos(angle) * radius, 0, MathL.sin(angle) * radius)); pos.y := height;
+			pos := Vectors.VAdd3(lookat, Vectors.Vector3d(Math64.cos(angle) * radius, 0, Math64.sin(angle) * radius)); pos.y := height;
 			lookat := Vectors.Vector3d(lookat.x, height, lookat.z);
 			dir := Vectors.VNormed3(Vectors.VSub3(lookat, pos));
 			up := Vectors.Vector3d(0, 1, 0);

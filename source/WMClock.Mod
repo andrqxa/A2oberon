@@ -1,7 +1,7 @@
 MODULE WMClock; (** AUTHOR "TF/staubesv"; PURPOSE "Clock components & clock application"; *)
 
 IMPORT
-	Modules, Kernel, Math, Dates, Strings, Locks, XML, Raster, WMRasterScale, WMRectangles, WMGraphics, WMGraphicUtilities,
+	Modules, Kernel, Math32, Dates, Strings, Locks, XML, Raster, WMRasterScale, WMRectangles, WMGraphics, WMGraphicUtilities,
 	WMWindowManager, WMPopups, WMRestorable, WMMessages, WMComponents, WMProperties;
 
 CONST
@@ -318,9 +318,9 @@ TYPE
 			BEGIN
 				lengthX := handLengthInPercent * bounds.GetWidth() DIV 2 DIV 100;
 				lengthY := handLengthInPercent * bounds.GetHeight() DIV 2 DIV 100;
-				radiants := (angle / 360) * 2*Math.pi;
-				deltaX := ENTIER(lengthX * Math.sin(radiants) + 0.5);
-				deltaY := ENTIER(lengthY * Math.cos(radiants) + 0.5);
+				radiants := (angle / 360) * 2*Math32.pi;
+				deltaX := ENTIER(lengthX * Math32.sin(radiants) + 0.5);
+				deltaY := ENTIER(lengthY * Math32.cos(radiants) + 0.5);
 				canvas.Line(centerX, centerY, centerX + deltaX, centerY - deltaY, color, WMGraphics.ModeSrcOverDst);
 			END DrawLine;
 

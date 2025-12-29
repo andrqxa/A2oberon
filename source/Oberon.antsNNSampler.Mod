@@ -26,7 +26,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 IMPORT antsObjects, Files, antsKernel, antsModels, antsCommands, vyName, Objects, vyBase, Gadgets, antsFunctions,
-	antsArrayObjects, antsSecurity, vyRanBase, vyRandom, Math := MathL IN A2, Links, antsArrays, aM := antsMessages;
+	antsArrayObjects, antsSecurity, vyRanBase, vyRandom, Math := Math64 IN A2, Links, antsArrays, aM := antsMessages;
 
 TYPE
 	tModel* = POINTER TO tModelDesc;

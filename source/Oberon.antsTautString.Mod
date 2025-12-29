@@ -29,7 +29,7 @@ Stefan Brandt, 2003
 Alexandra Hutzenthaler, 2003
 *)
 
-IMPORT aC := antsCommands, aA := antsArrays, antsSecurity, vyBase, vyLongreal, vyLongrealVec, vyName, math := MathL IN A2, antsTautStringTree;
+IMPORT aC := antsCommands, aA := antsArrays, antsSecurity, vyBase, vyLongreal, vyLongrealVec, vyName, math := Math64 IN A2, antsTautStringTree;
 
 TYPE
 	Statistic* = POINTER TO StatisticDesc;

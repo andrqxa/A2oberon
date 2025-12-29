@@ -2,7 +2,7 @@
 
 MODULE Performance; (** AUTHOR "pjm"; PURPOSE "Performance measurements"; *)
 
-IMPORT KernelLog, Machine, Modules, Objects, Kernel, Random, Math;
+IMPORT KernelLog, Machine, Modules, Objects, Kernel, Random, Math32;
 
 CONST
 	LoadPeriod = 5;	(* load sample interval in seconds *)
@@ -55,9 +55,9 @@ TYPE
 		BEGIN
 			Init^(period, randomized);
 			load[0] := 0; load[1] := 0; load[2] := 0;
-			exp[0] := 1/Math.exp(period/(Time0*60));
-			exp[1] := 1/Math.exp(period/(Time1*60));
-			exp[2] := 1/Math.exp(period/(Time2*60))
+			exp[0] := 1/Math32.exp(period/(Time0*60));
+			exp[1] := 1/Math32.exp(period/(Time1*60));
+			exp[2] := 1/Math32.exp(period/(Time2*60))
 		END Init;
 
 		PROCEDURE Compute(loops: SIGNED32);

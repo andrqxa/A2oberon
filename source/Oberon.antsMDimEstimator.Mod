@@ -29,7 +29,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 IMPORT antsObjects, vyGraphBase, vyPort, vyLongrealVec, vyDisplay2d, antsInteractivePar, antsNeighbourhoods,
-	vyHostStrings, antsArrayObjects, MathL IN A2, antsCommands, vyBase, antsDirSet, vyHostTexts, vyName, vyLinks, Objects, Files,
+	vyHostStrings, antsArrayObjects, Math64 IN A2, antsCommands, vyBase, antsDirSet, vyHostTexts, vyName, vyLinks, Objects, Files,
 	Gadgets, antsSecurity, aM := antsMessages;
 
 TYPE
@@ -75,7 +75,7 @@ VAR
 	BEGIN
 		theta := 0;
 		FOR k := 1 TO dim DO theta := theta + par[k] * temptable[pos, k];  END;
-		theta := theta + par[0];  RETURN -(theta * temptable[pos, 0]) + MathL.ln( MathL.exp( theta ) + MathL.exp( -theta ) );
+		theta := theta + par[0];  RETURN -(theta * temptable[pos, 0]) + Math64.ln( Math64.exp( theta ) + Math64.exp( -theta ) );
 	END Calc;
 
 	PROCEDURE IsingPMLE( o: antsArrayObjects.tObject;  dim: SIGNED32;  par: ARRAY OF FLOAT64 ): FLOAT64;

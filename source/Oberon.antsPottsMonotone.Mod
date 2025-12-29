@@ -29,7 +29,7 @@ Angela Kempe, 2003
 *)
 
 
-IMPORT Math := MathL IN A2, Out, vyLongreal, vyLongrealVec, vyBase, antsCommands, Input, vyName, Display3, vyLinks, vyPort, aM := antsMessages, vyHostStrings,
+IMPORT Math := Math64 IN A2, Out, vyLongreal, vyLongrealVec, vyBase, antsCommands, Input, vyName, Display3, vyLinks, vyPort, aM := antsMessages, vyHostStrings,
 	antsReadWrite, Objects, antsSecurity, Texts, vyHostTexts, Gadgets, Attributes, antsBellman, antsArrays, antsVecOpt, antsPotts1DSurvey;
 
 CONST

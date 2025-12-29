@@ -12,7 +12,7 @@ MODULE Asteroids IN Oberon;	(** portable *)	(* by W. Ibl *)
 	Okt '97	V1.5	added pause button
 *)
 IMPORT Attributes,Desktops,Display,Display3,Documents,Effects,Files,Fonts,
-			  Gadgets,Strings,Modules,Math IN A2,Oberon,Objects,Out,Panels,
+			  Gadgets,Strings,Modules,Math32 IN A2,Oberon,Objects,Out,Panels,
 			  RandomNumbers;
 CONST
 	(* Program version *)
@@ -265,13 +265,13 @@ END Sign;
 PROCEDURE TransX(x,y: SIGNED16; p,v: FLOAT32): FLOAT32;
 	(* Transform x-coord - shift and rotate *)
 BEGIN
-	RETURN((x*Math.cos(p)+y*Math.sin(p))+v);
+	RETURN((x*Math32.cos(p)+y*Math32.sin(p))+v);
 END TransX;
 
 PROCEDURE TransY(x,y: SIGNED16; p,v: FLOAT32): FLOAT32;
 	(* Transform y-coord - shift and rotate *)
 BEGIN
-	RETURN((-x*Math.sin(p)+y*Math.cos(p))+v);
+	RETURN((-x*Math32.sin(p)+y*Math32.cos(p))+v);
 END TransY;
 
 PROCEDURE Model(D: Object): Field;

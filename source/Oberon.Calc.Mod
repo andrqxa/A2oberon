@@ -3,7 +3,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 
 MODULE Calc IN Oberon;	(** portable *)	(* CAS 28.9.93 / tk adapted for System 3 1.6.95*)
 	IMPORT
-		MathL IN A2, Texts, Oberon;
+		Math64 IN A2, Texts, Oberon;
 
 	CONST
 		Version = "Calc / cas 28.9.93";
@@ -60,45 +60,45 @@ MODULE Calc IN Oberon;	(** portable *)	(* CAS 28.9.93 / tk adapted for System 3 
 
 
 	PROCEDURE sin (n: FLOAT64): FLOAT64;
-	BEGIN RETURN MathL.sin(n)
+	BEGIN RETURN Math64.sin(n)
 	END sin;
 
 	PROCEDURE cos (n: FLOAT64): FLOAT64;
-	BEGIN RETURN MathL.cos(n)
+	BEGIN RETURN Math64.cos(n)
 	END cos;
 
 	PROCEDURE tan (n: FLOAT64): FLOAT64;
 		VAR x: FLOAT64;
-	BEGIN x := MathL.cos(n);
-		IF x # 0 THEN RETURN MathL.sin(n) / x ELSE err; RETURN 1 END
+	BEGIN x := Math64.cos(n);
+		IF x # 0 THEN RETURN Math64.sin(n) / x ELSE err; RETURN 1 END
 	END tan;
 
 	PROCEDURE arcsin (n: FLOAT64): FLOAT64;
 		VAR x: FLOAT64;
-	BEGIN x := MathL.sqrt(1 - n * n);
-		IF x # 0 THEN RETURN MathL.arctan(n / x) ELSE err; RETURN 1 END
+	BEGIN x := Math64.sqrt(1 - n * n);
+		IF x # 0 THEN RETURN Math64.arctan(n / x) ELSE err; RETURN 1 END
 	END arcsin;
 
 	PROCEDURE arccos (n: FLOAT64): FLOAT64;
-	BEGIN RETURN MathL.pi / 2 - arcsin(n)
+	BEGIN RETURN Math64.pi / 2 - arcsin(n)
 	END arccos;
 
 	PROCEDURE arctan (n: FLOAT64): FLOAT64;
-	BEGIN RETURN MathL.arctan(n)
+	BEGIN RETURN Math64.arctan(n)
 	END arctan;
 
 	PROCEDURE exp (n: FLOAT64): FLOAT64;
-	BEGIN RETURN MathL.exp(n)
+	BEGIN RETURN Math64.exp(n)
 	END exp;
 
 	PROCEDURE ln (n: FLOAT64): FLOAT64;
 	BEGIN
-		IF n > 0 THEN RETURN MathL.ln(n) ELSE err; RETURN 1 END
+		IF n > 0 THEN RETURN Math64.ln(n) ELSE err; RETURN 1 END
 	END ln;
 
 	PROCEDURE sqrt (n: FLOAT64): FLOAT64;
 	BEGIN
-		IF n >= 0 THEN RETURN MathL.sqrt(n) ELSE err; RETURN 1 END
+		IF n >= 0 THEN RETURN Math64.sqrt(n) ELSE err; RETURN 1 END
 	END sqrt;
 
 
@@ -233,8 +233,8 @@ MODULE Calc IN Oberon;	(** portable *)	(* CAS 28.9.93 / tk adapted for System 3 
 	PROCEDURE InitSyms;
 		VAR s: Symbol; n: FLOAT64; name: ARRAY 2 OF CHAR;
 	BEGIN name[1] := 0X;
-		name[0] := "e"; n := MathL.e; FindIdent(name, TRUE, n);
-		n := MathL.pi; FindIdent("pi", TRUE, n);
+		name[0] := "e"; n := Math64.e; FindIdent(name, TRUE, n);
+		n := Math64.pi; FindIdent("pi", TRUE, n);
 		n := 0;
 		NEW(s); FindFunct("arctan", TRUE, s);
 		NEW(s); FindFunct("arccos", TRUE, s);
@@ -295,7 +295,7 @@ MODULE Calc IN Oberon;	(** portable *)	(* CAS 28.9.93 / tk adapted for System 3 
 	BEGIN Atom(n);
 		WHILE (S.class = Texts.Char) & (S.c = "^") DO
 			Scan(S); Factor(x);
-			n := sign(n) * MathL.exp(MathL.ln(ABS(n)) * x)
+			n := sign(n) * Math64.exp(Math64.ln(ABS(n)) * x)
 		END
 	END Factor;
 

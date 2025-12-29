@@ -26,7 +26,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 IMPORT antsFunctions, antsCommands, vyBase, Objects, antsSecurity, antsArrayObjects, vyName, antsPlots,
-	antsNeighbourhoods, Math := MathL IN A2, vyRandom, vyLongreal, Files, Gadgets, antsObjects, antsToolbox, Attributes, Strings,
+	antsNeighbourhoods, Math := Math64 IN A2, vyRandom, vyLongreal, Files, Gadgets, antsObjects, antsToolbox, Attributes, Strings,
 	vyInteger, aM := antsMessages;
 
 TYPE

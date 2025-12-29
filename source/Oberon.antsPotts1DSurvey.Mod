@@ -52,7 +52,7 @@ Last date: August 2, 2002
 (* ported to Oberon 010315 ak & fof *)
 
 
-IMPORT Math := MathL IN A2, vyLongreal, vyLongrealVec, vyBase, antsCommands, Input, vyName, Display3, vyLinks, vyPort,
+IMPORT Math := Math64 IN A2, vyLongreal, vyLongrealVec, vyBase, antsCommands, Input, vyName, Display3, vyLinks, vyPort,
 	aM := antsMessages, vyHostStrings, antsReadWrite, Objects, antsSecurity, Texts, vyHostTexts, Gadgets, Attributes,
 	antsBellman, antsArrays, antsVecOpt, vySize;
 

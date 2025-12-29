@@ -12,7 +12,7 @@ MODULE BenchInterrupts; (** AUTHOR "staubesv"; PURPOSE "Interrupt latency benchm
 
 IMPORT
 	SYSTEM,
-	Machine, Heaps, Streams, Commands, MathL;
+	Machine, Heaps, Streams, Commands, Math64;
 
 CONST
 	(*	Interrupt vector number for 1st level interrupt handler benchmark
@@ -108,7 +108,7 @@ BEGIN {EXCLUSIVE}
 			diff := avg - data[i];
 			diffSum := diffSum + (diff * diff);
 		END;
-		standardDeviation := MathL.sqrt(diffSum / nofSamples);
+		standardDeviation := Math64.sqrt(diffSum / nofSamples);
 		context.out.String("NofSamples: "); context.out.Int(nofSamples, 0); context.out.Ln;
 		context.out.String("Nof GC runs while benchmarking: "); context.out.Int(ngc, 0); context.out.Ln;
 		context.out.String("CPU clock rate: ");

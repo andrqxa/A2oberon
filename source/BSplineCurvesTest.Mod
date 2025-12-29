@@ -5,7 +5,7 @@ MODULE BSplineCurvesTest;
 *)
 
 IMPORT
-	BSplineCurves, KernelLog, MathL, Kernel;
+	BSplineCurves, KernelLog, Math64, Kernel;
 
 	PROCEDURE Test*;
 	VAR
@@ -25,10 +25,10 @@ IMPORT
 
 		(* use knots as points on an ellipse *)
 		NEW(kx,N); NEW(ky,N);
-		d := 2.0D0*MathL.pi / N; t := 0;
+		d := 2.0D0*Math64.pi / N; t := 0;
 		FOR i := 0 TO N-1 DO
-			kx[i] := 640*MathL.cos(t);
-			ky[i] := 480*MathL.sin(t);
+			kx[i] := 640*Math64.cos(t);
+			ky[i] := 480*Math64.sin(t);
 			t := t + d;
 		END;
 

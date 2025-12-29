@@ -9,7 +9,7 @@ MODULE GfxTest IN Oberon; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		Files, Display, Fonts, Math IN A2, Texts, Oberon, Printer, Images, PictImages,
+		Files, Display, Fonts, Math32 IN A2, Texts, Oberon, Printer, Images, PictImages,
 		GfxMatrix, GfxImages, GfxFonts, Gfx, GfxDisplay, GfxBuffer, GfxPrinter, GfxPS;
 
 
@@ -131,7 +131,7 @@ MODULE GfxTest IN Oberon; (** portable *)	(* eos  *)
 		FOR i := 1 TO 5 DO
 			Gfx.LineTo(Ctxt, 72, 0);
 			Gfx.Translate(Ctxt, Ctxt.cpx, Ctxt.cpy);
-			Gfx.Rotate(Ctxt, Math.sin(-4*Math.pi/5), Math.cos(-4*Math.pi/5))
+			Gfx.Rotate(Ctxt, Math32.sin(-4*Math32.pi/5), Math32.cos(-4*Math32.pi/5))
 		END;
 		Gfx.Close(Ctxt);
 		Gfx.End(Ctxt)
@@ -147,7 +147,7 @@ MODULE GfxTest IN Oberon; (** portable *)	(* eos  *)
 		FOR i := 1 TO 4 DO
 			Gfx.LineTo(Ctxt, 72, 0);
 			Gfx.Translate(Ctxt, Ctxt.cpx, Ctxt.cpy);
-			Gfx.Rotate(Ctxt, Math.sin(-4*Math.pi/5), Math.cos(-4*Math.pi/5))
+			Gfx.Rotate(Ctxt, Math32.sin(-4*Math32.pi/5), Math32.cos(-4*Math32.pi/5))
 		END;
 		Gfx.LineTo(Ctxt, 72, 0);
 		Gfx.End(Ctxt);
@@ -167,7 +167,7 @@ MODULE GfxTest IN Oberon; (** portable *)	(* eos  *)
 		Gfx.ArcTo(Ctxt, 100, 160 + 36, 100, 160, 100 + 36, 160, 100, 160 + 36);
 		Gfx.MoveTo(Ctxt, 100 + 36/sqrt2, 150 + 36/sqrt2);
 		Gfx.ArcTo(Ctxt, 100, 150 + 36, 100, 150, 100 + 36, 150, 100, 150 - 36);
-		sin := Math.sin(40*Math.pi/180); cos := Math.cos(40*Math.pi/180);
+		sin := Math32.sin(40*Math32.pi/180); cos := Math32.cos(40*Math32.pi/180);
 		Gfx.MoveTo(Ctxt, 300 + 54*cos, 400 + 54*sin);
 		Gfx.ArcTo(Ctxt, 300 - 54*cos, 400 + 54*sin, 300, 400, 300 + 54, 400, 300, 400 + 54);
 		Gfx.MoveTo(Ctxt, 300 + 5*cos, 345 + 5*sin);
@@ -286,7 +286,7 @@ MODULE GfxTest IN Oberon; (** portable *)	(* eos  *)
 		END;
 		Gfx.End(Ctxt);
 		Gfx.SetClip(Ctxt, clip);
-		Gfx.Rotate(Ctxt, 0.5, Math.sqrt(0.75));
+		Gfx.Rotate(Ctxt, 0.5, Math32.sqrt(0.75));
 		Gfx.SetFont(Ctxt, GfxFonts.OpenSize("Oberon", 20));
 		Gfx.DrawStringAt(Ctxt, 30, 40, "Hello World")
 	END Triangle;
@@ -399,7 +399,7 @@ MODULE GfxTest IN Oberon; (** portable *)	(* eos  *)
 		GfxImages.Scale(img, simg, 72/16, 72/6, 0, 0, GfxImages.NoFilter);
 		FOR i := 0 TO 11 DO
 			Gfx.Translate(Ctxt, 300, 300);
-			Gfx.Rotate(Ctxt, Math.sin(i * Math.pi/6), Math.cos(i * Math.pi/6));
+			Gfx.Rotate(Ctxt, Math32.sin(i * Math32.pi/6), Math32.cos(i * Math32.pi/6));
 			Gfx.Translate(Ctxt, 2*72, 0);
 			(*Gfx.Scale(Ctxt, 72/16, 72/6);*)
 			Gfx.DrawImageAt(Ctxt, 0, 0, simg, GfxImages.LinearFilter);
@@ -522,7 +522,7 @@ MODULE GfxTest IN Oberon; (** portable *)	(* eos  *)
 		Gfx.SetLineWidth(Ctxt, 0.5);
 		FOR phi := 15 TO 345 BY 15 DO
 			ctm := Ctxt.ctm;
-			Gfx.Rotate(Ctxt, Math.sin(phi*Math.pi/180), Math.cos(phi*Math.pi/180));
+			Gfx.Rotate(Ctxt, Math32.sin(phi*Math32.pi/180), Math32.cos(phi*Math32.pi/180));
 			Gfx.Begin(Ctxt, {Gfx.Stroke});
 			Gfx.ShowAt(Ctxt, 0, 0, "Adobe");
 			Gfx.End(Ctxt);
@@ -549,7 +549,7 @@ MODULE GfxTest IN Oberon; (** portable *)	(* eos  *)
 		phi := 0;
 		WHILE phi < 180 DO
 			ctm := Ctxt.ctm;
-			Gfx.Rotate(Ctxt, Math.sin(phi*Math.pi/180), Math.cos(phi*Math.pi/180));
+			Gfx.Rotate(Ctxt, Math32.sin(phi*Math32.pi/180), Math32.cos(phi*Math32.pi/180));
 			Gfx.DrawLine(Ctxt, 0, 0, 200, 0, {Gfx.Stroke});
 			Gfx.SetCTM(Ctxt, ctm);
 			phi := phi + 1.5

@@ -22,7 +22,7 @@ Copy of the GNU Lesser General Public License can be found in the file COPYING.T
 Report any problems as soon as possible to ants@AntsInFields.de
 *)
 IMPORT antsObjects, Files, antsKernel, antsModels, antsCommands, vyName, Objects, vyBase, Gadgets, antsFunctions,
-	antsVectors, vyLongrealVec, antsSecurity, Math := MathL IN A2, vyRandom, aM := antsMessages;
+	antsVectors, vyLongrealVec, antsSecurity, Math := Math64 IN A2, vyRandom, aM := antsMessages;
 
 TYPE
 	tModel* = POINTER TO tModelDesc;

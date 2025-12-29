@@ -1,7 +1,7 @@
 MODULE TestVideo; (** AUTHOR "thomas.frey@alumni.ethz.ch"; PURPOSE "Computer Vision Experiments"; *)
 
 IMPORT
-	Kernel, Modules, Raster, VideoExample, Commands, Options, KernelLog, Random, WMGraphics, WMRectangles, Kernel32, SYSTEM, Vectors := W3dVectors, Math := MathL;
+	Kernel, Modules, Raster, VideoExample, Commands, Options, KernelLog, Random, WMGraphics, WMRectangles, Kernel32, SYSTEM, Vectors := W3dVectors, Math := Math64;
 
 CONST
 	Ok* = 0;

@@ -10,7 +10,7 @@ MODULE W3dVectors; (** AUTHOR "TF"; PURPOSE "Vector operations for 3d partial po
 	No default values,
 	No default result variable --> less efficient
 	No const parameters (can not use VAR(less "functional" --> less efficient) *)
-IMPORT Math := MathL;
+IMPORT Math := Math64;
 
 TYPE
 	 TVector2d* = RECORD x*, y*: FLOAT64 END;

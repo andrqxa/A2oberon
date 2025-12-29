@@ -1,6 +1,6 @@
 MODULE srLifeVox;	(* Soren Renner *)
 
-IMPORT Random, Kernel, Math, srE, srBase,
+IMPORT Random, Kernel, Math32, srE, srBase,
 srVoxel2, srM5Space;
 
 CONST
@@ -552,7 +552,7 @@ END STOPGO;
 PROCEDURE normalize(VAR x,y,z: SREAL);
 VAR d: SREAL;
 BEGIN
-	d := Math.sqrt(x*x+y*y+z*z);  (* Norma! Liza! Ray! Front and center, oh dark thirty!*)
+	d := Math32.sqrt(x*x+y*y+z*z);  (* Norma! Liza! Ray! Front and center, oh dark thirty!*)
 	x := x/d; y := y/d; z:=z/d;
 END normalize;
 

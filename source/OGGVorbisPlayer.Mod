@@ -4,7 +4,7 @@
 MODULE OGGVorbisPlayer;
 
 IMPORT
-	SYSTEM, Strings, KernelLog, Streams, Files, Commands, SoundDevices, BIT, Math,
+	SYSTEM, Strings, KernelLog, Streams, Files, Commands, SoundDevices, BIT, Math32,
 	OGGUtilities, Modules, Kernel,
 	TCP, WebHTTP, NewHTTPClient;
 
@@ -923,8 +923,8 @@ TYPE
 			(*
 		VAR res: FLOAT32;
 		BEGIN
-			res := 13.1 * Math.arctan(0.00074 * x);
-			res := res + 2.24 * Math.arctan(0.0000000158 * x * x);
+			res := 13.1 * Math32.arctan(0.00074 * x);
+			res := res + 2.24 * Math32.arctan(0.0000000158 * x * x);
 			res := res + 0.0001 * x;
 			RETURN ENTIER(res)
 			*)
@@ -1948,19 +1948,19 @@ TYPE
 			ce := be + n DIV 2;
 			co := ce + 1;
 			FOR i := 0 TO n DIV 4 - 1 DO
-				float := Math.cos((Math.pi / n) * 4 * i);
+				float := Math32.cos((Math32.pi / n) * 4 * i);
 				trig[ae + i * 2] := OGGUtilities.ScaleUp(float);
-				float := - Math.sin((Math.pi / n) * 4 * i);
+				float := - Math32.sin((Math32.pi / n) * 4 * i);
 				trig[ao + i * 2] := OGGUtilities.ScaleUp(float);
-				float := Math.cos((Math.pi / (2 * n)) * (2 * i + 1));
+				float := Math32.cos((Math32.pi / (2 * n)) * (2 * i + 1));
 				trig[be + i * 2] := OGGUtilities.ScaleUp(float);
-				float := Math.sin((Math.pi / (2 * n)) * (2 * i + 1));
+				float := Math32.sin((Math32.pi / (2 * n)) * (2 * i + 1));
 				trig[bo + i * 2] := OGGUtilities.ScaleUp(float);
 			END;
 			FOR i := 0 TO n DIV 8 - 1 DO
-				float := Math.cos((Math.pi / n) * (4 * i + 2));
+				float := Math32.cos((Math32.pi / n) * (4 * i + 2));
 				trig[ce + i * 2] := OGGUtilities.ScaleUp(float);
-				float := - Math.sin((Math.pi / n) * (4 * i + 2));
+				float := - Math32.sin((Math32.pi / n) * (4 * i + 2));
 				trig[co + i * 2] := OGGUtilities.ScaleUp(float);
 			END;
 			mask := LSH(LONG(LONG(1)), log2n - 1) - 1;
@@ -3030,8 +3030,8 @@ TYPE
 	PROCEDURE SlopeRight(x, n: SIGNED32): FLOAT32;
 		VAR res: FLOAT32;
 	BEGIN
-		res := Math.sin( ((n - x - 0.5) / n) * (Math.pi / 2) );
-		res := Math.sin( res * res * Math.pi / 2);
+		res := Math32.sin( ((n - x - 0.5) / n) * (Math32.pi / 2) );
+		res := Math32.sin( res * res * Math32.pi / 2);
 		RETURN res
 	END SlopeRight;
 
@@ -3039,8 +3039,8 @@ TYPE
 	PROCEDURE SlopeLeft(x, n: SIGNED32): FLOAT32;
 		VAR res: FLOAT32;
 	BEGIN
-		res := Math.sin( ((x + 0.5) / n) * (Math.pi / 2) );
-		res := Math.sin( res * res * Math.pi / 2);
+		res := Math32.sin( ((x + 0.5) / n) * (Math32.pi / 2) );
+		res := Math32.sin( res * res * Math32.pi / 2);
 		RETURN res
 	END SlopeLeft;
 

@@ -24,7 +24,7 @@ Report any problems as soon as possible to voyager@statlab.uni-heidelberg.de
 
 
 (* FLOAT64 version, jb 26.10.00 *)
-IMPORT MathL IN A2; (* := Math , jb 26.10.00 *)
+IMPORT Math64 IN A2; (* := Math , jb 26.10.00 *)
 TYPE
 	real = FLOAT64;  (* jb, 26.10.00 *)
 
@@ -38,7 +38,7 @@ BEGIN
 	fac := 2;  sum := 0;  termbf := 0;
 	a2 := - 2 * alam * alam;
 	FOR j := 1 TO 100 DO
-		term := fac * MathL.exp(a2 * j * j);
+		term := fac * Math64.exp(a2 * j * j);
 		sum := sum + term;
 		IF (ABS(term) <= eps1 * termbf ) OR (ABS(term) <= eps2 * sum ) THEN RETURN sum END;
 		fac := - fac;
@@ -67,7 +67,7 @@ BEGIN
 		IF (dt > d) THEN d := dt END;
 		f0 := fn;
 	END;
-	prob := probks(MathL.sqrt(en) * d);
+	prob := probks(Math64.sqrt(en) * d);
 END KS1;
 
 (* jb 1.11.00 *)
@@ -88,7 +88,7 @@ BEGIN
 		INC (j);  fn := j / en;
 		dt := ABS (fn - ff);  IF dt > d THEN d := dt END
 	END;
-	prob := probks (MathL.sqrt (en) * d);
+	prob := probks (Math64.sqrt (en) * d);
 END KS1Id;
 
 PROCEDURE KS2* (data1: ARRAY OF real;  n1: SIZE;  data2: ARRAY OF real;  n2: SIZE;  VAR d, prob: real);
@@ -111,7 +111,7 @@ BEGIN
 		dt := ABS(fn2 - fn1);
 		IF dt > d THEN d := dt END;
 	END;
-	prob := probks(MathL.sqrt(en1 * en2 / (en1 + en2)) * d)
+	prob := probks(Math64.sqrt(en1 * en2 / (en1 + en2)) * d)
 
 END KS2;
 

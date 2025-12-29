@@ -9,7 +9,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 
 MODULE SavePoints IN Oberon;
 
-IMPORT Out, In, Modules, SaveScreen, Display, Display3, M := Math IN A2, RandomNumbers, Files, Texts, Oberon, Input;
+IMPORT Out, In, Modules, SaveScreen, Display, Display3, M := Math32 IN A2, RandomNumbers, Files, Texts, Oberon, Input;
 
 CONST
 	versionString = "SavePoints 1.3.2000 / jaco";

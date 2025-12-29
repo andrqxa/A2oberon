@@ -8,7 +8,7 @@ MODULE BSplineCurves;
 *)
 
 IMPORT
-	MathL, KernelLog;
+	Math64, KernelLog;
 
 CONST
 	(* supported boundary conventions *)
@@ -52,12 +52,12 @@ TYPE
 
 			(* prepare acceleration of the transform *)
 			NEW(accelBuf,LEN(poles,0));
-			v := MathL.ln(ABS(tolerance));
+			v := Math64.ln(ABS(tolerance));
 
 			FOR i := 0 TO LEN(poles,0)-1 DO
 
 				p := poles[i];
-				n := ENTIER(0.5D0 + (v / MathL.ln( ABS( p ) )) );
+				n := ENTIER(0.5D0 + (v / Math64.ln( ABS( p ) )) );
 
 				NEW(buf,n); accelBuf[i] := buf; w := 1.0D0;
 				FOR j := 0 TO n-1 DO buf.x[j] := w; w := w*p; END;
@@ -287,7 +287,7 @@ TYPE
 				(* distance between subsequent knots *)
 				d1 := kx[i+1]-kx[i];
 				d2 := ky[i+1]-ky[i];
-				d1 := MathL.sqrt(d1*d1 + d2*d2);
+				d1 := Math64.sqrt(d1*d1 + d2*d2);
 
 				(* number of subintervals within the interval *)
 				m := ENTIER(0.5D0 + (d1/ maxDist)) - 1;
@@ -304,7 +304,7 @@ TYPE
 				(* distance between last and first knots *)
 				d1 := kx[0]-kx[LEN(kx,0)-1];
 				d2 := ky[0]-ky[LEN(kx,0)-1];
-				d1 := MathL.sqrt(d1*d1 + d2*d2);
+				d1 := Math64.sqrt(d1*d1 + d2*d2);
 
 				(* number of subintervals within the interval *)
 				m := ENTIER(0.5D0 + (d1/ maxDist)) - 1;
@@ -384,19 +384,19 @@ TYPE
 	BEGIN
 		CASE degree OF
 
-			|2: NEW(poles,1); poles[0] := MathL.sqrt( 8.0D0 ) - 3.0D0;
+			|2: NEW(poles,1); poles[0] := Math64.sqrt( 8.0D0 ) - 3.0D0;
 
-			|3: NEW(poles,1);  poles[0] := MathL.sqrt( 3.0D0 ) - 2.0D0;
+			|3: NEW(poles,1);  poles[0] := Math64.sqrt( 3.0D0 ) - 2.0D0;
 
 			|4:
 				NEW(poles,2);
-				poles[0] := MathL.sqrt(664.0D0 - MathL.sqrt(438976.0D0)) + MathL.sqrt(304.0D0) - 19.0D0;
-				poles[1] := MathL.sqrt(664.0D0 + MathL.sqrt(438976.0D0)) - MathL.sqrt(304.0D0) - 19.0D0;
+				poles[0] := Math64.sqrt(664.0D0 - Math64.sqrt(438976.0D0)) + Math64.sqrt(304.0D0) - 19.0D0;
+				poles[1] := Math64.sqrt(664.0D0 + Math64.sqrt(438976.0D0)) - Math64.sqrt(304.0D0) - 19.0D0;
 
 			|5:
 				NEW(poles,2);
-				poles[0] := MathL.sqrt(135.0D0 / 2.0D0 - MathL.sqrt(17745.0D0 / 4.0D0)) + MathL.sqrt(105.0D0 / 4.0D0)- 13.0D0 / 2.0D0;
-                		poles[1] := MathL.sqrt(135.0D0 / 2.0D0 + MathL.sqrt(17745.0D0 / 4.0D0)) - MathL.sqrt(105.0D0 / 4.0D0)- 13.0D0 / 2.0D0;
+				poles[0] := Math64.sqrt(135.0D0 / 2.0D0 - Math64.sqrt(17745.0D0 / 4.0D0)) + Math64.sqrt(105.0D0 / 4.0D0)- 13.0D0 / 2.0D0;
+                		poles[1] := Math64.sqrt(135.0D0 / 2.0D0 + Math64.sqrt(17745.0D0 / 4.0D0)) - Math64.sqrt(105.0D0 / 4.0D0)- 13.0D0 / 2.0D0;
 
 			|6:
 				NEW(poles,3);
@@ -636,12 +636,12 @@ TYPE
 	PROCEDURE IPower(x: FLOAT64; p: SIGNED32): FLOAT64;
 	BEGIN
 		IF x > 0 THEN
-			RETURN MathL.exp(p*MathL.ln(x));
+			RETURN Math64.exp(p*Math64.ln(x));
 		ELSIF x # 0 THEN
 			IF ODD(p) THEN
-				RETURN -MathL.exp(p*MathL.ln(-x));
+				RETURN -Math64.exp(p*Math64.ln(-x));
 			ELSE
-				RETURN MathL.exp(p*MathL.ln(-x));
+				RETURN Math64.exp(p*Math64.ln(-x));
 			END;
 		ELSE
 			RETURN 0;

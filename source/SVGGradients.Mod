@@ -1,6 +1,6 @@
 MODULE SVGGradients;
 
-IMPORT SVG, SVGColors, XMLObjects, Raster, Gfx, Math;
+IMPORT SVG, SVGColors, XMLObjects, Raster, Gfx, Math32;
 
 (* Constants that determine the contiuity of gradients *)
 CONST
@@ -147,7 +147,7 @@ TYPE
 			u.y :=p2.y-p1.y;
 			v.x :=p.x-p1.x;
 			v.y :=p.y-p1.y;
-			len := Math.sqrt(SHORT(u.x*u.x+u.y*u.y));
+			len := Math32.sqrt(SHORT(u.x*u.x+u.y*u.y));
 			n.x :=u.x / len;
 			n.y :=u.y / len;
 			offset := (n.x*v.x+n.y*v.y)/len;
@@ -188,8 +188,8 @@ TYPE
 				(* wrap? *)
 				offset := 1.0;
 			ELSE
-				t1 := (v.x*u.x+v.y*u.y+Math.sqrt(SHORT(discr)))/ul2;
-				t2 := (v.x*u.x+v.y*u.y-Math.sqrt(SHORT(discr)))/ul2;
+				t1 := (v.x*u.x+v.y*u.y+Math32.sqrt(SHORT(discr)))/ul2;
+				t2 := (v.x*u.x+v.y*u.y-Math32.sqrt(SHORT(discr)))/ul2;
 				IF (t2 < t1) & (t2 >= 0) THEN
 					t1 := t2;
 				END;

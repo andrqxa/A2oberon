@@ -26,7 +26,7 @@ Report any problems as soon as possible to voyager@statlab.uni-heidelberg.de
 (*** Complex number arrays, Cartesian flavour, including linear algebra and matrices *)
 (* Pairs of real arrays interpreted as real and imaginary part of complex numbers. *)
 (*! add asserts *)
-IMPORT Math IN A2;
+IMPORT Math32 IN A2;
 CONST idversion* = ' v0r0d1';
 TYPE
 	real = FLOAT32;  (* technical convenience, to avoid duplicate code for FLOAT32 and FLOAT64 *)
@@ -37,8 +37,8 @@ PROCEDURE PolarToC* (len: index;  VAR (*IN*)rho, phi: ARRAY OF real;
 	VAR i: index;
 BEGIN
 	FOR i := start TO start + len - 1 DO
-		Re[i] := rho[i] * Math.cos(phi[i]);
-		Im[i] := rho[i] * Math.sin(phi[i])
+		Re[i] := rho[i] * Math32.cos(phi[i]);
+		Im[i] := rho[i] * Math32.sin(phi[i])
 	END
 END PolarToC;
 

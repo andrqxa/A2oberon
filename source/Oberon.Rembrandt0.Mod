@@ -12,7 +12,7 @@ MODULE Rembrandt0 IN Oberon;	(** portable *)
 *)
 
 IMPORT
-	Oberon, Display, Strings, Gadgets, Texts, Pictures, Objects, D3 := Display3, Out, Files, Math IN A2;
+	Oberon, Display, Strings, Gadgets, Texts, Pictures, Objects, D3 := Display3, Out, Files, Math32 IN A2;
 
 TYPE
 	ColFrame*= POINTER TO ColFrameDesc;
@@ -435,7 +435,7 @@ END NearestColor;
 PROCEDURE Gamma( val: SIGNED16; gamma: FLOAT32): SIGNED16;
 VAR gval: FLOAT32;
   BEGIN
-	IF val = 0 THEN gval := 0 ELSE gval := Math.exp(Math.ln(val/256.0)*gamma) END;
+	IF val = 0 THEN gval := 0 ELSE gval := Math32.exp(Math32.ln(val/256.0)*gamma) END;
 	RETURN SHORT(ENTIER(256*gval))
 END Gamma;
 

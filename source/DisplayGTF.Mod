@@ -3,7 +3,7 @@
 MODULE DisplayGTF; (** AUTHOR "afi"; PURPOSE "Construct a configuration Init= string
 			with embedded GTF timing parameters *)
 
-IMPORT SYSTEM, MathL, Strings, Commands;
+IMPORT SYSTEM, Math64, Strings, Commands;
 
 CONST
 	GTFLockVF = 1;		(* Lock to vertical frequency				*)
@@ -182,7 +182,7 @@ BEGIN
 		idealDutyCycle := c.c - (c.m / hFreq);
 	ELSIF type = GTFLockPF THEN
 		(* Find ideal horizontal period from blanking duty cycle formula *)
-		idealHPeriod := (((c.c - 100) + (MathL.sqrt((pow(100-c.c,2)) +
+		idealHPeriod := (((c.c - 100) + (Math64.sqrt((pow(100-c.c,2)) +
 			(0.4 * c.m * (hTotalActivePixels + rightMarginPixels +
 			leftMarginPixels) / dotClock)))) / (2 * c.m)) * 1000;
 

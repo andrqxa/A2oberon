@@ -40,7 +40,7 @@ IMPORT
 	Texts, vyHostTexts, vyParser, vyBase, vyName,
 	vyRealVec, vyTypes,
 	vyDisplay2d, vyPort,  vyScatter2, vyLine, vyLinePlot,
-	vyQFisher, MathL IN A2 (* ,vyCharts fuer Lutz*)
+	vyQFisher, Math64 IN A2 (* ,vyCharts fuer Lutz*)
 	, Out
 	;
 
@@ -80,7 +80,7 @@ PROCEDURE WS (x: ARRAY OF CHAR);    BEGIN Texts.WriteString(w, x) END WS;
 PROCEDURE ReportStattyp (VAR name: ARRAY OF CHAR;    VAR s: vyQFisher.Stattyp);
 BEGIN vyHostTexts.Msg(name);   vyHostTexts.MsgSI('Nr of observations:', s.Count);
 	vyHostTexts.MsgSR('Mean:', SHORT(s.Mean));
-	IF s.Count > 1 THEN vyHostTexts.MsgSR('Std dev:', SHORT(MathL.sqrt(s.Ssq / (s.Count - 1)))) END
+	IF s.Count > 1 THEN vyHostTexts.MsgSR('Std dev:', SHORT(Math64.sqrt(s.Ssq / (s.Count - 1)))) END
 END  ReportStattyp;
 
 PROCEDURE ReportRegression (VAR namey, namex: ARRAY OF CHAR;    par: tFBandParameter);
@@ -94,7 +94,7 @@ PROCEDURE FBand (x: Real;    para: vyLinePlot.tParameter): Real;
 	VAR p: tFBandParameter;
 BEGIN ASSERT (para IS tFBandParameter, vyBase.precc);    p := para(tFBandParameter);
 	RETURN SHORT (p.Regression.intercept + p.Regression.slope * x +
-	p.UpBand * MathL.sqrt(2 * p.F * p.Regression.errvar *
+	p.UpBand * Math64.sqrt(2 * p.F * p.Regression.errvar *
 	(1 / p.Regression.count + (x - p.Regression.ymean) / p.Regression.yssq * (x - p.Regression.ymean)))
 	)
 END FBand;

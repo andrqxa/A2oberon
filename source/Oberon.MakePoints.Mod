@@ -22,7 +22,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 
 MODULE MakePoints IN Oberon;
 
-IMPORT SYSTEM, M := Math IN A2, Files, Texts, Oberon, Fonts, Display, R := RandomNumbers;
+IMPORT SYSTEM, M := Math32 IN A2, Files, Texts, Oberon, Fonts, Display, R := RandomNumbers;
 
 CONST
 	versionString = "MakePoints 1.3.2000 / jaco";

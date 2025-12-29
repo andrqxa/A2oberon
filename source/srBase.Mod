@@ -1,7 +1,7 @@
 MODULE srBase;
-IMPORT Raster, Math, Random, Out:=KernelLog(* , DebugLog*);
+IMPORT Raster, Math32, Random, Out:=KernelLog(* , DebugLog*);
 
-(*	HALFPI* = Math.pi/2; *)
+(*	HALFPI* = Math32.pi/2; *)
 
 CONST
 	TILESIZE*=15;
@@ -282,7 +282,7 @@ PROCEDURE normalize*(VAR x,y,z: SREAL);
 VAR
 	d: SREAL;
 BEGIN
-	d := Math.sqrt(x*x + y*y+z*z);
+	d := Math32.sqrt(x*x + y*y+z*z);
 	IF d = 0 THEN
 		x := 1;
 		d := 1;
@@ -304,7 +304,7 @@ PROCEDURE normalizePT*(VAR n:PT);
 VAR
 	d: SREAL;
 BEGIN
-	d := Math.sqrt(n.x*n.x + n.y*n.y +n.z*n.z);
+	d := Math32.sqrt(n.x*n.x + n.y*n.y +n.z*n.z);
 	IF d = 0 THEN
 		n.x := 1;
 		d := 1;
@@ -319,7 +319,7 @@ BEGIN
 	x := b.x-a.x;
 	y := b.y-a.y;
 	z := b.z-a.z;
-	RETURN(Math.sqrt(x*x+y*y+z*z));
+	RETURN(Math32.sqrt(x*x+y*y+z*z));
 END distance;
 
 PROCEDURE string*(s: ARRAY OF CHAR);
@@ -363,7 +363,7 @@ BEGIN
 	dx := a.x-b.x;
 	dy := a.y-b.y;
 	dz := a.z-b.z;
-	RETURN(Math.sqrt(dx*dx+dy*dy*dz*dz));
+	RETURN(Math32.sqrt(dx*dx+dy*dy*dz*dz));
 END dist;
 
 PROCEDURE distsquared*(a,b:PT):SREAL;

@@ -26,7 +26,7 @@ Report any problems as soon as possible to voyager@statlab.uni-heidelberg.de
 (*** Complex number arrays, Cartesian flavour, including linear algebra and matrices *)
 (* Pairs of real arrays interpreted as real and imaginary part of complex numbers. *)
 (*! add asserts *)
-IMPORT realmath := Math IN A2;
+IMPORT realmath := Math32 IN A2;
 CONST idversion* = ' v0r0d1';
 TYPE
 	real = FLOAT32;  (* technical convenience, to avoid duplicate code for FLOAT32 and FLOAT64 *)

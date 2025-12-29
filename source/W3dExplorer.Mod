@@ -1,7 +1,7 @@
 MODULE W3dExplorer;	(** AUTHOR "TF"; PURPOSE "Simple 3d viewer"; *)
 
 IMPORT
-		MathL, Vectors := W3dVectors, Matrix := W3dMatrix, AbstractWorld := W3dAbstractWorld,
+		Math64, Vectors := W3dVectors, Matrix := W3dMatrix, AbstractWorld := W3dAbstractWorld,
 		World := W3dWorld, WM := WMWindowManager, Random, Raster, Kernel, KernelLog, Strings,
 		ObjectGenerator := W3dObjectGenerator, WMGraphics, WMRectangles;
 
@@ -94,7 +94,7 @@ TYPE
 			Kernel.SetTimer(t, 0);
 			FOR i := 0 TO 359 DO
 				radius := 300; angle := i / 180 * 3.14159; height := 50;
-				pos := Vectors.VAdd3(lookat, Vectors.Vector3d(MathL.cos(angle) * radius, 0, MathL.sin(angle) * radius)); pos.y := height;
+				pos := Vectors.VAdd3(lookat, Vectors.Vector3d(Math64.cos(angle) * radius, 0, Math64.sin(angle) * radius)); pos.y := height;
 				lookat := Vectors.Vector3d(lookat.x, height, lookat.z);
 				dir := Vectors.VNormed3(Vectors.VSub3(lookat, pos));
 				up := Vectors.Vector3d(0, 1, 0);
@@ -108,7 +108,7 @@ TYPE
 		PROCEDURE Render;
 		VAR pos, dir, up : Vectors.TVector3d;
 		BEGIN
-			pos := Vectors.VAdd3(lookat, Vectors.Vector3d(MathL.cos(angle) * radius, 0, MathL.sin(angle) * radius)); pos.y := height;
+			pos := Vectors.VAdd3(lookat, Vectors.Vector3d(Math64.cos(angle) * radius, 0, Math64.sin(angle) * radius)); pos.y := height;
 			lookat := Vectors.Vector3d(lookat.x, height, lookat.z);
 			dir := Vectors.VNormed3(Vectors.VSub3(lookat, pos));
 			up := Vectors.Vector3d(0, 1, 0);

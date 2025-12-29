@@ -3,7 +3,7 @@ MODULE DivXDecoder;
 
 IMPORT
 	SYSTEM, Files,Streams, Raster, KernelLog,
-	Math, Reals, DivXHelper, DT := DivXTypes, Codecs, AVI;
+	Math32, Reals, DivXHelper, DT := DivXTypes, Codecs, AVI;
 
 TYPE MacroBlock *= OBJECT
 	VAR
@@ -2030,7 +2030,7 @@ TYPE DivXDecoder* = OBJECT(Codecs.VideoDecoder)
 				mp4State.hdr.fixedVopRate := AVI.GetBits(1, buffer.data^, buffer.index);
 
 				IF mp4State.hdr.fixedVopRate > 0 THEN
-					tempReal := Math.ln( mp4State.hdr.timeIncrementResolution) / Math.ln( 2.0 );
+					tempReal := Math32.ln( mp4State.hdr.timeIncrementResolution) / Math32.ln( 2.0 );
 					temp :=  ENTIER( tempReal );
 					IF  tempReal / Reals.Real( temp ) > 1.0 THEN
 						INC( temp )
@@ -2207,7 +2207,7 @@ TYPE DivXDecoder* = OBJECT(Codecs.VideoDecoder)
 
 			temp := AVI.GetBits(1, buffer.data^, buffer.index);	(* marker bit *)
 
-			tempReal := Math.ln( mp4State.hdr.timeIncrementResolution )/Math.ln( 2.0 );
+			tempReal := Math32.ln( mp4State.hdr.timeIncrementResolution )/Math32.ln( 2.0 );
 			temp := ENTIER( tempReal );
 			IF ( tempReal / Reals.Real( temp ) ) > 1.0 THEN
 				INC( temp )

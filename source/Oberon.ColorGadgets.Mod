@@ -13,7 +13,7 @@ MODULE ColorGadgets IN Oberon; (** portable **)	(* eos  *)
 	*)
 
 	IMPORT
-		Files, Objects, Math IN A2, Display, Printer, Input, Texts, Oberon, Strings, Attributes, Display3, Printer3, Effects, Gadgets,
+		Files, Objects, Math32 IN A2, Display, Printer, Input, Texts, Oberon, Strings, Attributes, Display3, Printer3, Effects, Gadgets,
 		Colors, Images;
 
 
@@ -56,15 +56,15 @@ MODULE ColorGadgets IN Oberon; (** portable **)	(* eos  *)
 		VAR phi: FLOAT32;
 	BEGIN
 		IF (ABS(x) < 1.0) & (ABS(y) >= ABS(x * MAX(FLOAT32))) THEN	(* y/x would result in overflow/divide by zero trap *)
-			IF y >= 0 THEN phi := Math.pi/2
-			ELSE phi := 3*Math.pi/2
+			IF y >= 0 THEN phi := Math32.pi/2
+			ELSE phi := 3*Math32.pi/2
 			END
 		ELSIF x < 0 THEN	(* 2nd or 3rd quadrant *)
-			phi := Math.arctan(y/x) + Math.pi
+			phi := Math32.arctan(y/x) + Math32.pi
 		ELSIF y > 0 THEN	(* 1st quadrant *)
-			phi := Math.arctan(y/x)
+			phi := Math32.arctan(y/x)
 		ELSE	(* 4th quadrant *)
-			phi := 2*Math.pi + Math.arctan(y/x)
+			phi := 2*Math32.pi + Math32.arctan(y/x)
 		END;
 		RETURN phi
 	END atan2;
@@ -429,8 +429,8 @@ MODULE ColorGadgets IN Oberon; (** portable **)	(* eos  *)
 			x := disc.W DIV 2;
 			y := disc.H DIV 2
 		ELSE
-			x := SHORT(ENTIER((1 + disc.sat * Math.cos(2*Math.pi * disc.hue)) * (disc.W/2)));
-			y := SHORT(ENTIER((1 + disc.sat * Math.sin(2*Math.pi * disc.hue)) * (disc.H/2)))
+			x := SHORT(ENTIER((1 + disc.sat * Math32.cos(2*Math32.pi * disc.hue)) * (disc.W/2)));
+			y := SHORT(ENTIER((1 + disc.sat * Math32.sin(2*Math32.pi * disc.hue)) * (disc.H/2)))
 		END
 	END GetDiscCoords;
 
@@ -463,10 +463,10 @@ MODULE ColorGadgets IN Oberon; (** portable **)	(* eos  *)
 			IF (keys # {}) & ((x # mx) OR (y # my)) THEN
 				RestoreImageRect(disc.img, px-2, py-2, 5, 5, fx, fy, mask);
 				dx := 2*(x - fx)/disc.W - 1; dy := 2*(y - fy)/disc.H - 1;
-				disc.sat := Math.sqrt(dx * dx + dy * dy);
+				disc.sat := Math32.sqrt(dx * dx + dy * dy);
 				IF disc.sat > 1.0 THEN disc.sat := 1.0 END;
 				IF disc.sat < 0.001 THEN disc.hue := Colors.undefined
-				ELSE disc.hue := atan2(dx, dy) * (1/(2*Math.pi))
+				ELSE disc.hue := atan2(dx, dy) * (1/(2*Math32.pi))
 				END;
 				UpdateDiscModel(disc);
 				GetDiscCoords(disc, px, py);
@@ -501,9 +501,9 @@ MODULE ColorGadgets IN Oberon; (** portable **)	(* eos  *)
 			WHILE j < disc.H DO
 				i := 0; x := -1.0;
 				WHILE i < disc.W DO
-					sat := Math.sqrt(x * x + y * y);
+					sat := Math32.sqrt(x * x + y * y);
 					IF sat <= 1 THEN
-						hue := atan2(x, y) * (1/(2*Math.pi));
+						hue := atan2(x, y) * (1/(2*Math32.pi));
 						Colors.HSVToRGB(hue, sat, 1.0, rr, gg, bb);
 						r := SHORT(ENTIER(255*rr)); g := SHORT(ENTIER(255*gg)); b := SHORT(ENTIER(255*bb));
 						Images.SetRGB(pix, r, g, b);
@@ -541,9 +541,9 @@ MODULE ColorGadgets IN Oberon; (** portable **)	(* eos  *)
 			i := 0; x := -1.0;
 			WHILE i < w DO
 				IF Display3.Visible(mask, msg.x + i, msg.y + j, 1, 1) THEN
-					sat := Math.sqrt(x * x + y * y);
+					sat := Math32.sqrt(x * x + y * y);
 					IF sat <= 1 THEN
-						hue := atan2(x, y) * (1/(2*Math.pi));
+						hue := atan2(x, y) * (1/(2*Math32.pi));
 						Colors.HSVToRGB(hue, sat, 1.0, r, g, b);
 						Printer.UseColor(SHORT(ENTIER(255*r)), SHORT(ENTIER(255*g)), SHORT(ENTIER(255*b)));
 						Printer.ReplConst(msg.x + i, msg.y + j, 1, 1)

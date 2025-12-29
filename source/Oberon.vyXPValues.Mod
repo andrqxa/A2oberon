@@ -41,7 +41,7 @@ changes:
 11.1.01 by Johannes Becker - bug fixed (subscribe problems)
 *)
 
-IMPORT jbrtStdNormal, vyKolSmirL, M := MathL IN A2, vyLongrealVec, vyLongreal, vyBase, Objects, Strings, Gadgets, Files;
+IMPORT jbrtStdNormal, vyKolSmirL, M := Math64 IN A2, vyLongrealVec, vyLongreal, vyBase, Objects, Strings, Gadgets, Files;
 
 TYPE
 	Real = vyBase.Real;

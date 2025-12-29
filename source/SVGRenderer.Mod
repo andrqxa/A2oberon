@@ -1,7 +1,7 @@
 MODULE SVGRenderer;
 
 IMPORT SVG, SVGColors, SVGGradients, SVGFilters, SVGUtilities, XMLObjects,
-	Gfx, GfxBuffer, GfxPaths, GfxImages, GfxMatrix, Math, Raster;
+	Gfx, GfxBuffer, GfxPaths, GfxImages, GfxMatrix, Math32, Raster;
 
 TYPE
 	RenderTargetPool=OBJECT
@@ -225,15 +225,15 @@ TYPE
 			IF flags.y#0 THEN flags.y := 1.0 END;
 
 		(* Calculate center *)
-			cos := Math.cos(SHORT(xrot/180.0*Math.pi));
-			sin := Math.sin(SHORT(xrot/180.0*Math.pi));
+			cos := Math32.cos(SHORT(xrot/180.0*Math32.pi));
+			sin := Math32.sin(SHORT(xrot/180.0*Math32.pi));
 			diff.x := (start.x-end.x)/2;
 			diff.y := (start.y-end.y)/2;
 			diff0.x := cos*diff.x+sin*diff.y;
 			diff0.y := -sin*diff.x+cos*diff.y;
 			tmp := diff0.x*diff0.x/(radius.x*radius.x)+diff0.y*diff0.y/(radius.y*radius.y);
 			IF tmp > 1 THEN
-				tmp := Math.sqrt(SHORT(tmp));
+				tmp := Math32.sqrt(SHORT(tmp));
 				radius.x := tmp*radius.x;
 				radius.y := tmp*radius.y;
 				tmp := 0;
@@ -243,7 +243,7 @@ TYPE
 				tmp := rx2*diff0.y*diff0.y+ry2*diff0.x*diff0.x;
 				tmp := (rx2*ry2-tmp)/tmp;
 				IF tmp <= 0 THEN tmp := 0 END;
-				tmp := Math.sqrt(SHORT(tmp));
+				tmp := Math32.sqrt(SHORT(tmp));
 				IF flags.x=flags.y THEN tmp := -tmp END;
 			END;
 			center0.x := tmp*radius.x*diff0.y/radius.y;

@@ -4,7 +4,7 @@ MODULE ComplexNumbers;
 	this module is automatically loaded (FoxSemanticChecker) when operators on complex numbers are encountered
 *)
 
-IMPORT Math, MathL;
+IMPORT Math32, Math64;
 
 	OPERATOR "+"*(CONST left, right: COMPLEX32): COMPLEX32;
 	VAR result: COMPLEX32;
@@ -73,11 +73,11 @@ IMPORT Math, MathL;
 	END "/";
 
 	OPERATOR "ABS"*(CONST arg: COMPLEX32): FLOAT32;
-	BEGIN RETURN Math.sqrt(RE(arg) * RE(arg) + IM(arg) * IM(arg))
+	BEGIN RETURN Math32.sqrt(RE(arg) * RE(arg) + IM(arg) * IM(arg))
 	END "ABS";
 
 	OPERATOR "ABS"*(CONST arg: COMPLEX64): FLOAT64;
-	BEGIN RETURN MathL.sqrt(RE(arg) * RE(arg) + IM(arg) * IM(arg))
+	BEGIN RETURN Math64.sqrt(RE(arg) * RE(arg) + IM(arg) * IM(arg))
 	END "ABS";
 
 	OPERATOR "~"*(CONST left: COMPLEX32): COMPLEX32;

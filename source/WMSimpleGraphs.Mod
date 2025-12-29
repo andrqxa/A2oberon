@@ -5,7 +5,7 @@ MODULE WMSimpleGraphs;	(** AUTHOR "Patrick Hunziker"; PURPOSE "Minimum-overhead 
 (*ToDo: ticks for Graph. labels on axes *)
 (*ToDo: catch NaN and Inf in data and other strategies to avoid erratic window sizes*)
 
-IMPORT Strings, WMGraphics, WMRectangles, WMMessages, Modules, Reals, Files, Streams, WM:=WMWindowManager, MathL, Raster, Commands;
+IMPORT Strings, WMGraphics, WMRectangles, WMMessages, Modules, Reals, Files, Streams, WM:=WMWindowManager, Math64, Raster, Commands;
 
 CONST Colors=[WMGraphics.Red,WMGraphics.Blue,WMGraphics.Green,WMGraphics.Gold, WMGraphics.Magenta, WMGraphics.Cyan, WMGraphics.Gray];
 		MinSize=30;
@@ -479,11 +479,11 @@ BEGIN
 END NewWindowPos;
 
 PROCEDURE Log10(x:FLOAT64):FLOAT64;
-BEGIN RETURN MathL.ln(x)/MathL.ln(10);
+BEGIN RETURN Math64.ln(x)/Math64.ln(10);
 END Log10;
 
 PROCEDURE Exp10(x:FLOAT64):FLOAT64;
-BEGIN RETURN MathL.exp(ENTIER(x)*MathL.ln(10));
+BEGIN RETURN Math64.exp(ENTIER(x)*Math64.ln(10));
 END Exp10;
 
 

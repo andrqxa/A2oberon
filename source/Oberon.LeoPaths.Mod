@@ -13,7 +13,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 	*)
 
 	IMPORT
-		Files, Math IN A2, Display, Objects, Attributes, Strings, Gadgets, PictImages, GfxMatrix, GfxImages, GfxPaths, Gfx,
+		Files, Math32 IN A2, Display, Objects, Attributes, Strings, Gadgets, PictImages, GfxMatrix, GfxImages, GfxPaths, Gfx,
 		Leonardo, LeoPens;
 
 
@@ -1074,7 +1074,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 						GfxMatrix.ApplyToVector(msg.lgm, cm.dx, cm.dy, dx, dy);
 						GfxMatrix.ApplyToVector(msg.gsm, dx, dy, dx, dy);
 						Gfx.ResetCTM(msg.ctxt);
-						d := 1/Math.sqrt(dx * dx + dy * dy + 0.1);
+						d := 1/Math32.sqrt(dx * dx + dy * dy + 0.1);
 						dx := d * dx; dy := d * dy;
 						IF cm.mode MOD wrap = coincident THEN coinc(x, y, dx, dy)
 						ELSIF cm.mode MOD wrap = collinear THEN coll(x, y, dx, dy)
@@ -1090,7 +1090,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 						GfxMatrix.ApplyToVector(msg.lgm, -cm.dx, -cm.dy, dx, dy);
 						GfxMatrix.ApplyToVector(msg.gsm, dx, dy, dx, dy);
 						Gfx.ResetCTM(msg.ctxt);
-						d := 1/Math.sqrt(dx * dx + dy * dy + 0.1);
+						d := 1/Math32.sqrt(dx * dx + dy * dy + 0.1);
 						dx := d * dx; dy := d * dy;
 						IF cm.mode MOD wrap = coincident THEN coinc(x, y, dx, dy)
 						ELSIF cm.mode MOD wrap = collinear THEN coll(x, y, dx, dy)
@@ -1167,7 +1167,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 						p := first.up(Point);
 						IF msg.mode MOD wrap = collinear THEN
 							dx := p.x - msg.x; dy := p.y - msg.y;
-							t := Math.sqrt((dx * dx + dy * dy)/(msg.dx * msg.dx + msg.dy * msg.dy));
+							t := Math32.sqrt((dx * dx + dy * dy)/(msg.dx * msg.dx + msg.dy * msg.dy));
 							Leonardo.SetReal(msg.fig, p, "X", msg.x + t * msg.dx);
 							Leonardo.SetReal(msg.fig, p, "Y", msg.y + t * msg.dy)
 						ELSIF msg.mode MOD wrap = symmetric THEN
@@ -1190,7 +1190,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 						p := last.down(Point);
 						IF msg.mode MOD wrap = collinear THEN
 							dx := msg.x - p.x; dy := msg.y - p.y;
-							t := Math.sqrt((dx * dx + dy * dy)/(msg.dx * msg.dx + msg.dy * msg.dy));
+							t := Math32.sqrt((dx * dx + dy * dy)/(msg.dx * msg.dx + msg.dy * msg.dy));
 							Leonardo.SetReal(msg.fig, p, "X", msg.x - t * msg.dx);
 							Leonardo.SetReal(msg.fig, p, "Y", msg.y - t * msg.dy)
 						ELSIF msg.mode MOD wrap = symmetric THEN
@@ -1221,7 +1221,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 					p := first.up(Point); x := p.x; y := p.y;
 					IF msg.mode MOD wrap = collinear THEN
 						dx := p.x - msg.x; dy := p.y - msg.y;
-						t := Math.sqrt((dx * dx + dy * dy)/(msg.dx * msg.dx + msg.dy * msg.dy));
+						t := Math32.sqrt((dx * dx + dy * dy)/(msg.dx * msg.dx + msg.dy * msg.dy));
 						x := msg.x + t * msg.dx; y := msg.y + t * msg.dy
 					ELSIF msg.mode MOD wrap = symmetric THEN
 						x := msg.x + msg.dx; y := msg.y + msg.dy
@@ -1253,7 +1253,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 					p := last.down(Point); x := p.x; y := p.y;
 					IF msg.mode MOD wrap = collinear THEN
 						dx := msg.x - p.x; dy := msg.y - p.y;
-						t := Math.sqrt((dx * dx + dy * dy)/(msg.dx * msg.dx + msg.dy * msg.dy));
+						t := Math32.sqrt((dx * dx + dy * dy)/(msg.dx * msg.dx + msg.dy * msg.dy));
 						x := msg.x - t * msg.dx; y := msg.y - t * msg.dy
 					ELSIF msg.mode MOD wrap = symmetric THEN
 						x := msg.x - msg.dx; y := msg.y - msg.dy
@@ -1992,7 +1992,7 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 		BEGIN
 			IF (ABS(x3 - x0) <= 0.5*(urx - llx)) & (ABS(y3 - y0) <= 0.5*(ury - lly)) THEN
 				IF OnLine(x0, y0, x3, y3, x, y, llx, lly, urx, ury, px, py) THEN
-					t := Math.sqrt(((x3 - px)*(x3 - px) + (y3 - py)*(y3 - py)) / ((x3 - x0)*(x3 - x0) + (y3 - y0)*(y3 - y0)));
+					t := Math32.sqrt(((x3 - px)*(x3 - px) + (y3 - py)*(y3 - py)) / ((x3 - x0)*(x3 - x0) + (y3 - y0)*(y3 - y0)));
 					t := t0 * t + t1 * (1-t);
 					RETURN TRUE
 				ELSE
@@ -2610,8 +2610,8 @@ MODULE LeoPaths IN Oberon; (** portable **)	(* eos  *)
 	PROCEDURE InitArc* (arc: Arc; x, y, rx, ry, start, end: FLOAT32; pen: LeoPens.Pen);
 		VAR p0, p1: Point;
 	BEGIN
-		NEW(p0); InitPoint(p0, x + rx * Math.cos(start), y + ry * Math.sin(start));
-		NEW(p1); InitPoint(p1, x + rx * Math.cos(end), y + ry * Math.sin(end));
+		NEW(p0); InitPoint(p0, x + rx * Math32.cos(start), y + ry * Math32.sin(start));
+		NEW(p1); InitPoint(p1, x + rx * Math32.cos(end), y + ry * Math32.sin(end));
 		p0.up := p1; p1.down := p0;
 		InitSegment(arc, HandleArc, p0, p1, start = end, pen);
 		GfxMatrix.Init(arc.mat, rx, 0, 0, ry, x, y);

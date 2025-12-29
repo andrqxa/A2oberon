@@ -27,7 +27,7 @@ generators und corresponds mainly to its Panel antsRandom.Panel *)
 
 
 IMPORT vyRanBase, vyRanParksMiller, vyRandom, antsCommands, vyBase, Objects, Attributes, antsObjects, Gadgets, vyLongrealVec, antsPortability,
-	Math := MathL IN A2,  aM := antsMessages;
+	Math := Math64 IN A2,  aM := antsMessages;
 
 VAR
 	default-: vyRanBase.tRandom;

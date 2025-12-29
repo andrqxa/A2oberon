@@ -2,7 +2,7 @@ MODULE FractalDemo;	(** AUTHOR "TF"; PURPOSE "Draw Mandelbrot-Set using n - proc
 
 IMPORT
 	Objects, XML, WMComponents,  WMGraphics, WMGraphicUtilities, Raster, KernelLog,
-	Kernel, Strings, Math, WMProperties, WMRectangles;
+	Kernel, Strings, Math32, WMProperties, WMRectangles;
 
 CONST MaxIter = 2048;
 
@@ -136,7 +136,7 @@ TYPE
 			list.depth := MaxIter;
 			(* calculate a "nice" palette *)
 			FOR i := 0 TO MaxIter-1 DO
-				x := ENTIER(200 * Math.sqrt(Math.sqrt(Math.sin(i / MaxIter*Math.pi / 2)))) + 55;
+				x := ENTIER(200 * Math32.sqrt(Math32.sqrt(Math32.sin(i / MaxIter*Math32.pi / 2)))) + 55;
 				palette[i] := WMGraphics.RGBAToColor(x, x*2 MOD 255, x*4 MOD 255, 255)
 			END;
 			alive := TRUE; calculating := FALSE

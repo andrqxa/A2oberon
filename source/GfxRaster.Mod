@@ -37,7 +37,7 @@ MODULE GfxRaster; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		Math, GfxMatrix, GfxImages, GfxPaths, GfxRegions, GfxFonts, Gfx;
+		Math32, GfxMatrix, GfxImages, GfxPaths, GfxRegions, GfxFonts, Gfx;
 
 
 	CONST
@@ -467,7 +467,7 @@ MODULE GfxRaster; (** portable *)	(* eos  *)
 				ELSIF rc.joinStyle = Gfx.MiterJoin THEN
 					bu := cu + hu; bv := cv + hv; EnterLine(rc, bu, bv); AddLine(rc, cu + dv, cv - du)
 				ELSIF rc.joinStyle = Gfx.RoundJoin THEN
-					t := Math.sqrt((du * du + dv * dv)/(hu * hu + hv * hv));
+					t := Math32.sqrt((du * du + dv * dv)/(hu * hu + hv * hv));
 					bu := cu + t * hu; bv := cv + t * hv; EnterLine(rc, bu, bv);
 					data.context := rc; data.x := rc.fu; data.y := rc.fv;
 					GfxPaths.EnumArc(cu, cv, cu - du, cv - dv, cu + dv, cv - du, cu + dv, cv - du, rc.flatness, AddPathElem, data)
@@ -484,7 +484,7 @@ MODULE GfxRaster; (** portable *)	(* eos  *)
 				ELSIF rc.joinStyle = Gfx.MiterJoin THEN
 					AddLine(rc, cu + hu, cv + hv)
 				ELSIF rc.joinStyle = Gfx.RoundJoin THEN
-					t := Math.sqrt((du * du + dv * dv)/(hu * hu + hv * hv));
+					t := Math32.sqrt((du * du + dv * dv)/(hu * hu + hv * hv));
 					data.context := rc; data.x := rc.fu; data.y := rc.fv;
 					GfxPaths.EnumArc(cu, cv, cu - du, cv - dv, cu + dv, cv - du, cu + t * hu, cv + t * hv, rc.flatness, AddPathElem, data)
 				END;
@@ -713,7 +713,7 @@ MODULE GfxRaster; (** portable *)	(* eos  *)
 	BEGIN
 		cu := rc.u; cv := rc.v;
 		du := u - cu; dv := v - cv;
-		len := Math.sqrt(du * du + dv * dv);
+		len := Math32.sqrt(du * du + dv * dv);
 		cos := du/len; sin := dv/len;
 		wdu := rc.devWidth * cos; wdv := rc.devWidth * sin;
 		offset := rc.offset; rc.offset := offset + len;

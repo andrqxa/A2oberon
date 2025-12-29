@@ -10,7 +10,7 @@ MODULE GfxMatrix; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		Streams, Math;
+		Streams, Math32;
 
 
 	CONST
@@ -254,13 +254,13 @@ MODULE GfxMatrix; (** portable *)	(* eos  *)
 		VAR phi: FLOAT32;
 	BEGIN
 		IF (ABS(x) < 1.0) & (ABS(y) >= ABS(x * MAX(FLOAT32))) THEN	(* y/x would overflow *)
-			IF y >= 0.0 THEN phi := Math.pi/2
-			ELSE phi := -Math.pi/2
+			IF y >= 0.0 THEN phi := Math32.pi/2
+			ELSE phi := -Math32.pi/2
 			END
 		ELSIF x > 0.0 THEN	(* 1st or 4th quadrant *)
-			phi := Math.arctan(y/x)
+			phi := Math32.arctan(y/x)
 		ELSIF x < 0.0 THEN	(* 2nd or 3rd quadrant *)
-			phi := Math.arctan(y/x) + Math.pi
+			phi := Math32.arctan(y/x) + Math32.pi
 		END;
 		RETURN phi
 	END Atan2;
@@ -288,7 +288,7 @@ MODULE GfxMatrix; (** portable *)	(* eos  *)
 	BEGIN
 		x := din * m[0, 0]; y := din * m[0, 1];
 		IF ABS(y) < 1.0E-3 THEN dout := x
-		ELSE dout := Math.sqrt(x * x + y * y)
+		ELSE dout := Math32.sqrt(x * x + y * y)
 		END
 	END ApplyToDist;
 
