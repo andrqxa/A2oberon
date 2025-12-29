@@ -25,7 +25,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 (*** 3 dim Arrays wrapped in a Voyager object *)
-IMPORT vyBase, vyInteger, Objects, antsCommands, vyRanBase, MathL IN A2, Gadgets, Files, vyName, vyHostTexts, antsObjects,
+IMPORT vyBase, vyInteger, Objects, antsCommands, vyRanBase, Math64 IN A2, Gadgets, Files, vyName, vyHostTexts, antsObjects,
 	antsArrayObjects, antsArrays, aM := antsMessages;
 
 CONST
@@ -75,8 +75,8 @@ VAR
 			FOR l := 0 TO o.d - 1 DO
 				FOR j := 0 TO o.h - 1 DO
 					FOR i := 0 TO o.w - 1 DO
-						rz := l / o.d;  ry := -1 + j / o.h * 2;  rx := -1 + i / o.w * 2;  rxx := 3 / 4 * (MathL.sin( rz * 2 * MathL.pi ));
-						ryy := 3 / 4 * (MathL.cos( rz * 2 * MathL.pi ));
+						rz := l / o.d;  ry := -1 + j / o.h * 2;  rx := -1 + i / o.w * 2;  rxx := 3 / 4 * (Math64.sin( rz * 2 * Math64.pi ));
+						ryy := 3 / 4 * (Math64.cos( rz * 2 * Math64.pi ));
 						IF ((rx - rxx) * (rx - rxx) + (ry - ryy) * (ry - ryy)) < 0.16 THEN o.A[l, j, i] := 1;  ELSE o.A[l, j, i] := 0 END;
 					END;
 				END;

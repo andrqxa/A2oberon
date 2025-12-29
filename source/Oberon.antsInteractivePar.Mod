@@ -27,7 +27,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 IMPORT vyPort, Objects, vyName, vyBase, vyGraphBase, Display, vyEvents, Files, Gadgets, vyCommandMenus,
 	aM := antsMessages, vyHostStrings, vyRectangles, vyCG := vyName, antsCommands, vyLayers2d := vyDisplay2d,
-	antsNeighbourhoods, antsToolbox, Math := MathL IN A2;
+	antsNeighbourhoods, antsToolbox, Math := Math64 IN A2;
 
 TYPE
 

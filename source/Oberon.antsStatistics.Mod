@@ -25,7 +25,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 
-IMPORT antsMessages, antsArrayObjects, antsCommands, vyBase, vyLongrealVec := vyRealVec, Math := MathL IN A2, antsDirSet, aM := antsMessages;
+IMPORT antsMessages, antsArrayObjects, antsCommands, vyBase, vyLongrealVec := vyRealVec, Math := Math64 IN A2, antsDirSet, aM := antsMessages;
 
 VAR
 	v1, v2: vyBase.tVector;  t1d, t2d, ph1, ph2: FLOAT64;  wd, hd: SIZE;

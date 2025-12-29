@@ -8,7 +8,7 @@ MODULE Backdrops IN Oberon; (** portable *)	(* Daniel Ponti	Jan 94 *)
 (** Dieses Modul enthält alle Backdrop-Algorithmen und verwaltet die zugehörigen Farbpaletten *)
 
 IMPORT
-	Texts, Oberon, Pictures, Rembrandt0, Rembrandt, Display, Math IN A2, Input, Gadgets, Objects,
+	Texts, Oberon, Pictures, Rembrandt0, Rembrandt, Display, Math32 IN A2, Input, Gadgets, Objects,
 	Files, BasicGadgets, Out, RembrandtDocs;
 
 TYPE ptr = POINTER TO complex;
@@ -301,8 +301,8 @@ BEGIN
 		step:= fac/r;
 		i:= 0;
 		WHILE i<360 DO
-			x:= SHORT(ENTIER(r*Math.sin(i*Math.pi/180)));
-			y:= SHORT(ENTIER(r*Math.cos(i*Math.pi/180)));
+			x:= SHORT(ENTIER(r*Math32.sin(i*Math32.pi/180)));
+			y:= SHORT(ENTIER(r*Math32.cos(i*Math32.pi/180)));
 			IF dis>1 THEN h:= -dis+SHORT(Random()) MOD (2*dis) ELSE h:=0 END;
 			IF Pictures.Get(P, (xm+x+h) MOD px, (ym+y+h) MOD py) = Rembrandt0.color.col THEN
 				Pictures.Dot(P, dc, (xm+x+h) MOD px, (ym+y+h) MOD py, Display.replace)
@@ -330,7 +330,7 @@ BEGIN
 	WHILE i<2*a DO
 		x:=-a+i;
 		i:= i+step;
-		y:=b*Math.sqrt(1-x*x/a/a);
+		y:=b*Math32.sqrt(1-x*x/a/a);
 		x:= x+xm; y1:= y+ym;
 		Pictures.Dot(P, col, SHORT(ENTIER(x) MOD px), SHORT(ENTIER(y1) MOD py), Display.replace);
 		IF both THEN
@@ -351,8 +351,8 @@ BEGIN
 	IF b=1 THEN coldec:=col/(a1-a0) ELSE coldec:=0 END;
 	cols:= col*1.0-coldec;
 	FOR i:= a0 TO a1 DO
-		x:= SHORT(ENTIER((r0+r)*Math.sin(i*Math.pi/180)));
-		y:= SHORT(ENTIER((r0+r)*Math.cos(i*Math.pi/180)));
+		x:= SHORT(ENTIER((r0+r)*Math32.sin(i*Math32.pi/180)));
+		y:= SHORT(ENTIER((r0+r)*Math32.cos(i*Math32.pi/180)));
 		x:= x+xm; y:= y+ym;
 		Pictures.Dot(P, SHORT(ENTIER(cols)), x MOD px, y MOD py, Display.replace);
 		cols:= cols-coldec;
@@ -375,14 +375,14 @@ VAR
 	PROCEDURE complexsqrt(z: complex): ptr;
 		VAR mag : FLOAT32;
 	BEGIN
-		mag:= Math.sqrt(z.r*z.r+z.i*z.i);
+		mag:= Math32.sqrt(z.r*z.r+z.i*z.i);
 		IF (mag+z.r) < 0 THEN ret.r:=0
 		ELSE
-			ret.r:= Math.sqrt((mag+z.r)/2);
+			ret.r:= Math32.sqrt((mag+z.r)/2);
 		END;
 		IF (mag-z.r) < 0 THEN ret.i:=0
 		ELSE
-			ret.i:= Math.sqrt((mag-z.r)/2);
+			ret.i:= Math32.sqrt((mag-z.r)/2);
 		END;
 		IF z.i<0 THEN ret.i:=-ret.i END;
 		RETURN ret

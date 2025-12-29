@@ -18,7 +18,7 @@ MODULE SaveLife IN Oberon;	(* bsm - 2000.05.30 *)
 
 IMPORT
 	SYSTEM,	(* SYSTEM.MOVE, ADDRESSOF *)
-	In, Out, Display, Pictures, SaveScreen, Math IN A2,
+	In, Out, Display, Pictures, SaveScreen, Math32 IN A2,
 	Oberon, (* Collect *)
 	Input, (* Time, TimeUnit *)
 	Modules; (* InstallTermHandler *)
@@ -209,7 +209,7 @@ VAR
 				BEGIN
 					IF (ABS(m-0.5)<eps) (* special case to avoid divide by zero *)
 						THEN RETURN v
-						ELSE RETURN (4*m - 1 - Math.sqrt( m*16*m - m*8 + 1 + 8*v - m*16*v)) / (m*8 - 4);
+						ELSE RETURN (4*m - 1 - Math32.sqrt( m*16*m - m*8 + 1 + 8*v - m*16*v)) / (m*8 - 4);
 					END;
 				END ValueToBrightness;
 

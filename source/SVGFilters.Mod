@@ -1,6 +1,6 @@
 MODULE SVGFilters;
 
-IMPORT SVG, SVGColors, SVGUtilities, XML, XMLObjects, Raster, Math;
+IMPORT SVG, SVGColors, SVGUtilities, XML, XMLObjects, Raster, Math32;
 
 (* Constants that determine the input, the blend-mode and the type of color-matrix *)
 CONST
@@ -229,9 +229,9 @@ TYPE
 
 		(* horizontal part *)
 			sSquared2 := 2*stdDeviationX*stdDeviationX;
-			norm := Math.sqrt(SHORT(sSquared2)*Math.pi);
+			norm := Math32.sqrt(SHORT(sSquared2)*Math32.pi);
 			FOR k :=-kernelHalfX TO kernelHalfX DO
-				kernel[kernelHalfX+k] := Math.exp(SHORT(-k*k/sSquared2)) / norm;
+				kernel[kernelHalfX+k] := Math32.exp(SHORT(-k*k/sSquared2)) / norm;
 			END;
 
 			FOR ty:=0 TO temp.height-1 DO
@@ -247,9 +247,9 @@ TYPE
 
 		(* vertical part *)
 			sSquared2 := 2*stdDeviationY*stdDeviationY;
-			norm := Math.sqrt(SHORT(sSquared2)*Math.pi);
+			norm := Math32.sqrt(SHORT(sSquared2)*Math32.pi);
 			FOR k :=-kernelHalfY TO kernelHalfY DO
-				kernel[kernelHalfY+k] := Math.exp(SHORT(-k*k/sSquared2)) / norm;
+				kernel[kernelHalfY+k] := Math32.exp(SHORT(-k*k/sSquared2)) / norm;
 			END;
 
 			FOR ty:=0 TO target.height-1 DO
@@ -557,8 +557,8 @@ BEGIN
 	| ColorMatrixTypeHueRotate:
 		SVGUtilities.SkipCommaWhiteSpace(pos, values);
 		SVGUtilities.StrToFloatPos(values^, angle, pos);
-		s := Math.sin(-SHORT(angle)/180.0*Math.pi);
-		c := Math.cos(-SHORT(angle)/180.0*Math.pi);
+		s := Math32.sin(-SHORT(angle)/180.0*Math32.pi);
+		c := Math32.cos(-SHORT(angle)/180.0*Math32.pi);
 		matrix.a[0,0] := 0.213+0.787*c-0.213*s; matrix.a[1,0] := 0.715-0.715*c-0.715*s; matrix.a[2,0] := 0.072-0.072*c+0.928*s;
 		matrix.a[0,1] := 0.213-0.213*c+0.143*s; matrix.a[1,1] := 0.715+0.285*c+0.140*s; matrix.a[2,1] := 0.072-0.072*c-0.283*s;
 		matrix.a[0,2] := 0.213-0.213*c-0.787*s; matrix.a[1,2] := 0.715-0.715*c+0.715*s; matrix.a[2,2] := 0.072+0.928*c+0.072*s;

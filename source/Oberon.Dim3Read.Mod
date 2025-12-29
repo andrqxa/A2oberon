@@ -5,7 +5,7 @@ MODULE Dim3Read IN Oberon;	(** portable *)	(* David Ulrich Nov 95 - März 96 *)
 (** This module builds polygon worlds for the 3D Engine from a text description **)
 
 IMPORT
-	Math IN A2, Oberon, Dim3Engine, Texts;
+	Math32 IN A2, Oberon, Dim3Engine, Texts;
 
 CONST
 	invalid = -1; eot = 0; string = 1; ident = 2; number = 3; lpar = 4; rpar = 5; yes = 6; no = 7;
@@ -336,7 +336,7 @@ BEGIN
 		Get;
 		Number(angle);
 		Vector(v);
-		Dim3Engine.Rotate(cur.T, angle * Math.pi / 180.0, v[0], v[1], v[2])
+		Dim3Engine.Rotate(cur.T, angle * Math32.pi / 180.0, v[0], v[1], v[2])
 	| scale:
 		Get;
 		Vector(v);

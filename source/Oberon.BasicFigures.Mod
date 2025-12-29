@@ -17,7 +17,7 @@ MODULE BasicFigures IN Oberon;	(** portable *) (* jm 27.4.95 *)
 		- hit detection inside filled polygon might be a problem
 *)
 
-IMPORT Math IN A2, Files, Display, Display3, Printer, Printer3, Effects, Objects, Gadgets, Oberon;
+IMPORT Math32 IN A2, Files, Display, Display3, Printer, Printer3, Effects, Objects, Gadgets, Oberon;
 
 CONST
 	(** State0 settings. *)
@@ -76,7 +76,7 @@ VAR
 PROCEDURE Distance(x, y, x0, y0: SIGNED16): SIGNED16;
 VAR dx, dy: SIGNED32;
 BEGIN dx := x - x0; dy := y - y0;
-	RETURN SHORT(ENTIER(Math.sqrt(dx * dx + dy * dy)))
+	RETURN SHORT(ENTIER(Math32.sqrt(dx * dx + dy * dy)))
 END Distance;
 
 PROCEDURE Min(x, y: SIGNED16): SIGNED16;
@@ -1025,7 +1025,7 @@ END NewRect3D;
 		RS[1] := 0.0; i := 2;
 		WHILE i <= n DO
 			dx := RX[i] - RX[i-1];  dy := RY[i] - RY[i-1];
-			RS[i] := RS[i-1] + Math.sqrt(dx*dx + dy*dy);
+			RS[i] := RS[i-1] + Math32.sqrt(dx*dx + dy*dy);
 			INC(i);
 		END;
 		IF ~closed THEN

@@ -26,7 +26,7 @@ MODULE GfxFonts; (** non-portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		SYSTEM, KernelLog, Commands, Files, Configuration, Math, Raster, GfxMatrix,
+		SYSTEM, KernelLog, Commands, Files, Configuration, Math32, Raster, GfxMatrix,
 		GfxImages, GfxPaths, GfxRegions;
 
 
@@ -626,7 +626,7 @@ MODULE GfxFonts; (** non-portable *)	(* eos  *)
 			ext, pstr: ARRAY 9 OF CHAR; name: FontName;
 	BEGIN
 		rfile := NIL; font := NIL;
-		scale := Math.sqrt(ABS(GfxMatrix.Det(mat)));
+		scale := Math32.sqrt(ABS(GfxMatrix.Det(mat)));
 
 		(* look for exactly matching raster font *)
 		IF scale < 2.5 THEN ppm := SHORT(ENTIER(ptsize * scale + 0.5)); ext := ".Scn.Fnt"

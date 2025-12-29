@@ -1,5 +1,5 @@
 MODULE srRotaVox;
-IMPORT srBase, srMath, Math;
+IMPORT srBase, srMath, Math32;
 
 TYPE Voxel=srBase.Voxel;
 TYPE PT=srBase.PT;
@@ -34,7 +34,7 @@ END d2;
 
 PROCEDURE dia(a,b:PT):SREAL;
 BEGIN
-	 RETURN Math.sqrt((a.x-b.x)*(a.x-b.x)+ (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z));
+	 RETURN Math32.sqrt((a.x-b.x)*(a.x-b.x)+ (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z));
 END dia;
 
 PROCEDURE Shade*(VAR ray: Ray);

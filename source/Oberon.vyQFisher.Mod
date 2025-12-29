@@ -24,7 +24,7 @@ Report any problems as soon as possible to voyager@statlab.uni-heidelberg.de
 
 
 (* gs 25.2.94 *)
-IMPORT MathL IN A2, Texts, In, vyBase, vyHostTexts;
+IMPORT Math64 IN A2, Texts, In, vyBase, vyHostTexts;
 TYPE
 	Stattyp* = RECORD
 		Count*: SIGNED16;
@@ -114,14 +114,14 @@ BEGIN (*PFFISHER*)
 
 			IF ODD(N) THEN
 				IF ODD(M) THEN
-					P := MathL.sqrt(W);   Y := 0.3183098862;
-					D := Y * Z / P;  P := 2.0 * Y * MathL.arctan(P)
+					P := Math64.sqrt(W);   Y := 0.3183098862;
+					D := Y * Z / P;  P := 2.0 * Y * Math64.arctan(P)
 				ELSE
-					P := MathL.sqrt(W * Z); D := 0.5 * P * Z / W
+					P := Math64.sqrt(W * Z); D := 0.5 * P * Z / W
 				END (* ODD M *)
 			ELSE
 				IF ODD(M) THEN
-					P := MathL.sqrt(Z);   D := 0.5 * Z * P;   P := 1 - P
+					P := Math64.sqrt(Z);   D := 0.5 * Z * P;   P := 1 - P
 				ELSE
 					D := Z * Z;  P := W * Z
 				END (* ODD M *)
@@ -181,13 +181,13 @@ BEGIN (*Function QFISHER*)
 
 			Psq := Percentage * Percentage;
 			IF (Percentage > 0.5) THEN Psq := (1 - Percentage) * (1 - Percentage) END;
-			T := MathL.sqrt(MathL.ln(1 / Psq));
+			T := Math64.sqrt(Math64.ln(1 / Psq));
 			Up := T - (K1 + K2 * T) / (1.0 + K3 * T + K4 * Sqr(T));
 			IF (Percentage < 0.5) THEN Up := - Up END;
 			E := M / (M - 2);
 			V := Sqr(M);
 			V := V * (N + M - 2) / (Sqr(M - 2) * N * (M - 4));
-			B := E + Up * MathL.sqrt(2 * V);
+			B := E + Up * Math64.sqrt(2 * V);
 			IF B < 0 THEN B := 0 END;
 			(*Writeln('b ', B);*)
 		END;  (*(m>4)*)

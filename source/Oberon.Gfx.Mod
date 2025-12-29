@@ -33,7 +33,7 @@ MODULE Gfx IN Oberon; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		Math IN A2, Texts, Oberon, GfxMatrix, GfxImages, GfxPaths, GfxFonts;
+		Math32 IN A2, Texts, Oberon, GfxMatrix, GfxImages, GfxPaths, GfxFonts;
 
 
 	CONST
@@ -667,7 +667,7 @@ MODULE Gfx IN Oberon; (** portable *)	(* eos  *)
 			GfxPaths.AddEnter(path, x + hx, y + hy, idx, idy);
 			GfxPaths.AddLine(path, x + ody, y - odx)
 		ELSIF ctxt.joinStyle = RoundJoin THEN
-			t := Math.sqrt((odx * odx + ody * ody)/(hx * hx + hy * hy));
+			t := Math32.sqrt((odx * odx + ody * ody)/(hx * hx + hy * hy));
 			GfxPaths.AddEnter(path, x + t * hx, y + t * hy, -hy, hx);
 			GfxPaths.AddArc(path, x + ody, y - odx, x, y, x - odx, y - ody, x + ody, y - odx)
 		ELSE
@@ -701,7 +701,7 @@ MODULE Gfx IN Oberon; (** portable *)	(* eos  *)
 			GfxPaths.AddLine(path, x + hx, y + hy);
 			GfxPaths.AddExit(path, odx, ody)
 		ELSIF ctxt.joinStyle = RoundJoin THEN
-			t := Math.sqrt((odx * odx + ody * ody)/(hx * hx + hy * hy));
+			t := Math32.sqrt((odx * odx + ody * ody)/(hx * hx + hy * hy));
 			GfxPaths.AddArc(path, x + t * hx, y + t * hy, x, y, x - idx, y - idy, x + idy, y - idx);
 			GfxPaths.AddExit(path, -hy, hx)
 		ELSE
@@ -723,7 +723,7 @@ MODULE Gfx IN Oberon; (** portable *)	(* eos  *)
 	PROCEDURE GetNormVector* (x, y, len: FLOAT32; VAR nx, ny: FLOAT32);
 		VAR t: FLOAT32;
 	BEGIN
-		t := len/Math.sqrt(x * x + y * y);
+		t := len/Math32.sqrt(x * x + y * y);
 		nx := t * x; ny := t * y
 	END GetNormVector;
 
@@ -753,7 +753,7 @@ MODULE Gfx IN Oberon; (** portable *)	(* eos  *)
 		ELSIF ctxt.joinStyle = MiterJoin THEN
 			GfxPaths.AddLine(path, x + hx, y + hy); GfxPaths.AddLine(path, x + ody, y - odx)
 		ELSIF ctxt.joinStyle = RoundJoin THEN
-			t := Math.sqrt((odx * odx + ody * ody)/(hx * hx + hy * hy));
+			t := Math32.sqrt((odx * odx + ody * ody)/(hx * hx + hy * hy));
 			GfxPaths.AddLine(path, x + t * hx, y + t * hy);
 			GfxPaths.AddArc(path, x + ody, y - odx, x, y, x - odx, y - ody, x + ody, y - odx)
 		ELSE
@@ -770,7 +770,7 @@ MODULE Gfx IN Oberon; (** portable *)	(* eos  *)
 		ELSIF ctxt.joinStyle = MiterJoin THEN
 			GfxPaths.AddLine(path, x + hx, y + hy)
 		ELSIF ctxt.joinStyle = RoundJoin THEN
-			t := Math.sqrt((idx * idx + idy * idy)/(hx * hx + hy * hy));
+			t := Math32.sqrt((idx * idx + idy * idy)/(hx * hx + hy * hy));
 			GfxPaths.AddArc(path, x + t * hx, y + t * hy, x, y, x - idx, y - idy, x + idy, y - idx)
 		END;
 		GfxPaths.AddLine(path, x - hx, y - hy)
@@ -975,7 +975,7 @@ MODULE Gfx IN Oberon; (** portable *)	(* eos  *)
 		offset := 0;
 		WHILE scan.elem = GfxPaths.Line DO
 			dx := scan.x - cx; dy := scan.y - cy;
-			len := Math.sqrt(dx * dx + dy * dy);
+			len := Math32.sqrt(dx * dx + dy * dy);
 			cos := dx/len; sin := dy/len;
 			endOff := offset + len;
 			IF offset < end THEN	(* begin of line is within dash *)
@@ -1127,8 +1127,8 @@ MODULE Gfx IN Oberon; (** portable *)	(* eos  *)
 		ELSE RETURN
 		END;
 		ctxt.do.begin(ctxt, mode);
-		ctxt.do.enter(ctxt, x + r * Math.cos(start), y + r * Math.sin(start), 0, 0);
-		ctxt.do.arc(ctxt, x + r * Math.cos(end), y + r * Math.sin(end), x, y, x1, y1, x2, y2);
+		ctxt.do.enter(ctxt, x + r * Math32.cos(start), y + r * Math32.sin(start), 0, 0);
+		ctxt.do.arc(ctxt, x + r * Math32.cos(end), y + r * Math32.sin(end), x, y, x1, y1, x2, y2);
 		ctxt.do.end(ctxt)
 	END DrawArc;
 

@@ -92,7 +92,7 @@ MODULE HPCalc IN Oberon;	(** portable *)	(** prk  **)
 
 *)
 
-IMPORT Conversions, Panels, Documents, PanelDocs, Desktops, BIT IN A2, Reals IN A2, MathL IN A2, Texts, Strings, Oberon, Objects, Display,
+IMPORT Conversions, Panels, Documents, PanelDocs, Desktops, BIT IN A2, Reals IN A2, Math64 IN A2, Texts, Strings, Oberon, Objects, Display,
 	Attributes, Links, Gadgets, TextFields;
 
 CONST
@@ -344,39 +344,39 @@ BEGIN
 	ELSIF FN = "MINL" THEN
 		r := MIN(SIGNED32)
 	ELSIF FN = "SIN" THEN
-		PopR (m, b); r := MathL.sin (b)
+		PopR (m, b); r := Math64.sin (b)
 	ELSIF FN= "COS" THEN
-		PopR (m, b); r := MathL.cos (b)
+		PopR (m, b); r := Math64.cos (b)
 	ELSIF FN = "TAN" THEN
-		PopR (m, b); r := MathL.sin (b) / MathL.cos (b)
+		PopR (m, b); r := Math64.sin (b) / Math64.cos (b)
 	ELSIF FN = "ARCTAN" THEN
-		PopR (m, b); r := MathL.arctan (b)
+		PopR (m, b); r := Math64.arctan (b)
 	ELSIF FN = "ARCSIN" THEN
-		PopR (m, b); r := MathL.arctan (b/MathL.sqrt(1-b*b))	(* <- from "Taschenbuch der Mathematik *)
+		PopR (m, b); r := Math64.arctan (b/Math64.sqrt(1-b*b))	(* <- from "Taschenbuch der Mathematik *)
 	ELSIF FN = "ARCCOS" THEN
-		PopR (m, b); r := MathL.pi/2 - MathL.arctan (b/MathL.sqrt(1-b*b))	(* <- from "Taschenbuch der Mathematik *)
+		PopR (m, b); r := Math64.pi/2 - Math64.arctan (b/Math64.sqrt(1-b*b))	(* <- from "Taschenbuch der Mathematik *)
 	ELSIF FN = "SINH" THEN
-		PopR (m, b); r := (MathL.exp(b) - MathL.exp(-b))/2
+		PopR (m, b); r := (Math64.exp(b) - Math64.exp(-b))/2
 	ELSIF FN = "COSH" THEN
-		PopR (m, b); r := (MathL.exp(b) + MathL.exp(-b))/2
+		PopR (m, b); r := (Math64.exp(b) + Math64.exp(-b))/2
 	ELSIF FN = "TANH" THEN
-		PopR (m, b); r := (MathL.exp(b) - MathL.exp(-b))/(MathL.exp(b) + MathL.exp(-b))
+		PopR (m, b); r := (Math64.exp(b) - Math64.exp(-b))/(Math64.exp(b) + Math64.exp(-b))
 	ELSIF FN = "CONST_E" THEN
-		r := MathL.e
+		r := Math64.e
 	ELSIF FN = "EXP" THEN
-		PopR (m, b); r := MathL.exp (b)
+		PopR (m, b); r := Math64.exp (b)
 	ELSIF FN = "LN" THEN
-		PopR (m, b); r := MathL.ln (b)
+		PopR (m, b); r := Math64.ln (b)
 	ELSIF FN = "LOG" THEN
-		PopR (m, b); r := MathL.ln (b) / MathL.ln (10)
+		PopR (m, b); r := Math64.ln (b) / Math64.ln (10)
 	ELSIF FN = "HOCH2" THEN
 		PopR (m, b); r := b*b
 	ELSIF FN = "HOCHY" THEN
-		PopR (m, b); PopR (m, a); r := MathL.exp ( b*MathL.ln (a))
+		PopR (m, b); PopR (m, a); r := Math64.exp ( b*Math64.ln (a))
 	ELSIF FN = "CONST_PI" THEN
-		r := MathL.pi
+		r := Math64.pi
 	ELSIF FN = "SQRT" THEN
-		PopR (m, b); r := MathL.sqrt (b)
+		PopR (m, b); r := Math64.sqrt (b)
 	ELSIF FN = "+" THEN
 		PopR (m, b); PopR (m, a); r := a+b
 	ELSIF FN = "-" THEN

@@ -13,7 +13,7 @@ MODULE GfxPKFonts IN Oberon; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		Files, FileDir, Math IN A2, Display, Strings, Images, GfxMatrix, GfxImages, GfxPaths, GfxFonts;
+		Files, FileDir, Math32 IN A2, Display, Strings, Images, GfxMatrix, GfxImages, GfxPaths, GfxFonts;
 
 
 	TYPE
@@ -446,7 +446,7 @@ MODULE GfxPKFonts IN Oberon; (** portable *)	(* eos  *)
 	BEGIN
 		font := NIL;
 		COPY(family, name); Strings.Append(name, style);
-		scale := Math.sqrt(ABS(GfxMatrix.Det(mat)));
+		scale := Math32.sqrt(ABS(GfxMatrix.Det(mat)));
 		base := OpenBase(name, ptsize, scale);
 		IF base # NIL THEN
 			NEW(font); font.class := Class; font.base := base; font.niceMaps := TRUE;

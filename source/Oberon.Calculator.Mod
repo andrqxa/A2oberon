@@ -6,7 +6,7 @@ MODULE Calculator IN Oberon;	(** portable *)	(** by W. Ibl *)
 	Aug '97	V 1.0	first release
 	Oct '97	V1.1	added pre- in- and postfix classification
 *)
-IMPORT MathL IN A2,Oberon,Objects,Texts;
+IMPORT Math64 IN A2,Oberon,Objects,Texts;
 
 CONST
 	EOC = "~";
@@ -103,7 +103,7 @@ BEGIN
 	IF (base <= 0.0) THEN
 		res:= 0.0;
 	ELSE
-		res:= MathL.exp(exponent * MathL.ln(base));
+		res:= Math64.exp(exponent * Math64.ln(base));
 	END;
 	RETURN(res);
 END Power;
@@ -115,7 +115,7 @@ VAR
 BEGIN
 	IF (this > 0.0) THEN
 		cf:= 1.0+1.0/(12.0*this)+1.0/(288.0*this*this)-139.0/(51840.0*this*this*this)-571.0/(2488320.0*this*this*this*this);
-		RETURN(MathL.sqrt(2*MathL.pi*this)*MathL.exp(this*MathL.ln(this)-this)*cf);
+		RETURN(Math64.sqrt(2*Math64.pi*this)*Math64.exp(this*Math64.ln(this)-this)*cf);
 	ELSE
 		RETURN(1.0);
 	END;
@@ -430,7 +430,7 @@ f must be PROCEDURE(x: FLOAT64) returning FLOAT64. For example to define the una
 
 		PROCEDURE log(x: FLOAT64): FLOAT64;
 		BEGIN
-			RETURN(MathL.ln(x) / MathL.ln(10));
+			RETURN(Math64.ln(x) / Math64.ln(10));
 		END log;
 
 		Calculator.AddPrefixOperator("log",log);
@@ -627,13 +627,13 @@ Syntax of expression must be according to Texts.Scanner
 	AddInfixOperator("/",3,Divide);
 	AddInfixOperator("^",4,Power);
 
-	(* accessable MathL functions can be added immediately *)
-	AddPrefixOperator("arctan",MathL.arctan);	(* PREFIX *)
-	AddPrefixOperator("sin",MathL.sin);
-	AddPrefixOperator("cos",MathL.cos);
-	AddPrefixOperator("exp",MathL.exp);
-	AddPrefixOperator("ln",MathL.ln);
-	AddPrefixOperator("sqrt",MathL.sqrt);
+	(* accessable Math64 functions can be added immediately *)
+	AddPrefixOperator("arctan",Math64.arctan);	(* PREFIX *)
+	AddPrefixOperator("sin",Math64.sin);
+	AddPrefixOperator("cos",Math64.cos);
+	AddPrefixOperator("exp",Math64.exp);
+	AddPrefixOperator("ln",Math64.ln);
+	AddPrefixOperator("sqrt",Math64.sqrt);
 
 	AddPostfixOperator("!",Fac);	(* POSTFIX *)
 

@@ -30,7 +30,7 @@ Stefan Brandt, 2003
 Alexandra Hutzenthaler, 2003
 *)
 
-IMPORT math := MathL IN A2;
+IMPORT math := Math64 IN A2;
 
 TYPE
 	Tree = RECORD

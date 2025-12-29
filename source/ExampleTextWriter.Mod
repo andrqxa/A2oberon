@@ -4,7 +4,7 @@ MODULE ExampleTextWriter;	(** AUTHOR "TF"; PURPOSE "Template/Example  for compon
 
 IMPORT
 	Strings, WMGraphics, WMComponents, WMWindowManager,
-	WMEditors, TextUtilities, Math;
+	WMEditors, TextUtilities, Math32;
 
 TYPE
 	Window* = OBJECT (WMComponents.FormWindow)
@@ -60,7 +60,7 @@ TYPE
 			tw.SetFontStyle({WMGraphics.FontBold});
 			WHILE buffer[i] # 0X DO
 				tw.SetFontColor(WMGraphics.RGBAToColor(i * 2, i * 2, i * 2, 0FFH));
-				tw.SetVerticalOffset(ENTIER(15 * Math.cos(i/4)));
+				tw.SetVerticalOffset(ENTIER(15 * Math32.cos(i/4)));
 				tw.Char(buffer[i]);
 				INC(i)
 			END;

@@ -6,7 +6,7 @@ MODULE Dim3Paint IN Oberon; (** portable *)	(* David Ulrich Nov  95 - März 96 *
       polygon drawing with and without the dynamic screen data structure **)
 
 IMPORT
-	SYSTEM, Display, Display3, Pictures, Texts, Oberon, Files, Math IN A2, Dim3Base;
+	SYSTEM, Display, Display3, Pictures, Texts, Oberon, Files, Math32 IN A2, Dim3Base;
 
 CONST
 	NoPattern = 0; Light = 1; Middle = 2; Dark = 3;
@@ -1440,7 +1440,7 @@ VAR  h, width, height: SIGNED16; point1, point2, point3: Point; dummy: ARRAY 50 
 			v[0] := p1.v; v[1] := p2.v;  v[2] := p3.v;
 			deltaX :=  (x[0] - x[1]) * (x[0] - x[1]); deltaY :=  (y[0] - y[1]) * (y[0] - y[1]);
 			deltaU :=  (u[0] - u[1]) * (u[0] - u[1]) * width2; deltaV :=  (v[0] - v[1]) * (v[0] - v[1]) * height2;
-			mipmap := ENTIER(Math.ln( Math.sqrt((deltaU + deltaV) / (deltaX + deltaY))) / Ln2);
+			mipmap := ENTIER(Math32.ln( Math32.sqrt((deltaU + deltaV) / (deltaX + deltaY))) / Ln2);
 			IF mipmap < 0 THEN mipmap := 0 ELSIF mipmap > (numPict - 1) THEN mipmap := numPict - 1 END;
 			IF transparent THEN
 				DrawTransparent(P, ds, texture[mipmap], tsList, x, y, u, v, 3);

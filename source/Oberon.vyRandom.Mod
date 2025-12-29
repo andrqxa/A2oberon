@@ -30,7 +30,7 @@ Report any problems as soon as possible to voyager@statlab.uni-heidelberg.de
 (*!  support fully parametrized versions  *)
 (*! support bernoulli variates *)
 (* fixed: vector support needs VAR parameters *)
-IMPORT	MathL IN A2, vyRanBase, vyRanParksMiller;
+IMPORT	Math64 IN A2, vyRanBase, vyRanParksMiller;
 CONST
 	idversion* = "Random v0.1d4";
 	VAR  twopi: FLOAT64;
@@ -42,13 +42,13 @@ PROCEDURE UniformV* (count: SIGNED32; VAR x: ARRAY OF FLOAT64;  start: SIGNED32)
 BEGIN vyRanBase.RandomUVX(count, x, start)  END UniformV;
 
 PROCEDURE Exp* (mu: FLOAT64): FLOAT64;
-BEGIN RETURN (- MathL.ln(Uniform()) / mu) END Exp;
+BEGIN RETURN (- Math64.ln(Uniform()) / mu) END Exp;
 
 PROCEDURE ExpV* (mu: FLOAT64; count: SIGNED32; VAR  x: ARRAY OF FLOAT64;  start: SIGNED32);
 BEGIN
 	vyRanBase.RandomUVX(count, x, start);
 	count := count + start;
-	WHILE start < count DO x[start] := - MathL.ln(x[start]) / mu; INC(start) END
+	WHILE start < count DO x[start] := - Math64.ln(x[start]) / mu; INC(start) END
 END ExpV;
 
 (*=
@@ -60,8 +60,8 @@ A tutorial. Int. Stat. Review 51(1983) 301-319
 PROCEDURE Cauchy* (): FLOAT64;
 	VAR x: FLOAT64;
 BEGIN
-	x := MathL.pi * ( Uniform() - 0.5);
-	RETURN (MathL.sin(x) / MathL.cos(x))
+	x := Math64.pi * ( Uniform() - 0.5);
+	RETURN (Math64.sin(x) / Math64.cos(x))
 END Cauchy;
 
 PROCEDURE CauchyV* (count: SIGNED32; VAR x: ARRAY OF FLOAT64;  start: SIGNED32);
@@ -69,8 +69,8 @@ PROCEDURE CauchyV* (count: SIGNED32; VAR x: ARRAY OF FLOAT64;  start: SIGNED32);
 BEGIN
 	vyRanBase.RandomUVX(count, x, start);
 	count := count + start;
-	WHILE start < count DO	 temp := MathL.pi * ( x[start] - 0.5);
-		x[start] := (MathL.sin(temp) / MathL.cos(temp)); INC(start)
+	WHILE start < count DO	 temp := Math64.pi * ( x[start] - 0.5);
+		x[start] := (Math64.sin(temp) / Math64.cos(temp)); INC(start)
 	END
 END CauchyV;
 
@@ -86,21 +86,21 @@ PROCEDURE Gauss* (mu, sigmasq: FLOAT64): FLOAT64;
 BEGIN
 	u1 := Uniform();
 	u2 := Uniform();
-	RETURN ((MathL.sqrt(  - 2 * MathL.ln(u1)) * MathL.cos(twopi * u2))) * MathL.sqrt(sigmasq) + mu
+	RETURN ((Math64.sqrt(  - 2 * Math64.ln(u1)) * Math64.cos(twopi * u2))) * Math64.sqrt(sigmasq) + mu
 END Gauss;
 
 PROCEDURE GaussV* (mu, sigmasq: FLOAT64; count: SIGNED32; VAR x: ARRAY OF FLOAT64;  start: SIGNED32);
 	(*= Gaussian random variates, mean mu, Var sigmasq *)
 	VAR u1, u2: FLOAT64; stddev: FLOAT64;
-BEGIN stddev := MathL.sqrt(sigmasq);
+BEGIN stddev := Math64.sqrt(sigmasq);
 	IF ODD(count) THEN x[start] := Gauss(mu, sigmasq);  INC(start); DEC(count) END;
 	vyRanBase.RandomUVX(count, x, start);
 	count := count + start;
 	WHILE start < count DO
 		u1 := x[start];
 		u2 := x[start + 1];
-		x[start] := ((MathL.sqrt(  - 2 * MathL.ln(u1)) * MathL.cos(twopi * u2)) * stddev + mu);
-		x[start + 1] := ((MathL.sqrt(  - 2 * MathL.ln(u1)) * MathL.sin(twopi * u2)) * stddev + mu);
+		x[start] := ((Math64.sqrt(  - 2 * Math64.ln(u1)) * Math64.cos(twopi * u2)) * stddev + mu);
+		x[start + 1] := ((Math64.sqrt(  - 2 * Math64.ln(u1)) * Math64.sin(twopi * u2)) * stddev + mu);
 		INC(start, 2)
 	END
 END GaussV;
@@ -118,9 +118,9 @@ BEGIN
 		v2 := 2 * Uniform() - 1;
 		w := v1 * v1 + v2 * v2
 	UNTIL w <= 1;
-	c := MathL.sqrt(  - 2 * MathL.ln(w) / w);
+	c := Math64.sqrt(  - 2 * Math64.ln(w) / w);
 	x := c * v1;
-	RETURN (x * MathL.sqrt(sigmasq) + mu);
+	RETURN (x * Math64.sqrt(sigmasq) + mu);
 	(* {RandomGaussM:=c*v2;} *)
 	(*       {another independent variate} *)
 END GaussM;
@@ -128,7 +128,7 @@ END GaussM;
 PROCEDURE GaussMV* (mu, sigmasq: FLOAT64; count: SIGNED32; VAR gauss: ARRAY OF FLOAT64;  start: SIGNED32);
 VAR
 	v1, v2, w, c: FLOAT64; stddev: FLOAT64;
-BEGIN stddev := MathL.sqrt(sigmasq);
+BEGIN stddev := Math64.sqrt(sigmasq);
 	count := count + start;
 	WHILE start < count DO
 		REPEAT
@@ -136,7 +136,7 @@ BEGIN stddev := MathL.sqrt(sigmasq);
 			v2 := 2 * Uniform() - 1;
 			w := v1 * v1 + v2 * v2;
 		UNTIL w <= 1;
-		c := MathL.sqrt(  - 2 * MathL.ln(w) / w);
+		c := Math64.sqrt(  - 2 * Math64.ln(w) / w);
 		gauss[start] := c * v1 * stddev + mu;
 		gauss[start + 1] := c * v2 * stddev + mu;
 		INC(start, 2);
@@ -147,7 +147,7 @@ END GaussMV;
 
 PROCEDURE Weibull* (beta : FLOAT64) : FLOAT64;
 BEGIN
-	RETURN (MathL.exp(MathL.ln(  - MathL.ln(Uniform()) / beta)));
+	RETURN (Math64.exp(Math64.ln(  - Math64.ln(Uniform()) / beta)));
 END Weibull;
 
 PROCEDURE WeibullV* (beta : FLOAT64; count: SIGNED32; VAR x: ARRAY OF FLOAT64;  start: SIGNED32);
@@ -155,7 +155,7 @@ BEGIN
 	vyRanBase.RandomUVX(count, x, start);
 	count := count + start;
 	WHILE start < count DO
-		x[start] := (MathL.exp(MathL.ln(  - MathL.ln(x[start]) / beta))); INC(start)
+		x[start] := (Math64.exp(Math64.ln(  - Math64.ln(x[start]) / beta))); INC(start)
 	END;
 END WeibullV;
 
@@ -163,7 +163,7 @@ END WeibullV;
 
 PROCEDURE Gumbel* (): FLOAT64;
 BEGIN
-	RETURN  (- MathL.ln(  - MathL.ln(Uniform())));
+	RETURN  (- Math64.ln(  - Math64.ln(Uniform())));
 END Gumbel;
 
 PROCEDURE GumbelV* (count: SIGNED32; VAR x: ARRAY OF FLOAT64;  start: SIGNED32);
@@ -171,7 +171,7 @@ BEGIN
 	vyRanBase.RandomUVX(count, x, start);
 	count := count + start;
 	WHILE start < count DO
-		x[start] :=  (- MathL.ln(  - MathL.ln(x[start]))); INC(start)
+		x[start] :=  (- Math64.ln(  - Math64.ln(x[start]))); INC(start)
 	END;
 END GumbelV;
 
@@ -179,8 +179,8 @@ PROCEDURE VonMises* (Kappa : FLOAT64) : FLOAT64;
 	VAR        y: FLOAT64;
 BEGIN
 	REPEAT
-		y := 2 * MathL.pi * Uniform();
-	UNTIL Uniform() > MathL.exp(Kappa * MathL.cos(y) - 1);
+		y := 2 * Math64.pi * Uniform();
+	UNTIL Uniform() > Math64.exp(Kappa * Math64.cos(y) - 1);
 	RETURN (y);
 END VonMises;
 
@@ -191,14 +191,14 @@ BEGIN
 	WHILE start < count DO
 		REPEAT
 			y := twopi * Uniform();
-		UNTIL Uniform() > MathL.exp(Kappa * MathL.cos(y) - 1);
+		UNTIL Uniform() > Math64.exp(Kappa * Math64.cos(y) - 1);
 		x[start] := (y);
 		INC(start)
 	END;
 END VonMisesV;
 
 BEGIN
-	twopi := 2 * MathL.pi;
+	twopi := 2 * Math64.pi;
 	IF vyRanBase.RandomGenerator = NIL THEN (* warning ?? *)
 		vyRanParksMiller.Install;
 	END;

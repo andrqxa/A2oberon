@@ -1,30 +1,30 @@
 (* ETH Oberon, Copyright 2001 ETH Zuerich Institut fuer Computersysteme, ETH Zentrum, CH-8092 Zuerich.
 Refer to the "General ETH Oberon System Source License" contract available at: http://www.oberon.ethz.ch/ *)
 
-MODULE Math;	(** portable *)
-(** AUTHOR "?"; PURPOSE "Math utility module (FLOAT32)"; *)
+MODULE Math64;	(** portable *)
+(** AUTHOR "?"; PURPOSE "Math utility module (FLOAT64)"; *)
 
 (* Aos version - requires floating-point instruction support. *)
 
-IMPORT SYSTEM, Commands;
+IMPORT SYSTEM;
 
 CONST
-	e* = 2.7182818284590452354E0;
-	pi* = 3.14159265358979323846E0;
-	ln2* = 0.693147180559945309417232121458E0;
-	eps = 1.2E-7;
+	e* = 2.7182818284590452354D0;
+	pi* = 3.14159265358979323846D0;
+	ln2* = 0.693147180559945309417232121458D0;
+	eps = 2.2D-16;
 
 TYPE
-	Value = FLOAT32;
+	Value = FLOAT64;
 
 PROCEDURE Expo (x: Value): UNSIGNED32;
 BEGIN
-	RETURN ASH(SYSTEM.VAL(UNSIGNED32, x), -23) MOD 256
+	RETURN UNSIGNED32(ASH(SYSTEM.VAL(UNSIGNED64, x), -52)) MOD 2048
 END Expo;
 
-PROCEDURE Mantissa (x: Value): UNSIGNED32;
+PROCEDURE Mantissa (x: Value): UNSIGNED64;
 BEGIN
-	RETURN SYSTEM.VAL(UNSIGNED32, SYSTEM.VAL(SET32, x) * {0 .. 22})
+	RETURN SYSTEM.VAL(UNSIGNED64, SYSTEM.VAL(SET64, x) * {0 .. 51})
 END Mantissa;
 
 PROCEDURE Equal (x, y: Value): BOOLEAN;
@@ -44,21 +44,21 @@ VAR
 BEGIN
 #IF I386 THEN
 	CODE
-		FLD [EBP + x]
+		FLD QWORD [EBP + x]
 		FSIN
 		#IF ~LEGACY THEN
-			FSTP [EBP + x]
-			MOVSS XMM0, [EBP + x]
+			FSTP QWORD [EBP + x]
+			MOVSD XMM0, [EBP + x]
 		#END
 	END;
 	RETURN RESULT;
 #ELSIF AMD64 THEN
 	CODE
-		FLD [RBP + x]
+		FLD QWORD [RBP + x]
 		FSIN
 		#IF ~LEGACY THEN
-			FSTP [RBP + x]
-			MOVSS XMM0, [RBP + x]
+			FSTP QWORD [RBP + x]
+			MOVSD XMM0, [RBP + x]
 		#END
 	END;
 	RETURN RESULT;
@@ -85,21 +85,21 @@ VAR
 BEGIN
 #IF I386 THEN
 	CODE
-		FLD [EBP + x]
+		FLD QWORD [EBP + x]
 		FCOS
 		#IF ~LEGACY THEN
-			FSTP [EBP + x]
-			MOVSS XMM0, [EBP + x]
+			FSTP QWORD [EBP + x]
+			MOVSD XMM0, [EBP + x]
 		#END
 	END;
 	RETURN RESULT;
 #ELSIF AMD64 THEN
 	CODE
-		FLD [RBP + x]
+		FLD QWORD [RBP + x]
 		FCOS
 		#IF ~LEGACY THEN
-			FSTP [RBP + x]
-			MOVSS XMM0, [RBP + x]
+			FSTP QWORD [RBP + x]
+			MOVSD XMM0, [RBP + x]
 		#END
 	END;
 	RETURN RESULT;
@@ -151,31 +151,31 @@ END arctan0;
 
 (* one-parameter version: res:=arctan(y/x) with the usual loss of the quadrant information
 	two-parameter version specific for all quadrants: res:=arctan(y,x) iusing optional second argument*)
-PROCEDURE arctan2*(y: Value; x:=1:Value): Value;
+PROCEDURE arctan2*(y:Value; x:=1.0: Value): Value;
 BEGIN
 #IF I386 THEN
 	CODE
-		FLD [EBP + y]
-		FLD	[EBP + x]
+		FLD QWORD [EBP + y]
+		FLD QWORD [EBP + x]
 		FPATAN
 		#IF ~LEGACY THEN
-			FSTP [EBP + y]
-			MOVSS XMM0, [EBP + y]
+			FSTP QWORD [EBP + y]
+			MOVSD XMM0, [EBP + y]
 		#END
 	END;
 	RETURN RESULT;
 #ELSIF AMD64 THEN
 	CODE
-		FLD [RBP + y]
-		FLD [RBP + x]
+		FLD QWORD [RBP + y]
+		FLD  QWORD [RBP + x]
 		FPATAN
 		#IF ~LEGACY THEN
-			FSTP [RBP + y]
-			MOVSS XMM0, [RBP + y]
+			FSTP QWORD [RBP + y]
+			MOVSD XMM0, [RBP + y]
 		#END
 	END;
 	RETURN RESULT;
-#ELSE 
+#ELSE
 	IF (x>0) & (y>=0) THEN RETURN arctan0(y/x)
 	ELSIF (x>0) & (y<0) THEN RETURN arctan0(y/x)
 	ELSIF x<0 THEN RETURN arctan0(y/x)-pi (*?*)
@@ -186,9 +186,9 @@ BEGIN
 #END
 END arctan2;
 
-PROCEDURE arctan*(y: Value): Value;
+PROCEDURE arctan*(y:Value): Value;
 BEGIN
-	RETURN arctan2(y);
+RETURN arctan2(y)
 END arctan;
 
 PROCEDURE sqrt*(x: Value): Value;
@@ -198,21 +198,21 @@ BEGIN
 	END;
 #IF I386 THEN
 	CODE
-		FLD [EBP + x]
+		FLD QWORD [EBP + x]
 		FSQRT
 		#IF ~LEGACY THEN
-			FSTP [EBP + x]
-			MOVSS XMM0, [EBP + x]
+			FSTP QWORD [EBP + x]
+			MOVSD XMM0, [EBP + x]
 		#END
 	END;
 	RETURN RESULT;
 #ELSIF AMD64 THEN
 	CODE
-		FLD [RBP + x]
+		FLD QWORD [RBP + x]
 		FSQRT
 		#IF ~LEGACY THEN
-			FSTP [RBP + x]
-			MOVSS XMM0, [RBP + x]
+			FSTP QWORD [RBP + x]
+			MOVSD XMM0, [RBP + x]
 		#END
 	END;
 	RETURN RESULT;
@@ -225,6 +225,7 @@ PROCEDURE ln*(x: Value): Value;
 VAR
 	k: INTEGER;
 	res, y, yk: Value;
+	mantissa: UNSIGNED64;
 BEGIN
 	IF x <= 0 THEN
 		HALT(80);
@@ -234,11 +235,11 @@ BEGIN
 		FLD1
 		FLDL2E
 		FDIVP
-		FLD [EBP + x]
+		FLD QWORD [EBP + x]
 		FYL2X
 		#IF ~LEGACY THEN
-			FSTP [EBP + x]
-			MOVSS XMM0, [EBP + x]
+			FSTP QWORD [EBP + x]
+			MOVSD XMM0, [EBP + x]
 		#END
 	END;
 	RETURN RESULT;
@@ -247,11 +248,11 @@ BEGIN
 		FLD1
 		FLDL2E
 		FDIVP
-		FLD [RBP + x]
+		FLD QWORD [RBP + x]
 		FYL2X
 		#IF ~LEGACY THEN
-			FSTP [RBP + x]
-			MOVSS XMM0, [RBP + x]
+			FSTP QWORD [RBP + x]
+			MOVSD XMM0, [RBP + x]
 		#END
 	END;
 	RETURN RESULT;
@@ -265,7 +266,8 @@ BEGIN
 
 			ln(m * 2^e) = e ln(2) + ln(m)
 		*)
-		RETURN (Expo(x) - 127) * ln2 + ln(SYSTEM.VAL(Value, Mantissa(x) + 3F800000H))
+		mantissa := Mantissa(x) + 3FF0000000000000H;
+		RETURN (Expo(x) - 1023) * ln2 + ln(SYSTEM.VAL(Value, mantissa))
 	ELSE
 		(* ln(x) = 2 * sum_k 1/(2 k + 1) y^k, where y = (x - 1) / (x + 1), x real *)
 		y := (x - 1) / (x + 1);
@@ -289,7 +291,7 @@ VAR
 BEGIN
 #IF I386 THEN
 	CODE
-		FLD [EBP + x]
+		FLD QWORD [EBP + x]
 		FLDL2E
 		FMULP
 		FLD ST0
@@ -302,14 +304,14 @@ BEGIN
 		FSCALE
 		FSTP ST1
 		#IF ~LEGACY THEN
-			FSTP [EBP + x]
-			MOVSS XMM0, [EBP + x]
+			FSTP QWORD [EBP + x]
+			MOVSD XMM0, [EBP + x]
 		#END
 	END;
 	RETURN RESULT;
 #ELSIF AMD64 THEN
 	CODE
-		FLD [RBP + x]
+		FLD QWORD [RBP + x]
 		FLDL2E
 		FMULP
 		FLD ST0
@@ -322,8 +324,8 @@ BEGIN
 		FSCALE
 		FSTP ST1
 		#IF ~LEGACY THEN
-			FSTP [RBP + x]
-			MOVSS XMM0, [RBP + x]
+			FSTP QWORD [RBP + x]
+			MOVSD XMM0, [RBP + x]
 		#END
 	END;
 	RETURN RESULT;
@@ -374,7 +376,5 @@ BEGIN
 	*)
 END Test;
 
-END Math.
 
-System.FreeDownTo Math~
-Math.Test
+END Math64.

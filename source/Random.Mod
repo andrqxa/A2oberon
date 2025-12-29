@@ -4,7 +4,7 @@ MODULE Random; (** AUTHOR "ecarter/bsm/pjm"; PURPOSE "Pseudo-random number gener
 
 (* Based on the ADA version by Everett F. Carter Jr., ported to Aos by Ben Smith-Mannschott. *)
 
-IMPORT SYSTEM, Math;
+IMPORT SYSTEM, Math32;
 
 CONST
 	max       = 2147483647;
@@ -95,7 +95,7 @@ TYPE
 
 		PROCEDURE Exp*(mu: FLOAT32): FLOAT32;
 		BEGIN
-			RETURN -Math.ln(Uniform())/mu
+			RETURN -Math32.ln(Uniform())/mu
 		END Exp;
 
 		PROCEDURE Gaussian*(): FLOAT32; (*generates a normal distribution with mean 0, variance 1 using the Box-Muller Transform*)
@@ -107,7 +107,7 @@ TYPE
 				x2:=2.0*Uniform()-1;
 				w:=x1*x1+x2*x2;
 			UNTIL (w>0) & (w<1);
-			w:=Math.sqrt( (-2.0* Math.ln(w) ) /w);
+			w:=Math32.sqrt( (-2.0* Math32.ln(w) ) /w);
 			y1:=x1*w;
 			(*y2:=x2*w*)
 			RETURN y1;

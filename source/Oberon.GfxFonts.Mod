@@ -28,7 +28,7 @@ MODULE GfxFonts IN Oberon; (** non-portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		SYSTEM, Files, Math IN A2, Display, Fonts, Texts, Oberon, Strings, Images, PictImages, GfxMatrix, GfxImages, GfxPaths,
+		SYSTEM, Files, Math32 IN A2, Display, Fonts, Texts, Oberon, Strings, Images, PictImages, GfxMatrix, GfxImages, GfxPaths,
 		GfxRegions, GfxFonts0;
 
 
@@ -541,7 +541,7 @@ MODULE GfxFonts IN Oberon; (** non-portable *)	(* eos  *)
 			ext, pstr: ARRAY 9 OF CHAR; name: FontName;
 	BEGIN
 		rfont := NIL; rfile := NIL; font := NIL;
-		scale := Math.sqrt(ABS(GfxMatrix.Det(mat)));
+		scale := Math32.sqrt(ABS(GfxMatrix.Det(mat)));
 
 		(* ask system for font *)
 		IF scale < 2.5 THEN ppm := SHORT(ENTIER(ptsize * scale + 0.5)); ext := ".Scn.Fnt"

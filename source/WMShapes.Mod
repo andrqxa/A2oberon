@@ -1,7 +1,7 @@
 MODULE WMShapes; (** AUTHOR "staubesv, PH"; PURPOSE "Basic geormetric shapes as visual components"; *)
 (*! to do: thread safety*)
 IMPORT
-	Strings, XML, WMRectangles, WMGraphics, WMGraphicUtilities, WMProperties, WMComponents, Math, KernelLog;
+	Strings, XML, WMRectangles, WMGraphics, WMGraphicUtilities, WMProperties, WMComponents, Math32, KernelLog;
 
 TYPE
 	(* generic line. can have an arrowhead on either end *)
@@ -112,12 +112,12 @@ TYPE
 				head:=size * headscale (*  + 2 *);
 				canvas.Line(startI.x, startI.y, endI.x, endI.y, colorI, WMGraphics.ModeSrcOverDst);
 				IF arrowAtEndI THEN
-					canvas.Line(endI.x,endI.y, endI.x - ENTIER(0.5+head * Math.cos(alpha + pi/8)), endI.y - ENTIER(0.5+head * Math.sin(alpha + pi/8)), colorI, WMGraphics.ModeSrcOverDst);
-					canvas.Line(endI.x,endI.y, endI.x - ENTIER(0.5+head * Math.cos(alpha - pi/8)), endI.y - ENTIER(0.5+head * Math.sin(alpha - pi/8)), colorI, WMGraphics.ModeSrcOverDst);
+					canvas.Line(endI.x,endI.y, endI.x - ENTIER(0.5+head * Math32.cos(alpha + pi/8)), endI.y - ENTIER(0.5+head * Math32.sin(alpha + pi/8)), colorI, WMGraphics.ModeSrcOverDst);
+					canvas.Line(endI.x,endI.y, endI.x - ENTIER(0.5+head * Math32.cos(alpha - pi/8)), endI.y - ENTIER(0.5+head * Math32.sin(alpha - pi/8)), colorI, WMGraphics.ModeSrcOverDst);
 				END;
 				IF arrowAtStartI THEN
-					canvas.Line(startI.x,startI.y, startI.x + ENTIER(0.5+head * Math.cos(alpha + pi/8)), startI.y + ENTIER(0.5+head * Math.sin(alpha + pi/8)), colorI, WMGraphics.ModeSrcOverDst);
-					canvas.Line(startI.x,startI.y, startI.x + ENTIER(0.5+head * Math.cos(alpha - pi/8)), startI.y + ENTIER(0.5+head * Math.sin(alpha - pi/8)), colorI, WMGraphics.ModeSrcOverDst);
+					canvas.Line(startI.x,startI.y, startI.x + ENTIER(0.5+head * Math32.cos(alpha + pi/8)), startI.y + ENTIER(0.5+head * Math32.sin(alpha + pi/8)), colorI, WMGraphics.ModeSrcOverDst);
+					canvas.Line(startI.x,startI.y, startI.x + ENTIER(0.5+head * Math32.cos(alpha - pi/8)), startI.y + ENTIER(0.5+head * Math32.sin(alpha - pi/8)), colorI, WMGraphics.ModeSrcOverDst);
 				END
 			END;
 		END DrawBackground;
@@ -297,11 +297,11 @@ END InitStrings;
 
 PROCEDURE arctan2(x,y: FLOAT32): FLOAT32; (*arctan in range 0..2pi*)
 	BEGIN
-		IF (x>0) & (y>=0) THEN RETURN Math.arctan(y/x)
-		ELSIF (x>0) & (y<0) THEN RETURN Math.arctan(y/x)+2*Math.pi
-		ELSIF x<0 THEN RETURN Math.arctan(y/x)+Math.pi
-		ELSIF (x=0) & (y>0) THEN RETURN Math.pi/2
-		ELSIF (x=0) & (y<0) THEN RETURN 3*Math.pi/2
+		IF (x>0) & (y>=0) THEN RETURN Math32.arctan(y/x)
+		ELSIF (x>0) & (y<0) THEN RETURN Math32.arctan(y/x)+2*Math32.pi
+		ELSIF x<0 THEN RETURN Math32.arctan(y/x)+Math32.pi
+		ELSIF (x=0) & (y>0) THEN RETURN Math32.pi/2
+		ELSIF (x=0) & (y<0) THEN RETURN 3*Math32.pi/2
 		ELSE (*( x=0) & (y=0) *) RETURN 0 (*or RETURN NaN ?*)
 		END
 	END arctan2;

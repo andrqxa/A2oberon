@@ -31,7 +31,7 @@ Alexandra Hutzenthaler, 2003
 
 
 IMPORT antsArrays, vyBase, vyLongrealVec, antsVecOpt, antsPotts1DSurvey, antsTautString, antsSecurity, vyLongreal, antsBellman, antsPottsMonotone,
-	antsReadWrite, antsPottsSimDataStructure, vyName, antsFunctions, Strings, MathL IN A2, Out;
+	antsReadWrite, antsPottsSimDataStructure, vyName, antsFunctions, Strings, Math64 IN A2, Out;
 
 CONST
 	cMedian* = 0;  cMean* = 1;  cHampel* = 2;  cSaegezahn* = 3;  cHuber* = 4;  cTautString* = 5;
@@ -183,7 +183,7 @@ VAR
 	BEGIN
 		len := LEN( x );  NEW( y, len - 1 );
 
-		FOR i := 1 TO len - 1 DO y[i - 1] := (x[i] - x[i - 1]) / MathL.sqrt( 2 );  END;
+		FOR i := 1 TO len - 1 DO y[i - 1] := (x[i] - x[i - 1]) / Math64.sqrt( 2 );  END;
 
 		mad := antsArrays.Median1dX( y^, len - 1 );
 
@@ -423,9 +423,9 @@ VAR
 		vec2 := vyLongrealVec.New( len );
 
 		IF type = cGauss THEN antsVecOpt.DoAddGaussNoise( vec1, vec2, 0, parameter );
-		ELSIF type = cUniform THEN par := MathL.sqrt( 12 * parameter );  antsVecOpt.DoAddUniformNoise( vec1, vec2, par );
-		ELSIF type = cLaplace THEN par := 1 / (MathL.sqrt( parameter ));  antsVecOpt.DoAddLaplaceNoise( vec1, vec2, par );
-		ELSIF type = cExp THEN par := 1 / (MathL.sqrt( parameter ));  antsVecOpt.DoAddExpNoise( vec1, vec2, parameter );
+		ELSIF type = cUniform THEN par := Math64.sqrt( 12 * parameter );  antsVecOpt.DoAddUniformNoise( vec1, vec2, par );
+		ELSIF type = cLaplace THEN par := 1 / (Math64.sqrt( parameter ));  antsVecOpt.DoAddLaplaceNoise( vec1, vec2, par );
+		ELSIF type = cExp THEN par := 1 / (Math64.sqrt( parameter ));  antsVecOpt.DoAddExpNoise( vec1, vec2, parameter );
 		END;
 
 		NEW( y, vyLongrealVec.Len( vec2 ) );  vyLongrealVec.CopyToArray( vec2, y^ );

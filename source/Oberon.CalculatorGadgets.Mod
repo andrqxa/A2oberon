@@ -7,7 +7,7 @@ MODULE CalculatorGadgets IN Oberon;	(** portable *)	(** by W.Ibl *)
 	Oct '97	V1.1	several bugfixes
 *)
 IMPORT SYSTEM,BasicGadgets,Calculator,Conversions,
-			  Files,Gadgets,MathL IN A2,Objects,Out,Strings;
+			  Files,Gadgets,Math64 IN A2,Objects,Out,Strings;
 
 CONST
 	(* Program version *)
@@ -100,11 +100,11 @@ PROCEDURE Rad(value: FLOAT64; angle: SIGNED16): FLOAT64;
 BEGIN
 	CASE angle OF
 	|	DEG:
-			RETURN((value * 2 * MathL.pi) / 360.0);
+			RETURN((value * 2 * Math64.pi) / 360.0);
 	|	RAD:
 			RETURN(value);
 	|	GRAD:
-			RETURN((value * 2 * MathL.pi) / 400);
+			RETURN((value * 2 * Math64.pi) / 400);
 	END;
 END Rad;
 
@@ -114,9 +114,9 @@ BEGIN
 	|	DEG:
 			RETURN(value);
 	|	RAD:
-			RETURN((value * 360) / (2 * MathL.pi));
+			RETURN((value * 360) / (2 * Math64.pi));
 	|	GRAD:
-			RETURN((value * 400) / (2 * MathL.pi));
+			RETURN((value * 400) / (2 * Math64.pi));
 	END;
 END Deg;
 
@@ -127,27 +127,27 @@ END RadOp;
 
 PROCEDURE arcsin(VAR op: Operand): BOOLEAN;
 BEGIN
-	op.value:= Deg(op.value,op.angle)/MathL.sqrt(1.0-Deg(op.value*op.value,op.angle));
-	op.value:= MathL.arctan(op.value);
+	op.value:= Deg(op.value,op.angle)/Math64.sqrt(1.0-Deg(op.value*op.value,op.angle));
+	op.value:= Math64.arctan(op.value);
 	RETURN(TRUE);
 END arcsin;
 
 PROCEDURE arccos(VAR op: Operand): BOOLEAN;
 BEGIN
-	op.value:= 1.0/MathL.sqrt(1.0-op.value*op.value);
-	op.value:= MathL.arctan(RadOp(op));
+	op.value:= 1.0/Math64.sqrt(1.0-op.value*op.value);
+	op.value:= Math64.arctan(RadOp(op));
 	RETURN(TRUE);
 END arccos;
 
 PROCEDURE cot(VAR op: Operand): BOOLEAN;
 BEGIN
-	op.value:= MathL.cos(RadOp(op))/MathL.sin(RadOp(op));
+	op.value:= Math64.cos(RadOp(op))/Math64.sin(RadOp(op));
 	RETURN(TRUE);
 END cot;
 
 PROCEDURE tan(VAR op: Operand): BOOLEAN;
 BEGIN
-	op.value:= MathL.sin(RadOp(op)) / MathL.cos(RadOp(op));
+	op.value:= Math64.sin(RadOp(op)) / Math64.cos(RadOp(op));
 	RETURN(TRUE);
 END tan;
 
@@ -232,33 +232,33 @@ BEGIN
 	ELSIF (s = "arcsin") THEN
 		ok:= arcsin(E.op[0]);
 	ELSIF (s = "arctan") THEN
-		E.op[0].value:= MathL.arctan(RadOp(E.op[0])); ok:= TRUE;
+		E.op[0].value:= Math64.arctan(RadOp(E.op[0])); ok:= TRUE;
 	ELSIF (s = "cos") THEN
-		E.op[0].value:= MathL.cos(RadOp(E.op[0])); ok:= TRUE;
+		E.op[0].value:= Math64.cos(RadOp(E.op[0])); ok:= TRUE;
 	ELSIF (s = "cot") THEN
 		ok:= cot(E.op[0]);
 	ELSIF (s = "ex") THEN
-		E.op[0].value:= Calculator.Power(MathL.e,E.op[0].value); ok:= TRUE;
+		E.op[0].value:= Calculator.Power(Math64.e,E.op[0].value); ok:= TRUE;
 	ELSIF (s = "fac") THEN
 		E.op[0].value:= Calculator.Fac(E.op[0].value); ok:= TRUE;
 	ELSIF (s = "gamma") THEN
 		E.op[0].value:= Calculator.Fac(E.op[0].value-1.0); ok:= TRUE;
 	ELSIF (s = "ld") THEN
-		E.op[0].value:= MathL.ln(E.op[0].value) / MathL.ln(2); ok:= TRUE;
+		E.op[0].value:= Math64.ln(E.op[0].value) / Math64.ln(2); ok:= TRUE;
 	ELSIF (s = "ln") THEN
-		E.op[0].value:= MathL.ln(E.op[0].value); ok:= TRUE;
+		E.op[0].value:= Math64.ln(E.op[0].value); ok:= TRUE;
 	ELSIF (s = "log") THEN
-		E.op[0].value:= MathL.ln(E.op[0].value) / MathL.ln(10); ok:= TRUE;
+		E.op[0].value:= Math64.ln(E.op[0].value) / Math64.ln(10); ok:= TRUE;
 	ELSIF (s = "not") THEN
 		E.op[0].value:= not(E.op[0].value); ok:= TRUE;
 	ELSIF (s = "percent") THEN
 		E.op[0].value:= E.op[0].value / 100.0; ok:= TRUE;
 	ELSIF (s = "sin") THEN
-		E.op[0].value:= MathL.sin(RadOp(E.op[0])); ok:= TRUE;
+		E.op[0].value:= Math64.sin(RadOp(E.op[0])); ok:= TRUE;
 	ELSIF (s = "sqr") THEN
 		E.op[0].value:= E.op[0].value * E.op[0].value; ok:= TRUE;
 	ELSIF (s = "sqrt") THEN
-		E.op[0].value:= MathL.sqrt(E.op[0].value); ok:= TRUE;
+		E.op[0].value:= Math64.sqrt(E.op[0].value); ok:= TRUE;
 	ELSIF (s = "tan") THEN
 		ok:= tan(E.op[0]);
 	ELSIF (s = "1dx") THEN
@@ -345,9 +345,9 @@ VAR
 BEGIN
 	ok:= FALSE;
 	IF (s = "e") THEN
-		E.op[0].value:= MathL.e; ok:= TRUE;
+		E.op[0].value:= Math64.e; ok:= TRUE;
 	ELSIF (s = "pi") THEN
-		E.op[0].value:= MathL.pi; ok:= TRUE;
+		E.op[0].value:= Math64.pi; ok:= TRUE;
 	END;
 	RETURN(ok);
 END AddConstant;

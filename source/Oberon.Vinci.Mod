@@ -52,7 +52,7 @@ MODULE Vinci IN Oberon; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		Modules, Math IN A2, MathL IN A2, Display, Objects, Texts, Oberon, Strings, Scheme, Ops := SchemeOps,
+		Modules, Math32 IN A2, Math64 IN A2, Display, Objects, Texts, Oberon, Strings, Scheme, Ops := SchemeOps,
 		Images, PictImages, GfxMatrix, GfxImages, GfxPaths, GfxFonts, Gfx, Leonardo, LeoPens;
 
 
@@ -1148,11 +1148,11 @@ MODULE Vinci IN Oberon; (** portable *)	(* eos  *)
 	BEGIN
 		c := ctxt(Context); cx := NumVal(c, args); cy := NumVal(c, args); r := NumVal(c, args);
 		x := NumVal(c, args); y := NumVal(c, args); Ops.CheckNull(c, args);
-		dx := cx - c.x; dy := cy - c.y; d := Math.sqrt(dx * dx + dy * dy);
+		dx := cx - c.x; dy := cy - c.y; d := Math32.sqrt(dx * dx + dy * dy);
 		IF d > r THEN x1 := cx - (r/d)*dx; y1 := cy - (r/d)*dy
 		ELSE x1 := c.x; y1 := c.y
 		END;
-		dx := x - cx; dy := y - cy; d := Math.sqrt(dx * dx + dy * dy);
+		dx := x - cx; dy := y - cy; d := Math32.sqrt(dx * dx + dy * dy);
 		IF d > r THEN x2 := cx + (r/d)*dx; y2 := cy + (r/d)*dy
 		ELSE x2 := x; y2 := y
 		END;
@@ -1211,7 +1211,7 @@ MODULE Vinci IN Oberon; (** portable *)	(* eos  *)
 		Ops.CheckNull(c, args);
 		IF c.gc = NIL THEN FailGC(c); RETURN END;
 		IF phi # 0 THEN
-			ctm := c.gc.ctm; Gfx.Rotate(c.gc, Math.sin(phi), Math.cos(phi))
+			ctm := c.gc.ctm; Gfx.Rotate(c.gc, Math32.sin(phi), Math32.cos(phi))
 		END;
 		Scheme.GetString(str, 0, Scheme.StringLen(str), s);
 		IF mode # 0 THEN
@@ -1400,17 +1400,17 @@ MODULE Vinci IN Oberon; (** portable *)	(* eos  *)
 		c := ctxt(Context); phi := NumVal(c, args);
 		IF c.gc = NIL THEN FailGC(c)
 		ELSIF Scheme.IsNull(args) THEN
-			Gfx.Rotate(c.gc, Math.sin(phi), Math.cos(phi))
+			Gfx.Rotate(c.gc, Math32.sin(phi), Math32.cos(phi))
 		ELSE
 			x := NumVal(c, args); y := NumVal(c, args); Ops.CheckNull(c, args);
-			Gfx.RotateAt(c.gc, Math.sin(phi), Math.cos(phi), x, y)
+			Gfx.RotateAt(c.gc, Math32.sin(phi), Math32.cos(phi), x, y)
 		END
 	END EvalRotate;
 
 	PROCEDURE EvalRad (ctxt: Scheme.Context; args: Object; VAR res: Object);
 		VAR c: Context; deg: FLOAT32;
 	BEGIN
-		c := ctxt(Context); deg := NumVal(c, args); res := Scheme.NewReal(deg * MathL.pi/180.0D0)
+		c := ctxt(Context); deg := NumVal(c, args); res := Scheme.NewReal(deg * Math64.pi/180.0D0)
 	END EvalRad;
 
 	PROCEDURE EvalConcat (ctxt: Scheme.Context; args: Object; VAR res: Object);
@@ -1560,7 +1560,7 @@ MODULE Vinci IN Oberon; (** portable *)	(* eos  *)
 		VAR m: GfxMatrix.Matrix; phi: FLOAT64;
 	BEGIN
 		GetMatrixVal(c, args, m); phi := NumVal(c, args); Ops.CheckNull(c, args);
-		GfxMatrix.Rotate(m, SHORT(MathL.sin(phi)), SHORT(MathL.cos(phi)), m);
+		GfxMatrix.Rotate(m, SHORT(Math64.sin(phi)), SHORT(Math64.cos(phi)), m);
 		res := MakeMatrix(m)
 	END EvalMatrixRotate;
 

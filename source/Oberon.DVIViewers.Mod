@@ -12,7 +12,7 @@ MODULE DVIViewers IN Oberon;
     model. **)
 IMPORT Display, Display3, Effects, Files, Gadgets, Oberon, Strings, Input,
    Objects, Printer, In, Out, Documents, Desktops, DVIFiles, Gfx,
-   GfxImages, GfxDisplay, GfxRegions, GfxMatrix, GfxFonts, GfxPS, Math IN A2,
+   GfxImages, GfxDisplay, GfxRegions, GfxMatrix, GfxFonts, GfxPS, Math32 IN A2,
    Links, Attributes, Images, BIT IN A2;
 CONST
    Version* = 100; (** version 1.00 **)
@@ -433,8 +433,8 @@ VAR
             sc := SHORT(F.zoom * GetResolution()/2.54D5/M.den*M.num);
             Gfx.Scale(F.context,SHORT(sc*(s.urx-s.llx)/s.image.width),
                SHORT(sc*(s.lly-s.ury)/s.image.height));
-            phi:= 2.0*Math.pi/360.0*s.angle;
-            Gfx.Rotate(F.context,Math.sin(phi),Math.cos(phi));
+            phi:= 2.0*Math32.pi/360.0*s.angle;
+            Gfx.Rotate(F.context,Math32.sin(phi),Math32.cos(phi));
             Gfx.DrawImageAt(F.context,0,0,s.image,GfxImages.NoFilter);
             Gfx.SetCTM(F.context,ctm);
          ELSE (* no image available, draw bounds: *)

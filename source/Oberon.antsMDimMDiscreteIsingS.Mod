@@ -25,7 +25,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 IMPORT antsObjects, antsMatrixPar, Objects, Files, Gadgets, antsNeighbourhoods, vyRectangles, aM := antsMessages,
-	antsArrayObjects, Math := MathL IN A2, antsKernel, antsModels, antsCommands, vyName, vyBase, vyRanBase;
+	antsArrayObjects, Math := Math64 IN A2, antsKernel, antsModels, antsCommands, vyName, vyBase, vyRanBase;
 
 TYPE
 	array = antsNeighbourhoods.pars;

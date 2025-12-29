@@ -1,7 +1,7 @@
 MODULE W3dMatrix;	(** AUTHOR "TF"; PURPOSE "Matrix operations for 3d (case study)"; *)
 
 IMPORT
-	Vectors := W3dVectors, MathL;
+	Vectors := W3dVectors, Math64;
 
 TYPE Matrix4x4* = ARRAY 4 OF ARRAY 4 OF FLOAT64;
 
@@ -25,7 +25,7 @@ END Stretch4x4;
 PROCEDURE Rotation4x4*(u : Vectors.TVector3d; phi : FLOAT64) : Matrix4x4;
 VAR result : Matrix4x4; t, c, s : FLOAT64;
 BEGIN
-	s := MathL.sin(phi); c := MathL.cos(phi); t := 1 - c;
+	s := Math64.sin(phi); c := Math64.cos(phi); t := 1 - c;
 	result := Identity4x4;
 	result[0, 0] := t*u.x*u.x+c; 		result[1, 0] := t*u.x*u.y+s*u.z; result[2, 0] := t*u.x*u.z-s*u.y;
 	result[0, 1] := t*u.x*u.y-s*u.z;	result[1, 1] := t*u.y*u.y+c; 	result[2, 1] := t*u.y*u.z+s*u.x;

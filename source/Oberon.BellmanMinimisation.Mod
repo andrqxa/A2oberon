@@ -3,7 +3,7 @@ MODULE BellmanMinimisation IN Oberon;   (**  AUTHOR "fof"; PURPOSE "";  **)
 Currently, you can choose between five distancefunctions, belonging to the five objects L2, L1, Hampel, Saegezahn ["sawtooth"] and Huber, particulars there.  *)
 
 IMPORT antsArrays, vyLongrealVec, vyBase, vyName, antsCommands, aM := antsMessages, vyLongreal, vyLongintVec, Oberon,
-	MathL IN A2, Math IN A2, vyRandom, vyPort, antsReadWrite, Out, antsArrayObjects;
+	Math64 IN A2, Math32 IN A2, vyRandom, vyPort, antsReadWrite, Out, antsArrayObjects;
 
 TYPE
 	DistanceFunction* = PROCEDURE {DELEGATE} ( l, r: SIGNED32 ): FLOAT64;
@@ -960,7 +960,7 @@ VAR
 				vec := vyLongrealVec.New( len );  vyName.RegisterNamed( vec, name );
 			ELSE vec := obj( vyLongrealVec.tVector );  vyLongrealVec.SetLen( vec( vyLongrealVec.tVector ), len );
 			END;
-			FOR i := 0 TO len - 1 DO val := MathL.sin( i / period * 2 * MathL.pi );  vyLongrealVec.Set( val, vec, i );  END;
+			FOR i := 0 TO len - 1 DO val := Math64.sin( i / period * 2 * Math64.pi );  vyLongrealVec.Set( val, vec, i );  END;
 			vyBase.Update( vec );
 		END;
 	END NewSinVector;
@@ -1211,14 +1211,14 @@ MAD(y) = median(ABS(y[i] - median(y)))
 		d[3] := 3.754408661907416D+00;
 
 		IF (p < plow) THEN
-			q := MathL.sqrt( -2 * MathL.ln( p ) );
+			q := Math64.sqrt( -2 * Math64.ln( p ) );
 			RETURN (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
 					    ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
 		END;
 
 		(* Rational approximation for upper region:*)
 		IF (phigh < p) THEN
-			q := MathL.sqrt( -2 * MathL.ln( 1 - p ) );
+			q := Math64.sqrt( -2 * Math64.ln( 1 - p ) );
 			RETURN -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
 					    ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
 		END;
@@ -1550,9 +1550,9 @@ END NormalisationMinMax;
 		FOR i := 2 TO N DO cumsum^[i - 1] := cumsum^[i - 2] + vyLongrealVec.Get( y, i - 1 ) - approx[i - 1] END;
 
 		(*matrix Coeff contains the multiresolution coefficients w(i,j) at position i-1, j-1*)
-		FOR j := 1 TO N DO Coeff[0][j - 1] := cumsum^[j - 1] / MathL.sqrt( j ) END;   (* since i is 1: j-1+1=j*)
+		FOR j := 1 TO N DO Coeff[0][j - 1] := cumsum^[j - 1] / Math64.sqrt( j ) END;   (* since i is 1: j-1+1=j*)
 		FOR j := 1 TO N DO
-			FOR i := 2 TO j DO Coeff[i - 1][j - 1] := (cumsum^[j - 1] - cumsum^[i - 2]) / MathL.sqrt( j - i + 1 ) END
+			FOR i := 2 TO j DO Coeff[i - 1][j - 1] := (cumsum^[j - 1] - cumsum^[i - 2]) / Math64.sqrt( j - i + 1 ) END
 		END;
 		RETURN Coeff;
 	END MultiCoefficients;
@@ -1570,7 +1570,7 @@ END NormalisationMinMax;
 		median := vyLongrealVec.GetMedian( z );
 
 		(*multiresolution condition value*)
-		cond := MathL.sqrt( factor * MathL.ln( N ) ) * median * (1.4826 / MathL.sqrt( 2 ));
+		cond := Math64.sqrt( factor * Math64.ln( N ) ) * median * (1.4826 / Math64.sqrt( 2 ));
 
 		(*Computation of the multiresolution coefficents, i. e. w(i,j)*)
 		Coeff := MultiCoefficients( data, approx );

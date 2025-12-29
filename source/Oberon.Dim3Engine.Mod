@@ -5,7 +5,7 @@ MODULE Dim3Engine IN Oberon;	(** portable *)	(* David Ulrich Nov  95 - März 96 
 (** This module contains a 3D Engine to draw 3D worlds consisting of polygons **)
 
 IMPORT
-	Attributes, Display, Files, Gadgets, Math IN A2, Oberon, Objects, Pictures, Texts, Dim3Paint, Fonts, Dim3Base;
+	Attributes, Display, Files, Gadgets, Math32 IN A2, Oberon, Objects, Pictures, Texts, Dim3Paint, Fonts, Dim3Base;
 
 
 CONST
@@ -254,13 +254,13 @@ END ReleaseMem;
 PROCEDURE Atan2* (y, x: FLOAT32): FLOAT32;
 BEGIN
 	IF (ABS(x) < 1.0) & (ABS(y) >= ABS(x * MAX(FLOAT32))) THEN	(* y / x would result in overflow/divide by zero trap *)
-		IF y >= 0 THEN RETURN Math.pi/2
-		ELSE RETURN -Math.pi/2
+		IF y >= 0 THEN RETURN Math32.pi/2
+		ELSE RETURN -Math32.pi/2
 		END
 	ELSIF x > 0 THEN	(* 1st or 4th quadrant *)
-		RETURN Math.arctan(y / x)
+		RETURN Math32.arctan(y / x)
 	ELSIF x < 0 THEN	(* 2nd or 3rd quadrant *)
-		RETURN Math.arctan(y / x) + Math.pi
+		RETURN Math32.arctan(y / x) + Math32.pi
 	END
 END Atan2;
 
@@ -298,7 +298,7 @@ PROCEDURE Normalize* (VAR x: Vector);
 CONST eps = 1.E-7;
 VAR f: FLOAT32;
 BEGIN
-	f := Math.sqrt(x[0]*x[0] + x[1]*x[1] + x[2]*x[2]);
+	f := Math32.sqrt(x[0]*x[0] + x[1]*x[1] + x[2]*x[2]);
 	IF f >= eps THEN
 		x[0] := x[0]/f; x[1] := x[1]/f; x[2] := x[2]/f
 	END
@@ -317,7 +317,7 @@ PROCEDURE Distance (x, y: Vector):FLOAT32;
 VAR t1, t2, t0: FLOAT32;
 BEGIN
 	t0 := x[0] - y[0]; t1 := x[1] - y[1]; t2 := x[2] - y[2];
-	RETURN Math.sqrt(t0*t0 + t1*t1 + t2*t2);
+	RETURN Math32.sqrt(t0*t0 + t1*t1 + t2*t2);
 END Distance;
 
 PROCEDURE WriteVector (VAR R: Files.Rider; VAR v: Vector);
@@ -361,11 +361,11 @@ PROCEDURE GetRotation* (VAR M: Matrix; angle, x, y, z: FLOAT32);
 CONST eps = 1.E-10;
 VAR s, c, t: FLOAT32;
 BEGIN
-	t := Math.sqrt(x*x + y*y + z*z);
+	t := Math32.sqrt(x*x + y*y + z*z);
 	IF t > eps THEN
 		(* the following formula comes from: A. S. Glassner,  Graphic Gems, Addison-Wesley 1990, p. 466 (Rotation Tools) *)
 		x := x/t; y := y/t; z := z/t;	(* normalize axis *)
-		s := Math.sin(angle); c := Math.cos(angle); t := 1 - c;
+		s := Math32.sin(angle); c := Math32.cos(angle); t := 1 - c;
 		M[0, 0] := t*x*x + c; M[0, 1] := t*x*y - s*z; M[0, 2] := t*x*z + s*y; M[0, 3] := 0;
 		M[1, 0] := t*y*x + s*z; M[1, 1] := t*y*y + c; M[1, 2] := t*y*z - s*x; M[1, 3] := 0;
 		M[2, 0] := t*z*x - s*y; M[2, 1] := t*z*y + s*x; M[2, 2] := t*z*z + c; M[2, 3] := 0
@@ -432,12 +432,12 @@ BEGIN
 	 *)
 	FOR i := 0 TO 2 DO
 		m0 := M[0, i]; m1 := M[1, i]; m2 := M[2, i];
-		scale[i] := Math.sqrt(m0*m0 + m1*m1 + m2*m2)
+		scale[i] := Math32.sqrt(m0*m0 + m1*m1 + m2*m2)
 	END;
 
 	(* calculate angle (see A. S. Glassner,  Graphic Gems, Addison-Wesley 1990, pp. 466 (Rotation Tools)) *)
 	cos := 0.5 * (M[0, 0]/scale[0] + M[1, 1]/scale[1] + M[2, 2]/scale[2] - 1.0);
-	sin := Math.sqrt(ABS(1.0 - cos*cos));
+	sin := Math32.sqrt(ABS(1.0 - cos*cos));
 	angle := Atan2(sin, cos);
 
 	(* get axis *)
@@ -1022,10 +1022,10 @@ VAR dir: Vector; i: SIGNED16;
 							REPEAT
 								MakeVector(v, ref.p.wc, p); Normalize(p);
 								cphi := DotProd(p, q);
-								sum := sum + Atan2(Math.sqrt(ABS(1.0 - cphi*cphi)), cphi);
+								sum := sum + Atan2(Math32.sqrt(ABS(1.0 - cphi*cphi)), cphi);
 								q := p; ref := ref.next
 							UNTIL ref = bsp.poly.contour;
-							IF ABS(ABS(sum) - 2.0*Math.pi) < eps THEN	(* intersection is inside polygon *)
+							IF ABS(ABS(sum) - 2.0*Math32.pi) < eps THEN	(* intersection is inside polygon *)
 								poly := bsp.poly
 							END
 						END
@@ -1068,7 +1068,7 @@ BEGIN
 				Transform(N, lightRef.R, R);
 				Normalize(R);
 				t := DotProd(R, V);
-				IF t < 0.05 THEN t := 0 ELSE t :=  Math.exp(poly.shape.specexpo * Math.ln(t)) * lightRef.factor END;
+				IF t < 0.05 THEN t := 0 ELSE t :=  Math32.exp(poly.shape.specexpo * Math32.ln(t)) * lightRef.factor END;
 				ref.specular := ref.specular + t;
 				lightRef := lightRef.next
 			END;
@@ -1095,7 +1095,7 @@ BEGIN
 		D := DotProd(poly.normal, C.pos) + poly.dist;
 		cos := DotProd(C.w, poly.normal);	(* cosine of angle between (normalized!) vectors C.w and poly.normal *)
 		t := C.zx*C.zx + C.zy*C.zy;	(* largest distance from midpoint of view plane to its boundary *)
-		t := Math.sqrt(t / (1.0 + t));	(* sine of largest angle between w-axis and a vertex on the view plane boundary *)
+		t := Math32.sqrt(t / (1.0 + t));	(* sine of largest angle between w-axis and a vertex on the view plane boundary *)
 		IF ABS(cos) > t THEN	(* if this is true, poly's plane cannot intersect the view volume *)
 			t := -D/cos;
 			IF t >= 0 THEN	(* poly crosses w-axis behind viewer => can prune one subtree *)
@@ -1575,7 +1575,7 @@ BEGIN
 		WHILE sub # NIL DO
 			CalcBound(sub);
 			MakeVector(s.center, sub.center, v);
-			d := Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+			d := Math32.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
 			IF d + sub.radius > s.radius THEN	(* s must have bigger radius *)
 				IF d < eps THEN
 					s.radius := sub.radius + eps
@@ -1599,7 +1599,7 @@ BEGIN
 	p := s.points;
 	WHILE p # NIL DO
 		MakeVector(s.center, p.wc, v);
-		d := Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+		d := Math32.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
 		IF d > s.radius THEN	(* point is outside current sphere *)
 			r := (s.radius + d + eps) / 2.0;
 			t := (r - s.radius) / d;
@@ -1621,7 +1621,7 @@ BEGIN
 	parent := s.parent;
 	WHILE parent # NIL DO
 		MakeVector(parent.center, s.center, v);
-		d := Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+		d := Math32.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
 		IF d + s.radius > parent.radius THEN
 			IF d < eps THEN
 				parent.radius := s.radius + eps
@@ -1834,7 +1834,7 @@ BEGIN
 	InitVector(C.u, 1, 0, 0);
 	InitVector(C.v, 0, 1, 0);
 	InitVector(C.w, 0, 0, 1);
-	C.fov := Math.pi/6;
+	C.fov := Math32.pi/6;
 END InitCamera;
 
 (** move camera position in its own coordinate system **)
@@ -1877,12 +1877,12 @@ BEGIN
 	ELSE
 		(* rotate projection of w on xz-plane into z-axis *)
 		azi := Atan2(C.w[0], C.w[2]);
-		sin := -Math.sin(azi); cos := Math.cos(azi);
+		sin := -Math32.sin(azi); cos := Math32.cos(azi);
 		InitVector(u, cos*C.u[0] + sin*C.u[2], C.u[1], -sin*C.u[0] + cos*C.u[2]);
 
 		(* rotate w into z-axis *)
 		pitch := -Atan2(C.w[1], -sin*C.w[0] + cos*C.w[2]);
-		sin := Math.sin(pitch); cos := Math.cos(pitch);
+		sin := Math32.sin(pitch); cos := Math32.cos(pitch);
 
 		(* calculate roll angle *)
 		roll := Atan2(cos*u[1] + sin*u[2], u[0])
@@ -1898,9 +1898,9 @@ BEGIN
 	 * rotation by 'azi' around y. This rotation is applied to the default coordinate axes which have azi, pitch and
 	 * roll set to zero. (u = [1 0 0], v = [0 1 0], w = [0 0 1])
 	 *)
-	 sa := Math.sin(azi); ca := Math.cos(azi);
-	 sp := -Math.sin(pitch); cp := Math.cos(pitch);
-	 sr := Math.sin(roll); cr := Math.cos(roll);
+	 sa := Math32.sin(azi); ca := Math32.cos(azi);
+	 sp := -Math32.sin(pitch); cp := Math32.cos(pitch);
+	 sr := Math32.sin(roll); cr := Math32.cos(roll);
 	 t := sp*sr;
 	 InitVector(C.u, ca*cr - sa*t, cp*sr, -sa*cr - ca*t);
 	 t := sp*cr;
@@ -2423,7 +2423,7 @@ VAR
 BEGIN
 	(* rotate around y *)
 	IF C.w[0]*C.w[0] + C.w[2]*C.w[2] >= eps THEN
-		angle := -Atan2(C.w[0], C.w[2]); sx := Math.sin(angle); cx := Math.cos(angle)
+		angle := -Atan2(C.w[0], C.w[2]); sx := Math32.sin(angle); cx := Math32.cos(angle)
 	ELSE
 		angle := 0; sx := 0; cx := 1
 	END;
@@ -2431,11 +2431,11 @@ BEGIN
 	InitVector(w, cx*C.w[0] + sx*C.w[2], C.w[1], -sx*C.w[0] + cx*C.w[2]);
 
 	(* rotate w-axis into z-axis *)
-	angle := Atan2(w[1], w[2]); sx := Math.sin(angle); cx := Math.cos(angle);
+	angle := Atan2(w[1], w[2]); sx := Math32.sin(angle); cx := Math32.cos(angle);
 	InitVector(u, u[0], cx*u[1] - sx*u[2], sx*u[1] + cx*u[2]);
 
 	(* rotate u-axis into x-axis *)
-	angle := -Atan2(u[1], u[0]); sz := Math.sin(angle); cz := Math.cos(angle);
+	angle := -Atan2(u[1], u[0]); sz := Math32.sin(angle); cz := Math32.cos(angle);
 
 	(* horizon transformation *)
 	R00 := C.zx*cz; R02 := C.zx*sx*sz;
@@ -2479,15 +2479,15 @@ END DrawHorizon;
 PROCEDURE DrawDirect* (w: World; VAR C: Camera; P: Pictures.Picture);
 VAR N: Matrix; zoom, sin: FLOAT32; i: SIGNED16;
 BEGIN
-	sin := Math.sin(C.fov);
-	C.zx := Math.cos(C.fov) / sin;	(* used to be compiler bug in DOS_Oberon, simplify when fixed *)
+	sin := Math32.sin(C.fov);
+	C.zx := Math32.cos(C.fov) / sin;	(* used to be compiler bug in DOS_Oberon, simplify when fixed *)
 	C.zy := C.zx * P.width / P.height;	(* take picture aspect ratio into account *)
 	GetCameraTrafo(C, N);
 	FOR i := 0 TO 3 DO	(* scale to canonic view volume *)
 		N[0, i] := N[0, i] * C.zx;
 		N[1, i] := N[1, i] * C.zy
 	END;
-	zoom := Math.sqrt(C.zx*C.zx + C.zy*C.zy);	(* maximum zoom factor affects bounding radii *)
+	zoom := Math32.sqrt(C.zx*C.zx + C.zy*C.zy);	(* maximum zoom factor affects bounding radii *)
 	CullShape(w.shape, C, N, zoom, {mustClip});
 	(* draw horizon first*)
 	IF w.horizon THEN

@@ -8,7 +8,7 @@ MODULE LeoBasic IN Oberon; (** portable **)	(* eos  *)
 	**)
 
 	IMPORT
-		Files, Math IN A2, Objects, Attributes, Gadgets, GfxMatrix, Gfx, Leonardo, LeoPens, LeoPaths;
+		Files, Math32 IN A2, Objects, Attributes, Gadgets, GfxMatrix, Gfx, Leonardo, LeoPens, LeoPaths;
 
 
 	TYPE
@@ -665,7 +665,7 @@ MODULE LeoBasic IN Oberon; (** portable **)	(* eos  *)
 					Leonardo.ProjectToHandles(e, 0, 0, 1, 1, msg);
 					IF msg.res # e THEN
 						GfxMatrix.Solve(msg.lgm, msg.x, msg.y, x, y);
-						d := Math.sqrt(x * x + y * y);
+						d := Math32.sqrt(x * x + y * y);
 						GfxMatrix.Apply(msg.lgm, x/d, y/d, x, y);
 						IF (msg.llx <= x) & (x <= msg.urx) & (msg.lly <= y) & (y <= msg.ury) THEN
 							msg.res := e; msg.px := x; msg.py := y

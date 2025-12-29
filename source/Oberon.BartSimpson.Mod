@@ -3,7 +3,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 
 MODULE BartSimpson IN Oberon; (** portable *)	(* Markus Dätwyler, 1996 *)
 
-IMPORT Out, Objects, Display, Input, Gadgets, Oberon, Modules, Pictures, Math IN A2, Display3, Printer, Printer3;
+IMPORT Out, Objects, Display, Input, Gadgets, Oberon, Modules, Pictures, Math32 IN A2, Display3, Printer, Printer3;
 
 CONST
 	LEyeX = 16.5; REyeX = 23.5;
@@ -114,13 +114,13 @@ BEGIN
 	A.id:= Objects.get; A.name:= "MouseX"; A.res:= -1; F.obj.handle(F.obj, A); mx:= SHORT(A.i);
 	A.id:= Objects.get; A.name:= "MouseY"; A.res:= -1; F.obj.handle(F.obj, A); my:= SHORT(A.i);
 	dx:= mx - LEyeX - x; dy:= my - LEyeY - y;
-	r:= Math.sqrt(dx*dx + dy*dy);
+	r:= Math32.sqrt(dx*dx + dy*dy);
 	IF r > EyeR THEN rp:= EyeR ELSE rp:= r END;
 	py:= SHORT(ENTIER(dy * rp / r)) + y + (ENTIER(LEyeY)); px:= (ENTIER(dx * rp / r)) + x + (ENTIER(LEyeX));
 	Display3.ReplConst(M, Display3.FG, SHORT(px), SHORT(py), 2, 2, Display.replace);
 	F.oldLX:= SHORT(px); F.oldLY:= SHORT(py);
 	dx:= mx - REyeX - x; dy:= (my - REyeY - y);
-	r:= Math.sqrt(dx*dx + dy*dy);
+	r:= Math32.sqrt(dx*dx + dy*dy);
 	IF r > EyeR THEN rp:= EyeR ELSE rp:= r END;
 	py:= SHORT(ENTIER(dy * rp / r)) + y + (ENTIER(REyeY)); px:= (ENTIER(dx * rp / r)) + x + (ENTIER(REyeX));
 	Display3.ReplConst(M, Display3.FG, SHORT(px), SHORT(py), 2, 2, Display.replace);

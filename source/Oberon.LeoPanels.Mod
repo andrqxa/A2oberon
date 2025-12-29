@@ -14,7 +14,7 @@ MODULE LeoPanels IN Oberon; (** portable **)	(* eos  *)
 	*)
 
 	IMPORT
-		Files, Objects, Math IN A2, Display, Printer, Texts, Viewers, Oberon, Out, Strings, Attributes, Links, Gadgets, Documents,
+		Files, Objects, Math32 IN A2, Display, Printer, Texts, Viewers, Oberon, Out, Strings, Attributes, Links, Gadgets, Documents,
 		Views, Desktops, Images, ImageGadgets, ImageDocs, GfxMatrix, Gfx, GfxPrinter, GfxBuffer, GfxPS,
 		Leonardo, LeoFrames, LeoTools, LeoDocs;
 
@@ -534,13 +534,13 @@ MODULE LeoPanels IN Oberon; (** portable **)	(* eos  *)
 		Attributes.GetInt(e, "Direction", dir);
 		IF dir = 1 THEN	(* direction vector *)
 			Attributes.GetReal(e, "DX", dx); Attributes.GetReal(e, "DY", dy);
-			d := Math.sqrt(dx * dx + dy * dy);
+			d := Math32.sqrt(dx * dx + dy * dy);
 			IF d > 0.001 THEN cos := dx/d; sin := dy/d
 			ELSE dir := 0
 			END
 		ELSIF dir = 2 THEN	(* direction angle *)
-			Attributes.GetReal(e, "Dir", phi); phi := phi * (Math.pi/180);
-			cos := Math.cos(phi); sin := Math.sin(phi)
+			Attributes.GetReal(e, "Dir", phi); phi := phi * (Math32.pi/180);
+			cos := Math32.cos(phi); sin := Math32.sin(phi)
 		END;
 		Attributes.GetInt(e, "Kind", kind);
 		CASE kind OF
@@ -555,8 +555,8 @@ MODULE LeoPanels IN Oberon; (** portable **)	(* eos  *)
 			ELSE GfxMatrix.ScaleAt(GfxMatrix.Identity, x0, y0, sx * cos + sy * sin, sx * sin - sy * cos, m)
 			END
 		| 3:	(* rotate *)
-			Attributes.GetReal(e, "Angle", rho); rho := rho * (Math.pi/180);
-			GfxMatrix.RotateAt(GfxMatrix.Identity, x0, y0, Math.sin(rho), Math.cos(rho), m)
+			Attributes.GetReal(e, "Angle", rho); rho := rho * (Math32.pi/180);
+			GfxMatrix.RotateAt(GfxMatrix.Identity, x0, y0, Math32.sin(rho), Math32.cos(rho), m)
 		| 4:	(* shear *)
 			IF dir = 0 THEN cos := 1; sin := 0 END;
 			Attributes.GetReal(e, "Factor", f);
@@ -1472,15 +1472,15 @@ MODULE LeoPanels IN Oberon; (** portable **)	(* eos  *)
 		VAR phi: FLOAT32;
 	BEGIN
 		IF (ABS(x) < 1.0) & (ABS(y) >= ABS(x * MAX(FLOAT32))) THEN	(* y/x would result in overflow/divide by zero trap *)
-			IF y >= 0 THEN phi := Math.pi/2
-			ELSE phi := 3*Math.pi/2
+			IF y >= 0 THEN phi := Math32.pi/2
+			ELSE phi := 3*Math32.pi/2
 			END
 		ELSIF x < 0 THEN	(* 2nd or 3rd quadrant *)
-			phi := Math.arctan(y/x) + Math.pi
+			phi := Math32.arctan(y/x) + Math32.pi
 		ELSIF y > 0 THEN	(* 1st quadrant *)
-			phi := Math.arctan(y/x)
+			phi := Math32.arctan(y/x)
 		ELSE	(* 4th quadrant *)
-			phi := 2*Math.pi + Math.arctan(y/x)
+			phi := 2*Math32.pi + Math32.arctan(y/x)
 		END;
 		RETURN phi
 	END atan2;
@@ -1496,12 +1496,12 @@ MODULE LeoPanels IN Oberon; (** portable **)	(* eos  *)
 				Attributes.SetReal(e, "X0", x); Attributes.SetReal(e, "Y0", y);
 				IF LeoTools.Focus.points > 1 THEN
 					LeoTools.PointToRuler(tool, LeoTools.Focus.x[1], LeoTools.Focus.y[1], dx, dy);
-					dx := dx - x; dy := dy - y; d := Math.sqrt(dx * dx + dy * dy);
+					dx := dx - x; dy := dy - y; d := Math32.sqrt(dx * dx + dy * dy);
 					IF d > 0.01 THEN
 						Attributes.SetReal(e, "DX", dx);
 						Attributes.SetReal(e, "DY", dy);
 						Attributes.SetInt(e, "Direction", 1);
-						Attributes.SetReal(e, "Dir", atan2(dx/d, -dy/d) * (180/Math.pi))
+						Attributes.SetReal(e, "Dir", atan2(dx/d, -dy/d) * (180/Math32.pi))
 					END
 				END;
 				IF LeoTools.Focus.style IN {1..4} THEN
@@ -1534,8 +1534,8 @@ MODULE LeoPanels IN Oberon; (** portable **)	(* eos  *)
 				LeoTools.RulerToPoint(tool, x, y, LeoTools.Focus.x[0], LeoTools.Focus.y[0]);
 				IF pts > 1 THEN
 					IF dir = 2 THEN
-						Attributes.GetReal(e, "Dir", phi); phi := phi * (Math.pi/180);
-						dx := Math.cos(phi); dy := -Math.sin(phi)
+						Attributes.GetReal(e, "Dir", phi); phi := phi * (Math32.pi/180);
+						dx := Math32.cos(phi); dy := -Math32.sin(phi)
 					ELSE
 						Attributes.GetReal(e, "DX", dx); Attributes.GetReal(e, "DY", dy)
 					END;

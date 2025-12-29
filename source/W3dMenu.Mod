@@ -2,7 +2,7 @@ MODULE W3dMenu;	(** AUTHOR "TF"; PURPOSE "3d Menu (case study)"; *)
 
 IMPORT
 (* Low level *)
-	KernelLog, Kernel, MathL, Modules, Files, Commands, Inputs, Strings,
+	KernelLog, Kernel, Math64, Modules, Files, Commands, Inputs, Strings,
 (* Window Manager *)
 	WM := WMWindowManager, Messages := WMMessages, Rect := WMRectangles, Raster, WMGraphics,
 (* 3d framework *)
@@ -250,7 +250,7 @@ TYPE
 			Init(w, h, FALSE);
 
 			(* Init navigation parameters *)
-			radius := 800; angle := -MathL.pi / 2; height := 200;
+			radius := 800; angle := -Math64.pi / 2; height := 200;
 
 			(* Setup the 3d World *)
 			NEW(world, w, h, 000000088H); world.quality := 1;
@@ -280,7 +280,7 @@ TYPE
 		PROCEDURE Render;
 		VAR pos, dir, up : Vectors.TVector3d;
 		BEGIN {EXCLUSIVE}
-			pos := Vectors.VAdd3(lookat, Vectors.Vector3d(MathL.cos(angle) * radius, 0, MathL.sin(angle) * radius)); pos.y := height;
+			pos := Vectors.VAdd3(lookat, Vectors.Vector3d(Math64.cos(angle) * radius, 0, Math64.sin(angle) * radius)); pos.y := height;
 	(*		lookat := Vectors.Vector3d(lookat.x, lookat.y, lookat.z); *)
 			dir := Vectors.VNormed3(Vectors.VSub3(lookat, pos));
 			up := Vectors.VNeg3(Vectors.VNormed3(Vectors.Cross(Vectors.Cross(Vectors.Vector3d(0, 1, 0), dir), dir)));
