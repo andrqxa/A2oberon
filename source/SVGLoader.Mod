@@ -1,6 +1,6 @@
 MODULE SVGLoader;
 
-IMPORT SVG, SVGColors, SVGGradients, SVGFilters, SVGRenderer, XML, XMLObjects, XMLLoader, Strings, Math, WMGraphics;
+IMPORT SVG, SVGColors, SVGGradients, SVGFilters, SVGRenderer, XML, XMLObjects, XMLLoader, Strings, Math32, WMGraphics;
 
 (* Constants that determine what to do if an attribute was omitted *)
 CONST 	OnOmittedParseDefault=0;
@@ -66,7 +66,7 @@ TYPE
 		(* Get the diagonal size of the viewport *)
 		PROCEDURE GetActualDiagonal(): SVG.Length;
 		BEGIN
-			RETURN Math.sqrt(SHORT( GetActualWidth()*GetActualWidth()+GetActualHeight()*GetActualHeight() )) / Math.sqrt(2.0);
+			RETURN Math32.sqrt(SHORT( GetActualWidth()*GetActualWidth()+GetActualHeight()*GetActualHeight() )) / Math32.sqrt(2.0);
 		END GetActualDiagonal;
 
 		(* Get the name of an xml element *)

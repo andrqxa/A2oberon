@@ -13,7 +13,7 @@ MODULE LeoSplines IN Oberon; (** portable **)	(* eos  *)
 	*)
 
 	IMPORT
-		Files, Math IN A2, Objects, Attributes, Gadgets, GfxMatrix, GfxPaths, Gfx, Leonardo, LeoPaths, LeoPens;
+		Files, Math32 IN A2, Objects, Attributes, Gadgets, GfxMatrix, GfxPaths, Gfx, Leonardo, LeoPaths, LeoPens;
 
 
 	TYPE
@@ -76,7 +76,7 @@ MODULE LeoSplines IN Oberon; (** portable **)	(* eos  *)
 				incl(data, data.x, data.y)
 			| GfxPaths.Arc:
 				data.dx0 := data.x2 - data.x0; data.dy0 := data.y2 - data.y0;
-				rx := data.x - data.x0; ry := data.y - data.y0; r := Math.sqrt(rx * rx + ry * ry);
+				rx := data.x - data.x0; ry := data.y - data.y0; r := Math32.sqrt(rx * rx + ry * ry);
 				incl(data, data.x0 - r, data.y0 - r); incl(data, data.x0 + r, data.y0 + r)
 			| GfxPaths.Bezier:
 				data.dx0 := data.x - data.x2; data.dy0 := data.y - data.y2;

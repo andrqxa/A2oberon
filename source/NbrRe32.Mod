@@ -3,10 +3,10 @@
 
 MODULE NbrRe32;   (** AUTHOR "adf"; PURPOSE "Alias for type FLOAT32."; *)
 
-IMPORT Streams, Math, NbrInt8, NbrInt16, NbrInt32, NbrInt64;
+IMPORT Streams, Math32, NbrInt8, NbrInt16, NbrInt32, NbrInt64;
 
 CONST
-	E* = Math.e;  Pi* = Math.pi;
+	E* = Math32.e;  Pi* = Math32.pi;
 
 TYPE
 	Real* = FLOAT32;
@@ -145,32 +145,32 @@ VAR
 
 	PROCEDURE Sqrt*( x: Real ): Real;
 	BEGIN
-		RETURN Math.sqrt( x )
+		RETURN Math32.sqrt( x )
 	END Sqrt;
 
 	PROCEDURE Sin*( x: Real ): Real;
 	BEGIN
-		RETURN Math.sin( x )
+		RETURN Math32.sin( x )
 	END Sin;
 
 	PROCEDURE Cos*( x: Real ): Real;
 	BEGIN
-		RETURN Math.cos( x )
+		RETURN Math32.cos( x )
 	END Cos;
 
 	PROCEDURE ArcTan*( x: Real ): Real;
 	BEGIN
-		RETURN Math.arctan( x )
+		RETURN Math32.arctan( x )
 	END ArcTan;
 
 	PROCEDURE Exp*( x: Real ): Real;
 	BEGIN
-		RETURN Math.exp( x )
+		RETURN Math32.exp( x )
 	END Exp;
 
 	PROCEDURE Ln*( x: Real ): Real;
 	BEGIN
-		RETURN Math.ln( x )
+		RETURN Math32.ln( x )
 	END Ln;
 
 	(** String conversions. *)

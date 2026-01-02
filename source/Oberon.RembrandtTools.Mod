@@ -5,7 +5,7 @@ MODULE RembrandtTools IN Oberon;	(** portable *)
 (** Enthält alle Operationen zum Rembrandt-Editor *)
 
 IMPORT
-	D3 := Display3, Display, Oberon, Pictures, Effects, Input, Rembrandt, Gadgets, Texts, Rembrandt0, Math IN A2, RembrandtDocs,
+	D3 := Display3, Display, Oberon, Pictures, Effects, Input, Rembrandt, Gadgets, Texts, Rembrandt0, Math32 IN A2, RembrandtDocs,
 		Objects;
 
 CONST
@@ -862,7 +862,7 @@ BEGIN
 			REPEAT
 				dx:= SHORT(ENTIER(Rembrandt0.Uniform()*dw)-r);
 				dy:= SHORT(ENTIER(Rembrandt0.Uniform()*dw)-r);
-			UNTIL Math.sqrt(dx*dx+dy*dy)<=r;
+			UNTIL Math32.sqrt(dx*dx+dy*dy)<=r;
 			Rembrandt.ScreentoPict(F, x, y, M.X, M.Y, px, py);
 			Pictures.Dot(F.pict, Rembrandt0.color.col, px+dx, py+dy, Display.replace);
 			IF double THEN Pictures.Dot(F.pict, Rembrandt0.color.col, px+dx+cdx, py+dy+cdy, Display.replace) END;
@@ -1546,7 +1546,7 @@ END StoreColors;
 BEGIN
 	width:= 1; filled:= FALSE; Rembrandt0.InitSeed(Oberon.Time());
 	FOR cdx:= 0 TO 90 DO
-		sintable[cdx]:= Math.sin(2*Math.pi*cdx/360);
+		sintable[cdx]:= Math32.sin(2*Math32.pi*cdx/360);
 	END;
 	sprayspeed:= 1; symmetric:= {}; smearspeed:= 1;
 	cdx:= 20; cdy:= 20;

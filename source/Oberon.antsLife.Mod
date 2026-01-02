@@ -234,7 +234,7 @@ antsMC.ApplyConstInit chain Sampler2 const = 1 max = 1 ~
 MODULE antsLife; 	(** fof  **)
 (* Sample from nearest neighbour non isotropic conditional distribution  *)
 
-IMPORT antsPictArray,Math:=MathL,antsDiscreteFields,Oberon,antsGibbs,vyRandom;
+IMPORT antsPictArray,Math:=Math64,antsDiscreteFields,Oberon,antsGibbs,vyRandom;
 
 TYPE
 

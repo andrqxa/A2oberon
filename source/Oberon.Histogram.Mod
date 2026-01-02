@@ -4,7 +4,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 MODULE Histogram IN Oberon;	(** portable *) (* gs  / ps *)
 (* System.Free Histogram ~*)
 IMPORT
-	Display, Objects, Gadgets, Oberon, BasicGadgets, Fonts, Display3, Printer, Printer3, Strings, Reals IN A2, MathL IN A2, Files;
+	Display, Objects, Gadgets, Oberon, BasicGadgets, Fonts, Display3, Printer, Printer3, Strings, Reals IN A2, Math64 IN A2, Files;
 
 CONST
 	idversion* = "Histogram 0.1d7"; Bins = 256; Mems = 256;
@@ -118,7 +118,7 @@ END GetHistCounts;
 PROCEDURE AddPoint* (H: Histogram; x: FLOAT64);
 VAR bin,i,nr: SIGNED32; xorig,w,min,max: FLOAT64; tempbins: SIGNED16;
 BEGIN
-	IF H.logtransform THEN x := MathL.ln(x) END;
+	IF H.logtransform THEN x := Math64.ln(x) END;
 	IF H.diff THEN
 		xorig := x; x := x - H.lastentry;
 		IF IsNaN(H.lastentry) THEN H.lastentry := xorig; RETURN
@@ -145,7 +145,7 @@ BEGIN
 			    (* brute force approximation to gaussian adapted bandwitdht.
 			    Asymptotically optimal bandwidth is 3.49* stddev * (H.nrobs)^(-1/3)
 			    Brute force assumes range=3.49* stddev *)
-	   		 tempbins := SHORT(ENTIER(MathL.exp(MathL.ln(H.nrobs)/3)));
+	   		 tempbins := SHORT(ENTIER(Math64.exp(Math64.ln(H.nrobs)/3)));
 
 			     IF tempbins > H.nrBins THEN H.nrBins := tempbins END;
 			     IF H.nrBins < 2 THEN H.nrBins := 2 END;

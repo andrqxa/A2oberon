@@ -12,7 +12,7 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 	*)
 
 	IMPORT
-		Files, Math IN A2, Objects, Display, Fonts, Printer, Input, Oberon, Pictures, Strings, Attributes, Links, Display3, Printer3,
+		Files, Math32 IN A2, Objects, Display, Fonts, Printer, Input, Oberon, Pictures, Strings, Attributes, Links, Display3, Printer3,
 		Effects, Gadgets, Colors, Images, GfxMatrix, GfxImages, GfxPaths, GfxRegions, GfxFonts, Gfx, GfxPrinter, GfxBuffer,
 		Leonardo, LeoFrames;
 
@@ -572,16 +572,16 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 		VAR phi: FLOAT32;
 	BEGIN
 		IF (ABS(dx) < 1.0) & (ABS(dy) >= ABS(dx * MAX(FLOAT32))) THEN	(* dy/dx would result in overflow/divide by zero trap *)
-			IF dy >= 0 THEN phi := Math.pi/2
-			ELSE phi := -Math.pi/2
+			IF dy >= 0 THEN phi := Math32.pi/2
+			ELSE phi := -Math32.pi/2
 			END
 		ELSIF dx > 0 THEN	(* 1st or 4th quadrant *)
-			phi := Math.arctan(dy/dx)
+			phi := Math32.arctan(dy/dx)
 		ELSIF dx < 0 THEN	(* 2nd or 3rd quadrant *)
-			phi := Math.arctan(dy/dx) + Math.pi
+			phi := Math32.arctan(dy/dx) + Math32.pi
 		END;
 		IF phi < 0 THEN
-			phi := phi + 2*Math.pi
+			phi := phi + 2*Math32.pi
 		END;
 		RETURN phi
 	END Angle;
@@ -603,13 +603,13 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 	BEGIN
 		Attributes.GetInt(AlignAxes, "Value", axes);
 		IF axes > 0 THEN
-			phi := 2.0 * Math.pi/axes;
+			phi := 2.0 * Math32.pi/axes;
 			dx := x - sx; dy := y - sy;
-			len := Math.sqrt(dx * dx + dy * dy);
+			len := Math32.sqrt(dx * dx + dy * dy);
 			Attributes.GetReal(Tolerance, "Value", tol);
 			IF len >= tol/tool.frame.scale THEN
 				atan := ENTIER(Angle(dx, dy)/phi + 0.5) * phi;
-				x := sx + len * Math.cos(atan); y := sy + len * Math.sin(atan)
+				x := sx + len * Math32.cos(atan); y := sy + len * Math32.sin(atan)
 			ELSE
 				x := sx; y := sy
 			END
@@ -788,12 +788,12 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 	PROCEDURE AppendDir* (tool: Tool; dx, dy: FLOAT32; VAR s: ARRAY OF CHAR; VAR len: SIGNED16);
 		VAR d: FLOAT32;
 	BEGIN
-		d := Math.sqrt(dx * dx + dy * dy);
+		d := Math32.sqrt(dx * dx + dy * dy);
 		IF d = 0 THEN
 			Append("0", s, len)
 		ELSE
 			dx := dx/d; dy := dy/d;
-			Append("(", s, len); AppendReal(Angle(dx, dy) * (180/Math.pi), s, len);
+			Append("(", s, len); AppendReal(Angle(dx, dy) * (180/Math32.pi), s, len);
 			Append(", ", s, len); AppendReal(d/tool.unit, s, len);
 			Append(")", s, len)
 		END
@@ -1408,18 +1408,18 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 			GfxMatrix.Init(mat, 1, 0, 0, 1, dx, dy);
 			Append(" from ", s, len); AppendPoint(tool, x0, y0, s, len);
 			Append(" to ", s, len); AppendPoint(tool, x1, y1, s, len);
-			Append(", dist=", s, len); AppendReal(Math.sqrt(dx * dx + dy * dy)/tool.unit, s, len)
+			Append(", dist=", s, len); AppendReal(Math32.sqrt(dx * dx + dy * dy)/tool.unit, s, len)
 
 		| scale:
 			dx0 := x0 - fx0; dy0 := y0 - fy0; d0 := dx0 * dx0 + dy0 * dy0;
 			IF d0 < eps THEN Append(" invalid starting point", s, len); mat := GfxMatrix.Identity; RETURN END;
 			dx1 := x1 - fx0; dy1 := y1 - fy0; d1 := dx1 * dx1 + dy1 * dy1;
-			t := Math.sqrt(d1/d0);
+			t := Math32.sqrt(d1/d0);
 			IF dx0 * dx1 + dy0 * dy1 < 0 THEN t := -t END;
 			IF points = 1 THEN
 				GfxMatrix.ScaleAt(GfxMatrix.Identity, fx0, fy0, t, t, mat)
 			ELSE
-				dx := fx1 - fx0; dy := fy1 - fy0; d := Math.sqrt(dx * dx + dy * dy);
+				dx := fx1 - fx0; dy := fy1 - fy0; d := Math32.sqrt(dx * dx + dy * dy);
 				IF d < eps THEN d := eps END;
 				cos := dx/d; sin := dy/d;
 				GfxMatrix.RotateAt(GfxMatrix.Identity, fx0, fy0, sin, cos, mat);
@@ -1429,13 +1429,13 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 			Append(" factor ", s, len); AppendReal(t, s, len)
 
 		| rotate:
-			dx0 := x0 - fx0; dy0 := y0 - fy0; d0 := Math.sqrt(dx0 * dx0 + dy0 * dy0);
+			dx0 := x0 - fx0; dy0 := y0 - fy0; d0 := Math32.sqrt(dx0 * dx0 + dy0 * dy0);
 			IF d0 < eps THEN Append(" invalid starting point", s, len); mat := GfxMatrix.Identity; RETURN END;
-			dx1 := x1 - fx0; dy1 := y1 - fy0; d1 := Math.sqrt(dx1 * dx1 + dy1 * dy1);
+			dx1 := x1 - fx0; dy1 := y1 - fy0; d1 := Math32.sqrt(dx1 * dx1 + dy1 * dy1);
 			IF d1 < eps THEN Append(" invalid end point", s, len); mat := GfxMatrix.Identity; RETURN END;
 			t := d1/d0;
 			GfxMatrix.Get2PointTransform(fx0, fy0, fx0, fy0, x0, y0, fx0 + dx1/t, fy0 + dy1/t, mat);
-			Append(" angle=", s, len); AppendReal((Angle(dx1/d1, dy1/d1) - Angle(dx0/d0, dy0/d0)) * (180/Math.pi), s, len)
+			Append(" angle=", s, len); AppendReal((Angle(dx1/d1, dy1/d1) - Angle(dx0/d0, dy0/d0)) * (180/Math32.pi), s, len)
 
 		| shear:
 			dx := fx1 - fx0; dy := fy1 - fy0;
@@ -1452,7 +1452,7 @@ MODULE LeoTools IN Oberon; (** portable **)	(* eos  *)
 			IF points = 1 THEN
 				GfxMatrix.ScaleAt(GfxMatrix.Identity, fx0, fy0, -1, -1, mat)
 			ELSE
-				dx := fx1 - fx0; dy := fy1 - fy0; d := Math.sqrt(dx * dx + dy * dy);
+				dx := fx1 - fx0; dy := fy1 - fy0; d := Math32.sqrt(dx * dx + dy * dy);
 				IF d < eps THEN d := eps END;
 				cos := dx/d; sin := dy/d;
 				GfxMatrix.RotateAt(GfxMatrix.Identity, fx0, fy0, sin, cos, mat);

@@ -38,7 +38,7 @@ Bugs:  PFCHISQ=INF if an error is detected./// change to NaN
 Implementation 1.0; ur
 Implementation 1.1  NaN ,parametercontrol;ur
 *)
-IMPORT MathL IN A2;
+IMPORT Math64 IN A2;
 CONST INF = MAX(FLOAT64);
 TYPE extended = FLOAT64;   integer = SIGNED32;
 
@@ -101,9 +101,9 @@ BEGIN(*Gauss*)
 	END   END  PFGaussACM209;  (*Gauss*)
 
 BEGIN(*falleins*)
-	help := - MathL.sqrt(intbound );
+	help := - Math64.sqrt(intbound );
 	IF ODD(Exponent) THEN RETURN 2.0 * PFGaussACM209(help)
-	ELSE RETURN MathL.exp( - 0.5 * intbound) END;
+	ELSE RETURN Math64.exp( - 0.5 * intbound) END;
 END Falleins;  (*falleins*)
 
 PROCEDURE Fallzwei (Exponent: integer;  intbound, startvalue: extended): extended;
@@ -116,12 +116,12 @@ BEGIN(*fallzwei*)
 		e := 0.0;  counter := 1.0;
 	END;
 	halfintbound := 0.5 * intbound;
-	c := MathL.ln(halfintbound);
+	c := Math64.ln(halfintbound);
 	countbound := 0.5 * (Exponent - 1);
 	helpFallzwei := startvalue;
 	WHILE counter <= countbound DO
-		e := MathL.ln(counter) + e;
-		helpFallzwei := MathL.exp(c * counter - halfintbound - e) + helpFallzwei;
+		e := Math64.ln(counter) + e;
+		helpFallzwei := Math64.exp(c * counter - halfintbound - e) + helpFallzwei;
 		counter := counter + 1.0;
 	END;  (*while*)
 	RETURN helpFallzwei;
@@ -133,7 +133,7 @@ CONST k = 0.564189583548;
 BEGIN(*falldrei*)
 	countbound := 0.5 * (Exponent - 1);
 	IF ODD(Exponent) THEN
-		e := k / MathL.sqrt(0.5 * intbound);  counter := 0.5;
+		e := k / Math64.sqrt(0.5 * intbound);  counter := 0.5;
 	ELSE
 		e := 1.0;  counter := 1.0;
 	END;
@@ -147,7 +147,7 @@ BEGIN(*falldrei*)
 		counter := counter + 1.0;
 	END;
 
-	RETURN c * MathL.exp( - halfintbound) + helpFalldrei;
+	RETURN c * Math64.exp( - halfintbound) + helpFalldrei;
 
 END Falldrei;  (*Falldrei*)
 
@@ -159,7 +159,7 @@ BEGIN(* PFCHISQ *)
 	ELSE
 		hPFCHISQ := Falleins(n, x);
 		IF ( n > 2 ) THEN
-			IF ( MathL.exp( - 0.5 * x) < 1.0E-10 ) THEN hPFCHISQ := Fallzwei(n, x, hPFCHISQ)
+			IF ( Math64.exp( - 0.5 * x) < 1.0E-10 ) THEN hPFCHISQ := Fallzwei(n, x, hPFCHISQ)
 			ELSE hPFCHISQ := Falldrei(n, x, hPFCHISQ);
 			END;
 			RETURN hPFCHISQ;

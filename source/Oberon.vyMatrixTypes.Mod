@@ -26,7 +26,7 @@ Report any problems as soon as possible to voyager@statlab.uni-heidelberg.de
 
 (*! rename type specific functions, e.g. InsertNewRealRow...*)
 (*! migrate to lower modules *)
-IMPORT Reals IN A2, MathL IN A2, Texts, vyBase, vyIntVec, vyRealVec, vyLongrealVec, vyHostStrings, vyQFisher, vyHostTexts;
+IMPORT Reals IN A2, Math64 IN A2, Texts, vyBase, vyIntVec, vyRealVec, vyLongrealVec, vyHostStrings, vyQFisher, vyHostTexts;
 
 CONST
 	idversion* = 'v0r0d3.gs';
@@ -524,7 +524,7 @@ TYPE
 			END;
 			temp := xstat.Ssq * ystat.Ssq;
 			IF Reals.IsNaNL( temp ) THEN RETURN Reals.NaN( 0 ) END;
-			IF (temp > 0) THEN temp := xyssq / MathL.sqrt( temp ) ELSE temp := 1 END
+			IF (temp > 0) THEN temp := xyssq / Math64.sqrt( temp ) ELSE temp := 1 END
 		END;
 		RETURN temp
 	END CorrDist;

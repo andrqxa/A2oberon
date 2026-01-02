@@ -1,6 +1,6 @@
 MODULE WMGraphicsDemo;	(** AUTHOR "TF"; PURPOSE "Example program"; *)
 
-IMPORT WMWindowManager, Strings, WMGraphics, WMGraphicsGfx, WMRectangles, Modules, Math, Kernel;
+IMPORT WMWindowManager, Strings, WMGraphics, WMGraphicsGfx, WMRectangles, Modules, Math32, Kernel;
 
 CONST
 	ShortFrameDelay = 10; (* ms *)
@@ -29,10 +29,10 @@ TYPE
 		VAR i : SIZE;
 			inv : FLOAT32;
 		BEGIN
-			inv := 2 * Math.pi / nofPoints;
+			inv := 2 * Math32.pi / nofPoints;
 			FOR i := 0 TO INTEGER(nofPoints) - 1 DO
-				p[i].x := x + ENTIER(r * Math.cos(i * inv));
-				p[i].y := y + ENTIER(r * Math.sin(i * inv));
+				p[i].x := x + ENTIER(r * Math32.cos(i * inv));
+				p[i].y := y + ENTIER(r * Math32.sin(i * inv));
 			END
 		END MakeCircle;
 
@@ -162,8 +162,8 @@ BEGIN
 	x0:=250; y0:=250;
 	FOR t:=0 TO 1000 DO
 		c.SetLineWidth(MAX (t/400,1));
-		x:= 250+ENTIER(t/5 * Math.sin(t/10));
-		y:= 250+ENTIER(t/5 * Math.cos(t/10));
+		x:= 250+ENTIER(t/5 * Math32.sin(t/10));
+		y:= 250+ENTIER(t/5 * Math32.cos(t/10));
 		c.Line(x0,y0,x,y, t*800H + 0FFH, WMGraphics.ModeCopy);
 		x0:=x; y0:=y;
 	END;

@@ -756,6 +756,7 @@ PACKAGE Compiler ARCHIVE "Compiler.zip" SOURCE "CompilerSrc.zip" DESCRIPTION "Ac
 	FoxProfiler.Mod
 
 	# Runtime support for math oberon (Move to runtime package? *)
+	Math32.Mod Math64.Mod
 	Math.Mod MathL.Mod
 	ComplexNumbers.Mod
 	FoxArrayBase.Mod
@@ -794,6 +795,7 @@ PACKAGE ApplicationsMini ARCHIVE "ApplicationsMini.zip" SOURCE "ApplicationsMini
 		PCITools.Mod pci.ids # Automatic HW detection
 	}
 
+	Math32.Mod Math64.Mod
 	Math.Mod MathL.Mod
 
 	Random.Mod Drand48.Mod
@@ -893,7 +895,7 @@ PACKAGE ApplicationsMini ARCHIVE "ApplicationsMini.zip" SOURCE "ApplicationsMini
 	# Image codecs
 	PNGDecoder.Mod BMPCodec.Mod GIFCodec.Mod PictCodec.Mod
 	JPEGDecoder.Mod JPEGEncoder.Mod
-	
+
 
 	# Animation codecs
 	AnimationCodec.Mod
@@ -2015,8 +2017,8 @@ PACKAGE OberonVoyager ARCHIVE "OberonVoyager.zip" SOURCE "OberonVoyagerSrc.zip" 
 	Oberon.vyLinks.Mod Oberon.vyHostStrings.Mod Oberon.vyHostTexts.Mod Oberon.vyBase.Mod Oberon.vyName.Mod	# Base and Name
 	Oberon.vyScanners.Mod Oberon.vyParser.Mod Oberon.vyPars.Mod Oberon.vyIn.Mod Oberon.vyOut.Mod Oberon.vyFiles.Mod Oberon.vyTextsCtl.Mod	# In and Output
 	Oberon.vyBoolean.Mod Oberon.vyBit.Mod Oberon.vySet.Mod Oberon.vyReal.Mod Oberon.vyLongreal.Mod
-	Oberon.vyChiSquare.Mod 
-	Oberon.vySize.Mod Oberon.vySizeVec.Mod # vectors of base type size (index vectors)	
+	Oberon.vyChiSquare.Mod
+	Oberon.vySize.Mod Oberon.vySizeVec.Mod # vectors of base type size (index vectors)
 	Oberon.vyInteger.Mod Oberon.vyLongint.Mod	# 1d Arrays
 	Oberon.vyLongintVec.Mod Oberon.vyRealVec.Mod Oberon.vyStringVec.Mod Oberon.vyReadMatrix.Mod Oberon.vyConsume.Mod
 	Oberon.vyBooleanVec.Mod Oberon.vyIntVec.Mod Oberon.vyLongrealVec.Mod Oberon.vyTypes.Mod Oberon.vyPointerVec.Mod	# 1d Vectors

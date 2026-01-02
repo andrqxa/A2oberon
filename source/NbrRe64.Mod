@@ -3,10 +3,10 @@
 
 MODULE NbrRe64;   (** AUTHOR "adf"; PURPOSE "Alias for type FLOAT64."; *)
 
-IMPORT Streams, MathL, NbrInt8, NbrInt16, NbrInt32, NbrInt64, NbrRe32;
+IMPORT Streams, Math64, NbrInt8, NbrInt16, NbrInt32, NbrInt64, NbrRe32;
 
 CONST
-	E* = MathL.e;  Pi* = MathL.pi;
+	E* = Math64.e;  Pi* = Math64.pi;
 
 TYPE
 	Real* = FLOAT64;
@@ -159,32 +159,32 @@ VAR
 
 	PROCEDURE Sqrt*( x: Real ): Real;
 	BEGIN
-		RETURN MathL.sqrt( x )
+		RETURN Math64.sqrt( x )
 	END Sqrt;
 
 	PROCEDURE Sin*( x: Real ): Real;
 	BEGIN
-		RETURN MathL.sin( x )
+		RETURN Math64.sin( x )
 	END Sin;
 
 	PROCEDURE Cos*( x: Real ): Real;
 	BEGIN
-		RETURN MathL.cos( x )
+		RETURN Math64.cos( x )
 	END Cos;
 
 	PROCEDURE ArcTan*( x: Real ): Real;
 	BEGIN
-		RETURN MathL.arctan( x )
+		RETURN Math64.arctan( x )
 	END ArcTan;
 
 	PROCEDURE Exp*( x: Real ): Real;
 	BEGIN
-		RETURN MathL.exp( x )
+		RETURN Math64.exp( x )
 	END Exp;
 
 	PROCEDURE Ln*( x: Real ): Real;
 	BEGIN
-		RETURN MathL.ln( x )
+		RETURN Math64.ln( x )
 	END Ln;
 
 

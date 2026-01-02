@@ -25,7 +25,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 (*** 4 dim Arrays wrapped in a Voyager object *)
-IMPORT vyBase, vyInteger, Objects, antsCommands, vyRanBase, MathL IN A2, Gadgets, Files, vyName, vyHostTexts, antsObjects,
+IMPORT vyBase, vyInteger, Objects, antsCommands, vyRanBase, Math64 IN A2, Gadgets, Files, vyName, vyHostTexts, antsObjects,
 	ants3dArrayObjects, antsArrays, aM := antsMessages;
 
 CONST
@@ -75,7 +75,7 @@ VAR
 					FOR j := 0 TO o.h - 1 DO
 						FOR i := 0 TO o.w - 1 DO
 							rz := l / o.d;  ry := -1 + j / o.h * 2;  rx := -1 + i / o.w * 2;  rt := k / o.t;
-							rxx := 3 / 4 * (MathL.sin( (rz + rt) * 2 * MathL.pi ));  ryy := 3 / 4 * (MathL.cos( (rz + rt) * 2 * MathL.pi ));
+							rxx := 3 / 4 * (Math64.sin( (rz + rt) * 2 * Math64.pi ));  ryy := 3 / 4 * (Math64.cos( (rz + rt) * 2 * Math64.pi ));
 							IF ((rx - rxx) * (rx - rxx) + (ry - ryy) * (ry - ryy)) < 0.16 THEN o.A[k, l, j, i] := 1 ELSE o.A[k, l, j, i] := 0 END
 						END
 					END
@@ -92,8 +92,8 @@ VAR
 		IF o # NIL THEN
 			FOR k := 0 TO o.t - 1 DO
 				rt := -1 + k / o.t * 2;   (* time *)
-				rxx := oms * MathL.sin( rt * 2 * MathL.pi );  ryy := -oms * MathL.cos( rt * 2 * MathL.pi );
-				rzz := oms * MathL.cos( rt * MathL.pi );
+				rxx := oms * Math64.sin( rt * 2 * Math64.pi );  ryy := -oms * Math64.cos( rt * 2 * Math64.pi );
+				rzz := oms * Math64.cos( rt * Math64.pi );
 				FOR l := 0 TO o.d - 1 DO
 					rz := -1 + l / o.d * 2;   (* z  = up down*)
 					FOR j := 0 TO o.h - 1 DO
@@ -118,8 +118,8 @@ VAR
 		IF o # NIL THEN
 			FOR k := 0 TO o.t - 1 DO
 				rt := -1 + k / o.t * 2;   (* time *)
-				rxx := oms * MathL.sin( rt * 2 * MathL.pi );  ryy := -oms * MathL.cos( rt * 2 * MathL.pi );
-				rzz := oms * MathL.cos( rt * MathL.pi );
+				rxx := oms * Math64.sin( rt * 2 * Math64.pi );  ryy := -oms * Math64.cos( rt * 2 * Math64.pi );
+				rzz := oms * Math64.cos( rt * Math64.pi );
 				FOR l := 0 TO o.d - 1 DO
 					rz := -1 + l / o.d * 2;   (* z  = up down*)
 					FOR j := 0 TO o.h - 1 DO
@@ -146,8 +146,8 @@ VAR
 		IF o # NIL THEN
 			FOR k := 0 TO o.t - 1 DO
 				rt := -1 + k / o.t * 2;   (* time *)
-				rxx := oms * MathL.sin( rt * 2 * MathL.pi );  ryy := -oms * MathL.cos( rt * 2 * MathL.pi );
-				rzz := oms * MathL.cos( rt * MathL.pi );
+				rxx := oms * Math64.sin( rt * 2 * Math64.pi );  ryy := -oms * Math64.cos( rt * 2 * Math64.pi );
+				rzz := oms * Math64.cos( rt * Math64.pi );
 				FOR l := 0 TO o.d - 1 DO
 					rz := -1 + l / o.d * 2;   (* z  = up down*)
 					FOR j := 0 TO o.h - 1 DO
@@ -174,8 +174,8 @@ VAR
 		IF o # NIL THEN
 			FOR k := 0 TO o.t - 1 DO
 				rt := -1 + k / o.t * 2;   (* time *)
-				rxx := oms * MathL.sin( rt * MathL.pi );  ryy := -oms * MathL.cos( rt * 2 * MathL.pi );
-				rzz := oms * MathL.cos( rt * 1 * MathL.pi );
+				rxx := oms * Math64.sin( rt * Math64.pi );  ryy := -oms * Math64.cos( rt * 2 * Math64.pi );
+				rzz := oms * Math64.cos( rt * 1 * Math64.pi );
 				FOR l := 0 TO o.d - 1 DO
 					rz := -1 + l / o.d * 2;   (* z  = up down*)
 					FOR j := 0 TO o.h - 1 DO

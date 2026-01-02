@@ -3,7 +3,7 @@ MODULE FoxArrayBase; (* stubs for array base runtime - can only be compiled by o
 
 (*! do  do: MAX(array,scalar) and MAX(array,array) for all datatypes*)
 
-IMPORT SYSTEM, KernelLog, Heaps, Machine, MathL;
+IMPORT SYSTEM, KernelLog, Heaps, Machine, Math64;
 
 TYPE
 
@@ -8850,7 +8850,7 @@ TYPE
 	BEGIN
 		WHILE (len > 0) DO
 			SYSTEM.GET( ladr, lvalRe ); SYSTEM.GET( ladr+SIZEOF(FLOAT64), lvalIm );
-			SYSTEM.PUT( dadr, MathL.sqrt(lvalRe*lvalRe + lvalIm*lvalIm) );
+			SYSTEM.PUT( dadr, Math64.sqrt(lvalRe*lvalRe + lvalIm*lvalIm) );
 			INC( ladr, linc );
 			INC( dadr, dinc );  DEC( len );
 		END;

@@ -1,6 +1,6 @@
 MODULE srRender;
 IMPORT  Modules, Commands, WMWindowManager, Raster, Objects, Random,
-Rectangles := WMRectangles,  Out  := KernelLog, Math, srBase,  srMath,  srRastermovie, srvoxels,
+Rectangles := WMRectangles,  Out  := KernelLog, Math32, srBase,  srMath,  srRastermovie, srvoxels,
 srRayEngine;
 
 TYPE SREAL=srBase.SREAL;
@@ -229,7 +229,7 @@ VAR
 
 PROCEDURE normalize(VAR x,y,z,d: SREAL);
 BEGIN
-	d := Math.sqrt(x*x + y*y+z*z);
+	d := Math32.sqrt(x*x + y*y+z*z);
 	x := x/d; y := y/d; z:=z/d
 END normalize;
 
@@ -634,7 +634,7 @@ BEGIN
 	ray.dxyz.x := srMath.cos(ray.theta) * srMath.cos(ray.phi);
 	ray.dxyz.y := srMath.sin(ray.theta) * srMath.cos(ray.phi);
 	ray.dxyz.z := srMath.sin(ray.phi);
-(*	d := Math.sqrt(ray.dxyz.x*ray.dxyz.x + ray.dxyz.y* ray.dxyz.y+ray.dxyz.z*ray.dxyz.z);  (* Norma! Liza! Ray! Front and center, oh dark thirty!*)
+(*	d := Math32.sqrt(ray.dxyz.x*ray.dxyz.x + ray.dxyz.y* ray.dxyz.y+ray.dxyz.z*ray.dxyz.z);  (* Norma! Liza! Ray! Front and center, oh dark thirty!*)
 	ray.dxyz.x := ray.dxyz.x/d;
 	ray.dxyz.y := ray.dxyz.y/d;
 	ray.dxyz.z := ray.dxyz.z/d; *)

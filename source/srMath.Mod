@@ -1,12 +1,12 @@
 MODULE srMath;
-IMPORT Math, srBase;
+IMPORT Math32, srBase;
 
 TYPE SREAL=srBase.SREAL;
 
 CONST
 	R = 10000;
 	N = 1000;
-	twopi = 2*Math.pi;
+	twopi = 2*Math32.pi;
 	dx = twopi/R;
 	dtp = twopi/N;
 
@@ -39,7 +39,7 @@ END norm;
 
 PROCEDURE arccos*(x: SREAL): SREAL;
 BEGIN
-	RETURN(Math.arctan(Math.sqrt(ABS((1-x*x))/x)));
+	RETURN(Math32.arctan(Math32.sqrt(ABS((1-x*x))/x)));
 END arccos;
 
 PROCEDURE orrot*(VAR a: srBase.PT; b: srBase.PT; theta: SREAL);
@@ -65,9 +65,9 @@ END orrot;
 BEGIN
 	x := 0;
 	FOR i := 0 TO R-1 DO
-		Sin[i] := Math.sin(x);
+		Sin[i] := Math32.sin(x);
 		IF Sin[i] = 0 THEN Sin[i] := 0.0000001 END;  (* Because we must avoid ever dividing by zero *)
-		Cos[i] := Math.cos(x);
+		Cos[i] := Math32.cos(x);
 		IF Cos[i] = 0 THEN Cos[i] := 0.0000001 END;	(* in shaders                                                  *)
 		x := x+dx;
 	END;

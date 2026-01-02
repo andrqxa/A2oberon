@@ -25,7 +25,7 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		MathL IN A2, Files, Modules, Reals IN A2, Objects, Texts, Oberon, Strings;
+		Math64 IN A2, Files, Modules, Reals IN A2, Objects, Texts, Oberon, Strings;
 
 
 	CONST
@@ -780,7 +780,7 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 	BEGIN
 		GetReal(obj, x);
 		IF x < 0.0D0 THEN RETURN nan END;
-		res := NewReal(MathL.sqrt(x));
+		res := NewReal(Math64.sqrt(x));
 		IF IsExact(obj) THEN
 			exres := ToExact(res);
 			IF Compare(Mul(exres, exres), obj) = 0 THEN
@@ -795,7 +795,7 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 	BEGIN
 		GetReal(obj, x);
 		IF (x = 0.0D0) & (obj.sub = fixnum) THEN RETURN one
-		ELSE RETURN NewReal(MathL.exp(x))
+		ELSE RETURN NewReal(Math64.exp(x))
 		END
 	END Exp;
 
@@ -805,7 +805,7 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 		GetReal(obj, x);
 		IF x < 0.0D0 THEN RETURN nan
 		ELSIF x = 0.0D0 THEN RETURN ninf
-		ELSE RETURN NewReal(MathL.ln(x))
+		ELSE RETURN NewReal(Math64.ln(x))
 		END
 	END Ln;
 
@@ -816,7 +816,7 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 		IF x < 0.0D0 THEN RETURN nan
 		ELSE
 			GetReal(power, y);
-			res := MathL.exp(y * MathL.ln(x));
+			res := Math64.exp(y * Math64.ln(x));
 			IF (base.sub = fixnum) & (power.sub = fixnum) & (res <= MAX(SIGNED32)) THEN
 				RETURN NewInteger(ENTIER(res + 0.5))
 			ELSE
@@ -828,7 +828,7 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 	PROCEDURE Sin* (obj: Object): Object;
 		VAR x: FLOAT64;
 	BEGIN
-		GetReal(obj, x); RETURN NewReal(MathL.sin(x))
+		GetReal(obj, x); RETURN NewReal(Math64.sin(x))
 	END Sin;
 
 	PROCEDURE ASin* (obj: Object): Object;
@@ -837,16 +837,16 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 		GetReal(obj, x);
 		IF ABS(x) > 1.0D0 THEN RETURN nan
 		ELSIF x = 0.0D0 THEN RETURN NewReal(0.0D0)
-		ELSIF x = 1.0D0 THEN RETURN NewReal(0.5D0*MathL.pi)
-		ELSIF x = -1.0D0 THEN RETURN NewReal(1.5D0*MathL.pi)
-		ELSE RETURN NewReal(MathL.arctan(x/MathL.sqrt(1.0D0-x*x)))
+		ELSIF x = 1.0D0 THEN RETURN NewReal(0.5D0*Math64.pi)
+		ELSIF x = -1.0D0 THEN RETURN NewReal(1.5D0*Math64.pi)
+		ELSE RETURN NewReal(Math64.arctan(x/Math64.sqrt(1.0D0-x*x)))
 		END
 	END ASin;
 
 	PROCEDURE Cos* (obj: Object): Object;
 		VAR x: FLOAT64;
 	BEGIN
-		GetReal(obj, x); RETURN NewReal(MathL.cos(x))
+		GetReal(obj, x); RETURN NewReal(Math64.cos(x))
 	END Cos;
 
 	PROCEDURE ACos* (obj: Object): Object;
@@ -854,10 +854,10 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 	BEGIN
 		GetReal(obj, x);
 		IF ABS(x) > 1.0D0 THEN RETURN nan
-		ELSIF x = 0.0D0 THEN RETURN NewReal(0.5D0*MathL.pi)
+		ELSIF x = 0.0D0 THEN RETURN NewReal(0.5D0*Math64.pi)
 		ELSIF x = 1.0D0 THEN RETURN NewReal(0.0D0)
-		ELSIF x = -1.0D0 THEN RETURN NewReal(MathL.pi)
-		ELSE RETURN NewReal(2.0D0 * MathL.arctan(MathL.sqrt((1.0D0-x)/(1.0D0+x))))
+		ELSIF x = -1.0D0 THEN RETURN NewReal(Math64.pi)
+		ELSE RETURN NewReal(2.0D0 * Math64.arctan(Math64.sqrt((1.0D0-x)/(1.0D0+x))))
 		END
 	END ACos;
 
@@ -865,20 +865,20 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 		VAR x, y: FLOAT64;
 	BEGIN
 		GetReal(obj, x);
-		y := MathL.cos(x);
+		y := Math64.cos(x);
 		IF y = 0.0D0 THEN
-			y := MathL.sin(x);
+			y := Math64.sin(x);
 			IF y > 0.0D0 THEN RETURN inf
 			ELSE RETURN ninf
 			END
 		END;
-		RETURN NewReal(MathL.sin(x)/y)
+		RETURN NewReal(Math64.sin(x)/y)
 	END Tan;
 
 	PROCEDURE ATan* (obj: Object): Object;
 		VAR x: FLOAT64;
 	BEGIN
-		GetReal(obj, x); RETURN NewReal(MathL.arctan(x))
+		GetReal(obj, x); RETURN NewReal(Math64.arctan(x))
 	END ATan;
 
 	PROCEDURE ATan2* (obj1, obj2: Object): Object;
@@ -886,13 +886,13 @@ MODULE Scheme IN Oberon; (** portable *)	(* eos  *)
 	BEGIN
 		GetReal(obj1, x); GetReal(obj2, y);
 		IF (ABS(x) < 1.0D0) & (ABS(y) >= ABS(x * MAX(FLOAT64))) THEN	(* y/x would overflow *)
-			IF y >= 0.0D0 THEN phi := MathL.pi/2.0D0
-			ELSE phi := -MathL.pi/2.0D0
+			IF y >= 0.0D0 THEN phi := Math64.pi/2.0D0
+			ELSE phi := -Math64.pi/2.0D0
 			END
 		ELSIF x > 0.0D0 THEN	(* 1st or 4th quadrant *)
-			phi := MathL.arctan(y/x)
+			phi := Math64.arctan(y/x)
 		ELSIF x < 0.0D0 THEN	(* 2nd or 3rd quadrant *)
-			phi := MathL.arctan(y/x) + MathL.pi
+			phi := Math64.arctan(y/x) + Math64.pi
 		END;
 		RETURN NewReal(phi)
 	END ATan2;

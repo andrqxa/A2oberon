@@ -5,7 +5,7 @@ MODULE Dim3Frames IN Oberon;	(** portable *)	(* David Ulrich Nov 95 - März 96 *
 (** This module implements a 3D Engine frame and gadget **)
 
 IMPORT
-	Attributes, Display, Display3, Effects, Files, Input, Gadgets, Math IN A2, Oberon, Objects, Pictures, Strings,
+	Attributes, Display, Display3, Effects, Files, Input, Gadgets, Math32 IN A2, Oberon, Objects, Pictures, Strings,
 	Dim3Read, Dim3Engine, Texts;
 
 CONST
@@ -91,13 +91,13 @@ VAR
 
 BEGIN
 	(* constrain upper bound for rotations between 30 and 45 degree/sec, depending on speed ratio *)
-	maxAngle := Math.pi/12.0 * (2.0 + speed) / frameRate;
+	maxAngle := Math32.pi/12.0 * (2.0 + speed) / frameRate;
 
 	(* get current angles *)
 	Dim3Engine.GetCameraAngles(F.camera, azi, pitch, roll);
 	xAngle := MapToAngle(-X); yAngle := MapToAngle(Y);
-	sinPitch := Math.sin(pitch); cosPitch := Math.cos(pitch);
-	sinRoll := Math.sin(roll); cosRoll := Math.cos(roll);
+	sinPitch := Math32.sin(pitch); cosPitch := Math32.cos(pitch);
+	sinRoll := Math32.sin(roll); cosRoll := Math32.cos(roll);
 
 	(*
 	 * Update azimute: Turn the airplane when its wings are not parallel to the horizon (=> bank turns).
@@ -118,11 +118,11 @@ BEGIN
 	 * pitch will always be constrained to the interval [-pi/2..pi/2], turning the airplane upside down when necessary.
 	 *)
 	pitch := pitch - yAngle * cosRoll;
-	IF ABS(pitch) > Math.pi/2.0 THEN	(* turn "airplane" upside down *)
-		azi := azi + Math.pi;
-		roll := roll + Math.pi;
-		IF pitch > 0.0 THEN pitch := Math.pi - pitch
-		ELSE pitch := -Math.pi - pitch
+	IF ABS(pitch) > Math32.pi/2.0 THEN	(* turn "airplane" upside down *)
+		azi := azi + Math32.pi;
+		roll := roll + Math32.pi;
+		IF pitch > 0.0 THEN pitch := Math32.pi - pitch
+		ELSE pitch := -Math32.pi - pitch
 		END
 	ELSIF ABS(pitch) < 0.01 THEN
 		pitch := 0.0
@@ -200,7 +200,7 @@ BEGIN
 			END
 		END;
 
-		Dim3Engine.RotateCamera(F.camera, Math.pi * (oldX - X)/F.W, 0, 1, 0);
+		Dim3Engine.RotateCamera(F.camera, Math32.pi * (oldX - X)/F.W, 0, 1, 0);
 		oldX := X; oldY := Y;
 		Y := Y - M.Y;
 		IF ABS(Y) > minSpeed THEN
@@ -559,7 +559,7 @@ BEGIN
 	obj := Gadgets.FindObj(Gadgets.context, "FOV");
 	IF obj # NIL THEN
 		M.id := Objects.set; M.name := "Value"; M.res := -1; M.class := Objects.Real;
-		M.x := 0.01 * ENTIER(100.0*2.0*180.0/Math.pi * F.camera.fov + 0.5);
+		M.x := 0.01 * ENTIER(100.0*2.0*180.0/Math32.pi * F.camera.fov + 0.5);
 		obj.handle(obj, M);
 		Gadgets.Update(obj)
 	END
@@ -587,10 +587,10 @@ BEGIN
 	IF F # NIL THEN
 		Texts.OpenScanner(S, Oberon.Par.text, Oberon.Par.pos); Texts.Scan(S);
 		IF S.class = Texts.Int THEN
-			F.camera.fov := 0.5*Math.pi/180.0 * S.i;
+			F.camera.fov := 0.5*Math32.pi/180.0 * S.i;
 			Gadgets.Update(F)
 		ELSIF S.class = Texts.Real THEN
-			F.camera.fov := 0.5*Math.pi/180.0 * S.x;
+			F.camera.fov := 0.5*Math32.pi/180.0 * S.x;
 			Gadgets.Update(F)
 		END
 	END
@@ -613,9 +613,9 @@ BEGIN
 			Dim3Engine.ConcatMatrix(N, s.T, M);
 			Dim3Engine.Decompose(M, angle, axis, scale, trans);
 			Dim3Engine.Normalize(trans);
-			angle := Dim3Engine.Atan2(Math.sqrt(ABS(1.0 - trans[2]*trans[2])), -trans[2]);	(* angle between trans and [0 0 -1] *)
+			angle := Dim3Engine.Atan2(Math32.sqrt(ABS(1.0 - trans[2]*trans[2])), -trans[2]);	(* angle between trans and [0 0 -1] *)
 			IF ABS(angle) > 1.0E-5 THEN
-				steps := ENTIER(1 + 10/Math.pi * ABS(angle) * frameRate);
+				steps := ENTIER(1 + 10/Math32.pi * ABS(angle) * frameRate);
 				angle := -angle / steps;
 				WHILE steps > 0 DO
 					Dim3Engine.RotateCamera(F.camera, angle, -trans[1], trans[0], 0);
@@ -630,7 +630,7 @@ BEGIN
 			Dim3Engine.Decompose(M, angle, axis, scale, trans);
 			Dim3Engine.Normalize(axis);
 			IF ABS(Dim3Engine.DotProd(axis, axis)) > 0 THEN
-				steps := ENTIER(1 + 10/Math.pi * ABS(angle) * frameRate);
+				steps := ENTIER(1 + 10/Math32.pi * ABS(angle) * frameRate);
 				angle := -angle / steps;
 				WHILE steps > 0 DO
 					Dim3Engine.MoveCamera(F.camera, 0, 0, -trans[2]);
@@ -670,50 +670,50 @@ BEGIN
 	FOR i := 1 TO nFrames DIV 8 DO
 		RestoreFrame(F, R, F.absX, F.absY);
 		Dim3Engine.MoveCamera(F.camera, 0, 0, -80/nFrames);
-		Dim3Engine.RotateCamera(F.camera, 8*Math.pi/(6*nFrames), 0, 0, 1);
+		Dim3Engine.RotateCamera(F.camera, 8*Math32.pi/(6*nFrames), 0, 0, 1);
 		Poll
 	END;
 	Dim3Engine.InitCamera(F.camera);
 	Dim3Engine.MoveCamera(F.camera, 0, 0, -10);
-	Dim3Engine.RotateCamera(F.camera, Math.pi/6, 0, 0, 1);
+	Dim3Engine.RotateCamera(F.camera, Math32.pi/6, 0, 0, 1);
 
 	FOR i := 1 TO nFrames DIV 4 DO
 		RestoreFrame(F, R, F.absX, F.absY);
 		Dim3Engine.MoveCamera(F.camera, 0, 0, 10);
-		Dim3Engine.RotateCamera(F.camera, 4*Math.pi/nFrames, 0, 1, 0);
+		Dim3Engine.RotateCamera(F.camera, 4*Math32.pi/nFrames, 0, 1, 0);
 		Dim3Engine.MoveCamera(F.camera, 0, 0, -10);
 		Poll
 	END;
 	Dim3Engine.InitCamera(F.camera);
-	Dim3Engine.RotateCamera(F.camera, Math.pi, 0, 1, 0);
+	Dim3Engine.RotateCamera(F.camera, Math32.pi, 0, 1, 0);
 	Dim3Engine.MoveCamera(F.camera, 0, 0, -10);
-	Dim3Engine.RotateCamera(F.camera, -Math.pi/6, 0, 0, 1);
+	Dim3Engine.RotateCamera(F.camera, -Math32.pi/6, 0, 0, 1);
 
 	FOR i := 1 TO nFrames DIV 4 DO
 		RestoreFrame(F, R, F.absX, F.absY);
-		Dim3Engine.RotateCamera(F.camera, 8*Math.pi/(6*nFrames), 0, 0, 1);
+		Dim3Engine.RotateCamera(F.camera, 8*Math32.pi/(6*nFrames), 0, 0, 1);
 		Poll
 	END;
 	Dim3Engine.InitCamera(F.camera);
-	Dim3Engine.RotateCamera(F.camera, Math.pi, 0, 1, 0);
+	Dim3Engine.RotateCamera(F.camera, Math32.pi, 0, 1, 0);
 	Dim3Engine.MoveCamera(F.camera, 0, 0, -10);
-	Dim3Engine.RotateCamera(F.camera, Math.pi/6, 0, 0, 1);
+	Dim3Engine.RotateCamera(F.camera, Math32.pi/6, 0, 0, 1);
 
 	FOR i := 1 TO nFrames DIV 4 DO
 		RestoreFrame(F, R, F.absX, F.absY);
 		Dim3Engine.MoveCamera(F.camera, 0, 0, 10);
-		Dim3Engine.RotateCamera(F.camera, 4*Math.pi/nFrames, 0, 1, 0);
+		Dim3Engine.RotateCamera(F.camera, 4*Math32.pi/nFrames, 0, 1, 0);
 		Dim3Engine.MoveCamera(F.camera, 0, 0, -10);
 		Poll
 	END;
 	Dim3Engine.InitCamera(F.camera);
 	Dim3Engine.MoveCamera(F.camera, 0, 0, -10);
-	Dim3Engine.RotateCamera(F.camera, -Math.pi/6, 0, 0, 1);
+	Dim3Engine.RotateCamera(F.camera, -Math32.pi/6, 0, 0, 1);
 
 	FOR i := 1 TO nFrames DIV 8 DO
 		RestoreFrame(F, R, F.absX, F.absY);
 		Dim3Engine.MoveCamera(F.camera, 0, 0, 80/nFrames);
-		Dim3Engine.RotateCamera(F.camera, 8*Math.pi/(6*nFrames), 0, 0, 1);
+		Dim3Engine.RotateCamera(F.camera, 8*Math32.pi/(6*nFrames), 0, 0, 1);
 		Poll
 	END;
 	Dim3Engine.InitCamera(F.camera);

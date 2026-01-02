@@ -26,7 +26,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 IMPORT antsObjects, antsFunctions, Objects, Files, Gadgets, antsNeighbourhoods, antsRegions, aM := antsMessages,
-	antsArrayObjects, Math := MathL IN A2, antsKernel, antsModels, antsCommands, vyName, vyBase, antsCaches, vyRanBase, Links;
+	antsArrayObjects, Math := Math64 IN A2, antsKernel, antsModels, antsCommands, vyName, vyBase, antsCaches, vyRanBase, Links;
 
 TYPE
 	intArray = POINTER TO ARRAY OF SIGNED16;

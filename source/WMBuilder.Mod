@@ -2,7 +2,7 @@ MODULE WMBuilder; (** AUTHOR "staubesv"; PURPOSE "GUI builder"; *)
 
 IMPORT
 	Modules, Kernel, KernelLog, Streams, Commands, Inputs, Strings, UTF8Strings, Files, XML, XMLObjects, XMLScanner, XMLParser,
-	Math, Repositories, WMRepositories, WMUtilities,
+	Math32, Repositories, WMRepositories, WMUtilities,
 	WMRectangles, WMGraphics, WMMessages, WMWindowManager, WMRestorable, WMProperties, WMComponents, WMStandardComponents, WMEditors,
 	WMTrees, WMInspectionComponents, WMDialogs, Models, Configuration,
 	StringCollections := GenericCollections(Strings.String, UTF8Strings.LessString);
@@ -3833,7 +3833,7 @@ END CreateIndicator;
 
 PROCEDURE Distance(x0, y0, x1, y1 : SIZE) : FLOAT32;
 BEGIN
-	RETURN Math.sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+	RETURN Math32.sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
 END Distance;
 
 PROCEDURE DrawDashedLine(canvas : WMGraphics.Canvas; xs, ys, xe, ye: SIZE; color0, color1, width0, width1 : SIGNED32);

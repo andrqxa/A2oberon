@@ -2,7 +2,7 @@ MODULE WMFigures; (** AUTHOR "Patrick Hunziker, with inspirations from staubesv,
 (*TBD: closed figures with first[x,y]=last[x,y] are displayed inconsistently *)
 
 IMPORT
-	KernelLog, Streams, Math, Strings, XML, WMRectangles, WMGraphics, WMGraphicUtilities, WMProperties, WMComponents;
+	KernelLog, Streams, Math32, Strings, XML, WMRectangles, WMGraphics, WMGraphicUtilities, WMProperties, WMComponents;
 
 CONST
 	(* Figure.state *)
@@ -409,8 +409,8 @@ TYPE
 				alpha:=arctan2(p1.y-p0.y, p1.x-p0.x);
 				head:=MAX( 4,  0.05 * MAX(ABS(p1.x-p0.x), ABS(p1.y-p0.y))); (*avoid sqrt for performance reasons*)
 				col:=color.Get();
-				canvas.Line(p1.x,p1.y, p1.x - ENTIER(0.5+head * Math.cos(alpha + pi/8)), p1.y - ENTIER(0.5+head * Math.sin(alpha + pi/8)), col, WMGraphics.ModeSrcOverDst);
-				canvas.Line(p1.x,p1.y, p1.x - ENTIER(0.5+head * Math.cos(alpha - pi/8)), p1.y - ENTIER(0.5+head * Math.sin(alpha - pi/8)), col, WMGraphics.ModeSrcOverDst);
+				canvas.Line(p1.x,p1.y, p1.x - ENTIER(0.5+head * Math32.cos(alpha + pi/8)), p1.y - ENTIER(0.5+head * Math32.sin(alpha + pi/8)), col, WMGraphics.ModeSrcOverDst);
+				canvas.Line(p1.x,p1.y, p1.x - ENTIER(0.5+head * Math32.cos(alpha - pi/8)), p1.y - ENTIER(0.5+head * Math32.sin(alpha - pi/8)), col, WMGraphics.ModeSrcOverDst);
 		END DrawArrow;
 
 	END Figure;
@@ -892,11 +892,11 @@ VAR
 
 PROCEDURE arctan2(y,x: FLOAT32): FLOAT32; (*arctan in range 0..2pi*)
 	BEGIN
-		IF (x>0) & (y>=0) THEN RETURN Math.arctan(y/x)
-		ELSIF (x>0) & (y<0) THEN RETURN Math.arctan(y/x)+2*Math.pi
-		ELSIF x<0 THEN RETURN Math.arctan(y/x)+Math.pi
-		ELSIF (x=0) & (y>0) THEN RETURN Math.pi/2
-		ELSIF (x=0) & (y<0) THEN RETURN 3*Math.pi/2
+		IF (x>0) & (y>=0) THEN RETURN Math32.arctan(y/x)
+		ELSIF (x>0) & (y<0) THEN RETURN Math32.arctan(y/x)+2*Math32.pi
+		ELSIF x<0 THEN RETURN Math32.arctan(y/x)+Math32.pi
+		ELSIF (x=0) & (y>0) THEN RETURN Math32.pi/2
+		ELSIF (x=0) & (y<0) THEN RETURN 3*Math32.pi/2
 		ELSE (*( x=0) & (y=0) *) RETURN 0 (*or RETURN NaN ?*)
 		END
 	END arctan2;
@@ -1081,7 +1081,7 @@ BEGIN
 	RS[1] := 0.0; i := 2;
 	WHILE i <= n DO
 		dx := RX[i] - RX[i-1];  dy := RY[i] - RY[i-1];
-		RS[i] := RS[i-1] + Math.sqrt(dx*dx + dy*dy);
+		RS[i] := RS[i-1] + Math32.sqrt(dx*dx + dy*dy);
 		INC(i);
 	END;
 	IF ~closed THEN
@@ -1142,7 +1142,7 @@ END Intersect;
 PROCEDURE Distance*(x, y, x0, y0: SIZE): SIZE;
 VAR dx, dy: SIZE;
 BEGIN dx := x - x0; dy := y - y0;
-	RETURN ENTIER(Math.sqrt(dx * dx + dy * dy))
+	RETURN ENTIER(Math32.sqrt(dx * dx + dy * dy))
 END Distance;
 
 PROCEDURE GenLine*() : XML.Element; (* needs AddPoint(); AddPoint(), before a prototype becomes visible  *)

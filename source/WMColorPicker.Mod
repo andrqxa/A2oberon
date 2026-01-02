@@ -1,7 +1,7 @@
 MODULE WMColorPicker; (** AUTHOR "BohdanT"; PURPOSE "Powerful color picker dialog"; December 14-17, 2014 *)
 
 IMPORT
-	KernelLog, Strings, Math, Texts, UTF8Strings,
+	KernelLog, Strings, Math32, Texts, UTF8Strings,
 	(* visual part *)
 
 	WMRectangles, WMWindowManager, WMProperties,  WMComponents, WMStandardComponents, WMEditors,
@@ -1053,9 +1053,9 @@ BEGIN
 
 	ColorToRGB(color, iR, iG, iB); R:=iR/255; G:=iG/255; B:=iB/255;
 
-	IF (R > 0.04045) THEN R := Math.exp(2.4*Math.ln((R + 0.055) / 1.055)) ELSE R := R / 12.92 END;
-	IF (G > 0.04045) THEN G := Math.exp(2.4*Math.ln((G + 0.055) / 1.055)) ELSE G := G / 12.92 END;
-	IF (B > 0.04045) THEN B := Math.exp(2.4*Math.ln((B + 0.055) / 1.055)) ELSE B := B / 12.92 END;
+	IF (R > 0.04045) THEN R := Math32.exp(2.4*Math32.ln((R + 0.055) / 1.055)) ELSE R := R / 12.92 END;
+	IF (G > 0.04045) THEN G := Math32.exp(2.4*Math32.ln((G + 0.055) / 1.055)) ELSE G := G / 12.92 END;
+	IF (B > 0.04045) THEN B := Math32.exp(2.4*Math32.ln((B + 0.055) / 1.055)) ELSE B := B / 12.92 END;
 
 	(* Observer. = 2Â°, Illuminant = D65 *)
     X := R * 0.4124 + G * 0.3576 + B * 0.1805;
@@ -1066,9 +1066,9 @@ BEGIN
 (*	Y = Y / 1 nothing to do! *)
 	Z := Z / 1.08883;
 
-	IF (X > 0.008856) THEN X := Math.exp(K1d3*Math.ln(X)) ELSE X := (7.787 * X) + (K16d116) END;
-	IF (y > 0.008856) THEN y := Math.exp(K1d3*Math.ln(y)) ELSE y := (7.787 * y) + (K16d116) END;
-	IF (Z > 0.008856) THEN Z := Math.exp(K1d3*Math.ln(Z)) ELSE Z := (7.787 * Z) + (K16d116) END;
+	IF (X > 0.008856) THEN X := Math32.exp(K1d3*Math32.ln(X)) ELSE X := (7.787 * X) + (K16d116) END;
+	IF (y > 0.008856) THEN y := Math32.exp(K1d3*Math32.ln(y)) ELSE y := (7.787 * y) + (K16d116) END;
+	IF (Z > 0.008856) THEN Z := Math32.exp(K1d3*Math32.ln(Z)) ELSE Z := (7.787 * Z) + (K16d116) END;
 
     L := 116 * y - 16;
     a := 500 * (X - y);
@@ -1106,9 +1106,9 @@ BEGIN
 	G := (X * (-0.9689) + y * 1.8758 + Z * 0.0415);
 	B := (X * 0.0557 + y * (-0.204) + Z * 1.057);
 
-	IF (R > 0.0031308) THEN R := (1.055 * Math.exp(K1d2p4*Math.ln(R)) - 0.055) ELSE R := 12.92 * R END;
-	IF (G > 0.0031308) THEN G := (1.055 * Math.exp(K1d2p4*Math.ln(G)) - 0.055) ELSE G := 12.92 * G END;
-	IF (B > 0.0031308) THEN B := (1.055 * Math.exp(K1d2p4*Math.ln(B)) - 0.055) ELSE B := 12.92 * B END;
+	IF (R > 0.0031308) THEN R := (1.055 * Math32.exp(K1d2p4*Math32.ln(R)) - 0.055) ELSE R := 12.92 * R END;
+	IF (G > 0.0031308) THEN G := (1.055 * Math32.exp(K1d2p4*Math32.ln(G)) - 0.055) ELSE G := 12.92 * G END;
+	IF (B > 0.0031308) THEN B := (1.055 * Math32.exp(K1d2p4*Math32.ln(B)) - 0.055) ELSE B := 12.92 * B END;
 
 
 	iR:=ENTIER(MIN(MAX(0,R*255+0.5), 255));

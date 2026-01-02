@@ -1,5 +1,5 @@
 MODULE srTexVox;
-IMPORT srBase, Raster, Graphics := WMGraphics, Random, Math, srMath;
+IMPORT srBase, Raster, Graphics := WMGraphics, Random, Math32, srMath;
 
 TYPE SREAL=srBase.SREAL;
 TYPE Ray = srBase.Ray;
@@ -328,7 +328,7 @@ END init;
 
 PROCEDURE ctop(x,y,z: SREAL; VAR th,ph,d: SREAL);
 BEGIN
-	d := Math.sqrt((cx-x)*(cx-x) + (cy-y)*(cy-y) + (cz-z)*(cz-z));
+	d := Math32.sqrt((cx-x)*(cx-x) + (cy-y)*(cy-y) + (cz-z)*(cz-z));
 	th := 6.28*srMath.sin((x-cx)/d);
 	ph :=  6.28*srMath.cos((y-cy)/d);
 END ctop;

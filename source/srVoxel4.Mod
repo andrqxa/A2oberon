@@ -1,5 +1,5 @@
 MODULE srVoxel4;
-IMPORT Random, srBase, srVolShader, srVoxel, srVoxel2, srMath, Math;
+IMPORT Random, srBase, srVolShader, srVoxel, srVoxel2, srMath, Math32;
 
 VAR
 	rand: Random.Generator;
@@ -124,14 +124,14 @@ END in;
 
 PROCEDURE ctop(p:PT; VAR th,ph,d: SREAL);
 (* BEGIN
-	d := Math.sqrt(dee2(p));
+	d := Math32.sqrt(dee2(p));
 	th := 6.28*srMath.sin((x-cx)/d);
 	ph :=  6.28*srMath.cos((y-cy)/d); *)
 END ctop;
 
 PROCEDURE ctop1(p:PT; VAR th,ph,d: SREAL);
 BEGIN
-	d := Math.sqrt(dee2(p));
+	d := Math32.sqrt(dee2(p));
 (*	th := (1+srMath.sin((x-cx)/d))/2;
 	ph := (1+srMath.cos((y-cy)/d))/2; *)
 END ctop1;
@@ -620,7 +620,7 @@ END checkboard;
 PROCEDURE normalize(VAR x,y,z: SREAL);
 VAR d: SREAL;
 BEGIN
-	d := Math.sqrt(x*x+y*y+z*z);  (* Norma! Liza! Ray! Front and center, oh dark thirty!*)
+	d := Math32.sqrt(x*x+y*y+z*z);  (* Norma! Liza! Ray! Front and center, oh dark thirty!*)
 	x := x/d; y := y/d; z:=z/d;
 END normalize;
 

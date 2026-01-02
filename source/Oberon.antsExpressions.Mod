@@ -1073,7 +1073,7 @@ VAR
 		IF mod # NIL THEN
 			IF FindObj( mod, name ) # NIL THEN RETURN END
 		END;
-		Ln;  Str( "trying MathL" );  WLog;  modn := "MathL";  Strings.Append( modn, "." );  Strings.Append( modn, str );  SplitName( modn, mod, name );
+		Ln;  Str( "trying Math64" );  WLog;  modn := "Math64";  Strings.Append( modn, "." );  Strings.Append( modn, str );  SplitName( modn, mod, name );
 		IF mod # NIL THEN
 			IF FindObj( mod, name ) # NIL THEN RETURN END
 		END

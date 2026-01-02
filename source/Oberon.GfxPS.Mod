@@ -29,7 +29,7 @@ MODULE GfxPS IN Oberon; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		Files, Texts, Oberon, Math IN A2, Strings, BIT IN A2, Colors, Images, GfxMatrix, GfxImages, GfxPaths, GfxFonts, Gfx;
+		Files, Texts, Oberon, Math32 IN A2, Strings, BIT IN A2, Colors, Images, GfxMatrix, GfxImages, GfxPaths, GfxFonts, Gfx;
 
 
 	CONST
@@ -240,15 +240,15 @@ MODULE GfxPS IN Oberon; (** portable *)	(* eos  *)
 			VAR phi: FLOAT32;
 		BEGIN
 			IF (ABS(x) < 1.0) & (ABS(y) >= ABS(x * MAX(FLOAT32))) THEN	(* y/x would result in overflow/divide by zero trap *)
-				IF y >= 0 THEN phi := 0.5*Math.pi
-				ELSE phi := 1.5*Math.pi
+				IF y >= 0 THEN phi := 0.5*Math32.pi
+				ELSE phi := 1.5*Math32.pi
 				END
 			ELSIF x > 0 THEN	(* 1st or 4th quadrant *)
-				phi := Math.arctan(y/x)
+				phi := Math32.arctan(y/x)
 			ELSIF x < 0 THEN	(* 2nd or 3rd quadrant *)
-				phi := Math.arctan(y/x) + Math.pi
+				phi := Math32.arctan(y/x) + Math32.pi
 			END;
-			RETURN phi * (180/Math.pi)
+			RETURN phi * (180/Math32.pi)
 		END angle;
 
 	BEGIN
@@ -258,7 +258,7 @@ MODULE GfxPS IN Oberon; (** portable *)	(* eos  *)
 		END;
 		mat := GfxMatrix.Identity;
 		IF ABS(dy1) > eps THEN
-			tmp := Math.sqrt(dx1 * dx1 + dy1 * dy1); sin := dy1/tmp; cos := dx1/tmp;
+			tmp := Math32.sqrt(dx1 * dx1 + dy1 * dy1); sin := dy1/tmp; cos := dx1/tmp;
 			GfxMatrix.Rotate(GfxMatrix.Identity, sin, cos, mat);
 			dx1 := tmp; dy1 := 0;
 			tmp := cos * dy2 - sin * dx2; dx2 := cos * dx2 + sin * dy2; dy2 := tmp;
@@ -831,7 +831,7 @@ MODULE GfxPS IN Oberon; (** portable *)	(* eos  *)
 			| GfxPaths.Arc:
 				(* ooohh...shit! let's pray only MetaFonts return these in case of full circles (from closed spline with n=2) *)
 				cr := s.x1 - s.x0; sr := s.y1 - s.y0;
-				rad := Math.sqrt(cr * cr + sr * sr);
+				rad := Math32.sqrt(cr * cr + sr * sr);
 				cos := cr/rad; sin := sr/rad;
 				dx := rad * (8/6 * sqrt2 - 15/12); dy := rad * (13/12);
 				cdx := cos * dx; sdx := sin * dx; cdy := cos * dy; sdy := sin * dy;
@@ -1411,7 +1411,7 @@ MODULE GfxPS IN Oberon; (** portable *)	(* eos  *)
 		VAR psc: Context; scale: FLOAT32; m: GfxMatrix.Matrix; font: GfxFonts.Font;
 	BEGIN
 		psc := ctxt(Context);
-		scale := psc.res/ScreenDPI * Math.sqrt(GfxMatrix.Det(psc.ctm)/GfxMatrix.Det(psc.defMatrix));
+		scale := psc.res/ScreenDPI * Math32.sqrt(GfxMatrix.Det(psc.ctm)/GfxMatrix.Det(psc.defMatrix));
 		GfxMatrix.Init(m, scale, 0, 0, scale, 0, 0);
 		GfxMatrix.Concat(psc.font.mat, m, m);
 		font := GfxFonts.Open(psc.font.name, psc.font.ptsize, m);
@@ -1782,7 +1782,7 @@ MODULE GfxPS IN Oberon; (** portable *)	(* eos  *)
 		ELSE
 			COPY(font.name, name);
 			Strings.AppendCh(name, ".");
-			Strings.RealToFixStr(Math.sqrt(GfxMatrix.Det(psc.ctm) * GfxMatrix.Det(font.mat)), s, 3, 1, 0);
+			Strings.RealToFixStr(Math32.sqrt(GfxMatrix.Det(psc.ctm) * GfxMatrix.Det(font.mat)), s, 3, 1, 0);
 			i := 0; WHILE s[i] = " " DO s[i] := "0"; INC(i) END;
 			Strings.Append(name, s)
 		END;
@@ -1818,7 +1818,7 @@ MODULE GfxPS IN Oberon; (** portable *)	(* eos  *)
 		psc := ctxt(Context);
 		IF (psc.mode * {Gfx.Record..Gfx.EvenOdd} = {Gfx.Fill}) & (psc.fillPat = NIL) THEN
 			SetColor(psc, psc.fillCol, psc.fillPat);
-			scale := Math.sqrt(GfxMatrix.Det(psc.ctm))/(PSDPI/ScreenDPI);	(* overall scale factor wrt default matrix *)
+			scale := Math32.sqrt(GfxMatrix.Det(psc.ctm))/(PSDPI/ScreenDPI);	(* overall scale factor wrt default matrix *)
 			GfxMatrix.Init(inv, 1/scale, 0, 0, 1/scale, 0, 0);
 			scale := scale * psc.res/ScreenDPI;	(* scale factor relative to context font *)
 			GfxMatrix.Init(m, scale, 0, 0, scale, 0, 0);

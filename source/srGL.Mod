@@ -1,5 +1,5 @@
 MODULE srGL;
-IMPORT srBase, srMath, Math;
+IMPORT srBase, srMath, Math32;
 
 TYPE SREAL=srBase.SREAL;
 TYPE PT = srBase.PT;
@@ -102,7 +102,7 @@ PROCEDURE GetRotation (VAR M: Matrix; angle, x, y, z: SREAL);
 CONST eps = 1.E-10;
 VAR s, c, t: SREAL;
 BEGIN
-	t := Math.sqrt(x*x + y*y + z*z);
+	t := Math32.sqrt(x*x + y*y + z*z);
 	IF t > eps THEN
 		(* the following formula comes from: A. S. Glassner,  Graphic Gems, Addison-Wesley 1990, p. 466 (Rotation Tools) *)
 		x := x/t; y := y/t; z := z/t;	(* normalize axis *)

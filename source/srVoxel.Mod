@@ -1,5 +1,5 @@
 MODULE srVoxel;
-IMPORT srBase, Math, srMath, srE,  srHex,Out := KernelLog;
+IMPORT srBase, Math32, srMath, srE,  srHex,Out := KernelLog;
 
 TYPE SREAL=srBase.SREAL;
 TYPE PT=srBase.PT;
@@ -291,7 +291,7 @@ BEGIN
 (*	x := ray.lxyz.x-ray.xlx;
 	y := ray.lxyz.y-ray.xly;
 	z := ray.lxyz.z-ray.xlz;	*)
-	depth := Math.sqrt(x*x+y*y+z*z);
+	depth := Math32.sqrt(x*x+y*y+z*z);
 	dr :=  r*ray.ra*depth;
 	dg :=  g*ray.ga*depth;
 	db :=  b*ray.ba*depth;
@@ -315,7 +315,7 @@ BEGIN
 (*	x := ray.lxyz.x-ray.xlx;
 	y := ray.lxyz.y-ray.xly;
 	z := ray.lxyz.z-ray.xlz;	*)
-	depth := Math.sqrt(x*x+y*y+z*z)*srBase.fog;
+	depth := Math32.sqrt(x*x+y*y+z*z)*srBase.fog;
 	dr :=  r*ray.ra*depth;
 	dg :=  g*ray.ga*depth;
 	db :=  b*ray.ba*depth;

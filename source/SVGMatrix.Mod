@@ -1,6 +1,6 @@
 MODULE SVGMatrix;
 
-IMPORT Math;
+IMPORT Math32;
 
 CONST
 	Eps = 1.0E-5;
@@ -62,8 +62,8 @@ TYPE
 		VAR other: Matrix;
 			s, c: Number;
 		BEGIN
-			s := Math.sin(SHORT(angle)/180.0*Math.pi);
-			c := Math.cos(SHORT(angle)/180.0*Math.pi);
+			s := Math32.sin(SHORT(angle)/180.0*Math32.pi);
+			c := Math32.cos(SHORT(angle)/180.0*Math32.pi);
 			NEW(other);
 			other.Set(c, s, -s, c, -c*x+s*y+x, -s*x-c*y+y);
 			RETURN Multiply(other)
@@ -73,8 +73,8 @@ TYPE
 		VAR other: Matrix;
 			s, c: Number;
 		BEGIN
-			s := Math.sin(SHORT(angle)/180.0*Math.pi);
-			c := Math.cos(SHORT(angle)/180.0*Math.pi);
+			s := Math32.sin(SHORT(angle)/180.0*Math32.pi);
+			c := Math32.cos(SHORT(angle)/180.0*Math32.pi);
 			NEW(other);
 			other.Set(1.0, 0.0, s / c, 1.0, 0.0, 0.0);
 			RETURN Multiply(other)
@@ -84,8 +84,8 @@ TYPE
 		VAR other: Matrix;
 			s, c: Number;
 		BEGIN
-			s := Math.sin(SHORT(angle)/180.0*Math.pi);
-			c := Math.cos(SHORT(angle)/180.0*Math.pi);
+			s := Math32.sin(SHORT(angle)/180.0*Math32.pi);
+			c := Math32.cos(SHORT(angle)/180.0*Math32.pi);
 			NEW(other);
 			other.Set(1.0, s / c, 0.0, 1.0, 0.0, 0.0);
 			RETURN Multiply(other)
@@ -137,7 +137,7 @@ TYPE
 		VAR x, y: Number;
 		BEGIN
 			x := p * a; y := p * b;
-			RETURN Math.sqrt(SHORT(x * x + y * y))
+			RETURN Math32.sqrt(SHORT(x * x + y * y))
 		END TransformLength;
 
 	END Matrix;

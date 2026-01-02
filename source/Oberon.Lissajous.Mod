@@ -4,7 +4,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 MODULE Lissajous IN Oberon;
 
 IMPORT
-	Math IN A2, Objects, Gadgets, BasicGadgets, Complex;
+	Math32 IN A2, Objects, Gadgets, BasicGadgets, Complex;
 
 (* Return the value of a input gadget *)
 PROCEDURE GetValue(name: ARRAY OF CHAR; default: FLOAT32): FLOAT32;
@@ -26,7 +26,7 @@ BEGIN
 			freqA := GetValue("FreqA", 2); freqB := GetValue("FreqB", 2);
 			i := 0;
 			WHILE i < 360 DO
-				obj.real := Math.sin(freqA * Math.pi / 180 * i); obj.imag := Math.sin(freqB *Math.pi / 180 * i);
+				obj.real := Math32.sin(freqA * Math32.pi / 180 * i); obj.imag := Math32.sin(freqB *Math32.pi / 180 * i);
 				Gadgets.Update(obj); (* and plot *)
 				INC(i)
 			END

@@ -23,7 +23,7 @@ Report any problems as soon as possible to voyager@statlab.uni-heidelberg.de
 *)
 
 
-IMPORT vyBase, M := MathL IN A2;
+IMPORT vyBase, M := Math64 IN A2;
 
 TYPE
 	Real = vyBase.Real;

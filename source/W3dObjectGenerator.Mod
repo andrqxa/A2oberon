@@ -1,7 +1,7 @@
 MODULE W3dObjectGenerator;	(** AUTHOR "TF"; PURPOSE "Generator procedures for 3d objects (case study)"; *)
 
 IMPORT
-	AbstractWorld := W3dAbstractWorld, Matrix := W3dMatrix, Vectors := W3dVectors, MathL;
+	AbstractWorld := W3dAbstractWorld, Matrix := W3dMatrix, Vectors := W3dVectors, Math64;
 
 TYPE
 	VectorArray = POINTER TO ARRAY OF Vectors.TVector3d;
@@ -52,7 +52,7 @@ BEGIN
 
 	FOR i := 0 TO path.GetNofPoints() - 1 DO last[i] := first[i] END;
 	FOR i := 0 TO sides - 1 DO
-		m := Matrix.Rotation4x4(axis, i / sides * 2 * MathL.pi); m := Matrix.MulMat(mat, m);
+		m := Matrix.Rotation4x4(axis, i / sides * 2 * Math64.pi); m := Matrix.MulMat(mat, m);
 		FOR j := 0 TO path.GetNofPoints() - 1 DO current[j] := obj.AddVertex(Matrix.Mul(m, path.GetPoint(j))) END;
 		ConnectVLists(last, current, obj, color);
 		FOR j := 0 TO path.GetNofPoints() - 1 DO last[j] := current[j] END;
@@ -100,7 +100,7 @@ VAR p : Path;
 BEGIN
 	NEW(p);
 	FOR i := 0 TO segments DO
-		p.AddPoint(Vectors.Vector3d(-MathL.sin(i / segments * MathL.pi) * radius, MathL.cos(i / segments * MathL.pi) * radius, 0));
+		p.AddPoint(Vectors.Vector3d(-Math64.sin(i / segments * Math64.pi) * radius, Math64.cos(i / segments * Math64.pi) * radius, 0));
 	END;
   RotationObject(mat, p, Vectors.Vector3d(0, 1, 0), segments, obj, color)
 END Sphere;

@@ -12,7 +12,7 @@ MODULE GfxOType IN Oberon; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		Math IN A2, Display, Strings, Images, GfxMatrix, GfxPaths, GfxFonts, OType;
+		Math32 IN A2, Display, Strings, Images, GfxMatrix, GfxPaths, GfxFonts, OType;
 
 
 	TYPE
@@ -48,7 +48,7 @@ MODULE GfxOType IN Oberon; (** portable *)	(* eos  *)
 		VAR font: Font; scale: FLOAT32; dpi: SIGNED16; m: OType.Matrix;
 	BEGIN
 		NEW(font); font.class := Class; font.fam := fam; font.glyph := glyph;
-		scale := Math.sqrt(GfxMatrix.Det(mat));
+		scale := Math32.sqrt(GfxMatrix.Det(mat));
 		dpi := SHORT(ENTIER(scale * 914400/Display.Unit + 0.5));
 		m[0] := ENTIER(10000H * mat[0, 0]/scale + 0.5); m[1] := ENTIER(10000H/scale * mat[0, 1] + 0.5);
 		m[2] := ENTIER(10000H * mat[1, 0]/scale + 0.5); m[3] := ENTIER(10000H/scale * mat[1, 1] + 0.5);

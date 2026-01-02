@@ -27,7 +27,7 @@ MODULE GfxPaths IN Oberon; (** portable *)	(* eos  *)
 	*)
 
 	IMPORT
-		Math IN A2, GfxMatrix;
+		Math32 IN A2, GfxMatrix;
 
 
 	CONST
@@ -492,7 +492,7 @@ MODULE GfxPaths IN Oberon; (** portable *)	(* eos  *)
 		BEGIN
 			n := 0; d := b * b - a * c;
 			IF d >= 0 THEN
-				d := Math.sqrt(d); e := -b + d;
+				d := Math32.sqrt(d); e := -b + d;
 				IF (a * e > 0) & (ABS(e) < ABS(a)) THEN
 					t1 := e/a; n := 1;
 					e := -b - d;
@@ -688,7 +688,7 @@ MODULE GfxPaths IN Oberon; (** portable *)	(* eos  *)
 			i := 1;
 			WHILE i < n DO
 				dx := x[i] - x[i - 1]; dy := y[i] - y[i - 1];
-				s[i] := s[i - 1] + Math.sqrt(dx * dx + dy * dy) + 0.01;	(* make sure s[i] > s[i - 1] *)
+				s[i] := s[i - 1] + Math32.sqrt(dx * dx + dy * dy) + 0.01;	(* make sure s[i] > s[i - 1] *)
 				INC(i)
 			END;
 
@@ -926,7 +926,7 @@ MODULE GfxPaths IN Oberon; (** portable *)	(* eos  *)
 		VAR dx, dy: FLOAT32;
 	BEGIN
 		dx := x1 - x0; dy := y1 - y0;
-		RETURN Math.sqrt(dx * dx + dy * dy)
+		RETURN Math32.sqrt(dx * dx + dy * dy)
 	END LineLength;
 
 	PROCEDURE EnumLength (VAR data: EnumData);
@@ -935,7 +935,7 @@ MODULE GfxPaths IN Oberon; (** portable *)	(* eos  *)
 		WITH data: LengthData DO
 			IF data.elem = Line THEN
 				dx := data.x - data.sx; dy := data.y - data.sy;
-				data.len := data.len + Math.sqrt(dx * dx + dy * dy)
+				data.len := data.len + Math32.sqrt(dx * dx + dy * dy)
 			END;
 			data.sx := data.x; data.sy := data.y
 		END
@@ -1230,7 +1230,7 @@ MODULE GfxPaths IN Oberon; (** portable *)	(* eos  *)
 				data.sx := data.x; data.sy := data.y
 			| Line:
 				IF data.offset > 0 THEN	(* still appending to head *)
-					dx := data.x - data.sx; dy := data.y - data.sy; d := Math.sqrt(dx * dx + dy * dy);
+					dx := data.x - data.sx; dy := data.y - data.sy; d := Math32.sqrt(dx * dx + dy * dy);
 					IF d > 0 THEN
 						IF d < data.offset THEN	(* doesn't reach split offset *)
 							AddLine(data.head, data.x, data.y);
@@ -1307,7 +1307,7 @@ MODULE GfxPaths IN Oberon; (** portable *)	(* eos  *)
 		IF d < 0 THEN
 			nsol := 0
 		ELSE
-			d := Math.sqrt(d);
+			d := Math32.sqrt(d);
 			IF (d >= b) & (d - b <= a2) THEN
 				t := (d - b)/a2;
 				x1 := sx + t * dx; y1 := sy + t * dy;
@@ -1349,14 +1349,14 @@ MODULE GfxPaths IN Oberon; (** portable *)	(* eos  *)
 		IF ABS(ax * by - ay * bx) < 1.0E-10 THEN
 			u := 0.0; v := 0.0
 		ELSE	(* find parameters to rotate, shear and scale ellipse to unit circle *)
-			a := Math.sqrt(ax * ax + ay * ay);
+			a := Math32.sqrt(ax * ax + ay * ay);
 			sina := ay/a; cosa := ax/a;
 			b := cosa * by - sina * bx;
 			shear := (cosa * bx + sina * by)/b;
 			v := cosa * y - sina * x;
 			u := (cosa * x + sina * y - shear * v)/a;
 			v := v/b;
-			l := Math.sqrt(u * u + v * v);
+			l := Math32.sqrt(u * u + v * v);
 			u := u/l; v := v/l;
 
 			(* map u, v back to original coordinates *)

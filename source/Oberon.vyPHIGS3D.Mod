@@ -58,7 +58,7 @@ up to now there is no support of the definitionTime of a coordinate
 use this to decide if a plot is still guilty or not.*)
 
 IMPORT	vyBase, vyGraphBase, vyHostTexts,
-	Math := MathL IN A2, Oberon, Files, Out,
+	Math := Math64 IN A2, Oberon, Files, Out,
 	vyHostDisplay := vyGraphBase;
 
 CONST

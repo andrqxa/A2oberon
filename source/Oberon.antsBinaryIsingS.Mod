@@ -25,7 +25,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 
-IMPORT antsObjects, Objects, Files, vyHostTexts, antsArrayObjects, Math := MathL IN A2, antsKernel, antsModels, antsRandom,
+IMPORT antsObjects, Objects, Files, vyHostTexts, antsArrayObjects, Math := Math64 IN A2, antsKernel, antsModels, antsRandom,
 	antsCommands, vyName, vyBase, Gadgets, antsArrays, Links, aM := antsMessages;
 
 TYPE

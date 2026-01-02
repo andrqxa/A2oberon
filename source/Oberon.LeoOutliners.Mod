@@ -8,7 +8,7 @@ MODULE LeoOutliners IN Oberon; (** portable **)	(* eos  *)
 	**)
 
 	IMPORT
-		Files, Math IN A2, Objects, Gadgets, GfxMatrix, GfxPaths, Gfx, LeoPens;
+		Files, Math32 IN A2, Objects, Gadgets, GfxMatrix, GfxPaths, Gfx, LeoPens;
 
 
 	CONST
@@ -85,12 +85,12 @@ MODULE LeoOutliners IN Oberon; (** portable **)	(* eos  *)
 			ELSIF pen.joinstyle = Gfx.MiterJoin THEN
 				base.do.enter(base, x + w * hx, y + w * hy, dxi, dyi, 0)
 			ELSIF pen.joinstyle = Gfx.RoundJoin THEN
-				t := w * Math.sqrt(1/(hx * hx + hy * hy)); tan := w/aw * tan;
+				t := w * Math32.sqrt(1/(hx * hx + hy * hy)); tan := w/aw * tan;
 				base.do.enter(base, x + t * hx, y + t * hy, -w * hy, w * hx, 0);
 				IF ABS(tan) < eps THEN
 					base.do.arc(base, x + w * dyo, y - w * dxo, x, y, x - aw * dxo, y - aw * dyo, x + w * dyo, y - w * dxo)
 				ELSE
-					t := w/Math.sqrt(1 + tan*tan);
+					t := w/Math32.sqrt(1 + tan*tan);
 					dx := t * (dxo + tan * dyo); dy := t * (dyo - tan * dxo);	(* effective contour direction *)
 					IF hx * dx + hy * dy <= 0 THEN
 						base.do.arc(base, x + dy, y - dx, x, y, x - aw * dxo, y - aw * dyo, x + w * dyo, y - w * dxo)
@@ -110,7 +110,7 @@ MODULE LeoOutliners IN Oberon; (** portable **)	(* eos  *)
 		IF w < 0 THEN tani := -tani; tano := -tano END;
 		GetHalfAxisVector(dxi, dyi, dxo, dyo, hx, hy);
 		IF ABS(tani) >= eps THEN	(* get effective directions *)
-			t := 1/Math.sqrt(1 + tani*tani);
+			t := 1/Math32.sqrt(1 + tani*tani);
 			dx := t * (dxi + tani * dyi); dy := t * (dyi - tani * dxi);
 			dxi := dx; dyi := dy;
 			dx := t * (dxo + tano * dyo); dy := t * (dyo - tano * dxo);
@@ -174,12 +174,12 @@ MODULE LeoOutliners IN Oberon; (** portable **)	(* eos  *)
 				base.do.line(base, x + w * hx, y + w * hy);
 				base.do.exit(base, dxo, dyo, 0)
 			ELSIF pen.joinstyle = Gfx.RoundJoin THEN
-				t := w * Math.sqrt(1/(hx * hx + hy * hy)); tan := w/aw * tan;
+				t := w * Math32.sqrt(1/(hx * hx + hy * hy)); tan := w/aw * tan;
 				IF ABS(tan) < eps THEN
 					base.do.line(base, x + w * dyi, y - w * dxi);
 					base.do.arc(base, x + t * hx, y + t * hy, x, y, x + w * dyi, y - w * dxi, x + aw * dxi, y + aw * dyi)
 				ELSE
-					t := w/Math.sqrt(1 + tan*tan);
+					t := w/Math32.sqrt(1 + tan*tan);
 					dx := t * (dxi + tan * dyi); dy := t * (dyi - tan * dxi);	(* effective contour direction *)
 					IF hx * dx + hy * dy >= 0 THEN
 						base.do.line(base, x + dy, y - dx);
@@ -494,7 +494,7 @@ MODULE LeoOutliners IN Oberon; (** portable **)	(* eos  *)
 			x0 := s.x; y0 := s.y; Gfx.GetNormVector(s.dx, s.dy, 1, dx0, dy0);
 			GfxPaths.Scan(s);
 			IF s.elem = GfxPaths.Line THEN
-				dx := s.x - x0; dy := s.y - y0; d := Math.sqrt(dx * dx + dy * dy); dx := dx/d; dy := dy/d;
+				dx := s.x - x0; dy := s.y - y0; d := Math32.sqrt(dx * dx + dy * dy); dx := dx/d; dy := dy/d;
 				len := split * (pen.bdist[n] + pen.length[n] + pen.edist[n]) - pen.bdist[n];
 				IF len > 0 THEN
 					off0 := pen.bdist[n];
@@ -520,7 +520,7 @@ MODULE LeoOutliners IN Oberon; (** portable **)	(* eos  *)
 
 				LOOP
 					IF s.elem = GfxPaths.Line THEN
-						dx1 := s.x - x1; dy1 := s.y - y1; d1 := Math.sqrt(dx1 * dx1 + dy1 * dy1); dx1 := dx1/d1; dy1 := dy1/d1
+						dx1 := s.x - x1; dy1 := s.y - y1; d1 := Math32.sqrt(dx1 * dx1 + dy1 * dy1); dx1 := dx1/d1; dy1 := dy1/d1
 					ELSIF s.elem = GfxPaths.Exit THEN
 						Gfx.GetNormVector(s.dx, s.dy, 1, dx1, dy1)
 					ELSE
@@ -625,7 +625,7 @@ MODULE LeoOutliners IN Oberon; (** portable **)	(* eos  *)
 			x := s.x; y := s.y; len := 0;
 			GfxPaths.Scan(s);
 			WHILE s.elem = GfxPaths.Line DO
-				dx := s.x - x; dy := s.y - y; len := len + Math.sqrt(dx * dx + dy * dy);
+				dx := s.x - x; dy := s.y - y; len := len + Math32.sqrt(dx * dx + dy * dy);
 				x := s.x; y := s.y; GfxPaths.Scan(s)
 			END;
 			IF s.elem = GfxPaths.Exit THEN

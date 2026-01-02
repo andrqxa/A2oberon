@@ -4,7 +4,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 MODULE CUSM IN Oberon;	(** portable *)   (* CU-SeeMe video receiver  /  Luca Balestra 13.7.95 *)
 	(* ejz 29.8.95, DOS version *)
 IMPORT SYSTEM, NetSystem, IP IN A2, Texts, Oberon, Out, Objects, Gadgets, BasicGadgets, Pictures, RembrandtDocs, Display,
-	Math IN A2, Modules;
+	Math32 IN A2, Modules;
 
 (* pjm 01.07.96 - seems to assume Oberon.Time returns ms? *)
 
@@ -285,7 +285,7 @@ BEGIN
 	inc:=contr DIV 16;
 	i:=20;
 	WHILE c > lumin DO
-		d:=SHORT(ENTIER((Math.exp(gamma*Math.ln(c)))));
+		d:=SHORT(ENTIER((Math32.exp(gamma*Math32.ln(c)))));
 		Display.SetColor(i,d,d,d);
 		c:=c-inc;
 		INC(i);

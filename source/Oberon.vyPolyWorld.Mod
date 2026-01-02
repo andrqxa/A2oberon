@@ -41,7 +41,7 @@ up to now only for surfaces
 replace scanner stuff somewhere else
 *)
 
-IMPORT	Oberon, Math := MathL IN A2, Files,
+IMPORT	Oberon, Math := Math64 IN A2, Files,
 	vyHostTexts,  vyBase,
 	vyRealVec, vyGraphBase, Display, Out, Gadgets, Objects,
 	vyHostDisplay := vyGraphBase, vyPort, vyPHIGS3D, vyPaint3d, SYSTEM, vyLongreal, vySize;

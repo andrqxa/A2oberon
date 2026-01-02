@@ -27,7 +27,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 (*= basic definition and handler mechanism of a gibbs sampler on antsPictArray.tArrayObj. Intended for scheduled gibbs sampling.
 for implementing a gibbs sampler you only have to define your one-step and init procedures, see below.
 *)
-IMPORT antsObjects, vyBase, antsArrayObjects, antsCommands, MathL IN A2, Objects, Files, Gadgets, vyName, antsMC,
+IMPORT antsObjects, vyBase, antsArrayObjects, antsCommands, Math64 IN A2, Objects, Files, Gadgets, vyName, antsMC,
 	vyHostStrings, aM := antsMessages, vyLinks, Links, vyRanBase;
 
 CONST
@@ -128,9 +128,9 @@ CONST
 		(* s.cacheSize := dynamicCacheSize; *)
 		A := s.A;
 		IF A IS antsArrayObjects.tObject THEN
-			WITH A: antsArrayObjects.tObject DO s.temperature := MathL.ln( pos + 1 ) / MathL.ln( MathL.sqrt( A.w * A.h ) )
+			WITH A: antsArrayObjects.tObject DO s.temperature := Math64.ln( pos + 1 ) / Math64.ln( Math64.sqrt( A.w * A.h ) )
 			END;
-		ELSE s.temperature := MathL.ln( pos + 1 )
+		ELSE s.temperature := Math64.ln( pos + 1 )
 		END
 	END LogAnneal;
 
@@ -140,7 +140,7 @@ CONST
 		(* s.cacheSize := dynamicCacheSize; *)
 		A := s.A;
 		IF A IS antsArrayObjects.tObject THEN
-			WITH A: antsArrayObjects.tObject DO s.temperature := (pos) / MathL.sqrt( A.w * A.h )
+			WITH A: antsArrayObjects.tObject DO s.temperature := (pos) / Math64.sqrt( A.w * A.h )
 			END;
 		ELSE s.temperature := (pos)
 		END
@@ -152,9 +152,9 @@ CONST
 		(*  s.cacheSize := dynamicCacheSize; *)
 		A := s.A;
 		IF A IS antsArrayObjects.tObject THEN
-			WITH A: antsArrayObjects.tObject DO s.temperature := MathL.exp( pos / MathL.sqrt( A.w * A.h ) )
+			WITH A: antsArrayObjects.tObject DO s.temperature := Math64.exp( pos / Math64.sqrt( A.w * A.h ) )
 			END;
-		ELSE s.temperature := MathL.exp( pos )
+		ELSE s.temperature := Math64.exp( pos )
 		END
 	END ExpAnneal;
 
@@ -170,9 +170,9 @@ Prepare(s,omsg,msg); msg.cacheSize := dynamicCacheSize;
 msg.dlink := s;
 A := s.A;
 WITH A: antsArrayObjects.tObject DO
-msg.temp := MathL.ln(msg.pos + 1) / MathL.ln(MathL.sqrt(A.w * A.h))
+msg.temp := Math64.ln(msg.pos + 1) / Math64.ln(Math64.sqrt(A.w * A.h))
 ELSE
-msg.temp := MathL.ln(msg.pos + 1)
+msg.temp := Math64.ln(msg.pos + 1)
 END;
 s.par.handle(s.par,msg);
 END LogMetrAnneal;
@@ -183,7 +183,7 @@ BEGIN
 Prepare(s,omsg,msg); msg.cacheSize := dynamicCacheSize;
 A := s.A;
 WITH A: antsArrayObjects.tObject DO
-msg.temp :=  (msg.pos) / MathL.sqrt(A.w * A.h)
+msg.temp :=  (msg.pos) / Math64.sqrt(A.w * A.h)
 ELSE
 msg.temp :=  (msg.pos)
 END;
@@ -196,9 +196,9 @@ BEGIN
 Prepare(s,omsg,msg); msg.cacheSize := dynamicCacheSize;
 A := s.A;
 WITH A: antsArrayObjects.tObject DO
-msg.temp :=  MathL.exp(msg.pos / MathL.sqrt(A.w * A.h))
+msg.temp :=  Math64.exp(msg.pos / Math64.sqrt(A.w * A.h))
 ELSE
-msg.temp :=  MathL.exp(msg.pos)
+msg.temp :=  Math64.exp(msg.pos)
 END;
 s.par.handle(s.par,msg);
 END ExpMetrAnneal;

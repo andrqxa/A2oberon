@@ -18,7 +18,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 MODULE SaveSisyphus IN Oberon;	(** portable *)
 	(* bpsm 1999.11.11 from work by: gri 18.3.91 / 30.1.92 / 27.4.92 / jt/jm 7.11.95 *)
 
-	IMPORT SYSTEM, Out, Math IN A2, Files, Display, Modules, SaveScreen;
+	IMPORT SYSTEM, Out, Math32 IN A2, Files, Display, Modules, SaveScreen;
 
 	CONST
 		versionString = "SaveSisyphus 2000.03.31/12:17 - bpsm";
@@ -143,7 +143,7 @@ MODULE SaveSisyphus IN Oberon;	(** portable *)
 		BEGIN
 			IF X0-X > X+W-X0 THEN dx := X0-X ELSE dx := X+W-X0 END;
 			IF Y0-Y > Y+H-Y0 THEN dy := Y0-Y ELSE dy := Y+H-Y0 END;
-			r := SHORT(ENTIER(Math.sqrt(dx*dx + dy*dy)));
+			r := SHORT(ENTIER(Math32.sqrt(dx*dx + dy*dy)));
 			WHILE r > 0 DO Circle(X0, Y0, r, Display.FG, Display.replace); DEC(r, d) END
 		END HotSpot;
 

@@ -3,7 +3,7 @@ Refer to the "General ETH Oberon System Source License" contract available at: h
 
 MODULE Plot IN Oberon;
 
-IMPORT Objects, Gadgets, BasicGadgets, Math IN A2;
+IMPORT Objects, Gadgets, BasicGadgets, Math32 IN A2;
 
 PROCEDURE FindY(): BasicGadgets.Integer;
 VAR obj: Objects.Object;
@@ -34,8 +34,8 @@ BEGIN
 	IF y # NIL THEN
 		i := 0;
 		WHILE i < 360 DO
-			tmp := AmpB * Math.sin(FreqB * Math.pi / 180 * i);
-			y.val := ENTIER(AmpA * Math.sin(FreqA * Math.pi / 180 * i) + tmp);
+			tmp := AmpB * Math32.sin(FreqB * Math32.pi / 180 * i);
+			y.val := ENTIER(AmpA * Math32.sin(FreqA * Math32.pi / 180 * i) + tmp);
 			Gadgets.Update(y);
 			INC(i)
 		END

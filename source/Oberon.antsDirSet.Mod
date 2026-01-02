@@ -24,7 +24,7 @@ Report any problems as soon as possible to ants@AntsInFields.de
 
 
 
-IMPORT Math := MathL IN A2;
+IMPORT Math := Math64 IN A2;
 	(*= Dir set from numerical recipes, minimizing algorithm for n-dimensional functions originally,
 	for better performance and saving memory restricted to 2 dimensions, this may change in future  *)
 	(*! take care with pointer / var pars !!! *)
